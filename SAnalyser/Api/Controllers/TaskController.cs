@@ -16,6 +16,20 @@ namespace SAnalyser.Api.Controllers
             _taskService = taskService;
         }
 
+        [HttpGet]
+        [Route("api/heart-beat")]
+        public ActionResult<HbResponse> HeartBeat()
+        {
+            var response = new HbResponse();
+            response.Message = "Hello World!";
+            return Ok(response);
+        }
+
+        public class HbResponse
+        {
+            public string Message { get; set; }
+        }
+
         [HttpPost]
         [Route("api/submit")]
         public ActionResult<TaskResponse> Submit([FromBody] TaskRequest taskRequest)
