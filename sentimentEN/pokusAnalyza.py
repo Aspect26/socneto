@@ -6,8 +6,9 @@ Created on Mon Mar 11 07:30:22 2019
 """
 
 import pandas as pd
-import textblob as tb
+from textblob import TextBlob as tb
 import re
+from sklearn.metrics import accuracy_score as acscore
 
 def load_csv():
     data = pd.read_csv('datasets/Tweets.csv',delimiter = ',')
@@ -22,16 +23,17 @@ def clean_tweet(tweet):
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split()) 
     
 def compute_sentiment(train):
+    raise NotImplementedError
     
 
-#https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
-def get_tweet_sentiment(self, tweet): 
+# https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
+def get_tweet_sentiment(tweet):
     ''' 
     Utility function to classify sentiment of passed tweet 
     using textblob's sentiment method 
     '''
     # create TextBlob object of passed tweet text 
-    analysis = tb(self.clean_tweet(tweet)) 
+    analysis = tb(tweet)
     # set sentiment 
     if analysis.sentiment.polarity > 0: 
         return 'positive'
@@ -43,5 +45,12 @@ def get_tweet_sentiment(self, tweet):
 if __name__ == '__main__':
     print('start')
     data = load_csv()
+    data['text'].apply(clean_tweet)
+    prediction = data['text'].apply(get_tweet_sentiment)
+    #for t in data['text']:
+    #    get_tweet_sentiment(t)
+    accuracy = acscore(data['airline_sentiment'], prediction)
+    print(accuracy)
+    print('end')
     
     
