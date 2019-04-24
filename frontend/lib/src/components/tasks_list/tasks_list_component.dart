@@ -26,8 +26,10 @@ import 'package:sw_project/src/services/task_service.dart';
     ClassProvider(TaskService)
   ],
   templateUrl: 'tasks_list_component.html',
-  styleUrls: [ 'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
-    'tasks_list_component.css'],
+  styleUrls: [
+    'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
+    'tasks_list_component.css'
+  ],
   encapsulation: ViewEncapsulation.None
 )
 class TasksListComponent implements OnInit {
