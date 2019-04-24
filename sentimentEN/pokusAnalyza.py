@@ -47,8 +47,6 @@ if __name__ == '__main__':
     data = load_csv()
     data['text'].apply(clean_tweet)
     prediction = data['text'].apply(get_tweet_sentiment)
-    #for t in data['text']:
-    #    get_tweet_sentiment(t)
     accuracy = acscore(data['airline_sentiment'], prediction)
     print(accuracy)
     print('end')
