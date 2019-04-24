@@ -1,19 +1,34 @@
-<header class="material-header shadow dense-header">
-    <div class="material-header-row">
-        <material-button icon
-                         class="material-drawer-button">
-            <material-icon icon="menu"></material-icon>
-        </material-button>
-        <span class="material-header-title">SOCNETO</span>
-        <div class="material-spacer"></div>
-        <nav class="material-navigation">
-            <a href="https://github.com/jan-pavlovsky/SWProject" target="_blank" rel="noopener noreferrer">GitHub</a>
-        </nav>
-        <nav class="material-navigation">
-            <a>Link 2</a>
-        </nav>
-        <nav class="material-navigation">
-            <a>Link 3</a>
-        </nav>
+<material-drawer temporary #drawer="drawer">
+    <div *deferredContent>
+        <!-- Drawer content goes here -->
     </div>
-</header>
+</material-drawer>
+
+<material-content>
+
+    <header class="material-header shadow dense-header">
+        <div class="material-header-row">
+            <material-button icon
+                             class="material-drawer-button"
+                             (trigger)="drawer.toggle()">
+                <material-icon icon="menu"></material-icon>
+            </material-button>
+            <span class="material-header-title">SOCNETO</span>
+            <div class="material-spacer"></div>
+            <nav class="material-navigation">
+                <a href="https://github.com/jan-pavlovsky/SWProject" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </nav>
+            <nav class="material-navigation">
+                <a>Link 2</a>
+            </nav>
+            <nav class="material-navigation">
+                <a>Link 3</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="flex-container">
+        <tasks-list class="flex-30 flex-gap" (selected)="taskSelected($event)"></tasks-list>
+        <task-detail class="flex-70"></task-detail>
+    </div>
+</material-content>
