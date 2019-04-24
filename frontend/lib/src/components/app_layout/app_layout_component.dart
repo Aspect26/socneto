@@ -10,10 +10,10 @@ import 'package:sw_project/src/components/tasks_list/tasks_list_component.dart';
 import 'package:sw_project/src/models/Task.dart';
 
 @Component(
-    selector: 'toolbar',
-    templateUrl: 'toolbar_component.html',
+    selector: 'app-layout',
+    templateUrl: 'app_layout_component.html',
     styleUrls: const [
-      'toolbar_component.css',
+      'app_layout_component.css',
       'package:angular_components/app_layout/layout.scss.css'
     ],
     directives: [
@@ -31,7 +31,7 @@ import 'package:sw_project/src/models/Task.dart';
     ],
     encapsulation: ViewEncapsulation.None
 )
-class ToolbarComponent {
+class AppLayoutComponent {
   bool customWidth = false;
   bool end = false;
 
