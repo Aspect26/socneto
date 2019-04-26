@@ -34,10 +34,11 @@ namespace SAnalyser.Api.Controllers
         [Route("api/submit")]
         public ActionResult<TaskResponse> Submit([FromBody] TaskRequest taskRequest)
         {
-            var taskInput = ParseTaskRequest(taskRequest);
-            var result = _taskService.ProcessTaskAsync(taskInput).Result;
-            var taskResponse = TaskResponse.FromResult(result);
-            return Ok(taskResponse);
+            throw  new NotImplementedException();
+            //var taskInput = ParseTaskRequest(taskRequest);
+            //var result = _taskService.ProcessTaskAsync(taskInput).Result;
+            //var taskResponse = TaskResponse.FromResult(result);
+            //return Ok(taskResponse);
         }
 
         private TaskInput ParseTaskRequest(TaskRequest taskRequest)
