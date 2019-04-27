@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using SAnalyser.SocialNetworkDataCollector;
-
 namespace SAnalyser.Api
 {
     public class Startup
