@@ -23,9 +23,7 @@ namespace Socneto.Coordinator.Api.Controllers
         {
             return Ok($"Hello World! time {DateTime.Now:O}");
         }
-
         
-
         [HttpPost]
         [Route("api/submit")]
         public async Task< ActionResult<JobResponse>> Submit([FromBody] JobRequest taskRequest)
