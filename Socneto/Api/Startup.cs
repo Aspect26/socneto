@@ -27,8 +27,8 @@ namespace Socneto.Coordinator.Api
             
             services.AddTransient<IJobService,JobService>();
             
-            //services.AddTransient<IProducer, KafkaProducer>();
-            services.AddTransient<IResultProducer, ConsoleProducer>();
+            services.AddTransient<IResultProducer, KafkaProducer>();
+            //services.AddTransient<IResultProducer, ConsoleProducer>();
             
             services.Configure<KafkaOptions>(Configuration.GetSection("Coordinator:KafkaOptions"));
 
