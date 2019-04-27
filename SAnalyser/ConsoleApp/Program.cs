@@ -55,10 +55,10 @@ namespace ConsoleApp
             services.AddTransient<TaskService>();
 
             //services.AddTransient<IConsumer, KafkaConsumer>();
-            services.AddTransient<IProducer, KafkaProducer>();
+            //services.AddTransient<IProducer, KafkaProducer>();
 
             services.AddTransient<IConsumer, ConsoleConsumer>();
-            //services.AddTransient<IProducer, ConsoleProducer>();
+            services.AddTransient<IProducer, ConsoleProducer>();
 
             services.AddTransient<IDataCollector, CsvDataCollector>();
 
