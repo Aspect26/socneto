@@ -6,10 +6,10 @@ namespace Socneto.Coordinator.Domain.Models
         public string Name { get; set; }
     }
 
-    public class JobResultWrapper
+    public class JobDataRequest
     {
         public string  JobId { get; set; }
-        public string DataType { get; set; }
+        public string Topic { get; set; }
         public object Data { get; set; }
     }
 }

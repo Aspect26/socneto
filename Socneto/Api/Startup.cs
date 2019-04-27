@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Socneto.Coordinator.Domain;
-using Socneto.Coordinator.Domain.Interfaces;
 using Socneto.Coordinator.Infrastructure;
 using Socneto.Coordinator.Infrastructure.Kafka;
 
@@ -25,15 +24,11 @@ namespace Socneto.Coordinator.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddTransient<IDataCollector, CsvDataCollector>();
             
             services.AddTransient<IJobService,JobService>();
             
             //services.AddTransient<IProducer, KafkaProducer>();
             services.AddTransient<IResultProducer, ConsoleProducer>();
-
-
             
             services.Configure<KafkaOptions>(Configuration.GetSection("Coordinator:KafkaOptions"));
 
