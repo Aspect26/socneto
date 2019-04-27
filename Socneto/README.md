@@ -8,6 +8,8 @@ This document contains basic info about the poc. The code represents a base for 
 ## requirements
 
 - .Net core 2.2
+- Kafka in order to communicate
+  - Topic (`StoreToDbTopic` by default, can be changed in configuration)
 
 ## Interaction
 
@@ -15,47 +17,46 @@ It is a .net core web-api application.
 
 Responds only to https request to `/api/submit` with `Application/json` MIME type. 
 
+example:
+
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"Topic":"Charles"}' \
+  <url>
+```
+
 ### input
 
 Expects input in following format
 ~~~json
 {
-	Topic:"apple",
-	FromDate:"2017-05-05T18:20:26.000Z",
-	ToDate:"2017-05-05T18:20:26.000Z"
+	"Topic":"apple",
 }
 ~~~
 
-From/To Date must follow w3c format.
-
 ### output
 
-Returns list of string in json format.
+Returns id of a job
+
+```json
+{
+	"jobId":"58d8e8e2-603d-4bcb-af24-5692a0a62126"
+}
+```
+## configuration
+
+To configure the application, see `appsettings.json` in `Coordinator` section of the config. The config can be found at `Socneto/Api` project.
+
+```json
+{
+	"KafkaOptions": {
+      "ProduceDbStoreTopic": "StoreToDbTopic",
+      "ServerAddress": "<url>" 
+	}
+}
+```
 
 ## Implementation
 
-App consists of following parts:
-
-- `Analyser` - represent to-be remote procedure analyzing SN data. Currently counting top-ten keyword
-- `DataCollector` - represent to-be data collector. Returns 10k tweets from file. 
-- `Domain` - in other words: Simplified Coordinator
-
- In this case, data are mocked using file with 10k tweets twitter.
-
-## design
-
-Main part is a Domain. Which is a coordinator. It exposes two important interfaces
-
-- `IDataCollector`
-- `IAnalyser`
-
-And expects their proper implementation. In a near future, they will serve as an RPC caller to other services
-
-Project employs **IoC/DI** that .net core offers. 
-
-## Conclusion
-
-This project is under development. Everything there is subject to changes. 
-
-
-
+see documentation **!TODO**
