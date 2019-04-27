@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SAnalyser.Analyser;
+
 using SAnalyser.SocialNetworkDataCollector;
 
 namespace SAnalyser.Api
@@ -27,7 +27,7 @@ namespace SAnalyser.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddTransient<IDataCollector, CsvDataCollector>();
-            services.AddTransient<IAnalyser, KeywordAnalyser>();
+            
             services.AddTransient<TaskService>();
 
 

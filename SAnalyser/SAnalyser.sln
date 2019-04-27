@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{CE8E12F8-00EC-44CC-8023-CEFCD4E5FD3C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyser", "Analyser\Analyser.csproj", "{586D9CDD-1060-4550-96FE-B274FCE1B60D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkDataCollector", "SocialNetworkDataCollector\SocialNetworkDataCollector.csproj", "{ADF6B2C0-752C-4B41-B24C-D9602EB72DC2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{26B0EC09-FBD5-4A79-99A6-5DB4867A31F9}"
@@ -29,10 +27,6 @@ Global
 		{CE8E12F8-00EC-44CC-8023-CEFCD4E5FD3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE8E12F8-00EC-44CC-8023-CEFCD4E5FD3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE8E12F8-00EC-44CC-8023-CEFCD4E5FD3C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{586D9CDD-1060-4550-96FE-B274FCE1B60D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{586D9CDD-1060-4550-96FE-B274FCE1B60D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{586D9CDD-1060-4550-96FE-B274FCE1B60D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{586D9CDD-1060-4550-96FE-B274FCE1B60D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADF6B2C0-752C-4B41-B24C-D9602EB72DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADF6B2C0-752C-4B41-B24C-D9602EB72DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADF6B2C0-752C-4B41-B24C-D9602EB72DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
