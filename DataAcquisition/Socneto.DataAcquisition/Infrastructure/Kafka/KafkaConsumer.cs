@@ -52,7 +52,7 @@ namespace Socneto.DataAcquisition.Infrastructure.Kafka
                 .SetErrorHandler((_, e) => _logger.LogError(e.Reason))
                 .SetPartitionsAssignedHandler((c, partitions) =>
                 {
-                    //Console.WriteLine($"Assigned partitions: [{string.Join(", ", partitions)}]");
+                    _logger.LogInformation($"Assigned partitions: [{string.Join(", ", partitions)}]");
                     // possibly manually specify start offsets or override the partition assignment provided by
                     // the consumer group by returning a list of topic/partition/offsets to assign to, e.g.:
                     // 
@@ -60,7 +60,7 @@ namespace Socneto.DataAcquisition.Infrastructure.Kafka
                 })
                 .SetPartitionsRevokedHandler((c, partitions) =>
                 {
-                    //Console.WriteLine($"Revoking assignment: [{string.Join(", ", partitions)}]");
+                    _logger.LogInformation($"Revoking assignment: [{string.Join(", ", partitions)}]");
                 })
                 .Build())
             {
@@ -111,7 +111,7 @@ namespace Socneto.DataAcquisition.Infrastructure.Kafka
                 }
                 catch (OperationCanceledException)
                 {
-                    Console.WriteLine("Closing consumer.");
+                    _logger.LogInformation("Closing consumer.");
                     consumer.Close();
                 }
             }

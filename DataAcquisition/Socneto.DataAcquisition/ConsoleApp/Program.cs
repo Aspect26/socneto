@@ -37,6 +37,8 @@ class Program
             
             //do the actual work here
 
+            
+
             serviceProvider.GetService<StuffDoer>()
                 .DoSomeRealWork().GetAwaiter().GetResult();
             

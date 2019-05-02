@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Socneto.DataAcquisition.Domain;
 
@@ -8,16 +9,18 @@ namespace Socneto.DataAcquisition.Infrastructure.Kafka
 {
     public class KafkaProducer:IResultProducer
     {
+        private readonly ILogger<KafkaProducer> _logger;
         private readonly string _serverAddress;
         
         private readonly string _produceTopic;
 
-        public KafkaProducer(IOptions<KafkaOptions> kafkaOptionsObject, IOptions<TaskOptions> taskOptionObject)
+        public KafkaProducer(IOptions<KafkaOptions> kafkaOptionsObject, IOptions<TaskOptions> taskOptionObject, ILogger<KafkaProducer> logger)
         {
 
             if (string.IsNullOrEmpty(kafkaOptionsObject.Value.ServerAddress))
                 throw new ArgumentNullException(nameof(kafkaOptionsObject.Value.ServerAddress));
-                _serverAddress = kafkaOptionsObject.Value.ServerAddress;
+            _logger = logger;
+            _serverAddress = kafkaOptionsObject.Value.ServerAddress;
 
 
 
@@ -43,11 +46,11 @@ namespace Socneto.DataAcquisition.Infrastructure.Kafka
                         _produceTopic, KafkaMessage.ToKafka(message)
                         );
 
-                    Console.WriteLine($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                    _logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
                 }
                 catch (ProduceException<string, string> e)
                 {
-                    Console.WriteLine($"failed to deliver message: {e.Message} [{e.Error.Code}]");
+                    _logger.LogError($"failed to deliver message: {e.Message} [{e.Error.Code}]");
                 }
             }
         }
