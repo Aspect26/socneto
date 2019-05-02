@@ -30,13 +30,12 @@ namespace Socneto.DataAcquisition.Infrastructure.Kafka
         }
         public async Task ConsumeAsync(Func<string, Task> onRecieveAction, CancellationToken cancellationToken)
         {
-
             _logger.LogInformation($"Consuming topic: '{_consumeTopic}'");
 
             var config = new ConsumerConfig
             {
                 BootstrapServers = _serverAddress,
-                GroupId = "",// "test-consumer-group",
+                GroupId = "my-consumer-group",
                 EnableAutoCommit = false,
                 StatisticsIntervalMs = 5000,
                 SessionTimeoutMs = 6000,
