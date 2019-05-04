@@ -154,6 +154,8 @@ java -jar producer-consumer-1.0.0-SNAPSHOT.jar
 
 ## Goodies
 
+
+### Kafka related
 [Kafka](
 https://tecadmin.net/install-apache-kafka-ubuntu/)
 
@@ -165,3 +167,45 @@ bg
 jobs -l
 disown -h <id>
 ```
+
+### GPU cluster
+
+docker file example
+```
+FROM tensorflow/tensorflow:2.0.0a0-py3
+
+ADD main.py /main.py
+ADD modelnet20.npz /modelnet20.npz
+
+CMD [ "echo", "\"Working\""]
+CMD [ "python", "main.py"]
+```
+here: `https://hpc.github.io/charliecloud/tutorial.html`
+
+TODO tag the image
+
+* copy files to `/mnt/home/knotek/rec3d/` since `/mnt/home/knotek` is at shared disk
+* `salloc` will give you the right parition
+* build docker file `ch-build /mnt/home/knotek/rec3d/`
+  * remember an image id
+* `ch-docker2tar d31da /var/tmp`
+  * d31da is the id 
+* `ch-tar2dir /var/tmp/d31da.tar.gz /var/tmp`
+* check that it works with `ch-run /var/tmp/d31da /bin/bash`
+* move it to the shared disc ` mv /var/tmp/d31da /mnt/home/knotek/rec3d/data`
+* `exit` to get out of a node allocated with `salloc`
+* `salloc -p volta-lp` to get to partition with gpus
+* `srun -N 1 -c 2 -n 1 --mem=10G --gres=gpu:volta:0 -p volta-lp ch-run -w /mnt/home/knotek/rec3d/data -- python main.py`
+
+
+This runs on worker node after the first `salloc`
+```bash
+ch-build -t 3drec-gpu /mnt/home/knotek/rec3d-gpu/
+ch-docker2tar 3drec-gpu /var/tmp
+ch-tar2dir /var/tmp/3drec-gpu.tar.gz /var/tmp
+mv var/tmp/3drec-gpu /mnt/home/knotek/rec3d-gpu/data
+exit
+```
+
+
+
