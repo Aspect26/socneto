@@ -1,0 +1,1 @@
+[Here](https://developer.twitter.com/en/docs/tweets/search/overview) is information about limits of the twitter search api. It's limited to last 7 days for standard users.
