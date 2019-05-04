@@ -1,18 +1,33 @@
-function createLineChart(selector, dataset, w, h) {
+_LINE_COLORS = [
+    "#396AB1",
+    "#DA7C30",
+    "#3E9651",
+    "#CC2529",
+    "#535154",
+    "#6B4C9A",
+    "#922428",
+    "#948B3D"
+];
+
+function createLineChart(selector, datasets, datalabels) {
 
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
-    var width = w - margin.left - margin.right;
-    var height = h - margin.top - margin.bottom;
+    var legendWidth = 200;
 
-    var n = dataset.length;
+    w = document.getElementsByClassName("tab-content")[0].clientWidth;
+    h = 300;
+
+    var chartWidth = w - margin.left - margin.right - legendWidth;
+    var chartHeight = h - margin.top - margin.bottom;
+
 
     var xScale = d3.scaleTime()
-        .domain(d3.extent(dataset, function(d) { return new Date(d.date); }))
-        .range([0, width]);
+        .domain(d3.extent(datasets.flat(), function(d) { return new Date(d.date); }))
+        .range([0, chartWidth]);
 
     var yScale = d3.scaleLinear()
         .domain([0, 1])
-        .range([height, 0]);
+        .range([chartHeight, 0]);
 
     var line = d3.line()
         .x(function (d, i) {
@@ -23,39 +38,36 @@ function createLineChart(selector, dataset, w, h) {
         })
         .curve(d3.curveMonotoneX);
 
-
-    var svg = d3.select(selector).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+    var svg = d3.select(selector)
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left  + "," + margin.top + ")");
 
     svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(" + legendWidth + "," + chartHeight + ")")
         .call(d3.axisBottom(xScale));
 
     svg.append("g")
         .attr("class", "y axis")
+        .attr("transform", "translate(" + legendWidth + ", 0)")
         .call(d3.axisLeft(yScale));
 
-    svg.append("path")
-        .datum(dataset)
-        .attr("class", "line")
-        .attr("d", line);
+    for (var i = 0; i < datasets.length; ++i) {
+        var currentColor = _LINE_COLORS[i % _LINE_COLORS.length];
+        var currentTitle = datalabels[i];
 
-    svg.selectAll(".dot")
-        .data(dataset)
-        .enter()
-        .append("circle")
-        .attr("class", "dot")
-        .attr("cx", function(d, i) { return xScale(i) })
-        .attr("cy", function(d) { return yScale(d.y) })
-        .attr("r", 5)
-          .on("mouseover", function(a, b, c) {
-            //d3.select(this).attr('class', 'focus')
-          })
-          .on("mouseout", function() {
-            //d3.select(this).attr('class', '')
-          });
+        svg.append("path")
+            .datum(datasets[i])
+            .attr("class", "line")
+            .style('stroke', currentColor)
+            .attr("transform", "translate(" + legendWidth + ", 0)")
+            .attr("d", line);
+
+        svg.append("circle").attr("cx", 0).attr("cy", i * 20).attr("r", 6).style("fill", currentColor);
+        svg.append("text").attr("x", 20).attr("y", i * 20).text(currentTitle).style("font-size", "15px").attr("alignment-baseline","middle")
+    }
+
 }
