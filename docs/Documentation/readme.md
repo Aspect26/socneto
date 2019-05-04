@@ -47,6 +47,15 @@ The whole application communicates via kafka topics
 
 ![topic flow image][topic-flow]
 
+### Hardware 
+
+Currently, the project uses five machines on ip from `10.3.4.101` to `10.3.4.105`.
+
+* `10.3.4.101` - Hosts coordinator at port `6010` which can be accessed from the outside via `acheron.ms.mff.cuni.cz:39103`. It also hosts Data acquisition console app.
+* `10.3.4.102` - Hosts db storage
+* `10.3.4.103` - Hosts analyser
+* `10.3.4.104` - Hosts teamcity which exposes port `8111`. It can be accessed from the outside using `acheron.ms.mff.cuni.cz:39107`
+* `10.3.4.105` - Hosts Kafka(9092) which in future will be accessible from the outside using `acheron.ms.mff.cuni.cz:39108`
 
 
 [topic-flow]: images/topic-flow.png "Topic flow image"
