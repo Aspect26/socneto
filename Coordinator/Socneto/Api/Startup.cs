@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Socneto.Coordinator.Domain;
 using Socneto.Coordinator.Infrastructure;
 using Socneto.Coordinator.Infrastructure.Kafka;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Socneto.Coordinator.Api
 {
@@ -24,7 +25,14 @@ namespace Socneto.Coordinator.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "Socneto Api",
+                    Description = "Socneto task api - no users yet"
+                });
+            });
             services.AddTransient<IJobService,JobService>();
             
             services.AddTransient<IResultProducer, KafkaProducer>();
@@ -60,6 +68,12 @@ namespace Socneto.Coordinator.Api
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Socneto Api");
+            });
+
         }
     }
 }
