@@ -207,5 +207,14 @@ mv var/tmp/3drec-gpu /mnt/home/knotek/rec3d-gpu/data
 exit
 ```
 
+```bash
+srun -N 1 -c 16 -n 1 --mem=10G --gres=gpu:volta:1 -p volta-lp --pty bash
+ch-fromhost --nvidia /mnt/home/knotek/sr
+ch-run ...
+```
+
+*NOTE*: It may fail sometimes since some nodes does not have avx e.g. command `cat /proc/cpuinfo | grep avx` returns nothing
+
+
 
 

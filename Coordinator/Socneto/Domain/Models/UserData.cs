@@ -1,4 +1,6 @@
 
+using System;
+
 namespace Socneto.Coordinator.Domain.Models
 {
     public class UserData
@@ -8,8 +10,8 @@ namespace Socneto.Coordinator.Domain.Models
 
     public class JobDataRequest
     {
-        public string  JobId { get; set; }
-        public string Topic { get; set; }
+        public Guid JobId { get; set; }
+        public string Query { get; set; }
         
     }
 }

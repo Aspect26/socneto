@@ -1,7 +1,9 @@
+using System;
+
 namespace Socneto.Coordinator.Domain.Models
 {
     public class JobSubmitResult
     {
-        public string JobId { get; set; }
+        public Guid JobId { get; set; }
     }
 }
