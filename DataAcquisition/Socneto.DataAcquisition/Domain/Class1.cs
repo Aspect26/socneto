@@ -35,12 +35,12 @@ namespace Socneto.DataAcquisition.Domain
             // TODO i should deeserialize right at the consumer or register deserializer
             var taskInput = JsonConvert.DeserializeObject<TaskInput>(input);
 
-            _logger.LogInformation($"Generating 10 mock records for: '{taskInput.Topic}'");
+            _logger.LogInformation($"Generating 10 mock records for: '{taskInput.Query}'");
             //... todo
 
             for (int i = 0; i < 10; i++)
             {
-                var text =taskInput.Topic +"-"+ RandomString(random.Next(50, 100));
+                var text =taskInput.Query +"-"+ RandomString(random.Next(50, 100));
                 var user = RandomString(random.Next(5, 15));
                 var source = "twitter";
 
@@ -70,7 +70,7 @@ namespace Socneto.DataAcquisition.Domain
 
     public class TaskInput
     {
-        public string Topic { get; set; }
+        public string Query { get; set; }
     }
 
     //public interface ISocialNetwork

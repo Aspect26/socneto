@@ -8,6 +8,6 @@ namespace Socneto.Coordinator.Api.Models
 {
     public class JobResponse
     {
-        public string JobId { get; set; }
+        public Guid JobId { get; set; }
     }
 }

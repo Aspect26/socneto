@@ -18,7 +18,6 @@ namespace Socneto.Coordinator.Domain
 
         public JobService(IResultProducer producer, ILogger<JobService> logger)
         {
-
             _producer = producer;
             _logger = logger;
         }
@@ -26,7 +25,7 @@ namespace Socneto.Coordinator.Domain
 
         public async Task<JobSubmitResult> SubmitJob(JobSubmitInput jobInput)
         {
-            var guid = Guid.NewGuid().ToString();
+            var guid = Guid.NewGuid();
 
             _logger.LogInformation("Processing data");
 
@@ -34,7 +33,7 @@ namespace Socneto.Coordinator.Domain
             var job = new JobDataRequest()
             {
                 JobId = guid,
-                Topic = jobInput.Topic
+                Query = jobInput.Query
             };
 
             var json = JsonConvert.SerializeObject(job);
