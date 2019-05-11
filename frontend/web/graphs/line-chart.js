@@ -11,7 +11,7 @@ _LINE_COLORS = [
 
 function createLineChart(selector, datasets, datalabels) {
 
-    d3.select("svg").remove();
+    d3.select(selector).select("svg").remove();
 
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
     var legendWidth = 200;

@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:js';
 
 import 'package:angular/angular.dart';
@@ -20,11 +21,12 @@ import 'package:angular_components/laminate/popup/module.dart';
     DeferredContentDirective,
     MaterialTabPanelComponent,
     MaterialTabComponent,
-
     MaterialAutoSuggestInputComponent,
     MaterialButtonComponent,
     MaterialCheckboxComponent,
     MaterialDropdownSelectComponent,
+    MaterialChipsComponent,
+    MaterialChipComponent,
     materialInputDirectives,
     NgFor,
     NgIf,
@@ -53,9 +55,11 @@ class TaskGraphsComponent extends AfterViewInit {
     }
   ];
 
-  List<String> myOptions = data.map( (element) => element['keyword'].toString()).toList();
-
+  @ViewChild("keywordInput") MaterialAutoSuggestInputComponent keywordInput;
+  List<String> selectKeywordOptions = data.map( (element) => element['keyword'].toString()).toList();
   List<String> selectedKeywords = [];
+
+  String _currentKeywordInputText = "";
 
   @override
   Future<Null> ngAfterViewInit() async {
@@ -73,12 +77,31 @@ class TaskGraphsComponent extends AfterViewInit {
 
   }
 
-  void selectionChange(dynamic selected) {
-    if (!this.selectedKeywords.contains(selected)) {
-      this.selectedKeywords.add(selected);
-    }
+  void addKeywordTextChange(String text) {
+    this._currentKeywordInputText = text != null? text : "";
+  }
 
-    this.refreshGraph();
+  void addKeywordSelectionChange(dynamic selected) {
+    if (selected != null && selected != "" && !this.selectedKeywords.contains(selected)) {
+      this.selectedKeywords.add(selected);
+      this.keywordInput.writeValue("");
+      this.selectKeywordOptions.remove(selected);
+      this.refreshGraph();
+    }
+  }
+
+  void onKeywordChipRemove(String keyword) {
+    if (this.selectedKeywords.contains(keyword)) {
+      this.selectedKeywords.remove(keyword);
+      this.selectKeywordOptions.add(keyword);
+      this._notifyKeywordInputValuesChange();
+      this.refreshGraph();
+    }
+  }
+
+  void _notifyKeywordInputValuesChange() {
+    this.keywordInput.writeValue(_currentKeywordInputText + "a");
+    this.keywordInput.writeValue(this._currentKeywordInputText.substring(0, this._currentKeywordInputText.length - 1));
   }
 
 }

@@ -4,12 +4,22 @@
         <material-tab label="Keywords sentiment">
 
             <div class="flex-container column">
-                <material-auto-suggest-input
-                        [selectionOptions]="myOptions"
-                        (selectionChange)="selectionChange($event)"
+                <material-auto-suggest-input #keywordInput
+                        [selectionOptions]="selectKeywordOptions"
+                        (selectionChange)="addKeywordSelectionChange($event)"
+                        (inputTextChange)="addKeywordTextChange($event)"
                         label="Keywords"
-                        leadingGlyph="search" >
+                        showClearIcon>
                 </material-auto-suggest-input>
+
+                <material-chips>
+                    <material-chip *ngFor="let keyword of selectedKeywords"
+                                   (remove)="onKeywordChipRemove(keyword)"
+                                   [removable]="true"
+                                   [value]="keyword">
+                        {{ keyword }}
+                    </material-chip>
+                </material-chips>
 
                 <div class="graph-line-chart"></div>
             </div>
