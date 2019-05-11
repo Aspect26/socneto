@@ -2,7 +2,18 @@
     <h3>Graphs</h3>
     <material-tab-panel class="tab-panel" [activeTabIndex]="0">
         <material-tab label="Keywords sentiment">
-            <div class="graph-line-chart"></div>
+
+            <div class="flex-container column">
+                <material-auto-suggest-input
+                        [selectionOptions]="myOptions"
+                        (selectionChange)="selectionChange($event)"
+                        label="Keywords"
+                        leadingGlyph="search" >
+                </material-auto-suggest-input>
+
+                <div class="graph-line-chart"></div>
+            </div>
+
         </material-tab>
         <material-tab label="tab2">
             Content of Tab 2
