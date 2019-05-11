@@ -1,9 +1,17 @@
+import 'dart:js';
+
 import 'package:angular/angular.dart';
+import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/content/deferred_content.dart';
+import 'package:angular_components/material_button/material_button.dart';
+import 'package:angular_components/material_checkbox/material_checkbox.dart';
+import 'package:angular_components/material_input/material_auto_suggest_input.dart';
+import 'package:angular_components/material_input/material_input.dart';
+import 'package:angular_components/material_select/material_dropdown_select.dart';
 import 'package:angular_components/material_tab/material_tab.dart';
 import 'package:angular_components/material_tab/material_tab_panel.dart';
-
-import 'dart:js';
+import 'package:angular_components/model/selection/selection_model.dart';
+import 'package:angular_components/laminate/popup/module.dart';
 
 
 @Component(
@@ -12,6 +20,17 @@ import 'dart:js';
     DeferredContentDirective,
     MaterialTabPanelComponent,
     MaterialTabComponent,
+
+    MaterialAutoSuggestInputComponent,
+    MaterialButtonComponent,
+    MaterialCheckboxComponent,
+    MaterialDropdownSelectComponent,
+    materialInputDirectives,
+    NgFor,
+    NgIf,
+  ],
+  providers: [
+    materialProviders
   ],
   templateUrl: 'task_graphs_component.html',
   styleUrls: ['task_graphs_component.css'],
@@ -19,7 +38,7 @@ import 'dart:js';
 )
 class TaskGraphsComponent extends AfterViewInit {
 
-  var data = [
+  static var data = [
     {
       'keyword': 'Game of Thrones',
       'data': [{'y': 0.3, 'date': "2019-01-04"}, {'y': 0.8, 'date': "2019-02-04"}, {'y': 0.5, 'date': "2019-05-04"}],
@@ -34,18 +53,32 @@ class TaskGraphsComponent extends AfterViewInit {
     }
   ];
 
+  List<String> myOptions = data.map( (element) => element['keyword'].toString()).toList();
+
+  List<String> selectedKeywords = [];
+
   @override
   Future<Null> ngAfterViewInit() async {
+    this.refreshGraph();
+  }
 
-    var width = 800;
-    var height = 200;
+  void refreshGraph() {
+    var datasets = data.where( (element) => selectedKeywords.contains(element['keyword'])).toList().map( (element) => element['data']).toList();
+    var dataLabels = data.where( (element) => selectedKeywords.contains(element['keyword'])).toList().map( (element) => element['keyword'].toString()).toList();
 
-    var datasets = data.map( (element) => element['data']).toList();
-    var dataLabels = data.map( (element) => element['keyword']).toList();
+    context.callMethod('createLineChart', [".graph-line-chart", new JsObject.jsify(datasets), new JsObject.jsify(dataLabels)]);
+  }
 
+  void clear() {
 
-    context.callMethod('createLineChart', [".graph-line-chart", new JsObject.jsify(datasets), new JsObject.jsify(dataLabels), width, height]);
+  }
 
+  void selectionChange(dynamic selected) {
+    if (!this.selectedKeywords.contains(selected)) {
+      this.selectedKeywords.add(selected);
+    }
+
+    this.refreshGraph();
   }
 
 }
