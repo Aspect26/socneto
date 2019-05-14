@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'dart:js';
 
 import 'package:angular/angular.dart';
@@ -11,8 +10,6 @@ import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_select/material_dropdown_select.dart';
 import 'package:angular_components/material_tab/material_tab.dart';
 import 'package:angular_components/material_tab/material_tab_panel.dart';
-import 'package:angular_components/model/selection/selection_model.dart';
-import 'package:angular_components/laminate/popup/module.dart';
 
 
 @Component(
@@ -67,14 +64,15 @@ class TaskGraphsComponent extends AfterViewInit {
   }
 
   void refreshGraph() {
-    var datasets = data.where( (element) => selectedKeywords.contains(element['keyword'])).toList().map( (element) => element['data']).toList();
-    var dataLabels = data.where( (element) => selectedKeywords.contains(element['keyword'])).toList().map( (element) => element['keyword'].toString()).toList();
+    var dataSets = [];
+    var dataLabels = [];
 
-    context.callMethod('createLineChart', [".graph-line-chart", new JsObject.jsify(datasets), new JsObject.jsify(dataLabels)]);
-  }
+    for (var selectedKeyword in this.selectedKeywords) {
+      dataSets.add(data.firstWhere( (element) => element['keyword'] == selectedKeyword)['data']);
+      dataLabels.add(selectedKeyword);
+    }
 
-  void clear() {
-
+    context.callMethod('createLineChart', [".graph-line-chart", new JsObject.jsify(dataSets), new JsObject.jsify(dataLabels)]);
   }
 
   void addKeywordTextChange(String text) {
