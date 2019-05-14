@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Socneto.Coordinator.Api.Models
 {
@@ -7,6 +8,10 @@ namespace Socneto.Coordinator.Api.Models
         public string Text { get; set; }
 
         public double Sentiment { get; set; }
+
+        public DateTime DateTime { get; set; }
+
+        public int UserId { get; set; }
 
         public List<string> Keywords { get; set; }
     }

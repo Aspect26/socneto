@@ -33,7 +33,7 @@ namespace Socneto.Coordinator.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/submit")]
+        [Route("api/job/submit")]
         public async Task<ActionResult<JobResponse>> Submit([FromBody] JobRequest taskRequest)
         {
             var taskInput = JobRequest.ToTaskInput(taskRequest);
@@ -44,7 +44,7 @@ namespace Socneto.Coordinator.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/job-status/{jobId:guid}")]
+        [Route("api/job/{jobId:guid}/status")]
         public async Task<ActionResult<JobStatusResponse>> GetJobStatus([FromRoute]Guid jobId)
         {
             var jobStatusResponse = GetRandomJobStatusResponse(jobId);
@@ -55,7 +55,7 @@ namespace Socneto.Coordinator.Api.Controllers
 
 
         [HttpGet]
-        [Route("api/user-job-statuses/{userId}")]
+        [Route("api/user/{userId}/jobs")]
         public async Task<ActionResult<List<JobStatusResponse>>> GetJobStatuses([FromRoute]int userId)
         {
             var random = new Random(userId);
@@ -72,7 +72,7 @@ namespace Socneto.Coordinator.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/job-result/{jobId:guid}")]
+        [Route("api/job/{jobId:guid}/result")]
         public async Task<ActionResult<JobResultResponse>> GetJobResult([FromRoute]Guid jobId)
         {
             var hc = Math.Abs(jobId.GetHashCode());
@@ -86,7 +86,9 @@ namespace Socneto.Coordinator.Api.Controllers
                     {
                         Keywords = new List<string>() { topics[rand % topics.Length] },
                         Sentiment = (double)(rand % 2),
-                        Text = RandomString(64 + rand % 64)
+                        Text = RandomString(64 + rand % 64),
+                        UserId = hc ,
+                        DateTime = GetRandomDate(r+hc)
                     };
                 })
                 .ToList();
@@ -103,16 +105,9 @@ namespace Socneto.Coordinator.Api.Controllers
 
         private static JobStatusResponse GetRandomJobStatusResponse(Guid jobId)
         {
-
             var hc = Math.Abs(jobId.GetHashCode());
 
-            var year = 2010 + (hc % 10);
-            var month = hc % 12 + 1;
-            var day = hc % 28 + 1;
-            var hour = hc % 24 + 1;
-            var minute = hc % 60 + 1;
-            var second = hc % 60 + 1;
-            var startedAt = new DateTime(year, month, day, hour, minute, second);
+            var startedAt = GetRandomDate(hc);
 
             DateTime? finishedAt = null;
             if (hc % 5 == 0)
@@ -126,10 +121,23 @@ namespace Socneto.Coordinator.Api.Controllers
                 StartedAt = startedAt,
                 FinishedAt = finishedAt,
                 HasFinished = finishedAt.HasValue,
-                UserId = hc
+                UserId = hc,
+                JobName = RandomString(10)
+
             };
             return jobStatusResponse;
+        }
 
+        private static DateTime GetRandomDate(int seed)
+        {
+            var year = 2010 + (seed % 10);
+            var month = (seed % 12) + 1;
+            var day = (seed % 28) + 1;
+            var hour = seed % 24;
+            var minute = ((seed -53) % 59) + 1;
+            var second = (seed % 59) + 1;
+            //Console.WriteLine($"{year} {month} {day} {hour} {minute} {second}");
+            return new DateTime(year, month, day, hour, minute, second);
         }
 
         public static string RandomString(int length)
@@ -140,8 +148,4 @@ namespace Socneto.Coordinator.Api.Controllers
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
-
-
-
-
 }
