@@ -30,8 +30,9 @@ namespace Socneto.Coordinator.Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://example.com",
-                            "http://www.contoso.com");
+                        builder.WithOrigins("*")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
                     });
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -69,6 +70,8 @@ namespace Socneto.Coordinator.Api
                 app.UseHsts();
             }
 
+            app.UseCors(MyAllowSpecificOrigins);
+
             //app.UseForwardedHeaders(new ForwardedHeadersOptions
             //{
             //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -78,7 +81,6 @@ namespace Socneto.Coordinator.Api
 
             app.UseHttpsRedirection();
             app.UseMvc();
-            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseSwagger();
             app.UseSwaggerUI(c => {
