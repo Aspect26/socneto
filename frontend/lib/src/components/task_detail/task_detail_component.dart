@@ -10,6 +10,7 @@ import 'package:sw_project/src/components/task_graphs/task_graphs_component.dart
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Task.dart';
 import 'package:sw_project/src/services/post_service.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 
 @Component(
   selector: 'task-detail',
@@ -28,7 +29,7 @@ import 'package:sw_project/src/services/post_service.dart';
   templateUrl: 'task_detail_component.html',
   styleUrls: ['task_detail_component.css'],
   providers: [
-    ClassProvider(PostService)
+    ClassProvider(SocnetoService)
   ],
 )
 class TaskDetailComponent {
@@ -36,13 +37,13 @@ class TaskDetailComponent {
   Task task;
   List<Post> posts = [];
 
-  PostService _postsService;
+  SocnetoService _socnetoService;
 
-  TaskDetailComponent(this._postsService);
+  TaskDetailComponent(this._socnetoService);
 
   void setTask(Task task) async {
     this.task = task;
-    this.posts = await this._postsService.getPosts(task.id);
+    // this.posts = await this._socnetoService.getPosts(task.id);
   }
 
 }

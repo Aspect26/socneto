@@ -8,7 +8,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:sw_project/src/models/Task.dart';
-import 'package:sw_project/src/services/task_service.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 
 @Component(
   selector: 'tasks-list',
@@ -23,7 +23,7 @@ import 'package:sw_project/src/services/task_service.dart';
     NgIf
   ],
   providers: [
-    ClassProvider(TaskService)
+    ClassProvider(SocnetoService)
   ],
   templateUrl: 'tasks_list_component.html',
   styleUrls: [
@@ -34,12 +34,12 @@ import 'package:sw_project/src/services/task_service.dart';
 )
 class TasksListComponent implements OnInit {
 
-  final TaskService _taskService;
+  final SocnetoService _socnetoService;
 
   List<Task> tasks = [];
   var errorMessage = "";
 
-  TasksListComponent(this._taskService);
+  TasksListComponent(this._socnetoService);
 
   final _selectRequest = StreamController<Task>();
   @Output() Stream<Task> get selected => _selectRequest.stream;
@@ -51,7 +51,7 @@ class TasksListComponent implements OnInit {
 
   void _loadData() async {
     try {
-      this.tasks = await this._taskService.getTasks();
+      this.tasks = await this._socnetoService.getUserJobs(2);
       this.tasks.sort((a,b) => a.startedAt.compareTo(b.startedAt));
       this.tasks.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
     } catch (e) {
