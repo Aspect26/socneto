@@ -24,3 +24,8 @@ doc/api/
 # IDEA
 .idea/
 *.iml
+
+
+# CUSTOM
+TODO LIST
+dev_scripts/

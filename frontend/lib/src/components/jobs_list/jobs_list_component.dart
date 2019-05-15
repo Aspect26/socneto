@@ -7,11 +7,11 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
-import 'package:sw_project/src/models/Task.dart';
+import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 @Component(
-  selector: 'tasks-list',
+  selector: 'jobs-list',
   directives: [
     FocusItemDirective,
     FocusListDirective,
@@ -25,10 +25,10 @@ import 'package:sw_project/src/services/socneto_service.dart';
   providers: [
     ClassProvider(SocnetoService)
   ],
-  templateUrl: 'tasks_list_component.html',
+  templateUrl: 'jobs_list_component.html',
   styleUrls: [
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
-    'tasks_list_component.css'
+    'jobs_list_component.css'
   ],
   encapsulation: ViewEncapsulation.None
 )
@@ -36,13 +36,13 @@ class TasksListComponent implements OnInit {
 
   final SocnetoService _socnetoService;
 
-  List<Task> tasks = [];
+  List<Job> tasks = [];
   var errorMessage = "";
 
   TasksListComponent(this._socnetoService);
 
-  final _selectRequest = StreamController<Task>();
-  @Output() Stream<Task> get selected => _selectRequest.stream;
+  final _selectRequest = StreamController<Job>();
+  @Output() Stream<Job> get selected => _selectRequest.stream;
 
   @override
   void ngOnInit() {
@@ -59,7 +59,7 @@ class TasksListComponent implements OnInit {
     }
   }
 
-  void selectTask(Task task) {
+  void selectTask(Job task) {
     this._selectRequest.add(task);
   }
 
