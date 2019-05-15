@@ -1,12 +1,9 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Socneto.Coordinator.Domain;
-using Socneto.Coordinator.Infrastructure;
 using Socneto.Coordinator.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
 
