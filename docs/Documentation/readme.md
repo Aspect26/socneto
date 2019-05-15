@@ -7,26 +7,6 @@ This document will contain final documentation of SOCNETO project
 
 It runs on premise!
 
-## Prerequisities
-
-### Kafka
-
-Kafka must run
-```bash
-cd /usr/local/kafka
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
-```
-
-Kafka has to have following topics
-* AcquireDataTopic
-* databaseRaw
-* analyser
-* StoreAnalysisTopic
-```bash
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic <topicName>
-```
-
 ## Infrastructure and flow
 
 There are 4 major components
@@ -35,15 +15,6 @@ There are 4 major components
 - Data acquirer - loads posts and sends them to get indexed in a data storage
 - Data storage - indexes data and give them to a analyser module 
 - Analyser - analyses data and sends them back to the database
-
-The whole application communicates via kafka topics
-
-|from|to|topic name|description|
-|:--|:--|:--|:--|
-|Coordinator|Data acquirer|AcquireDataTopic| task definition, contains topic|
-|Data acquirer| Storage| databaseRaw| data gets indexed|
-|Storage|Analyser|analyser|indexed data gets analysed|
-|Analyser|Storage|StoreAnalysisTopic|analysed data gets stored|
 
 ![topic flow image][topic-flow]
 
@@ -59,98 +30,9 @@ Currently, the project uses five machines on ip from `10.3.4.101` to `10.3.4.105
 
 
 [topic-flow]: images/topic-flow.png "Topic flow image"
-## Configs
 
 
 
-### Analyser
-Python has input parameters instead of config 
-
-```bash
-python3 main.py --server '10.3.4.105:9092' --consume_topic analyser --produce_topic StoreAnalysisTopic
-```
-* server - place where kafka runs
-* consume_topic - topic on which analyser listens
-* produce_topic - topic to which analyser produces
-
-### DataAcquisition
-
-Stored at `appsettings.json`
-
-```json
-{
-
-  "Coordinator": {
-    "TaskOptions": {
-      "ConsumeTaskTopic": "AcquireDataTopic",
-      "ProduceTopic": "databaseRaw"
-    },
-    "KafkaOptions": {
-      "ServerAddress": "10.3.4.105:9092"
-    },
-
-    "Networks.Twitter": {
-      "ConsumerKey": "",
-      "ConsumerSecret": ""
-    }
-  }
-}
-```
-
-### Coordinator
-
-pretty much the same as Data acquisition
-
-
-## Examples
-
-### Submit job
-The app is interacted with via following command
-
-```
-curl --header "Content-Type: application/json"  --request POST  --data '{"Topic":"CharlesTonSon"}'  http://acheron.ms.mff.cuni.cz:39103/api/submit
-```
-
-### Start analyser
-
-* python app
-* at `10.3.4.103`
-
-```bash
-python3 main.py --server '10.3.4.105:9092' --consume_topic analyser --produce_topic StoreAnalysisTopic
-```
-
-### Start coordinator
-* .NET WebApp
-* at `10.3.4.101`
-* runs only in debug
-  
-```bash 
-cd /home/knotek/sa/SWProject/Coordinator/Socneto/ConsoleApp/
-dotnet run --urls "http://*:6010"
-```
-
-*NOTE*: For those who uses MobaXTerm, you have to create two sessions to server and close the first one after. Session 1 opens at 6010 and the second at 6011, closing the first one releases the port for the application.
-
-
-### Start data acquisition
-
-* .Net console app
-* at `10.3.4.101`
-* runs only in debug
-```bash
-cd /home/knotek/sa/SWProject/DataAcquisition/Socneto.DataAcquisition/ConsoleApp/
-dotnet run
-```
-
-### start db storage
-
-* java 
-* at `10.3.4.102`
-
-```bash
-java -jar producer-consumer-1.0.0-SNAPSHOT.jar
-```
 
 ## Goodies
 
@@ -167,79 +49,4 @@ bg
 jobs -l
 disown -h <id>
 ```
-
-### GPU cluster
-
-docker file example
-```
-FROM tensorflow/tensorflow:2.0.0a0-py3
-
-ADD main.py /main.py
-ADD modelnet20.npz /modelnet20.npz
-
-CMD [ "echo", "\"Working\""]
-CMD [ "python", "main.py"]
-```
-here: `https://hpc.github.io/charliecloud/tutorial.html`
-
-TODO tag the image
-
-* copy files to `/mnt/home/knotek/rec3d/` since `/mnt/home/knotek` is at shared disk
-* `salloc` will give you the right parition
-* build docker file `ch-build /mnt/home/knotek/rec3d/`
-  * remember an image id
-* `ch-docker2tar d31da /var/tmp`
-  * d31da is the id 
-* `ch-tar2dir /var/tmp/d31da.tar.gz /var/tmp`
-* check that it works with `ch-run /var/tmp/d31da /bin/bash`
-* move it to the shared disc ` mv /var/tmp/d31da /mnt/home/knotek/rec3d/data`
-* `exit` to get out of a node allocated with `salloc`
-* `salloc -p volta-lp` to get to partition with gpus
-* `srun -N 1 -c 2 -n 1 --mem=10G --gres=gpu:volta:0 -p volta-lp ch-run -w /mnt/home/knotek/rec3d/data -- python main.py`
-
-
-This runs on worker node after the first `salloc`
-```bash
-ch-build -t 3drec-gpu /mnt/home/knotek/rec3d-gpu/
-ch-docker2tar 3drec-gpu /var/tmp
-ch-tar2dir /var/tmp/3drec-gpu.tar.gz /var/tmp
-mv var/tmp/3drec-gpu /mnt/home/knotek/rec3d-gpu/data
-exit
-```
-
-```bash
-srun -N 1 -c 16 -n 1 --mem=10G --gres=gpu:volta:1 -p volta-lp --pty bash
-ch-fromhost --nvidia /mnt/home/knotek/sr
-ch-run ...
-```
-
-*NOTE*: It may fail sometimes since some nodes does not have avx e.g. command `cat /proc/cpuinfo | grep avx` returns nothing
-
-
-## Wiki stuff
-
-```
-https://localhost:5001/swagger/index.html
-```
-
-```
-curl -X GET https://localhost:5001/api/heart-beat --insecure
-```
-```
-curl -X GET https://localhost:5001/api/job-status/44bf2aea-1502-4938-8dfc-010ae7357fc3 --insecure
-```
-
-```
-curl -X GET https://localhost:5001/api/user-job-statuses/11034 --insecure
-```
-
-```
-curl -X GET https://localhost:5001/api/job-statuses/44bf2aea-1502-4938-8dfc-010ae7357fc3 --insecure
-```
-
-```
-curl -X GET https://localhost:5001/api/job-result/44bf2aea-1502-4938-8dfc-010ae7357fc3 --insecure
-```
-
-
 
