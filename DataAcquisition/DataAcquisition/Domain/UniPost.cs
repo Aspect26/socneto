@@ -9,7 +9,7 @@ namespace Socneto.DataAcquisition.Domain
             Text = text;
             UserIdId = userId;
             Source= source;
-            DateTime = dateTime 
+            DateTime = dateTime;
         }
         public string Text { get; set; }
         public string Source { get; set; }
