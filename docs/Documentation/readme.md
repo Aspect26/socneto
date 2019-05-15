@@ -36,15 +36,6 @@ There are 4 major components
 - Data storage - indexes data and give them to a analyser module 
 - Analyser - analyses data and sends them back to the database
 
-The whole application communicates via kafka topics
-
-|from|to|topic name|description|
-|:--|:--|:--|:--|
-|Coordinator|Data acquirer|AcquireDataTopic| task definition, contains topic|
-|Data acquirer| Storage| databaseRaw| data gets indexed|
-|Storage|Analyser|analyser|indexed data gets analysed|
-|Analyser|Storage|StoreAnalysisTopic|analysed data gets stored|
-
 ![topic flow image][topic-flow]
 
 ### Hardware 
@@ -59,98 +50,9 @@ Currently, the project uses five machines on ip from `10.3.4.101` to `10.3.4.105
 
 
 [topic-flow]: images/topic-flow.png "Topic flow image"
-## Configs
 
 
 
-### Analyser
-Python has input parameters instead of config 
-
-```bash
-python3 main.py --server '10.3.4.105:9092' --consume_topic analyser --produce_topic StoreAnalysisTopic
-```
-* server - place where kafka runs
-* consume_topic - topic on which analyser listens
-* produce_topic - topic to which analyser produces
-
-### DataAcquisition
-
-Stored at `appsettings.json`
-
-```json
-{
-
-  "Coordinator": {
-    "TaskOptions": {
-      "ConsumeTaskTopic": "AcquireDataTopic",
-      "ProduceTopic": "databaseRaw"
-    },
-    "KafkaOptions": {
-      "ServerAddress": "10.3.4.105:9092"
-    },
-
-    "Networks.Twitter": {
-      "ConsumerKey": "",
-      "ConsumerSecret": ""
-    }
-  }
-}
-```
-
-### Coordinator
-
-pretty much the same as Data acquisition
-
-
-## Examples
-
-### Submit job
-The app is interacted with via following command
-
-```
-curl --header "Content-Type: application/json"  --request POST  --data '{"Topic":"CharlesTonSon"}'  http://acheron.ms.mff.cuni.cz:39103/api/submit
-```
-
-### Start analyser
-
-* python app
-* at `10.3.4.103`
-
-```bash
-python3 main.py --server '10.3.4.105:9092' --consume_topic analyser --produce_topic StoreAnalysisTopic
-```
-
-### Start coordinator
-* .NET WebApp
-* at `10.3.4.101`
-* runs only in debug
-  
-```bash 
-cd /home/knotek/sa/SWProject/Coordinator/Socneto/ConsoleApp/
-dotnet run --urls "http://*:6010"
-```
-
-*NOTE*: For those who uses MobaXTerm, you have to create two sessions to server and close the first one after. Session 1 opens at 6010 and the second at 6011, closing the first one releases the port for the application.
-
-
-### Start data acquisition
-
-* .Net console app
-* at `10.3.4.101`
-* runs only in debug
-```bash
-cd /home/knotek/sa/SWProject/DataAcquisition/Socneto.DataAcquisition/ConsoleApp/
-dotnet run
-```
-
-### start db storage
-
-* java 
-* at `10.3.4.102`
-
-```bash
-java -jar producer-consumer-1.0.0-SNAPSHOT.jar
-```
 
 ## Goodies
 
