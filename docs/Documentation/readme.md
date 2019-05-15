@@ -216,30 +216,3 @@ ch-run ...
 *NOTE*: It may fail sometimes since some nodes does not have avx e.g. command `cat /proc/cpuinfo | grep avx` returns nothing
 
 
-## Wiki stuff
-
-```
-https://localhost:5001/swagger/index.html
-```
-
-```
-curl -X GET https://localhost:5001/api/heart-beat --insecure
-```
-```
-curl -X GET https://localhost:5001/api/job-status/44bf2aea-1502-4938-8dfc-010ae7357fc3 --insecure
-```
-
-```
-curl -X GET https://localhost:5001/api/user-job-statuses/11034 --insecure
-```
-
-```
-curl -X GET https://localhost:5001/api/job-statuses/44bf2aea-1502-4938-8dfc-010ae7357fc3 --insecure
-```
-
-```
-curl -X GET https://localhost:5001/api/job-result/44bf2aea-1502-4938-8dfc-010ae7357fc3 --insecure
-```
-
-
-
