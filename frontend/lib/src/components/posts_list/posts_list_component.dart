@@ -17,7 +17,6 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_components/material_yes_no_buttons/material_yes_no_buttons.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/models/Post.dart';
-import 'package:sw_project/src/services/task_service.dart';
 
 @Component(
   selector: 'posts-list',
@@ -44,7 +43,6 @@ import 'package:sw_project/src/services/task_service.dart';
     NgIf,
   ],
   providers: [
-    ClassProvider(TaskService),
     overlayBindings
   ],
   templateUrl: 'posts_list_component.html',
@@ -54,6 +52,5 @@ import 'package:sw_project/src/services/task_service.dart';
 class PostsListComponent {
 
   @Input() List<Post> posts = [];
-  var errorMessage = "";
 
 }
