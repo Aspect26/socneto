@@ -1,9 +1,8 @@
 <section>
     <div class="mdc-card mdc-card">
-        <h2>Selected Task</h2>
         <div *ngIf="task != null">
-            {{task.name}}
-            <task-graphs></task-graphs>
+            <h3>{{ task.name }}</h3>
+            <job-graphs></job-graphs>
             <posts-list [posts]="posts"></posts-list>
         </div>
     </div>
