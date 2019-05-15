@@ -51,16 +51,14 @@ namespace Socneto.Coordinator.Api.Controllers
 
             return Ok(jobStatusResponse);
         }
-
-
-
+        
         [HttpGet]
         [Route("api/user/{userId}/jobs")]
         public async Task<ActionResult<List<JobStatusResponse>>> GetJobStatuses([FromRoute]int userId)
         {
             var random = new Random(userId);
 
-            return Enumerable.Range(0, random.Next(5, 15))
+            var jobStatuses = Enumerable.Range(0, random.Next(5, 15))
                 .Select(r =>
                 {
                     var arr = new byte[16];
@@ -69,6 +67,7 @@ namespace Socneto.Coordinator.Api.Controllers
                 })
                 .Select(GetRandomJobStatusResponse)
                 .ToList();
+            return Ok(jobStatuses);
         }
 
         [HttpGet]
