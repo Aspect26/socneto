@@ -4,19 +4,22 @@ namespace Socneto.DataAcquisition.Domain
 {
     public class UniPost
     {
-        private UniPost(string text, string source, string user)
+        private UniPost(string text, string source, int userId, string dateTime)
         {
             Text = text;
-            User = user;
+            UserIdId = userId;
             Source= source;
+            DateTime = dateTime 
         }
         public string Text { get; set; }
         public string Source { get; set; }
-        public string User { get; set; }
+        public int UserIdId { get; set; }
 
-        public static UniPost FromValues(string text, string source, string user)
+        public string DateTime { get; set; }
+
+        public static UniPost FromValues(string text, string source, int userId, string dateTimeString)
         {
-            return new UniPost(text, source, user);
+            return new UniPost(text, source, userId, dateTimeString);
         }
 
     }
