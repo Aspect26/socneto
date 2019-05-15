@@ -30,6 +30,7 @@ def produce_mock_sentiment(data):
         "analysis": {
             "sentimentText": sentiment_dic[sentiment_value],
             "sentimentVal": sentiment_value,
+            "keywords":["kw1","kw2"]
         }
     }
 
