@@ -41,10 +41,10 @@ namespace Socneto.DataAcquisition.Domain
             for (int i = 0; i < 10; i++)
             {
                 var text =taskInput.Query +"-"+ RandomString(random.Next(50, 100));
-                var user = RandomString(random.Next(5, 15));
+                var userId = random.Next(10000, 99999);
                 var source = "twitter";
 
-                var post =  UniPost.FromValues(text, source, user);
+                var post =  UniPost.FromValues(text, source, userId, DateTime.Now.ToString("s"));
                 var serialized = JsonConvert.SerializeObject(post);
                 var message = new Message()
                 {
