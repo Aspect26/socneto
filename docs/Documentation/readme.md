@@ -7,26 +7,6 @@ This document will contain final documentation of SOCNETO project
 
 It runs on premise!
 
-## Prerequisities
-
-### Kafka
-
-Kafka must run
-```bash
-cd /usr/local/kafka
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
-```
-
-Kafka has to have following topics
-* AcquireDataTopic
-* databaseRaw
-* analyser
-* StoreAnalysisTopic
-```bash
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic <topicName>
-```
-
 ## Infrastructure and flow
 
 There are 4 major components
