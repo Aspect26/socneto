@@ -6,14 +6,13 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:sw_project/src/components/posts_list/posts_list_component.dart';
-import 'package:sw_project/src/components/task_graphs/task_graphs_component.dart';
+import 'package:sw_project/src/components/job_graphs/job_graphs_component.dart';
 import 'package:sw_project/src/models/Post.dart';
-import 'package:sw_project/src/models/Task.dart';
-import 'package:sw_project/src/services/post_service.dart';
+import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 @Component(
-  selector: 'task-detail',
+  selector: 'job-detail',
   directives: [
     FocusItemDirective,
     FocusListDirective,
@@ -26,24 +25,24 @@ import 'package:sw_project/src/services/socneto_service.dart';
     PostsListComponent,
     TaskGraphsComponent
   ],
-  templateUrl: 'task_detail_component.html',
-  styleUrls: ['task_detail_component.css'],
+  templateUrl: 'job_detail_component.html',
+  styleUrls: ['job_detail_component.css'],
   providers: [
     ClassProvider(SocnetoService)
   ],
 )
-class TaskDetailComponent {
+class JobDetailComponent {
 
-  Task task;
+  Job task;
   List<Post> posts = [];
 
   SocnetoService _socnetoService;
 
-  TaskDetailComponent(this._socnetoService);
+  JobDetailComponent(this._socnetoService);
 
-  void setTask(Task task) async {
+  void setTask(Job task) async {
     this.task = task;
-    // this.posts = await this._socnetoService.getPosts(task.id);
+    this.posts = await this._socnetoService.getJobPosts(task.id);
   }
 
 }

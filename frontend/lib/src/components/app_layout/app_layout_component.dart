@@ -6,9 +6,9 @@ import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
-import 'package:sw_project/src/components/task_detail/task_detail_component.dart';
-import 'package:sw_project/src/components/tasks_list/tasks_list_component.dart';
-import 'package:sw_project/src/models/Task.dart';
+import 'package:sw_project/src/components/job_detail/job_detail_component.dart';
+import 'package:sw_project/src/components/jobs_list/jobs_list_component.dart';
+import 'package:sw_project/src/models/Job.dart';
 
 @Component(
     selector: 'app-layout',
@@ -19,7 +19,7 @@ import 'package:sw_project/src/models/Task.dart';
     ],
     directives: [
       TasksListComponent,
-      TaskDetailComponent,
+      JobDetailComponent,
 
       DeferredContentDirective,
 
@@ -37,9 +37,9 @@ class AppLayoutComponent {
   bool customWidth = false;
   bool end = false;
 
-  @ViewChild(TaskDetailComponent) TaskDetailComponent taskDetailComponent;
+  @ViewChild(JobDetailComponent) JobDetailComponent taskDetailComponent;
 
-  taskSelected(Task task) {
+  taskSelected(Job task) {
     taskDetailComponent.setTask(task);
   }
 }

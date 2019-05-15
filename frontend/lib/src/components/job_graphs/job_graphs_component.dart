@@ -13,7 +13,7 @@ import 'package:angular_components/material_tab/material_tab_panel.dart';
 
 
 @Component(
-  selector: 'task-graphs',
+  selector: 'job-graphs',
   directives: [
     DeferredContentDirective,
     MaterialTabPanelComponent,
@@ -31,8 +31,8 @@ import 'package:angular_components/material_tab/material_tab_panel.dart';
   providers: [
     materialProviders
   ],
-  templateUrl: 'task_graphs_component.html',
-  styleUrls: ['task_graphs_component.css'],
+  templateUrl: 'job_graphs_component.html',
+  styleUrls: ['job_graphs_component.css'],
   encapsulation: ViewEncapsulation.None
 )
 class TaskGraphsComponent extends AfterViewInit {
