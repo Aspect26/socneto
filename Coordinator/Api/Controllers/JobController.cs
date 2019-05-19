@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Socneto.Coordinator.Api.Models;
 using Socneto.Coordinator.Domain;
-using Socneto.Coordinator.Domain.Models;
 
 namespace Socneto.Coordinator.Api.Controllers
 {

@@ -1,0 +1,11 @@
+cd " D:\swproj\docker\kafka>"
+docker-compose.exe up
+
+cd "D:\swproj\SWProject\Coordinator>"
+docker build -t coor-exp .
+# coor
+docker run --network kafka-network --rm --name coor-exp-c coor-exp
+
+# tester
+cd "D:\swproj\SWProject\DataAcquisition\DataAcquisition"
+docker run --mount "type=bind,source=$(pwd),target=/app"  --network kafka-network --rm -it microsoft/dotnet:sdk /bin/bash -c "cd /app/SmokeTester && dotnet run"
