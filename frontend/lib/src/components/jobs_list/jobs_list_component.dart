@@ -10,6 +10,8 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
+import '../../utils.dart';
+
 @Component(
   selector: 'jobs-list',
   directives: [
@@ -49,6 +51,18 @@ class TasksListComponent implements OnInit {
     this._loadData();
   }
 
+  void selectTask(Job job) {
+    this._selectRequest.add(job);
+  }
+
+  String getProcessingTime(Job job) {
+    var fromTime = job.startedAt;
+    var toTime = job.finishedAt ?? DateTime.now();
+    var timeDiff = toTime.difference(fromTime);
+
+    return getDurationString(timeDiff);
+  }
+
   void _loadData() async {
     try {
       this.tasks = await this._socnetoService.getUserJobs(2);
@@ -57,10 +71,6 @@ class TasksListComponent implements OnInit {
     } catch (e) {
       this.errorMessage = e.toString();
     }
-  }
-
-  void selectTask(Job task) {
-    this._selectRequest.add(task);
   }
 
 }
