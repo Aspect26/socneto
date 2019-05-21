@@ -44,10 +44,9 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
 
   List<Keyword> notSelectedKeywords = [];
   List<Keyword> selectedKeywords = [];
+  String _currentKeywordInputText = "";
 
   List<Map> graphData = [];
-
-  String _currentKeywordInputText = "";
 
   @override
   void ngAfterViewInit() {
@@ -68,8 +67,8 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
   void _transformPostsIntoData() {
     this.graphData = new List<Map>();
 
-    List<Keyword> allKeywords = new List<Keyword>();
-    Map<String, List<Post>> keywordsToPosts = new Map();
+    var allKeywords = new List<Keyword>();
+    var keywordsToPosts = new Map<String, List<Post>>();
 
     for (var post in this.posts) {
       for (var keyword in post.keywords) {
