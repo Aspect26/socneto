@@ -64,7 +64,9 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
   }
 
   void _transformPostsIntoData() {
+    this.data = new List<Map>();
     Map<String, List<Post>> keywordsToPosts = new Map();
+
     for (var post in this.posts) {
       for (var keyword in post.keywords) {
         if (keywordsToPosts.containsKey(keyword)) {
@@ -90,7 +92,7 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
       });
     }
 
-    this.selectKeywordOptions = keywordsToPosts.keys.toList();
+    this.selectKeywordOptions = [];
     this.selectedKeywords = keywordsToPosts.keys.toList();
   }
 
@@ -99,7 +101,7 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
     var dataLabels = [];
 
     for (var selectedKeyword in this.selectedKeywords) {
-      dataSets.add(data.firstWhere( (element) => element['keyword'] == selectedKeyword)['data']);
+      dataSets.add(this.data.firstWhere( (element) => element['keyword'] == selectedKeyword)['data']);
       dataLabels.add(selectedKeyword);
     }
 
