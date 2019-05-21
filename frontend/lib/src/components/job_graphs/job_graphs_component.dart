@@ -10,6 +10,7 @@ import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_select/material_dropdown_select.dart';
 import 'package:angular_components/material_tab/material_tab.dart';
 import 'package:angular_components/material_tab/material_tab_panel.dart';
+import 'package:sw_project/src/models/Keyword.dart';
 import 'package:sw_project/src/models/Post.dart';
 
 
@@ -41,9 +42,10 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
   @Input() List<Post> posts = [];
   @ViewChild("keywordInput") MaterialAutoSuggestInputComponent keywordInput;
 
-  List<String> selectKeywordOptions = [];
-  List<String> selectedKeywords = [];
-  List<Map> data = [];
+  List<Keyword> notSelectedKeywords = [];
+  List<Keyword> selectedKeywords = [];
+
+  List<Map> graphData = [];
 
   String _currentKeywordInputText = "";
 
@@ -64,7 +66,9 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
   }
 
   void _transformPostsIntoData() {
-    this.data = new List<Map>();
+    this.graphData = new List<Map>();
+
+    List<Keyword> allKeywords = new List<Keyword>();
     Map<String, List<Post>> keywordsToPosts = new Map();
 
     for (var post in this.posts) {
@@ -81,19 +85,20 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
     for (var keyword in keywordsToPosts.keys) {
       List<Map> graphData = [];
 
+      allKeywords.add(Keyword(keyword, keywordsToPosts[keyword].length));
       keywordsToPosts[keyword].sort((a, b) => a.postedAt.compareTo(b.postedAt));
       for (var post in keywordsToPosts[keyword]) {
         graphData.add({'y': post.sentiment, 'date': post.postedAt.toIso8601String()});
       }
 
-      this.data.add({
+      this.graphData.add({
         'keyword': keyword,
         'data': graphData,
       });
     }
 
-    this.selectKeywordOptions = [];
-    this.selectedKeywords = keywordsToPosts.keys.toList();
+    this.notSelectedKeywords = [];
+    this.selectedKeywords = allKeywords;
   }
 
   void _refreshGraph() {
@@ -101,8 +106,8 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
     var dataLabels = [];
 
     for (var selectedKeyword in this.selectedKeywords) {
-      dataSets.add(this.data.firstWhere( (element) => element['keyword'] == selectedKeyword)['data']);
-      dataLabels.add(selectedKeyword);
+      dataSets.add(this.graphData.firstWhere( (element) => element['keyword'] == selectedKeyword.keyword)['data']);
+      dataLabels.add("${selectedKeyword.keyword}");
     }
 
     context.callMethod('createLineChart', [".graph-line-chart", new JsObject.jsify(dataSets), new JsObject.jsify(dataLabels)]);
@@ -116,19 +121,23 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
     if (selected != null && selected != "" && !this.selectedKeywords.contains(selected)) {
       this.selectedKeywords.add(selected);
       this.keywordInput.writeValue("");
-      this.selectKeywordOptions.remove(selected);
+      this.notSelectedKeywords.remove(selected);
       this._refreshGraph();
     }
   }
 
-  void onKeywordChipRemove(String keyword) {
+  void onKeywordChipRemove(Keyword keyword) {
     if (this.selectedKeywords.contains(keyword)) {
       this.selectedKeywords.remove(keyword);
-      this.selectKeywordOptions.add(keyword);
+      this.notSelectedKeywords.add(keyword);
       this._notifyKeywordInputValuesChange();
       this._refreshGraph();
     }
   }
+
+  ItemRenderer<dynamic> renderKeyword = (dynamic keywordChip) {
+    return '${keywordChip.keyword} (${keywordChip.count})';
+  };
 
   void _notifyKeywordInputValuesChange() {
     this.keywordInput.writeValue(_currentKeywordInputText + "a");
