@@ -21,7 +21,7 @@ namespace Socneto.Coordinator.Api.Controllers
         [Route("api/heart-beat")]
         public ActionResult<string> HeartBeat()
         {
-            return Ok($"Hello World! TC checked. time {DateTime.Now:O}");
+            return Ok($"Hello World! time {DateTime.Now:O}");
         }
         
         [HttpPost]
