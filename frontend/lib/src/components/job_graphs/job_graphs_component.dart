@@ -10,6 +10,7 @@ import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_select/material_dropdown_select.dart';
 import 'package:angular_components/material_tab/material_tab.dart';
 import 'package:angular_components/material_tab/material_tab_panel.dart';
+import 'package:sw_project/src/models/Post.dart';
 
 
 @Component(
@@ -35,35 +36,65 @@ import 'package:angular_components/material_tab/material_tab_panel.dart';
   styleUrls: ['job_graphs_component.css'],
   encapsulation: ViewEncapsulation.None
 )
-class TaskGraphsComponent extends AfterViewInit {
+class TaskGraphsComponent implements AfterViewInit, AfterChanges {
 
-  static var data = [
-    {
-      'keyword': 'Game of Thrones',
-      'data': [{'y': 0.3, 'date': "2019-01-04"}, {'y': 0.8, 'date': "2019-02-04"}, {'y': 0.5, 'date': "2019-05-04"}],
-    },
-    {
-      'keyword': 'Star Wars',
-      'data': [{'y': 0.5, 'date': "2019-01-04"}, {'y': 0.2, 'date': "2019-04-04"}, {'y': 0.7, 'date': "2019-05-04"}],
-    },
-    {
-      'keyword': 'Internet',
-      'data': [{'y': 0.5, 'date': "2019-01-01"}, {'y': 0.2, 'date': "2019-02-04"}, {'y': 0.7, 'date': "2019-03-04"}, {'y': 0.1, 'date': "2019-04-04"}, {'y': 0.42, 'date': "2019-05-04"}, {'y': 0.3, 'date': "2019-06-04"}, {'y': 0.1, 'date': "2019-07-04"}]
-    }
-  ];
-
+  @Input() List<Post> posts = [];
   @ViewChild("keywordInput") MaterialAutoSuggestInputComponent keywordInput;
-  List<String> selectKeywordOptions = data.map( (element) => element['keyword'].toString()).toList();
+
+  List<String> selectKeywordOptions = [];
   List<String> selectedKeywords = [];
+  List<Map> data = [];
 
   String _currentKeywordInputText = "";
 
   @override
-  Future<Null> ngAfterViewInit() async {
-    this.refreshGraph();
+  void ngAfterViewInit() {
+    this._transformPostsIntoData();
+    this._refreshGraph();
   }
 
-  void refreshGraph() {
+  @override
+  void ngAfterChanges() {
+    if (this.posts.isEmpty) {
+      return;
+    }
+
+    this._transformPostsIntoData();
+    this._refreshGraph();
+  }
+
+  void _transformPostsIntoData() {
+    Map<String, List<Post>> keywordsToPosts = new Map();
+    for (var post in this.posts) {
+      for (var keyword in post.keywords) {
+        if (keywordsToPosts.containsKey(keyword)) {
+          keywordsToPosts[keyword].add(post);
+        } else {
+          keywordsToPosts[keyword] = new List<Post>();
+          keywordsToPosts[keyword].add(post);
+        }
+      };
+    }
+
+    for (var keyword in keywordsToPosts.keys) {
+      List<Map> graphData = [];
+
+      keywordsToPosts[keyword].sort((a, b) => a.postedAt.compareTo(b.postedAt));
+      for (var post in keywordsToPosts[keyword]) {
+        graphData.add({'y': post.sentiment, 'date': post.postedAt.toIso8601String()});
+      }
+
+      this.data.add({
+        'keyword': keyword,
+        'data': graphData,
+      });
+    }
+
+    this.selectKeywordOptions = keywordsToPosts.keys.toList();
+    this.selectedKeywords = keywordsToPosts.keys.toList();
+  }
+
+  void _refreshGraph() {
     var dataSets = [];
     var dataLabels = [];
 
@@ -84,7 +115,7 @@ class TaskGraphsComponent extends AfterViewInit {
       this.selectedKeywords.add(selected);
       this.keywordInput.writeValue("");
       this.selectKeywordOptions.remove(selected);
-      this.refreshGraph();
+      this._refreshGraph();
     }
   }
 
@@ -93,7 +124,7 @@ class TaskGraphsComponent extends AfterViewInit {
       this.selectedKeywords.remove(keyword);
       this.selectKeywordOptions.add(keyword);
       this._notifyKeywordInputValuesChange();
-      this.refreshGraph();
+      this._refreshGraph();
     }
   }
 
