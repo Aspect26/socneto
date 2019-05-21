@@ -4,9 +4,10 @@
 
             <div class="flex-container column">
                 <material-auto-suggest-input #keywordInput
-                        [selectionOptions]="selectKeywordOptions"
+                        [selectionOptions]="notSelectedKeywords"
                         (selectionChange)="addKeywordSelectionChange($event)"
                         (inputTextChange)="addKeywordTextChange($event)"
+                        [itemRenderer]="renderKeyword"
                         label="Keywords"
                         showClearIcon>
                 </material-auto-suggest-input>
@@ -15,8 +16,8 @@
                     <material-chip *ngFor="let keyword of selectedKeywords"
                                    (remove)="onKeywordChipRemove(keyword)"
                                    [removable]="true"
+                                   [itemRenderer]="renderKeyword"
                                    [value]="keyword">
-                        {{ keyword }}
                     </material-chip>
                 </material-chips>
 
