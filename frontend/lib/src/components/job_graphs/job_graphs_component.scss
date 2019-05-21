@@ -1,0 +1,22 @@
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/css/material/shadow';
+
+[header],
+[footer] {
+  display: flex;
+  align-items: center;
+  height: $mat-grid * 4;
+}
+
+[header] {
+  border-bottom: 1px solid $mat-border-light;
+}
+
+[footer] {
+  border-top: 1px solid $mat-border-light;
+}
+
+
+material-auto-suggest-input {
+  width: 200px;
+}
