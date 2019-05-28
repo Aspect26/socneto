@@ -5,8 +5,8 @@ namespace Socneto.Domain.Models
     public class DataContainer
     {
 
-        public IList<UserData> UserDataList { get; set; }
-        public IList<PostData> PostDataList { get; set; }
+        public IList<User> UserDataList { get; set; }
+        public IList<Post> PostDataList { get; set; }
 
     }
 }

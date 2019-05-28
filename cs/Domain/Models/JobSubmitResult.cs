@@ -6,8 +6,4 @@ namespace Socneto.Domain.Models
     {
         public Guid JobId { get; set; }
     }
-    public class TaskInput
-    {
-        public string Query { get; set; }
-    }
 }
