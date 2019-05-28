@@ -26,22 +26,19 @@
                              (trigger)="drawer.toggle()">
                 <material-icon icon="menu"></material-icon>
             </material-button>
-            <span class="material-header-title">SOCNETO</span>
+            <span class="material-header-title">SOCNETO v0.25-alpha</span>
             <div class="material-spacer"></div>
             <nav class="material-navigation">
                 <a href="https://github.com/jan-pavlovsky/SWProject" target="_blank" rel="noopener noreferrer">GitHub</a>
-            </nav>
-            <nav class="material-navigation">
-                <a>Link 2</a>
-            </nav>
-            <nav class="material-navigation">
-                <a>Link 3</a>
             </nav>
         </div>
     </header>
 
     <div class="flex-container app-content">
         <jobs-list class="flex-30 flex-gap" (selected)="taskSelected($event)"></jobs-list>
-        <job-detail class="flex-70"></job-detail>
+        <div class="flex-70">
+            <create-job></create-job>
+            <job-detail></job-detail>
+        </div>
     </div>
 </material-content>
