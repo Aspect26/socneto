@@ -26,7 +26,7 @@ def decide_right_language(result):
     return mapping[max(probabs, key=probabs.get)]
 
 
-def detect_langugage(text) -> int:
+def detect_language(text) -> int:
     """
     Function for recognize language
     :param text: text for recognition
