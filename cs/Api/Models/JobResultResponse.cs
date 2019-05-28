@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
 {
@@ -13,5 +15,16 @@ namespace Socneto.Api.Models
 
         public List<PostDto> Posts { get; set; }
 
+        public static JobResultResponse FromModel(JobResult jobResult)
+        {
+            return new JobResultResponse()
+            {
+                JobId = jobResult.JobId,
+                InputQuery = jobResult.InputQuery,
+                Posts = jobResult.Posts
+                    .Select(PostDto.FromValue)
+                    .ToList()
+            };
+        }
     }
 }

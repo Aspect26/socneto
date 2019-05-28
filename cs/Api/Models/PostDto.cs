@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
 {
@@ -14,5 +15,17 @@ namespace Socneto.Api.Models
         public int UserId { get; set; }
 
         public List<string> Keywords { get; set; }
+
+        public static PostDto FromValue(Post post)
+        {
+            return new PostDto
+            {
+                UserId =  post.UserId,
+                DateTime = post.DateTime,
+                Keywords = post.Keywords,
+                Sentiment =  post.Sentiment,
+                Text = post.Text
+            };
+        }
     }
 }
