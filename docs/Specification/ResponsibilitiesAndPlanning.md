@@ -12,7 +12,7 @@ This page offers detailed description of job division.
 |Lukáš Kolek|Data engineer – designs and develops the data storage|
 |Julius Flimmel|Web engineer – builds the web application and frontend|
 
-### Road map
+## Road map
 
 TODO specify milestones - don't use MD as a unit since it makes no sense at all.
 Each milestones should end with functionality reasonably tested and documented
