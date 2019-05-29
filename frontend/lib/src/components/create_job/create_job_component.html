@@ -1,0 +1,12 @@
+<section>
+    <div class="mdc-card mdc-card">
+        <h3>Create new job</h3>
+        <material-input label="Query (for better UX wait for the net version!)"
+                        floatingLabel
+                        [(ngModel)]="query">
+        </material-input>
+
+        <material-button *ngIf="isQueryValid()" (trigger)="onSubmit($event)" class="blue">Submit</material-button>
+        <material-button *ngIf="!isQueryValid()" raised disabled class="blue">Submit</material-button>
+    </div>
+</section>

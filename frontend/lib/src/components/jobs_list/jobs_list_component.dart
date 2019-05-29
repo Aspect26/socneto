@@ -7,12 +7,17 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
+import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:sw_project/src/utils.dart';
+
 
 @Component(
   selector: 'jobs-list',
   directives: [
+    routerDirectives,
     FocusItemDirective,
     FocusListDirective,
     MaterialIconComponent,
@@ -30,23 +35,34 @@ import 'package:sw_project/src/services/socneto_service.dart';
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
     'jobs_list_component.css'
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  exports: [RoutePaths, Routes],
 )
-class TasksListComponent implements OnInit {
+class JobsListComponent implements OnInit {
 
   final SocnetoService _socnetoService;
+  final Router _router;
 
   List<Job> tasks = [];
   var errorMessage = "";
 
-  TasksListComponent(this._socnetoService);
-
-  final _selectRequest = StreamController<Job>();
-  @Output() Stream<Job> get selected => _selectRequest.stream;
+  JobsListComponent(this._socnetoService, this._router);
 
   @override
   void ngOnInit() {
     this._loadData();
+  }
+
+  void selectTask(Job job) {
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"jobId": '${job.id}'}));
+  }
+
+  String getProcessingTime(Job job) {
+    var fromTime = job.startedAt;
+    var toTime = job.finishedAt ?? DateTime.now();
+    var timeDiff = toTime.difference(fromTime);
+
+    return getDurationString(timeDiff);
   }
 
   void _loadData() async {
@@ -57,10 +73,6 @@ class TasksListComponent implements OnInit {
     } catch (e) {
       this.errorMessage = e.toString();
     }
-  }
-
-  void selectTask(Job task) {
-    this._selectRequest.add(task);
   }
 
 }

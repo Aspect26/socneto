@@ -6,9 +6,11 @@ import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
+import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/components/create_job/create_job_component.dart';
 import 'package:sw_project/src/components/job_detail/job_detail_component.dart';
 import 'package:sw_project/src/components/jobs_list/jobs_list_component.dart';
-import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/routes.dart';
 
 @Component(
     selector: 'app-layout',
@@ -18,8 +20,11 @@ import 'package:sw_project/src/models/Job.dart';
       'package:angular_components/app_layout/layout.scss.css'
     ],
     directives: [
-      TasksListComponent,
+      routerDirectives,
+
+      JobsListComponent,
       JobDetailComponent,
+      CreateJobComponent,
 
       DeferredContentDirective,
 
@@ -31,15 +36,8 @@ import 'package:sw_project/src/models/Job.dart';
       MaterialToggleComponent,
       MaterialListItemComponent
     ],
-    encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  exports: [RoutePaths, Routes],
 )
 class AppLayoutComponent {
-  bool customWidth = false;
-  bool end = false;
-
-  @ViewChild(JobDetailComponent) JobDetailComponent taskDetailComponent;
-
-  taskSelected(Job task) {
-    taskDetailComponent.setTask(task);
-  }
 }
