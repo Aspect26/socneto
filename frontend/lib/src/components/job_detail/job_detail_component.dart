@@ -5,6 +5,7 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
+import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/components/job_graphs/job_graphs_component.dart';
 import 'package:sw_project/src/models/Post.dart';
@@ -31,18 +32,25 @@ import 'package:sw_project/src/services/socneto_service.dart';
     ClassProvider(SocnetoService)
   ],
 )
-class JobDetailComponent {
+class JobDetailComponent implements OnActivate {
 
-  Job task;
+  Job job;
   List<Post> posts = [];
-
   SocnetoService _socnetoService;
 
   JobDetailComponent(this._socnetoService);
 
-  void setTask(Job task) async {
-    this.task = task;
-    this.posts = await this._socnetoService.getJobPosts(task.id);
+  @override
+  void onActivate(_, RouterState routerState) async {
+    final parameters = routerState.parameters;
+    // TODO: put this 'jonId' to constants somewhere (routes.dart possibly). Its also used elsewhere.
+    final jobId = parameters["jobId"];
+    this._setJob(jobId);
+  }
+
+  void _setJob(String jobId) async {
+    this.job = await this._socnetoService.getJob(jobId);
+    this.posts = await this._socnetoService.getJobPosts(jobId);
   }
 
 }

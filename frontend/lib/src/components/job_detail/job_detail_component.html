@@ -1,7 +1,7 @@
 <section>
     <div class="mdc-card mdc-card">
-        <div *ngIf="task != null">
-            <h3>{{ task.name }}</h3>
+        <div *ngIf="job != null">
+            <h3>{{ job.name }}</h3>
             <job-graphs [posts]="posts"></job-graphs>
             <posts-list [posts]="posts"></posts-list>
         </div>
