@@ -35,10 +35,9 @@
     </header>
 
     <div class="flex-container app-content">
-        <jobs-list class="flex-30 flex-gap" (selected)="taskSelected($event)"></jobs-list>
+        <jobs-list class="flex-30 flex-gap"></jobs-list>
         <div class="flex-70">
-            <create-job></create-job>
-            <job-detail></job-detail>
+            <router-outlet [routes]="Routes.all"></router-outlet>
         </div>
     </div>
 </material-content>

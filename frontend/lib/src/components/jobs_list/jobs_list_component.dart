@@ -7,14 +7,17 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
+import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:sw_project/src/utils.dart';
 
-import '../../utils.dart';
 
 @Component(
   selector: 'jobs-list',
   directives: [
+    routerDirectives,
     FocusItemDirective,
     FocusListDirective,
     MaterialIconComponent,
@@ -32,19 +35,18 @@ import '../../utils.dart';
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
     'jobs_list_component.css'
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  exports: [RoutePaths, Routes],
 )
-class TasksListComponent implements OnInit {
+class JobsListComponent implements OnInit {
 
   final SocnetoService _socnetoService;
+  final Router _router;
 
   List<Job> tasks = [];
   var errorMessage = "";
 
-  TasksListComponent(this._socnetoService);
-
-  final _selectRequest = StreamController<Job>();
-  @Output() Stream<Job> get selected => _selectRequest.stream;
+  JobsListComponent(this._socnetoService, this._router);
 
   @override
   void ngOnInit() {
@@ -52,7 +54,7 @@ class TasksListComponent implements OnInit {
   }
 
   void selectTask(Job job) {
-    this._selectRequest.add(job);
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"jobId": '${job.id}'}));
   }
 
   String getProcessingTime(Job job) {
