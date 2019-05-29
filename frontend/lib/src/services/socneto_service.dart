@@ -13,6 +13,9 @@ class SocnetoService extends HttpServiceBase {
 
   SocnetoService() : super(API_URL, API_PREFIX);
 
+  Future<Job> getJob(String jobId) async =>
+    await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
+
   Future<List<Job>> getUserJobs(int userId) async =>
       await this.getList<Job>("user/$userId/jobs", (result) => Job.fromMap(result));
 
