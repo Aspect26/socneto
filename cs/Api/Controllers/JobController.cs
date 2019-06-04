@@ -19,31 +19,7 @@ namespace Socneto.Api.Controllers
             _jobService = jobService;
             _queryJobResultService = queryJobResultService;
         }
-
-        [HttpGet]
-        [Route("api/heart-beat")]
-        public ActionResult<string> HeartBeat()
-        {
-
-            var status = new
-            {
-                TimeStamp = DateTime.Now.ToString("s")
-            };
-
-            return Ok(status);
-        }
-
-        [HttpPost]
-        [Route("api/job/submit")]
-        public async Task<ActionResult<JobResponse>> Submit([FromBody] JobRequest taskRequest)
-        {
-            var taskInput = JobRequest.ToTaskInput(taskRequest);
-            var taskResult = await _jobService.SubmitJob(taskInput);
-
-            var taskResponse = new JobResponse() { JobId = taskResult.JobId };
-            return Ok(taskResponse);
-        }
-
+        
         [HttpGet]
         [Route("api/job/{jobId:guid}/status")]
         public async Task<ActionResult<JobStatusResponse>> GetJobStatus([FromRoute]Guid jobId)
@@ -53,8 +29,8 @@ namespace Socneto.Api.Controllers
             var jobStatusResponse = JobStatusResponse.FromModel(jobStatus);
             return Ok(jobStatusResponse);
         }
-        
-        
+
+
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/result")]
@@ -66,6 +42,6 @@ namespace Socneto.Api.Controllers
             return Ok(jobResultResponse);
         }
 
-       
+
     }
 }
