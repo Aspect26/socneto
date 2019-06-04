@@ -1,12 +1,12 @@
 import 'dart:html';
 
 import 'package:angular/angular.dart';
-import 'package:angular_components/focus/focus.dart';
-import 'package:angular_components/material_button/material_button.dart';
-import 'package:angular_components/material_icon/material_icon.dart';
-import 'package:angular_components/material_input/material_input.dart';
+import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
+import 'package:quiver/time.dart';
+import 'package:sw_project/src/models/SocialNetwork.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+
 
 @Component(
   selector: 'create-job',
@@ -15,34 +15,92 @@ import 'package:sw_project/src/services/socneto_service.dart';
     AutoFocusDirective,
     MaterialButtonComponent,
     MaterialIconComponent,
+    MaterialCheckboxComponent,
+    MaterialDropdownSelectComponent,
+    MaterialSelectSearchboxComponent,
+    DropdownSelectValueAccessor,
+    MultiDropdownSelectValueAccessor,
+    MaterialSelectDropdownItemComponent,
+    MaterialDateTimePickerComponent,
+    MaterialDateRangePickerComponent,
+    MaterialTimePickerComponent,
+    DateRangeInputComponent,
     materialInputDirectives,
+
+    MaterialMultilineInputComponent,
+    materialNumberInputDirectives,
+    MaterialPaperTooltipComponent,
+    MaterialTooltipTargetDirective,
+
     NgIf
   ],
   templateUrl: 'create_job_component.html',
   styleUrls: ['create_job_component.css'],
+  encapsulation: ViewEncapsulation.None,
   providers: [
-    ClassProvider(SocnetoService)
+    ClassProvider(SocnetoService),
+    materialProviders,
+    datepickerBindings
   ],
 )
 class CreateJobComponent {
 
-  String query = "";
-  SocnetoService _socnetoService;
+  static const List<SocialNetwork> _socialNetworks = [
+    SocialNetwork("Facebook", "www.facebook.com"),
+    SocialNetwork("Twitter", "www.twitter.com"),
+    SocialNetwork("Reddit", "www.reddit.com"),
+  ];
+
+  final SocnetoService _socnetoService;
+
+  String jobName = "";
+  num maxPostsCount = 150;
+  bool unlimitedPostsCount = false;
+  bool isContinuous = false;
+  DateTime dateFrom = new DateTime.now();
+  DatepickerComparison dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(new Clock()).range);
+  DateTime timeFrom = DateTime.now();
+  DateTime timeTo = DateTime.now();
+
+  final SelectionModel<SocialNetwork> socialNetworksSelectionModel = SelectionModel<SocialNetwork>.multi();
+  final StringSelectionOptions<SocialNetwork> socialNetworksOptions = StringSelectionOptions<SocialNetwork>(_socialNetworks);
 
   CreateJobComponent(this._socnetoService);
 
+  static ItemRenderer socialNetworkItemRenderer = newCachingItemRenderer<dynamic>(
+          (network) => "${network.name} (${network.url})");
+
   isQueryValid() {
-    return query != null && query.isNotEmpty;
+    return this.jobName != null && this.jobName.isNotEmpty && this.socialNetworksSelectionModel.isNotEmpty;
   }
-
-
 
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
-      this._socnetoService.submitNewJob(this.query)
-          .catchError((a) => {print("error: $a")} )
-          .then((jobId) => { print("result: $jobId")});
+      this._socnetoService.submitNewJob(this.jobName)
+          .catchError((a) => print("error: $a") )
+          .then((jobId) { print("result: $jobId"); this._clear(); });
     }
+  }
+
+  String get socialSelectLabel {
+    var selectedSocialNetworks = this.socialNetworksSelectionModel.selectedValues;
+    if (selectedSocialNetworks.isEmpty) {
+      return "No social networks selected";
+    } else {
+      return selectedSocialNetworks.map((network) => network.name).join(", ");
+    }
+  }
+
+  _clear() {
+    this.jobName = "";
+    this.maxPostsCount = 150;
+    this.unlimitedPostsCount = false;
+    this.isContinuous = false;
+    this.dateFrom = DateTime.now();
+    this.dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(new Clock()).range);
+    this.timeFrom = DateTime.now();
+    this.timeTo = DateTime.now();
+    this.socialNetworksSelectionModel.clear();
   }
 
 }
