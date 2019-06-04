@@ -1,0 +1,10 @@
+posts-list {
+  max-width: 100%;
+
+  material-expansionpanel {
+    p {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}
