@@ -8,19 +8,16 @@ import 'package:angular_components/material_checkbox/material_checkbox.dart';
 import 'package:angular_components/material_input/material_auto_suggest_input.dart';
 import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_select/material_dropdown_select.dart';
-import 'package:angular_components/material_tab/material_tab.dart';
-import 'package:angular_components/material_tab/material_tab_panel.dart';
 import 'package:sw_project/src/components/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Keyword.dart';
 import 'package:sw_project/src/models/Post.dart';
 
 
 @Component(
-  selector: 'job-graphs',
+  selector: 'job-keywords-graph',
   directives: [
     DeferredContentDirective,
-    MaterialTabPanelComponent,
-    MaterialTabComponent,
+
     MaterialAutoSuggestInputComponent,
     MaterialButtonComponent,
     MaterialCheckboxComponent,
@@ -35,11 +32,11 @@ import 'package:sw_project/src/models/Post.dart';
   providers: [
     materialProviders
   ],
-  templateUrl: 'job_graphs_component.html',
-  styleUrls: ['job_graphs_component.css'],
+  templateUrl: 'job_keywords_graph_component.html',
+  styleUrls: ['job_keywords_graph_component.css'],
   encapsulation: ViewEncapsulation.None
 )
-class TaskGraphsComponent implements AfterViewInit, AfterChanges {
+class JobKeywordsGraphComponent implements AfterViewInit, AfterChanges {
 
   @Input() List<Post> posts = [];
   @ViewChild("keywordInput") MaterialAutoSuggestInputComponent keywordInput;
@@ -58,8 +55,6 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
 
   @override
   void ngAfterChanges() {
-    print("AFTER CHANGES");
-    print(this.posts.isEmpty);  
     if (this.posts.isEmpty) {
       return;
     }
