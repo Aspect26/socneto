@@ -8,7 +8,7 @@ using Socneto.Domain;
 
 namespace Socneto.Infrastructure.Kafka
 {
-    public class KafkaConsumer : IJobConsumer
+    public class KafkaConsumer
     {
         private readonly ILogger<KafkaConsumer> _logger;
         private readonly string _serverAddress;

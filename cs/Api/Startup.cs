@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Socneto.Domain;
+using Socneto.Domain.DataAcquisition;
+using Socneto.Domain.QueryResult;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -33,7 +35,9 @@ namespace Socneto.Api
                     });
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSwaggerGen(c => {
+
+            services.AddSwaggerGen(c =>
+            {
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
@@ -41,22 +45,15 @@ namespace Socneto.Api
                     Description = "Socneto task api - no users yet"
                 });
             });
-            services.AddTransient<IJobService,JobService>();
-            
-            services.AddTransient<IResultProducer, KafkaProducer>();
-            //services.AddTransient<IResultProducer, ConsoleProducer>();
 
-            
-            services.AddTransient<StuffDoer>()
-                .AddTransient<IJobConsumer, KafkaConsumer>()
+            services
+                .AddTransient<IJobService, JobService>()
+                .AddTransient<IJobRegistry, JobRegistry>()
+                .AddTransient<IResultProducer, KafkaProducer>()
+                .AddTransient<IQueryJobResultService, QueryJobResultService>()
                 .AddTransient<IResultProducer, KafkaProducer>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"));
-
-            //services.Configure<ForwardedHeadersOptions>(options =>
-            //{
-            //    options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
-            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,7 +81,8 @@ namespace Socneto.Api
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => {
+            app.UseSwaggerUI(c =>
+            {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Socneto Api");
             });
 

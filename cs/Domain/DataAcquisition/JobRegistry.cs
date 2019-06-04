@@ -14,5 +14,4 @@ namespace Socneto.Domain.DataAcquisition
         }
     }
 
-
 }
