@@ -65,7 +65,7 @@ namespace Socneto.Api
             }
             else
             {
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             app.UseCors(MyAllowSpecificOrigins);
@@ -75,7 +75,7 @@ namespace Socneto.Api
             //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             //});
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
             //app.UseHttpsRedirection();
             app.UseMvc();
