@@ -43,17 +43,23 @@ class JobsListComponent implements OnInit {
   final SocnetoService _socnetoService;
   final Router _router;
 
-  List<Job> tasks = [];
-  var errorMessage = "";
+  List<Job> jobs = [];
+  Job selectedJob;
 
   JobsListComponent(this._socnetoService, this._router);
 
   @override
-  void ngOnInit() {
-    this._loadData();
+  void ngOnInit() async {
+    await this._loadData();
+
+    // TODO: this is not really a nice solution...
+    this._setSelectedJob(this._router.current);
+    this._router.onRouteActivated.listen((RouterState event) {
+      this._setSelectedJob(event);
+    });
   }
 
-  void selectTask(Job job) {
+  void selectJob(Job job) {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"jobId": '${job.id}'}));
   }
 
@@ -67,11 +73,24 @@ class JobsListComponent implements OnInit {
 
   void _loadData() async {
     try {
-      this.tasks = await this._socnetoService.getUserJobs(2);
-      this.tasks.sort((a,b) => a.startedAt.compareTo(b.startedAt));
-      this.tasks.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
+      this.jobs = await this._socnetoService.getUserJobs(2);
+      this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
+      this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
     } catch (e) {
-      this.errorMessage = e.toString();
+      // TODO: some error?
+    }
+  }
+
+  void _setSelectedJob(RouterState routerState) {
+    if (routerState == null || !routerState.parameters.containsKey("jobId")) {
+      this.selectedJob = null;
+    }
+
+    var selectedJobId = routerState.parameters["jobId"];
+    try {
+      this.selectedJob = this.jobs.firstWhere((job) => job.id == selectedJobId);
+    } catch (error) {
+      this.selectedJob = null;
     }
   }
 
