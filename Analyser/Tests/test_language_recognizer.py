@@ -1,4 +1,4 @@
-import Analyser.language_recognition.language_recognizer as lr
+import language_recognition.language_recognizer as lr
 import unittest
 
 class testLanguageRecogintion(unittest.TestCase):

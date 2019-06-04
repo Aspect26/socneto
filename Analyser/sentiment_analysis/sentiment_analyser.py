@@ -1,4 +1,4 @@
-import Analyser.sentiment_analysis.Analysis as a
+import sentiment_analysis.Analysis as a
 
 """
 Module for computing sentiment.
