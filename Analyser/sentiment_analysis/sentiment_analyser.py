@@ -1,8 +1,4 @@
-import pandas as pd
-from textblob import TextBlob as tb
-import re
-from sklearn.metrics import accuracy_score as acscore
-import pokusAnalyza as analysis
+import Analyser.sentiment_analysis.Analysis as a
 
 """
 Module for computing sentiment.
@@ -10,7 +6,7 @@ Module for computing sentiment.
 
 def get_sentiment(text):
     """Method for evaluating one given text."""
-    return analysis.get_tweet_sentiment(text)
+    return a.get_text_sentiment(text)
 
 
 
