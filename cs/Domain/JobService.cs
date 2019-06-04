@@ -6,7 +6,6 @@ using Socneto.Domain.Models;
 
 namespace Socneto.Domain
 {
-
     public class JobService : IJobService
     {
 
@@ -19,15 +18,13 @@ namespace Socneto.Domain
             _producer = producer;
             _logger = logger;
         }
-
-
+        
         public async Task<JobSubmitResult> SubmitJob(JobSubmitInput jobInput)
         {
             var guid = Guid.NewGuid();
 
             _logger.LogInformation("Processing data");
-
-
+            
             var job = new JobDataRequest()
             {
                 JobId = guid,
@@ -35,8 +32,7 @@ namespace Socneto.Domain
             };
 
             var json = JsonConvert.SerializeObject(job);
-
-
+            
             await _producer.ProduceAsync(
                 new Models.Message()
                 {
@@ -48,6 +44,5 @@ namespace Socneto.Domain
 
             return new JobSubmitResult() { JobId = guid };
         }
-
     }
 }
