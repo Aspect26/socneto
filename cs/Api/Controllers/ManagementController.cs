@@ -40,6 +40,7 @@ namespace Socneto.Api.Controllers
         [Route("api/produce")]
         public async Task<ActionResult> Produce([FromBody] ProduceRequest request)
         {
+            _logger.LogInformation("Producing");
             try
             {
                 var kafkaOptions = Options.Create(new KafkaOptions {ServerAddress = request.ServerAddress});
