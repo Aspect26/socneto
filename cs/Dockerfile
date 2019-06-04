@@ -1,7 +1,6 @@
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
-EXPOSE 15151
-EXPOSE 15152
+EXPOSE 15155
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
@@ -19,4 +18,4 @@ RUN dotnet publish "Api.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Socneto.Api.dll", "--urls", "https://*:15152;http://*:15151"]
+ENTRYPOINT ["dotnet", "Socneto.Api.dll", "--urls", "http://*:15155"]
