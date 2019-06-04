@@ -21,10 +21,7 @@ services:
   backend:
     build: './cs'
     ports: 
-      - '15151:15151'
-      - '15152:15152'
-    environment:
-      - ASPNETCORE_HTTPS_PORT=15152
+      - '15155:15155'
     networks:
       - kafka-network
 networks:
