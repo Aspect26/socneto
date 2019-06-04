@@ -23,6 +23,8 @@ services:
     ports: 
       - '15151:15151'
       - '15152:15152'
+    environment:
+      - ASPNETCORE_HTTPS_PORT=15152
     networks:
       - kafka-network
 networks:
