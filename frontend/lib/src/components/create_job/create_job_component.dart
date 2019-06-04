@@ -4,6 +4,7 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:quiver/time.dart';
+import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/SocialNetwork.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
@@ -76,9 +77,11 @@ class CreateJobComponent {
 
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
-      this._socnetoService.submitNewJob(this.jobName)
-          .catchError((a) => print("error: $a") )
-          .then((jobId) { print("result: $jobId"); this._clear(); });
+      this._socnetoService.submitNewJob(this.jobName).then((jobId) {
+        this._clear(); Toastr.success("New Job", "New job created successfully!");
+      }, onError: (error) {
+        Toastr.error( "New Job", "Could not create the new job :(");
+      });
     }
   }
 
