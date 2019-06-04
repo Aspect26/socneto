@@ -1,0 +1,30 @@
+version: '3'
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - kafka-network
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    networks:
+      - kafka-network
+    container_name: kafka_server
+  backend:
+    build: './cs'
+    ports: 
+      - '15151:15151'
+    networks:
+      - kafka-network
+networks:
+  kafka-network:
+    external:
+     name: kafka-network
