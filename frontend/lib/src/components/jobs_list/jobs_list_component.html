@@ -2,28 +2,28 @@
     <div class="mdc-card mdc-card">
         <h2>Your jobs</h2>
         <material-list focusList>
-            <material-list-item focusItem [routerLink]="RoutePaths.createJob.toUrl()">
+            <material-list-item [routerLink]="RoutePaths.createJob.toUrl()">
                 <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
                 Create Job
             </material-list-item>
 
-            <material-list-item *ngFor="let task of tasks" (trigger)="selectTask(task)" focusItem>
+            <material-select-item *ngFor="let job of jobs" (trigger)="selectJob(job)" focusItem [selected]="job == selectedJob">
                 <material-icon icon="today" class="material-list-item-primary" aria-hidden="true"></material-icon>
 
                 <div>
-                    <b>{{task.name}}</b>
+                    <b>{{job.name}}</b>
                     <br>
-                    {{task.startedAt}}
+                    {{job.startedAt}}
                 </div>
 
-                <span *ngIf="task.finished" class="material-list-item-secondary">
-                    Finished in {{ getProcessingTime(task) }}
+                <span *ngIf="job.finished" class="material-list-item-secondary">
+                    Finished in {{ getProcessingTime(job) }}
                 </span>
 
-                <span *ngIf="!task.finished" class="material-list-item-secondary">
-                    In progress for {{ getProcessingTime(task) }}
+                <span *ngIf="!job.finished" class="material-list-item-secondary">
+                    In progress for {{ getProcessingTime(job) }}
                 </span>
-            </material-list-item>
+            </material-select-item>
         </material-list>
     </div>
 </section>

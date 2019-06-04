@@ -17,7 +17,7 @@ function createLineChart(selector, datasets, datalabels) {
     var legendWidth = 200;
 
     w = document.getElementsByClassName("tab-content")[0].clientWidth;
-    h = 300;
+    h = 450;
 
     var chartWidth = w - margin.left - margin.right - legendWidth;
     var chartHeight = h - margin.top - margin.bottom;
