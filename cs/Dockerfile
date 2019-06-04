@@ -18,4 +18,4 @@ RUN dotnet publish "Api.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Socneto.Api.dll", "--urls", "http://*:15151"]
+ENTRYPOINT ["dotnet", "Socneto.Api.dll", "--urls", "https://localhost:15152;http://localhost:15151""]

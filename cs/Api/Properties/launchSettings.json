@@ -19,7 +19,7 @@
     },
     "SAnalyser": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "api/heart-beat",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
