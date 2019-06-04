@@ -10,6 +10,7 @@ import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_select/material_dropdown_select.dart';
 import 'package:angular_components/material_tab/material_tab.dart';
 import 'package:angular_components/material_tab/material_tab_panel.dart';
+import 'package:sw_project/src/components/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Keyword.dart';
 import 'package:sw_project/src/models/Post.dart';
 
@@ -26,6 +27,7 @@ import 'package:sw_project/src/models/Post.dart';
     MaterialDropdownSelectComponent,
     MaterialChipsComponent,
     MaterialChipComponent,
+    PostsListComponent,
     materialInputDirectives,
     NgFor,
     NgIf,
@@ -56,6 +58,8 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
 
   @override
   void ngAfterChanges() {
+    print("AFTER CHANGES");
+    print(this.posts.isEmpty);  
     if (this.posts.isEmpty) {
       return;
     }
@@ -101,6 +105,7 @@ class TaskGraphsComponent implements AfterViewInit, AfterChanges {
   }
 
   void _refreshGraph() {
+
     var dataSets = [];
     var dataLabels = [];
 
