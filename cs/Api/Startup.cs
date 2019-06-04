@@ -78,6 +78,7 @@ namespace Socneto.Api
             //app.UseAuthentication();
 
             //app.UseHttpsRedirection();
+            
             app.UseMvc();
 
             app.UseSwagger();

@@ -22,6 +22,7 @@ services:
     build: './cs'
     ports: 
       - '15151:15151'
+      - '15152:15152'
     networks:
       - kafka-network
 networks:
