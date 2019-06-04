@@ -2,6 +2,8 @@ from time import sleep
 import consumer
 import producer
 import argparse
+import Analyser.language_recognition.language_recognizer as lr
+import Analyser.sentiment_analysis.sentiment_analyser as sa
 
 if __name__ != "__main__":
     exit()
@@ -17,29 +19,33 @@ kafka_producer = producer.Producer(args.server, args.produce_topic)
 kafka_producer.subscribe_logging(lambda x: print(x))
 
 
-def produce_mock_sentiment(data):
-    # TODO add actual sentiment implementation
+def produce_sentiment(data):
+    text = data['text']
     sentiment_dic = {
         0: "negative",
-        1: "positive"
+        1: "positive",
+        2: "neutral"
     }
-    sentiment_value = len(str(data)) % 2
+    sentiment_value = sa.get_sentiment(text)
+
+    language = lr.detect_language(text)
 
     analysed_data = {
         "originalData": data,
         "analysis": {
             "sentimentText": sentiment_dic[sentiment_value],
             "sentimentVal": sentiment_value,
+            "language": language
         }
     }
 
     kafka_producer.produce(analysed_data)
 
 
-kafka_producer.produce({"info":"test produce"})
+kafka_producer.produce({"info": "test produce"})
 
 kafka_consumer = consumer.Consumer(args.server, args.consume_topic)
 kafka_consumer.subscribe_logging(lambda x: print(x))
 while True:
-    kafka_consumer.consume(produce_mock_sentiment)
+    kafka_consumer.consume(produce_sentiment)
     sleep(1)
