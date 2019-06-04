@@ -75,9 +75,9 @@ namespace Socneto.Api
             //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             //});
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseMvc();
 
