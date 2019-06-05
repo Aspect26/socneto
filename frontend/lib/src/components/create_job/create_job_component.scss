@@ -1,16 +1,57 @@
-.create-job-card {
-  padding: 20px;
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming.scss";
 
-  .labeled-input {
-    margin-left: 15px;
+
+@mixin create-job-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  create-job {
+
+    .create-job-card {
+      background-color: get-color($background, 200);
+      font-family: $font-family;
+      padding: 20px;
+
+      h3 {
+        text-align: center;
+        font-weight: normal;
+      }
+
+      i {
+        color: get-color($primary, 500);
+      }
+
+      material-input {
+
+        .focused-underline {
+          background-color: get-color($primary, 400);
+        }
+
+        .focused.label-text:not(.disabled) {
+          color: get-color($primary, 400);
+        }
+
+      }
+
+      material-button {
+        background-color: get-color($primary, 400);
+      }
+
+      .labeled-input {
+        margin-left: 15px;
+      }
+
+      .title-input {
+        width: 350px;
+      }
+
+      .submit-button {
+        margin: 10px;
+      }
+
+    }
+
   }
-
-  .title-input {
-    width: 350px;
-  }
-
-  .submit-button {
-    margin: 10px;
-  }
-
 }

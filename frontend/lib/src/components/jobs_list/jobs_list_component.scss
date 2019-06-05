@@ -1,48 +1,64 @@
-@import 'package:angular_components/css/material/material';
+@import "package:sw_project/src/style/style.scss";
 
-$mdc-card-image: 'http://material-components-web.appspot.com/images/16-9.jpg';
 
-:host {
-  display: flex;
-}
+@mixin jobs-list-component($theme) {
 
-// Provide a size for the card. Cards normally take up the complete space of
-// their parent.
-.demo-size {
-  width: $mat-grid * 44;
-}
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
 
-// Provide material styling for the title.
-.demo-card__title {
-  @include mat-font-title;
-  line-height: 1em; // legacy setting
-  margin: 0;
-}
+  jobs-list {
+    .mdc-card {
+      font-family: $font-family;
+      background-color: get-color($background, 200);
 
-// Provider material styling for the subtitle.
-.demo-card__subtitle {
-  @include mat-font-subhead;
-  margin: 0;
-}
+      h2 {
+        font-weight: normal;
+        text-align: center;
 
-// Use the same image as the mdc-web example.
-.demo-card__media {
-  background-image: url($mdc-card-image);
-}
+        margin-block-start: 0.4em;
+        margin-block-end: 0.4em;
+      }
 
-.demo-card__primary {
-  padding: $mat-grid * 2;
-}
+      material-list {
+        padding: 0;
+        background-color: get-color($background, 200);
 
-.demo-card__secondary {
-  @include mat-font-body;
-  padding: 0 $mat-grid * 2 $mat-grid;
-}
+        material-select-item {
+          line-height: 17px;
+          padding: 9px 16px;
+          height: 44px;
 
-section {
-  display: block;
+          .secondary {
+            font-size: 12px;
+            color: get-color($primary, A700);
+          }
+        }
 
-  + section {
-    margin-left: $mat-grid * 4;
+        material-select-item:hover {
+          background: get-color($background, 300);
+        }
+
+        material-select-item:focus {
+          background: get-color($background, 200);
+        }
+
+        material-select-item.special {
+          color: get-color($primary, 400);
+
+          i {
+            color: get-color($primary, 400);
+          }
+        }
+
+        material-select-item.selected {
+          background: get-color($background, 400);
+
+          .selected-accent {
+            background: get-color($background, 600);
+          }
+        }
+      }
+    }
   }
+
 }
