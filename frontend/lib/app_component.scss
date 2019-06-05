@@ -27,3 +27,7 @@
 .theme-fire-orange {
   @include apply-theme($theme-fire-orange);
 }
+
+.theme-blue-violet {
+  @include apply-theme($theme-blue-violet);
+}
