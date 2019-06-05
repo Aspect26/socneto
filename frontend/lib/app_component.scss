@@ -1,0 +1,16 @@
+@import "package:sw_project/src/style/theming.scss";
+@import "package:sw_project/src/components/app_layout/app_layout_component.scss";
+@import "package:sw_project/src/components/jobs_list/jobs_list_component.scss";
+
+@mixin apply-theme($theme) {
+  @include app-layout-component($theme);
+  @include jobs-list-component($theme);
+}
+
+.theme-fire-red {
+  @include apply-theme($theme-fire-red);
+}
+
+.theme-fire-red-dark {
+  @include apply-theme($theme-fire-red-dark);
+}
