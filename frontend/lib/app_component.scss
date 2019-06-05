@@ -3,16 +3,18 @@
 @import "package:sw_project/src/components/jobs_list/jobs_list_component.scss";
 @import "package:sw_project/src/components/job_detail/job_detail_component.scss";
 @import "package:sw_project/src/components/job_keywords_graph_component/job_keywords_graph_component.scss";
+@import "package:sw_project/src/components/posts_list/posts_list_component.scss";
 
 @mixin apply-theme($theme) {
   @include app-layout-component($theme);
   @include jobs-list-component($theme);
   @include job-detail-component($theme);
   @include job-keywords-graph-component($theme);
+  @include posts-lis-component($theme);
 }
 
-.theme-fire-red {
-  @include apply-theme($theme-fire-red);
+.theme-fire-red-light {
+  @include apply-theme($theme-fire-red-light);
 }
 
 .theme-fire-red-dark {
