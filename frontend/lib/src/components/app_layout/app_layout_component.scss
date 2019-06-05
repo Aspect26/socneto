@@ -1,0 +1,23 @@
+@import "package:sw_project/src/style/theming.scss";
+@import "package:sw_project/src/style/style.scss";
+
+@mixin app-layout-component($theme) {
+
+    $primary: map-get($theme, primary);
+    $background: map-get($theme, background);
+
+    header.material-header {
+        background-color: get-color($primary);
+        font-family: $font-family;
+    }
+
+    material-content {
+        min-height: 100vh;
+        background-color: get-color($background, 700);
+    }
+
+}
+
+.app-content {
+        padding: 20px 80px;
+}

@@ -1,9 +1,9 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 @import url(https://fonts.googleapis.com/css?family=Material+Icons);
 
-* {
-  font-family: Roboto, Helvetica, Arial, sans-serif;
-}
+/*
+ TODO: zjednotit s styles.scss
+ */
 
 body {
   margin: 0;
@@ -18,6 +18,12 @@ body {
   flex-direction: column;
 }
 
+.flex-20 {
+  flex: 20%;
+  max-width: 20%;
+  min-width: 20%;
+}
+
 .flex-30 {
   flex: 30%;
   max-width: 30%;
@@ -28,6 +34,12 @@ body {
   flex: 70%;
   max-width: 70%;
   min-width: 70%;
+}
+
+.flex-80 {
+  flex: 80%;
+  max-width: 80%;
+  min-width: 80%;
 }
 
 .flex-gap {
