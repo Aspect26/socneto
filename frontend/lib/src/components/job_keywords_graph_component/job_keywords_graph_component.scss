@@ -1,22 +1,43 @@
-@import 'package:angular_components/css/material/material';
-@import 'package:angular_components/css/material/shadow';
-
-[header],
-[footer] {
-  display: flex;
-  align-items: center;
-  height: $mat-grid * 4;
-}
-
-[header] {
-  border-bottom: 1px solid $mat-border-light;
-}
-
-[footer] {
-  border-top: 1px solid $mat-border-light;
-}
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming.scss";
 
 
-material-auto-suggest-input {
-  width: 200px;
+@mixin job-keywords-graph-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  job-keywords-graph {
+
+    .labeled-input {
+      margin-left: 15px;
+    }
+
+    material-input {
+
+      .focused-underline {
+        background-color: get-color($primary, 400);
+      }
+
+    }
+
+    material-chip {
+      background-color: get-color($background, 400);
+
+      .delete-icon {
+        fill: get-color($background, 600);
+      }
+    }
+
+    material-chip:hover {
+      cursor: pointer;
+      background-color: get-color($background, 300);
+
+      .delete-icon {
+        fill: get-color($background, 500);
+      }
+    }
+
+  }
+
 }

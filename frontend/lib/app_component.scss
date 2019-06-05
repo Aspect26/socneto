@@ -1,0 +1,33 @@
+@import "package:sw_project/src/style/theming.scss";
+@import "package:sw_project/src/components/app_layout/app_layout_component.scss";
+@import "package:sw_project/src/components/jobs_list/jobs_list_component.scss";
+@import "package:sw_project/src/components/job_detail/job_detail_component.scss";
+@import "package:sw_project/src/components/job_keywords_graph_component/job_keywords_graph_component.scss";
+@import "package:sw_project/src/components/posts_list/posts_list_component.scss";
+@import "package:sw_project/src/components/create_job/create_job_component.scss";
+
+
+@mixin apply-theme($theme) {
+  @include app-layout-component($theme);
+  @include jobs-list-component($theme);
+  @include job-detail-component($theme);
+  @include job-keywords-graph-component($theme);
+  @include posts-list-component($theme);
+  @include create-job-component($theme);
+}
+
+.theme-red-light {
+  @include apply-theme($theme-red-light);
+}
+
+.theme-red-dark {
+  @include apply-theme($theme-red-dark);
+}
+
+.theme-fire-orange {
+  @include apply-theme($theme-fire-orange);
+}
+
+.theme-blue-violet {
+  @include apply-theme($theme-blue-violet);
+}

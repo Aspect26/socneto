@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:angular/angular.dart';
 import 'package:angular_components/focus/focus_item.dart';
 import 'package:angular_components/focus/focus_list.dart';
@@ -69,6 +67,13 @@ class JobsListComponent implements OnInit {
     var timeDiff = toTime.difference(fromTime);
 
     return getDurationString(timeDiff);
+  }
+
+  String getHumanReadableDate(DateTime dateTime) {
+    var minute = "0${dateTime.minute}";
+    minute = minute.substring(minute.length - 2);
+
+    return "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:$minute";
   }
 
   void _loadData() async {
