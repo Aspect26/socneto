@@ -1,5 +1,5 @@
-@function get-color($colorPalette, $type: 500) {
-  @return map-get($colorPalette, $type)
+@function get-color($color-palette, $type: 500) {
+  @return map-get($color-palette, $type)
 }
 
 $palette-red: (
@@ -135,14 +135,21 @@ $palette-gray: (
         )
 );
 
+@function light-theme($primary-color-palette) {
+  @return (
+          primary: $primary-color-palette,
+          background: $palette-white
+  );
+}
 
 
-$theme-fire-red: (
-        primary: $palette-red,
-        background: $palette-white,
-);
+@function dark-theme($primary-color-palette) {
+  @return (
+          primary: $primary-color-palette,
+          background: $palette-gray
+  );
+}
 
-$theme-fire-red-dark: (
-        primary: $palette-red,
-        background: $palette-gray,
-)
+
+$theme-fire-red-light: light-theme($palette-red);
+$theme-fire-red-dark: dark-theme($palette-red);

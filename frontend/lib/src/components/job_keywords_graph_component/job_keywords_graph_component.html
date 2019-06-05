@@ -1,12 +1,16 @@
 <div class="flex-container column">
-    <material-auto-suggest-input #keywordInput
-                                 [selectionOptions]="notSelectedKeywords"
-                                 (selectionChange)="addKeywordSelectionChange($event)"
-                                 (inputTextChange)="addKeywordTextChange($event)"
-                                 [itemRenderer]="renderKeyword"
-                                 label="Keywords"
-                                 showClearIcon>
-    </material-auto-suggest-input>
+    <div>
+        Add keyword:
+        <material-auto-suggest-input #keywordInput
+                                     [selectionOptions]="notSelectedKeywords"
+                                     (selectionChange)="addKeywordSelectionChange($event)"
+                                     (inputTextChange)="addKeywordTextChange($event)"
+                                     [itemRenderer]="renderKeyword"
+                                     label="Keywords"
+                                     showClearIcon
+                                     class="labeled-input">
+        </material-auto-suggest-input>
+    </div>
 
     <material-chips>
         <material-chip *ngFor="let keyword of selectedKeywords"
