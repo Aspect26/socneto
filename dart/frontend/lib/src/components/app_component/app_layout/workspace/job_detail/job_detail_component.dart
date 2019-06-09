@@ -7,11 +7,12 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:sw_project/src/components/app_component/app_layout/job_detail/job_keywords_graph_component/job_keywords_graph_component.dart';
-import 'package:sw_project/src/components/app_component/app_layout/job_detail/posts_list/posts_list_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+
+import 'job_keywords_graph_component/job_keywords_graph_component.dart';
 
 @Component(
   selector: 'job-detail',

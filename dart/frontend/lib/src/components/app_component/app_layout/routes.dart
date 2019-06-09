@@ -1,8 +1,8 @@
 import 'package:angular_router/angular_router.dart';
 
-import 'package:sw_project/src/components/app_component/app_layout/job_detail/job_detail_component.template.dart' as job_detail_template;
-import 'package:sw_project/src/components/app_component/app_layout/create_job/create_job_component.template.dart' as create_job_template;
-import 'package:sw_project/src/components/app_component/app_layout/welcome/welcome_component.template.dart' as welcome_template;
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.template.dart' as job_detail_template;
+import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_component.template.dart' as create_job_template;
+import 'package:sw_project/src/components/app_component/app_layout/workspace/welcome/welcome_component.template.dart' as welcome_template;
 
 
 class RoutePaths {

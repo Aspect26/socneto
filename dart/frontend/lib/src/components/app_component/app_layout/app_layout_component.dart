@@ -7,10 +7,10 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:sw_project/src/components/app_component/app_layout/create_job/create_job_component.dart';
-import 'package:sw_project/src/components/app_component/app_layout/job_detail/job_detail_component.dart';
-import 'package:sw_project/src/components/app_component/app_layout/jobs_list/jobs_list_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/routes.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/jobs_list/jobs_list_component.dart';
 
 @Component(
     selector: 'app-layout',
