@@ -29,6 +29,6 @@ class Routes {
     component: job_detail_template.JobDetailComponentNgFactory,
   );
 
-  static final all = <RouteDefinition>[home, createJob, jobDetail];
+  static final workspace = <RouteDefinition>[home, createJob, jobDetail];
 
 }
