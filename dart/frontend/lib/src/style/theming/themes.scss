@@ -1,0 +1,12 @@
+@import "package:sw_project/src/style/theming/theming.scss";
+
+$theme-red-light: light-theme($palette-red);
+$theme-red-dark: dark-theme($palette-red);
+$theme-fire-orange: (
+        primary: $palette-orange,
+        background: $palette-light-orange
+);
+$theme-blue-violet: (
+        primary: $palette-blue,
+        background: $palette-light-violet
+);

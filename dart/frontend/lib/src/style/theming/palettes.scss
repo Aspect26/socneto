@@ -1,7 +1,3 @@
-@function get-color($color-palette, $type: 500) {
-  @return map-get($color-palette, $type)
-}
-
 $palette-red: (
         50 : #fee8e7,
         100 : #fcc7c3,
@@ -232,32 +228,4 @@ $palette-light-violet: (
                 A400 : #000000,
                 A700 : #000000,
         )
-);
-
-
-@function light-theme($primary-color-palette) {
-  @return (
-          primary: $primary-color-palette,
-          background: $palette-white
-  );
-}
-
-
-@function dark-theme($primary-color-palette) {
-  @return (
-          primary: $primary-color-palette,
-          background: $palette-gray
-  );
-}
-
-
-$theme-red-light: light-theme($palette-red);
-$theme-red-dark: dark-theme($palette-red);
-$theme-fire-orange: (
-        primary: $palette-orange,
-        background: $palette-light-orange
-);
-$theme-blue-violet: (
-        primary: $palette-blue,
-        background: $palette-light-violet
 );
