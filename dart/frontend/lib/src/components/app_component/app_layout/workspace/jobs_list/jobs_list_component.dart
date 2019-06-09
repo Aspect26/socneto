@@ -7,7 +7,7 @@ import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/models/Job.dart';
-import 'package:sw_project/src/components/app_component/app_layout/routes.dart';
+import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 import 'package:sw_project/src/utils.dart';
 
