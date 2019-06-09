@@ -10,7 +10,7 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/create_job/create_job_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/job_detail/job_detail_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/jobs_list/jobs_list_component.dart';
-import 'package:sw_project/src/routes.dart';
+import 'package:sw_project/src/components/app_component/app_layout/routes.dart';
 
 @Component(
     selector: 'app-layout',
