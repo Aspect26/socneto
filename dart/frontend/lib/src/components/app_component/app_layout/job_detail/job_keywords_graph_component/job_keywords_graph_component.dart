@@ -8,7 +8,7 @@ import 'package:angular_components/material_checkbox/material_checkbox.dart';
 import 'package:angular_components/material_input/material_auto_suggest_input.dart';
 import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_select/material_dropdown_select.dart';
-import 'package:sw_project/src/components/posts_list/posts_list_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Keyword.dart';
 import 'package:sw_project/src/models/Post.dart';
 

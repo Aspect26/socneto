@@ -1,5 +1,5 @@
 import 'package:angular/angular.dart';
-import 'package:sw_project/src/components/app_layout/app_layout_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/app_layout_component.dart';
 
 
 @Component(

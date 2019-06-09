@@ -1,7 +1,7 @@
 @TestOn('browser')
 import 'package:angular_test/angular_test.dart';
 import 'package:test/test.dart';
-import 'package:sw_project/app_component.dart';
+import 'package:sw_project/src/components/app_component/app_component.dart';
 import 'package:sw_project/app_component.template.dart' as ng;
 
 void main() {
