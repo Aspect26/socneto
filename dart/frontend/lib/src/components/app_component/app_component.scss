@@ -1,5 +1,6 @@
 @import "package:sw_project/src/style/theming/themes.scss";
 @import "package:sw_project/src/components/app_component/app_layout/app_layout_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/login/login_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/jobs_list/jobs_list_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.scss";
@@ -14,6 +15,7 @@
   @include job-keywords-graph-component($theme);
   @include posts-list-component($theme);
   @include create-job-component($theme);
+  @include login-component($theme);
 }
 
 .theme-red-light {

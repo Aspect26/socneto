@@ -71,7 +71,7 @@
         </div>
 
 
-        <material-button *ngIf="isQueryValid()" (trigger)="onSubmit($event)" raised class="submit-button">Submit</material-button>
+        <material-button *ngIf="isQueryValid()"  raised (trigger)="onSubmit($event)" class="submit-button">Submit</material-button>
         <material-button *ngIf="!isQueryValid()" raised disabled class="submit-button">Submit</material-button>
     </div>
 </section>

@@ -2,7 +2,7 @@
     <div class="mdc-card mdc-card">
         <h2>Your jobs</h2>
         <material-list focusList>
-            <material-select-item [routerLink]="RoutePaths.createJob.toUrl()" class="special">
+            <material-select-item (trigger)="onCreateNewJob($event)" class="special">
                 <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
                 Create Job
             </material-select-item>

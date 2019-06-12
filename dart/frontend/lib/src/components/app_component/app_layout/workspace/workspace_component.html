@@ -1,6 +1,6 @@
 <div class="flex-container app-content">
-    <jobs-list class="flex-20 flex-gap"></jobs-list>
+    <jobs-list class="flex-20 flex-gap" [userId]="userId"></jobs-list>
     <div class="flex-80">
-        <router-outlet [routes]="Routes.workspace"></router-outlet>
+        <router-outlet [routes]="Routes.workspaceRoutes"></router-outlet>
     </div>
 </div>
