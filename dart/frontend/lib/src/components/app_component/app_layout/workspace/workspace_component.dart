@@ -19,5 +19,13 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
   ],
   exports: [RoutePaths, Routes],
 )
-class WorkspaceComponent {
+class WorkspaceComponent implements OnActivate {
+
+  int userId;
+
+  @override
+  void onActivate(RouterState previous, RouterState current) {
+    this.userId = int.parse(current.parameters["userId"]);
+  }
+
 }

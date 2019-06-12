@@ -36,7 +36,10 @@ import 'package:sw_project/src/utils.dart';
   encapsulation: ViewEncapsulation.None,
   exports: [RoutePaths, Routes],
 )
-class JobsListComponent implements OnInit {
+class JobsListComponent implements AfterChanges {
+
+  @Input()
+  int userId;
 
   final SocnetoService _socnetoService;
   final Router _router;
@@ -47,7 +50,7 @@ class JobsListComponent implements OnInit {
   JobsListComponent(this._socnetoService, this._router);
 
   @override
-  void ngOnInit() async {
+  void ngAfterChanges() async {
     await this._loadData();
 
     // TODO: this is not really a nice solution...
@@ -58,7 +61,7 @@ class JobsListComponent implements OnInit {
   }
 
   void selectJob(Job job) {
-    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"jobId": '${job.id}'}));
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"userId": "${this.userId}", "jobId": "${job.id}"}));
   }
 
   String getProcessingTime(Job job) {
@@ -76,9 +79,13 @@ class JobsListComponent implements OnInit {
     return "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:$minute";
   }
 
+  void onCreateNewJob(_) {
+    this._router.navigate(RoutePaths.createJob.toUrl(parameters: {"userId": "${this.userId}"}));
+  }
+
   void _loadData() async {
     try {
-      this.jobs = await this._socnetoService.getUserJobs(2);
+      this.jobs = await this._socnetoService.getUserJobs(this.userId);
       this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
       this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
     } catch (e) {
