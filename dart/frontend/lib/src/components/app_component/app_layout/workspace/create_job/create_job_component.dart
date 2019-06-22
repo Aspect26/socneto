@@ -39,7 +39,6 @@ import 'package:sw_project/src/services/socneto_service.dart';
   styleUrls: ['create_job_component.css'],
   encapsulation: ViewEncapsulation.None,
   providers: [
-    ClassProvider(SocnetoService),
     materialProviders,
     datepickerBindings
   ],
