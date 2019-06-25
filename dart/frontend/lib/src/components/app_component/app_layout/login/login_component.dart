@@ -42,9 +42,6 @@ import 'package:sw_project/src/services/socneto_service.dart';
     NgIf
   ],
   exports: [RoutePaths, Routes],
-  providers: [
-    ClassProvider(SocnetoService)
-  ],
   encapsulation: ViewEncapsulation.None
 )
 class LoginComponent {

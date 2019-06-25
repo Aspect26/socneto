@@ -34,7 +34,6 @@ import 'job_keywords_graph_component/job_keywords_graph_component.dart';
   templateUrl: 'job_detail_component.html',
   styleUrls: ['job_detail_component.css'],
   providers: [
-    ClassProvider(SocnetoService),
     materialProviders
   ],
 )
