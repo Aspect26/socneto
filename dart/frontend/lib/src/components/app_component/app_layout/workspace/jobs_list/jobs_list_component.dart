@@ -25,9 +25,6 @@ import 'package:sw_project/src/utils.dart';
     NgFor,
     NgIf
   ],
-  providers: [
-    ClassProvider(SocnetoService)
-  ],
   templateUrl: 'jobs_list_component.html',
   styleUrls: [
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
