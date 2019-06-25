@@ -22,18 +22,21 @@ This component aims to easy, user-friendly ability to submit a new job. We use M
 ![Submit new job](https://github.com/jan-pavlovsky/SWProject/blob/dev/docs/Specification/images/fe_submit.png)
 
 #### Job detail
-TODO: update me
+The job detail component contains multiple visualisations of the analyzed data of the job. If the analysis is not complete yet, it contains the data, which is already analysed together with the percentage of how much data is processed. The individual visualisations are split into multiple tabs.
+
+The first tab shows a linechart of keyword sentiments of analysed posts. Each line represents one keyword. The y-axis displays the keyword's sentiment, and the x-axis shows date. In addition, the user can specify, which keywords he wants to see in the chart. By default it displays the most used keywords in the job's dataset, but the user can remove or add any other keyword apearing in the dataset.
 ![Job linechart](https://github.com/jan-pavlovsky/SWProject/blob/dev/docs/Specification/images/fe_job_linechart.png)
+
+The second tab contains a paginated list of all analyzed posts / comments / tweets from the job's dataset. In addition to the original data (post's text), it contains list of extracted keywords, and sentiment of  the post.
 ![Job posts](https://github.com/jan-pavlovsky/SWProject/blob/dev/docs/Specification/images/fe_job_posts.png)
+
+To not break any privacy policies, we are displaying only publicly available data (plus our analysis). 
+
+
+#### Admin
+Only users with admin privileges are able to access this component. It serves to make the user able to add, remove or configure some components of the SOCNETO platform. TODO: how?
 
 --------------------------------------------
 
-A user is presented with visualized aggregated data.
-
-- Line chart
-- Pie chart
-- Whatever
-
 The user can filter data by given time interval.
 
-Application also offers a sample of posts satisfying given conditions.
