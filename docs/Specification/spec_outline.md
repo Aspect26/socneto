@@ -67,7 +67,7 @@ When a service starts in its container it must register itself into Job-config. 
 After startup service should listen on an agreed topic where Job-config sends configuration of services when a new job is submitted by a user. The configuration contains description of the job: credentials for social network, analyzer parameters etc. When the configuration is received by service it should be correctly prepared and starts its task.
 #### Data and analysis output flow
 Along with the configuration described in previous chapter the configuration message contains also topics for data flow. Every post is sent from Data Acquisition into Analyzers and Database in parallel. Analyzers also works in parallel and their output is sent into database.
-### Metrics
+#### Metrics
 Messages in the internal communication are sent without waiting for responses. This brings a problem of control of application status (services health and progress). For this propose there is a component which manages metrices. This component listens for messages with services status on a preconfigured topic and user can query these stored logs. Every service should log its progress and errors with some human readable message.
 ### Extensibility
 Described communication architecture brings huge extensibility. A new service lives in its independent container. It only needs to be registered in Job-config without reboot of the whole platform and it must implement the defined API.
