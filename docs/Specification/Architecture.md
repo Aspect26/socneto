@@ -27,16 +27,3 @@ It offers components to subscribe to a topic, to which producer sends data. Mult
 <event diagram opposing to http approach >
 
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
-
-
-### What happens when the job gets submitted
-
-TODO Lukas
-
-### Extensibility
-
-TODO Lukas
-
-### Metrics
-
-TODO Lukas
