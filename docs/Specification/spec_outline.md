@@ -56,47 +56,28 @@ It offers components to subscribe to a topic, to which producer sends data. Mult
 
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
 
-## Communication [Lukas]
+## Communication
+
+For a communication from FE is used REST. For internal communication between services is used messaging which brings scalability without excessive effort. One exception in the internal communication will be communication with internal SQL storage (see cap. 6).
+### Communication architecture
+#### Initialization
+The system is implemented as docker containers (expecting single application in each container). Each container is given an address of the job management service (Job-config – see architecture schema).
+When a service starts in its container it must register itself into Job-config. Job config accepts new services on known topic and requires from services their unique identifier and a basic description. Services are registered and prepared for a future usage. 
+#### Submitted job configuration flow
+After startup service should listen on an agreed topic where Job-config sends configuration of services when a new job is submitted by a user. The configuration contains description of the job: credentials for social network, analyzer parameters etc. When the configuration is received by service it should be correctly prepared and starts its task.
+#### Data and analysis output flow
+Along with the configuration described in previous chapter the configuration message contains also topics for data flow. Every post is sent from Data Acquisition into Analyzers and Database in parallel. Analyzers also works in parallel and their output is sent into database.
+### Metrics
+Messages in the internal communication are sent without waiting for responses. This brings a problem of control of application status (services health and progress). For this propose there is a component which manages metrices. This component listens for messages with services status on a preconfigured topic and user can query these stored logs. Every service should log its progress and errors with some human readable message.
+### Extensibility
+Described communication architecture brings huge extensibility. A new service lives in its independent container. It only needs to be registered in Job-config without reboot of the whole platform and it must implement the defined API.
+(With a few changes in the implementation it is also possible to create custom pipelines of Analyzers if there is need of sequential processing instead of default parallel.)
+
+
 ## Analysis[Petra & Honza]
-## Implemented problems
-* Topic modeling
-* Setiment analysis
-* Langugage detection
-We will implement this analysis for czech and english. It should be easily exensible for other languages.
-
-### Data
-Big amount of data will be needed for NLP tasks. We do not assume anotating any data, but this will be one of bottleneck of our model performance. 
-There are data sets available for english both social nework posts and other short format data (like IMDb). There exists some data for czech too, but they are smaller.
-
-There is need to prepare some train and test data sets - to gather data, clean them, divide into sets.
-
-### Topic modeling (TM)
-This is generally a difficult problem for both languages.  
-Possible approaches :
-* Word frequency + dictionary - quite easy approach, but it can't handle i.e. pronoun references
-* Entity linking - is needed to use some knowledge base
-* Entity modeling  - knowledge base needed
-* Some probabilistic models (Latent Dirichlet Allocation - LDA)
-
-Combination of different approaches will be used:
-frequency, LDA and maybe entity linking, as for czech existing knowledge base is not so large. We will use existing libraries and knowledge bases.
-
-Topics for hierarchiacal structures like posts + their comments will be find for post and related comments together.
-
-### Language detection (LD)
-Easier than general language detection problem, because we have just three categories  - czech, english, other
-
-We will use existing model library (probably pycld)
-
-With usage of BERT, language decetion will not be needed for SA.
-
-### Sentiment analysis (SA)
-Quite subjective task.
-OUtputs:
-* polarity
-* subjectivity
-
-Using BERT:
-https://github.com/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
 ## API and FE [Julius]
+## Storage
+
+TODO
+
 ## Responsibilities and planning [all] 
