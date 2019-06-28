@@ -1,3 +1,9 @@
+## NOTES
+
+- complexity
+  - do we write it or just integrated
+- responsibilities
+
 ## High level description [Similar to small spec]
 Socneto  is an extensible framework allowing user to analyse vast socials networks's content. Analysis and social network data collector can be provided by user. 
 
