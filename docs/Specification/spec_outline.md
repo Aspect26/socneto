@@ -201,10 +201,10 @@ This page offers detailed description of job division.
 
 ### Team
 
-|Name|Responsibilities|
-|:..|:..|
+| Name | Responsibilities |
+|:--|:--|
 |Irena Holubová| Supervisor, decision leader|
-|Jan Pavlovský||Machine learning engineer, software engineer – builds the platform with a focus on machine learning integration|
+|Jan Pavlovský|Machine learning engineer, software engineer – builds the platform with a focus on machine learning integration|
 |Petra Doubravová|Machine learning, linguistic specialist – develops the sentiment analysis model |
 |Jaroslav Knotek|Software engineer – builds the platform|
 |Lukáš Kolek|Data engineer – designs and develops the data storage|
