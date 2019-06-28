@@ -3,6 +3,7 @@
 - complexity
   - do we write it or just integrated
 - responsibilities
+- extensibility
 
 ## High level description [Similar to small spec]
 Socneto  is an extensible framework allowing user to analyse vast socials networks's content. Analysis and social network data collector can be provided by user. 
@@ -11,7 +12,7 @@ Social networks offers free access to data, although the amount is limited by nu
 
 <pic1>
 
-The framework runs on premises which gives the user total control over its behavior. (This environment relies less on a user friendly UI and security. Also the extensibility is done by skilled operator and requires less attention of developers)
+The framework runs **on premises** which gives the user total control over its behavior. (This environment relies less on a user friendly UI and security. Also the extensibility is done by skilled operator and requires less attention of developers)
 
 ### Use case [Similar to small spec]
 
