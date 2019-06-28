@@ -1,4 +1,4 @@
-## High level description [Similart to small spec]
+## High level description [Similar to small spec]
 Socneto  is an extensible framework allowing user to analyse vast socials networks's content. Analysis and social network data collector can be provided by user. 
 
 Social networks offers free access to data, although the amount is limited by number of records per minute and age of the post which restrict us from downloading and analyzing large amount of historical data. To overcome those limitation, Socneto focuses on continuous analysis. It downloads data as they are published and analyses them immediately offering user up-to-date analysis.
@@ -7,7 +7,7 @@ Social networks offers free access to data, although the amount is limited by nu
 
 The framework runs on premises which gives the user total control over its behavior. (This environment relies less on a user friendly UI and security. Also the extensibility is done by skilled operator and requires less attention of developers)
 
-### Use case [Similart to small spec]
+### Use case [Similar to small spec]
 
 Generally, a user specifies a topic for analysis and selects data sources and type of analyses to be used. The system then starts collecting and analyzing data. User can then see summary in form of sentiment chart, significant keywords or post examples with the option to explore and search through them. 
 
@@ -39,7 +39,7 @@ Each service has unique responsibility given by functional requirements (ref ...
 
 ![Architecture](https://github.com/jan-pavlovsky/SWProject/blob/dev/docs/Specification/images/arch.PNG)
 
-## Communication
+### Communication
 
 As was previously stated, data are exchanged using message broker. The main reason to adopt it was its suitability to event driven systems. The framework fires multiple events to which multiple (at the same time) components can react. In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. This complex can be implemented using standard request/response model but more elegant solution is to use publish/subscriber model.
 
@@ -51,7 +51,6 @@ Another benefit of message broker is that particular services does not aware of 
 
 For a communication from FE is used REST. For internal communication between services is used messaging which brings scalability without excessive effort. One exception in the internal communication will be communication with internal SQL storage (see cap. 6).
 
-### Communication architecture
 #### Initialization
 The system is implemented as docker containers (expecting single application in each container). Each container is given an address of the job management service (Job-config – see architecture schema).
 When a service starts in its container it must register itself into Job-config. Job config accepts new services on known topic and requires from services their unique identifier and a basic description. Services are registered and prepared for a future usage. 
@@ -65,7 +64,7 @@ Messages in the internal communication are sent without waiting for responses. T
 Described communication architecture brings huge extensibility. A new service lives in its independent container. It only needs to be registered in Job-config without reboot of the whole platform and it must implement the defined API.
 (With a few changes in the implementation it is also possible to create custom pipelines of Analyzers if there is need of sequential processing instead of default parallel.)
 
-## Analysis 
+## Analysis
 
 ## Implemented problems
 * Topic modeling
@@ -195,11 +194,6 @@ Only users with admin privileges are able to access this component. It serves to
 --------------------------------------------
 
 The user can filter data by given time interval.
-
-
-## Storage
-
-TODO
 
 ## Responsibilities and planning [all] 
 
