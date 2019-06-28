@@ -37,7 +37,7 @@ Each service has unique responsibility given by functional requirements (ref ...
 * Database storage - stores analysed data along with source text. Also stores application data.
 * Job mangement service - contains all jobs necessary to successful job execution.
 
-![Submit new job](https://github.com/jan-pavlovsky/SWProject/blob/dev/docs/Specification/images/arch.png)
+![Architecture](https://github.com/jan-pavlovsky/SWProject/blob/dev/docs/Specification/images/arch.PNG)
 
 ## Communication
 
