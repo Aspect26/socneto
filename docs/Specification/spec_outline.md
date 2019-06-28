@@ -43,10 +43,9 @@ Each service has unique responsibility given by functional requirements (ref ...
   * This module can be extended using client-implemented adapters 
 * Analyser - performs sentiment analysis of a given text
 * Database storage - stores analysed data along with source text. Also stores application data.
-* Job foreman(předák) - contains all jobs necessary to successful job execution.
+* Job mangement service - contains all jobs necessary to successful job execution.
 
-
-#### Communication/Cooperation
+## Communication
 
 As was previously stated, data are exchanged using message broker. The main reason to adopt it was its suitability to event driven systems. The framework fires multiple events to which multiple (at the same time) components can react. In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. This complex can be implemented using standard request/response model but more elegant solution is to use publish/subscriber model.
 
@@ -56,9 +55,8 @@ It offers components to subscribe to a topic, to which producer sends data. Mult
 
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
 
-## Communication
-
 For a communication from FE is used REST. For internal communication between services is used messaging which brings scalability without excessive effort. One exception in the internal communication will be communication with internal SQL storage (see cap. 6).
+
 ### Communication architecture
 #### Initialization
 The system is implemented as docker containers (expecting single application in each container). Each container is given an address of the job management service (Job-config – see architecture schema).
@@ -73,8 +71,50 @@ Messages in the internal communication are sent without waiting for responses. T
 Described communication architecture brings huge extensibility. A new service lives in its independent container. It only needs to be registered in Job-config without reboot of the whole platform and it must implement the defined API.
 (With a few changes in the implementation it is also possible to create custom pipelines of Analyzers if there is need of sequential processing instead of default parallel.)
 
+## Analysis 
 
-## Analysis[Petra & Honza]
+## Implemented problems
+* Topic modeling
+* Setiment analysis
+* Langugage detection
+We will implement this analysis for czech and english. It should be easily exensible for other languages.
+
+### Data
+Big amount of data will be needed for NLP tasks. We do not assume anotating any data, but this will be one of bottleneck of our model performance. 
+There are data sets available for english both social nework posts and other short format data (like IMDb). There exists some data for czech too, but they are smaller.
+
+There is need to prepare some train and test data sets - to gather data, clean them, divide into sets.
+
+### Topic modeling (TM)
+This is generally a difficult problem for both languages.  
+Possible approaches :
+* Word frequency + dictionary - quite easy approach, but it can't handle i.e. pronoun references
+* Entity linking - is needed to use some knowledge base
+* Entity modeling  - knowledge base needed
+* Some probabilistic models (Latent Dirichlet Allocation - LDA)
+
+Combination of different approaches will be used:
+frequency, LDA and maybe entity linking, as for czech existing knowledge base is not so large. We will use existing libraries and knowledge bases.
+
+Topics for hierarchiacal structures like posts + their comments will be find for post and related comments together.
+
+### Language detection (LD)
+Easier than general language detection problem, because we have just three categories  - czech, english, other
+
+We will use existing model library (probably pycld)
+
+With usage of BERT, language decetion will not be needed for SA.
+
+### Sentiment analysis (SA)
+Quite subjective task.
+OUtputs:
+* polarity
+* subjectivity
+
+Using BERT:
+https://github.com/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
+
+
 ## API 
 
 Api allows user or frontend application to 
@@ -168,3 +208,48 @@ The user can filter data by given time interval.
 TODO
 
 ## Responsibilities and planning [all] 
+
+This page offers detailed description of job division.
+
+### Team
+
+|Name|Responsibilities|
+|:..|:..|
+|Irena Holubová| Supervisor, decision leader|
+|Jan Pavlovský||Machine learning engineer, software engineer – builds the platform with a focus on machine learning integration|
+|Petra Doubravová|Machine learning, linguistic specialist – develops the sentiment analysis model |
+|Jaroslav Knotek|Software engineer – builds the platform|
+|Lukáš Kolek|Data engineer – designs and develops the data storage|
+|Julius Flimmel|Web engineer – builds the web application and frontend|
+
+## Road map
+
+TODO specify milestones - don't use MD as a unit since it makes no sense at all.
+Each milestones should end with functionality reasonably tested and documented
+
+### Milestone 1 - Bare app
+
+Expected Length 2 months
+
+- satisfies basic requirements
+  - user can use it with some tweaks and hacks
+  - does not offer any extensibility
+- very unstable
+
+### Milestone 2 - Stabilization
+
+Expected length: 3mo
+
+- full functionality covered
+  - extensibility
+- stable but not production ready
+
+### Milestone 3 -
+
+Expected length: 1mo
+
+- Installation guide
+- Documentation finalization
+- Presentation preparation
+  - Test data
+
