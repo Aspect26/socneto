@@ -2,6 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
+using Domain.Abstract;
+using Domain.ComponentManagement;
 using Domain.Models;
 using Domain.Registration;
 using Microsoft.Extensions.Logging;
