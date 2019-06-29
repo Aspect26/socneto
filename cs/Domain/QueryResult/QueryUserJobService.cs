@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Socneto.Domain.DataAcquisition;
 using Socneto.Domain.Models;
 
 namespace Socneto.Domain.QueryResult
 {
     public class QueryUserJobService : IQueryUserJobService
     {
-        private readonly IJobRegistry _jobRegistry;
         
 
-        public QueryUserJobService(IJobRegistry jobRegistry)
+        public QueryUserJobService()
         {
-            _jobRegistry = jobRegistry;
         }
         public Task<IList<JobStatus>> GetJobStatuses(int userId)
         {
