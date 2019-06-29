@@ -5,14 +5,14 @@ namespace Domain
 {
     public class RegistrationRequestProcessor : IRegistrationRequestProcessor
     {
-        private readonly IComponentConfigSubscriber _componentConfigSubscriber;
+        private readonly ISubscribedComponentManager _subscribedComponentManager;
         private readonly IMessageBrokerApi _messageBrokerApi;
 
         public RegistrationRequestProcessor(
-            IComponentConfigSubscriber componentConfigSubscriber,
+            ISubscribedComponentManager subscribedComponentManager,
             IMessageBrokerApi messageBrokerApi)
         {
-            _componentConfigSubscriber = componentConfigSubscriber;
+            _subscribedComponentManager = subscribedComponentManager;
             _messageBrokerApi = messageBrokerApi;
         }
 
@@ -37,11 +37,12 @@ namespace Domain
             var channelCreationResult = _messageBrokerApi.CreateChannel(channelModel);
 
 
-            var componentRegisterModel = new ComponentRegisterModel(
+            var componentRegisterModel = new ComponentRegistrationModel(
+                request.ComponentId,
                 channelCreationResult.ChannelName,
                 request.ComponentType);
 
-            _componentConfigSubscriber.SubscribeComponent(componentRegisterModel);
+            _subscribedComponentManager.SubscribeComponent(componentRegisterModel);
 
         }
     }

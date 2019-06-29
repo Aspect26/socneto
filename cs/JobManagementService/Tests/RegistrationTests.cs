@@ -1,3 +1,4 @@
+using System;
 using Domain;
 using Domain.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,22 +7,22 @@ using Moq;
 namespace Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class RegistrationTests
     {
         [TestMethod]
         public void RequestListenerTest()
         {
-            
             IRequestListener requestListener = new RequestListener();
-
-           
         }
-
+        
         [TestMethod]
-        public void RequestProcessorTest()
+        public void RequestIntegrationTest()
         {
             // Arrange
-            var componentConfigSub = new Mock<IComponentConfigSubscriber>();
+            var componentRegistry = new ComponentRegistry();
+            var subscribedComponentManager = new SubscribedComponentManager(componentRegistry);
+
+
             var messageBrokerApi = new Mock<IMessageBrokerApi>();
             messageBrokerApi.Setup(mba =>
                 mba.CreateChannel(It.IsAny<MessageBrokerChannelModel>()))
@@ -29,7 +30,7 @@ namespace Tests
 
             IRegistrationRequestProcessor registrationRequestProcessor 
                 = new RegistrationRequestProcessor(
-                    componentConfigSub.Object,
+                    subscribedComponentManager,
                     messageBrokerApi.Object);
 
             // Act
@@ -48,13 +49,15 @@ namespace Tests
                     It.IsAny<MessageBrokerChannelModel>()), 
                     Times.Once());
 
-            componentConfigSub.Verify(ccs =>
-                ccs.SubscribeComponent(
-                    It.IsAny<ComponentRegisterModel>()),
-                    Times.Once());
+            var components = componentRegistry.GetAllByType("analyser");
+            Assert.AreEqual(1,components.Count,"Exactly one component should be registered");
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => registrationRequestProcessor.ProcessRequest(request));
+            
+            Assert.AreEqual(1, components.Count, "Number of component must not change");
         }
-
-        // What if I register sth that was already registered?
-
     }
+
+    
 }
