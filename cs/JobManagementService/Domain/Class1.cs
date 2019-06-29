@@ -1,48 +1,27 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Models;
-using Microsoft.Extensions.Hosting;
-// ReSharper disable All
 
 namespace Domain
 {
-    public class RequestListenerHostedService : IHostedService
+    
+
+    public interface IMessageBrokerConsumer
     {
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        Task ConsumeAsync(string consumeTopic,
+            Func<string, Task> onRecieveAction,
+            CancellationToken cancellationToken);
     }
-
-    public class RequestListener : IRequestListener
-    {
-
-    }
-
-    public interface IRequestListener
-    {
-
-    }
-
    
 
-    public interface IRegistrationRequestProcessor
-    {
-        void ProcessRequest(RegistrationRequestMessage request);
-    }
+    
     
     public interface IMessageBrokerApi
     {
-        CreateChannelResult CreateChannel(MessageBrokerChannelModel channelModel);
+        Task<CreateChannelResult> CreateChannel(MessageBrokerChannelModel channelModel);
 
     }
     

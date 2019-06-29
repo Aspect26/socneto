@@ -1,13 +1,13 @@
-﻿namespace Domain.Models
+﻿using Newtonsoft.Json;
+
+namespace Domain.Models
 {
     public class RegistrationRequestMessage
     {
-        public string ComponentType { get; }
-        public string ComponentId { get; }
-        public RegistrationRequestMessage(string componentId, string componentType)
-        {
-            ComponentId = componentId;
-            ComponentType = componentType;
-        }
+        [JsonProperty("componentType")]
+        public string ComponentType { get; set; }
+        [JsonProperty("componentId")]
+        public string ComponentId { get; set; }
+        
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Domain.Models;
 
-namespace Domain
+namespace Domain.Registration
 {
     public class RegistrationRequestProcessor : IRegistrationRequestProcessor
     {
@@ -16,7 +17,7 @@ namespace Domain
             _messageBrokerApi = messageBrokerApi;
         }
 
-        public void ProcessRequest(RegistrationRequestMessage request)
+        public async Task ProcessRequest(RegistrationRequestMessage request)
         {
             if (string.IsNullOrWhiteSpace(request.ComponentId))
             {
@@ -34,7 +35,7 @@ namespace Domain
 
             var channelModel = MessageBrokerChannelModel.FromRequest(request);
 
-            var channelCreationResult = _messageBrokerApi.CreateChannel(channelModel);
+            var channelCreationResult = await _messageBrokerApi.CreateChannel(channelModel);
 
 
             var componentRegisterModel = new ComponentRegistrationModel(
