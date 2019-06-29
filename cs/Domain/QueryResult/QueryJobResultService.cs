@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Socneto.Domain.DataAcquisition;
 using Socneto.Domain.Models;
 
 namespace Socneto.Domain.QueryResult

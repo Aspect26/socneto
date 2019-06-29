@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain.DataAcquisition
+namespace Socneto.Domain
 {
-    public interface IDataAcquirer
-    {
-
-
-
-    }
-
-    
-
     public class RandomDataGenerator
     {
         public static JobStatus GetRandomJobStatusResponse(Guid jobId)

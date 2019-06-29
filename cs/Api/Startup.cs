@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Socneto.Domain;
-using Socneto.Domain.DataAcquisition;
 using Socneto.Domain.QueryResult;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
@@ -48,7 +47,6 @@ namespace Socneto.Api
 
             services
                 .AddTransient<IJobService, JobService>()
-                .AddTransient<IJobRegistry, JobRegistry>()
                 .AddTransient<IResultProducer, KafkaProducer>()
                 .AddTransient<IQueryJobResultService, QueryJobResultService>()
                 .AddTransient<IResultProducer, KafkaProducer>()
