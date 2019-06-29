@@ -1,4 +1,4 @@
-﻿namespace Socneto.Infrastructure.Kafka
+﻿namespace Infrastructure.Kafka
 {
     public class KafkaOptions
     {
