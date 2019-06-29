@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Models;
 using Microsoft.Extensions.Hosting;
 
 namespace Domain
 {
-    public class RequestListenerHostedService:IHostedService
+    public class RequestListenerHostedService : IHostedService
     {
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -18,7 +19,7 @@ namespace Domain
         }
     }
 
-    public class RequestListener: IRequestListener
+    public class RequestListener : IRequestListener
     {
 
     }
@@ -28,8 +29,35 @@ namespace Domain
 
     }
 
-    public class RegistrationRequestMessage
+   
+
+    public interface IRegistrationRequestProcessor
     {
+        void ProcessRequest(RegistrationRequestMessage request);
+    }
+    
+    public interface IMessageBrokerApi
+    {
+        CreateChannelResult CreateChannel(MessageBrokerChannelModel channelModel);
 
     }
+
+    public class CreateChannelResult
+    {
+        public CreateChannelResult(string channelName)
+        {
+            ChannelName = channelName;
+        }
+
+        public string ChannelName { get;  }
+    }
+
+    
+    public interface IComponentConfigSubscriber
+    {
+        void SubscribeComponent(ComponentRegisterModel componentRegisterModel);
+    }
+
+
+
 }
