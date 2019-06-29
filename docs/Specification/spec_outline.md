@@ -7,6 +7,7 @@
 - message retention
 - metrics visualisation
   - heartbeat of modules
+- what do we want to test
 
 spec defense
 
