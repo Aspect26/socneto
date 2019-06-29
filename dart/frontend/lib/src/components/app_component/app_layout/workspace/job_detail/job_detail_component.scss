@@ -1,0 +1,38 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin job-detail-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  job-detail {
+
+    .mdc-card {
+      font-family: $font-family;
+      background-color: get-color($background, 200);
+
+      h3 {
+        text-align: center;
+        font-weight: normal;
+      }
+
+      material-tab-panel.tab-panel {
+        material-tab-strip {
+          .tab-indicator {
+            background: get-color($primary, 400);
+          }
+
+          tab-button.active {
+            .content {
+              color: get-color($primary, 400);
+            }
+          }
+        }
+      }
+
+    }
+
+  }
+}

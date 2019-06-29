@@ -1,11 +1,23 @@
 SOCNETO specification
 ---
 
+# Introduction
+
 This document contains specification of SOCNETO project.
 
-## INVARIANTS
+For more than a decade already, there has been an enormous growth of social networks and their audiences. As people post about their life and experiences, comment on other people’s posts and discuss all sorts of topics, they generate a tremendous amount of data that are stored in these networks. It is virtually impossible for a user to get a concise overview about any given topic.
 
-* the whole project will run *on premise* which means that a client is responsible for security.
-* we can assume that the client is skilled enough to use it so some parts might be more advanced (extension implementation)
+This project offer a framework allowing the users to analyze data related to a chosen topic from given social networks.
 
+# Outline
 
+- [High level description](HighLevel.md)
+- [Architecture](Architecture.md)
+  - [Data acquisition](DataAcquisition.md)
+  - [Analyser](Analyser.md)
+  - [Storage](Storage.md)
+- API and FE
+  - [Front end](FrontEnd.md)
+  - [API](WebApi.md)
+- [DevOps](DevOps.md)
+- [Responsibilities and planning](ResponsibilitiesAndPlanning.md)
