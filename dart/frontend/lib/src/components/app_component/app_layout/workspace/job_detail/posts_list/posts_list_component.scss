@@ -1,0 +1,64 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin posts-list-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  posts-list {
+    max-width: 100%;
+
+    material-expansionpanel {
+      .panel-name {
+        div {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+
+        .title {
+          color: get-color($primary, A700);
+        }
+
+        @for $i from 0 through 100 {
+          .sentiment-#{$i} {
+            display: inline-block;
+            vertical-align: middle;
+
+            width: 10px;
+            height: 30px;
+            background-color: hsl($i, 100%, 50%);
+            margin-right: 10px;
+          }
+        }
+
+        .name {
+          max-width: 98%;
+          display: inline-block;
+          vertical-align: middle;
+        }
+      }
+
+      .panel {
+        background-color: get-color($background, 400);
+        border-radius: 5px;
+
+        i {
+          color: get-color($primary, A700);
+        }
+      }
+
+      .panel.open,
+      .header.closed:not(.is-disabled):hover,
+      .header.closed:not(.is-disabled):focus,
+      .panel.open:not(.is-disabled):hover,
+      .panel.open:not(.is-disabled):focus {
+        background-color: get-color($background, 300);
+        border-radius: 5px;
+      }
+
+    }
+  }
+
+}
