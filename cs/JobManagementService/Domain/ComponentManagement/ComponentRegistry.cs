@@ -34,7 +34,40 @@ namespace Domain.ComponentManagement
             return true;
         }
 
+        public bool TryGetNetworkComponent(string componentId, out SubscribedComponent component )
+        {
+            var desiredComponentName = "Network";
+            return TryGetComponent(componentId, desiredComponentName,out component);
+        }
+
+        public bool TryGetAnalyserComponent(string componentId, out SubscribedComponent component)
+        {
+            var desiredComponentName = "Analyser";
+            return TryGetComponent(componentId, desiredComponentName, out component);
+        }
         
+        private bool TryGetComponent(string componentId, string desiredComponentName, out SubscribedComponent component)
+        {
+            component = null;
+            if (_registeredComponents.TryGetValue(componentId, out var val))
+            {
+                // TODO remove constant
+                if (val.ComponentType != desiredComponentName)
+                {
+                    return false;
+                }
+                else
+                {
+                    component = val;
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         public IList<SubscribedComponent> GetAllByType(string componentType)
         {

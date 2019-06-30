@@ -6,6 +6,7 @@ using Domain.Abstract;
 using Domain.ComponentManagement;
 using Domain.Models;
 using Domain.Registration;
+using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -59,7 +60,7 @@ namespace Tests
             
             registrationRequestProcessorMock.Verify(
 
-                rrp => rrp.ProcessRequest(
+                rrp => rrp.ProcessRequestAsync(
                     It.Is((RegistrationRequestMessage val) =>
                        val.ComponentType == testRegistrationRequest.componentType
                        && val.ComponentId == testRegistrationRequest.componentId)),
@@ -70,11 +71,18 @@ namespace Tests
         }
 
         [TestMethod]
-        public void RequestIntegrationTest()
+        public async Task RequestIntegrationTest()
         {
             // Arrange
             var componentRegistry = new ComponentRegistry();
-            var subscribedComponentManager = new SubscribedComponentManager(componentRegistry);
+            var subscribedCompnentLogger = new Mock<ILogger<SubscribedComponentManager>>();
+            var componentConfigNotifierMock = new Mock<IComponentConfigUpdateNotifier>();
+
+            var subscribedComponentManager = new SubscribedComponentManager(
+                componentRegistry,
+                componentConfigNotifierMock.Object,
+                subscribedCompnentLogger.Object
+            );
 
 
             var messageBrokerApiMock = new Mock<IMessageBrokerApi>();
@@ -85,13 +93,16 @@ namespace Tests
                         new CreateChannelResult("config_distribution.analyser_test_id.configuration"))
                 );
 
+            var registreationRequestProcessorLoggerMock = new Mock<ILogger<RegistrationRequestProcessor>>();
             IRegistrationRequestProcessor registrationRequestProcessor
                 = new RegistrationRequestProcessor(
                     subscribedComponentManager,
-                    messageBrokerApiMock.Object);
+                    messageBrokerApiMock.Object,
+                    registreationRequestProcessorLoggerMock.Object
+                    );
 
             // Act
-            var componentType = "analyser";
+            var componentType = "Analyser";
             var componentId = "analyser_test_id";
             var request = new RegistrationRequestMessage
             {
@@ -99,7 +110,7 @@ namespace Tests
                 ComponentId = componentId
             };
 
-            registrationRequestProcessor.ProcessRequest(request);
+            await registrationRequestProcessor.ProcessRequestAsync(request);
 
             // Assert
             messageBrokerApiMock.Verify(mba =>
@@ -108,14 +119,24 @@ namespace Tests
                     Times.Once());
             messageBrokerApiMock.VerifyNoOtherCalls();
 
-            var components = componentRegistry.GetAllByType("analyser");
-            Assert.AreEqual(1, components.Count, "Exactly one component should be registered");
 
-            Assert.ThrowsException<InvalidOperationException>(
-                () => registrationRequestProcessor.ProcessRequest(request));
-
-            Assert.AreEqual(1, components.Count, "Number of component must not change");
-
+            Assert.IsTrue(componentRegistry.TryGetAnalyserComponent("analyser_test_id", out var cmp));
+            Assert.AreEqual("Analyser",  cmp.ComponentType);
+            
+            try
+            {
+                await registrationRequestProcessor.ProcessRequestAsync(request);
+                Assert.Fail();
+            }
+            catch (InvalidOperationException)
+            {
+                // intentionally empty
+            }
+            catch (Exception)
+            {
+                Assert.Fail();
+            }
+            
         }
     }
 

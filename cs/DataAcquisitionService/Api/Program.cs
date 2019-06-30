@@ -60,6 +60,8 @@ namespace Api
                 throw;
             }
             logger.LogInformation("Service {serviceName} register request sent", "DataAcuisitionService");
+
+            // TODO start listening to the config updates
         }
 
         public static void Main(string[] args)

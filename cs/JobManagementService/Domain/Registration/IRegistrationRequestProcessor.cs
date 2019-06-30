@@ -5,6 +5,6 @@ namespace Domain.Registration
 {
     public interface IRegistrationRequestProcessor
     {
-        Task ProcessRequest(RegistrationRequestMessage request);
+        Task ProcessRequestAsync(RegistrationRequestMessage request);
     }
 }
