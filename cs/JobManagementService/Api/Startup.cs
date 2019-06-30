@@ -6,6 +6,7 @@ using Domain;
 using Domain.Abstract;
 using Domain.ComponentManagement;
 using Domain.Registration;
+using Domain.SubmittedJobConfiguration;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,9 @@ namespace Api
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddSingleton<IComponentRegistry, ComponentRegistry>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
+
+            services.AddHostedService<SubmittedJobConfigListenerHostedService>();
+            
 
             services.Configure<RegistrationRequestOptions>(
                 Configuration.GetSection("JobManagementService:RegistrationRequestOptions")
