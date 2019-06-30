@@ -29,7 +29,10 @@ namespace Api
 
         private static async Task InitializeApplication(IWebHost app)
         {
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Starting to wait");
             var registration = app.Services.GetRequiredService<IRegistrationService>();
+
 
             var componentOptions = app.Services.GetRequiredService<IOptions<ComponentOptions>>();
             
@@ -39,7 +42,24 @@ namespace Api
                 ComponentType = componentOptions.Value.ComponentType
             };
 
-            await registration.Register(registrationRequest);
+            for (int i = 0; i < 3; i++)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(10));
+                logger.LogInformation($"Waiting {TimeSpan.FromSeconds(10) *i }");
+            }
+
+            try
+            {
+                logger.LogInformation("Sending registration request");
+                await registration.Register(registrationRequest);
+                logger.LogInformation("Registration request sent");
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                throw;
+            }
+            logger.LogInformation("Service {serviceName} register request sent", "DataAcuisitionService");
         }
 
         public static void Main(string[] args)

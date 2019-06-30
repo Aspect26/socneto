@@ -26,18 +26,31 @@ namespace Infrastructure.Kafka
         {
             var config = new ProducerConfig { BootstrapServers = _serverAddress };
 
-            using (var producer = new ProducerBuilder<string, string>(config).Build())
+            var producerBuilder =new  ProducerBuilder<string, string>(config);
+            producerBuilder.SetErrorHandler(
+                (producer, error) => { _logger.LogError(error.Reason); }
+            );
+            
+
+            using (var producer = producerBuilder.Build())
             {
+                
                 try
                 {
                     // Note: Awaiting the asynchronous produce request below prevents flow of execution
                     // from proceeding until the acknowledgement from the broker is received (at the 
                     // expense of low throughput).
+
                     var deliveryReport = await producer.ProduceAsync(
                         topic, KafkaMessage.FromMessageBrokerMessage(message)
                         );
 
-                    _logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                    //producer.Produce(
+                    //    topic, KafkaMessage.FromMessageBrokerMessage(message)
+                    //);
+
+
+                    //_logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
                 }
                 catch (ProduceException<string, string> e)
                 {
