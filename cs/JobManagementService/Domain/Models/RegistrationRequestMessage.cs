@@ -8,6 +8,9 @@ namespace Domain.Models
         public string ComponentType { get; set; }
         [JsonProperty("componentId")]
         public string ComponentId { get; set; }
-        
+
+        [JsonProperty("updateChannelName")]
+        public string UpdateChannelName { get; set; }
+
     }
 }

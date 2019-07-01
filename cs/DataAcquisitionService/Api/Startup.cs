@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
+using Domain.JobConfiguration;
 using Domain.Registration;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
@@ -30,9 +31,16 @@ namespace Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddSingleton<JobConfigurationUpdateListener>();
+            services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
+            
+            services.AddTransient<IJobConfigUpdateProcessor,JobConfigUpdateProcessor>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+            services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+
+
 
             services.Configure<ComponentOptions>(
                 Configuration.GetSection("DataAcquisitionService:ComponentOptions"));
@@ -42,8 +50,6 @@ namespace Api
 
             services.Configure<KafkaOptions>(
                 Configuration.GetSection("DataAcquisitionService:KafkaOptions"));
-
-
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 

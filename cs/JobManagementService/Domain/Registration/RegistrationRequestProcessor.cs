@@ -44,17 +44,23 @@ namespace Domain.Registration
                     , nameof(request.ComponentType));
             }
             // TODO check if it is not already registered
-            
+
+            if (string.IsNullOrWhiteSpace(request.UpdateChannelName))
+            {
+                throw new ArgumentException("Argument must be valid channel name"
+                    , nameof(request.UpdateChannelName));
+            }
+
             var channelModel = MessageBrokerChannelModel.FromRequest(request);
-            var channelCreationResult = await _messageBrokerApi.CreateChannel(channelModel);
             
             var componentRegisterModel = new ComponentRegistrationModel(
                 request.ComponentId,
-                channelCreationResult.ChannelName,
+                request.UpdateChannelName,
                 request.ComponentType);
             try
             {
                 _subscribedComponentManager.SubscribeComponent(componentRegisterModel);
+                
             }
             catch (InvalidOperationException)
             {
@@ -64,6 +70,8 @@ namespace Domain.Registration
             {
                 _logger.LogError("Unexpected error while processing request: {errorMessage}",e.Message);
             }
+
+            await _messageBrokerApi.CreateChannel(channelModel);
 
         }
     }

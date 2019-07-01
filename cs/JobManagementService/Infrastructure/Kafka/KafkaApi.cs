@@ -13,10 +13,10 @@ namespace Infrastructure.Kafka
         {
             _logger = logger;
         }
-        public Task<CreateChannelResult> CreateChannel(MessageBrokerChannelModel channelModel)
+        public Task CreateChannel(MessageBrokerChannelModel channelModel)
         {
             _logger.LogWarning("CreateChannel did nothing");
-            return Task.FromResult(new CreateChannelResult("foo.bar"));
+            return Task.CompletedTask;
         }
     }
 }
