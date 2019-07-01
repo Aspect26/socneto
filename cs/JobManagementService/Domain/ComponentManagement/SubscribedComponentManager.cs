@@ -41,6 +41,20 @@ namespace Domain.ComponentManagement
             await PushNetworkDataAcquisitionJobConfig(jobConfigUpdateNotification);
         }
 
+        public IList<SubscribedComponent> GetAvaliableNetworks()
+        {
+            return _componentRegistry.GetRegisteredComponents()
+                .Where(r => r.ComponentType == "Network")
+                .ToList();
+        }
+
+        public IList<SubscribedComponent> GetAvaliableAnalysers()
+        {
+            return _componentRegistry.GetRegisteredComponents()
+                .Where(r => r.ComponentType == "Analyser")
+                .ToList();
+        }
+
         private async Task PushNetworkDataAcquisitionJobConfig(JobConfigUpdateNotification jobConfigUpdateNotification)
         {
             foreach (var network in jobConfigUpdateNotification.Networks)

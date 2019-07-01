@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Models;
 
 namespace Domain.ComponentManagement
@@ -14,7 +15,9 @@ namespace Domain.ComponentManagement
 
         public bool AddOrUpdate(ComponentRegistrationModel componentRegistrationModel)
         {
-            var subscribedComponent = new SubscribedComponent(componentRegistrationModel.ComponentType,
+            var subscribedComponent = new SubscribedComponent(
+                componentRegistrationModel.ComponentId,
+                componentRegistrationModel.ComponentType,
                 componentRegistrationModel.ChannelId);
 
             if (!_registeredComponents.TryAdd(componentRegistrationModel.ComponentId, subscribedComponent))
@@ -38,6 +41,11 @@ namespace Domain.ComponentManagement
         {
             var desiredComponentName = "Network";
             return TryGetComponent(componentId, desiredComponentName,out component);
+        }
+
+        public IList<SubscribedComponent> GetRegisteredComponents()
+        {
+            return _registeredComponents.Values.ToList();
         }
 
         public bool TryGetAnalyserComponent(string componentId, out SubscribedComponent component)

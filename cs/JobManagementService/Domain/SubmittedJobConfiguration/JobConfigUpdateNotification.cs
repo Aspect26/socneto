@@ -14,8 +14,8 @@ namespace Domain.SubmittedJobConfiguration
             Networks = networks;
             TopicQuery = topicQuery;
         }
-        public List<string> Analysers { get; set; }
-        public List<string> Networks { get; set; }
-        public string TopicQuery { get; set; }
+        public List<string> Analysers { get; }
+        public List<string> Networks { get; }
+        public string TopicQuery { get; }
     }
 }
