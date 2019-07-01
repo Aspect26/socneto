@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using System.Collections.Generic;
+using Domain.Models;
 
 namespace Domain.ComponentManagement
 {
@@ -8,5 +9,7 @@ namespace Domain.ComponentManagement
 
         bool TryGetAnalyserComponent(string componentId, out SubscribedComponent component);
         bool TryGetNetworkComponent(string componentId, out SubscribedComponent component);
+
+        IList<SubscribedComponent> GetRegisteredComponents();
     }
 }

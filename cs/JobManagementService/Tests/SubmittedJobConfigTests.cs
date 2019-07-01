@@ -20,65 +20,6 @@ namespace Tests
     [TestClass]
     public class SubmittedJobConfigTests
     {
-
-        [TestMethod]
-        public void SubmittedJobConfigListenerTest()
-        {
-            var messageBrokerConsumerMockObject = new MessageBrokerConsumerMock();
-
-            var subscribedComponentManager
-                = new Mock<ISubscribedComponentManager>();
-
-            subscribedComponentManager.Setup(scm => scm
-                    .PushJobConfigUpdateAsync(It.IsAny<JobConfigUpdateNotification>()))
-                .Returns(Task.CompletedTask);
-
-            var registrationOptions = Options.Create(new SubmittedJobConfigListenerOptions
-            {
-                JobConfigChannelName = "testContext.testComponent.testMessageType"
-            });
-
-            var loggerMock = new Mock<ILogger<SubmittedJobConfigListenerService>>();
-
-            var submittedJobConfigListenerService = new SubmittedJobConfigListenerService(
-                subscribedComponentManager.Object,
-                messageBrokerConsumerMockObject,
-                registrationOptions,
-                loggerMock.Object);
-
-            var cancellationTokenSource = new CancellationTokenSource();
-            var listenTask = submittedJobConfigListenerService.Listen(cancellationTokenSource.Token);
-
-
-            var testJobConfigUpdateNotification = new
-            {
-                Analysers = new string[] { "Analyser1", "Analyser2" },
-                Networks = new string[] { "Network1" },
-                TopicQuery = "topic1 and topic2"
-            };
-
-            var requestJson = JsonConvert.SerializeObject(testJobConfigUpdateNotification);
-            messageBrokerConsumerMockObject.OnRecieveAction(requestJson);
-
-            Assert.AreEqual("testContext.testComponent.testMessageType",
-                messageBrokerConsumerMockObject.ConsumeTopic);
-
-            cancellationTokenSource.Cancel();
-            listenTask.Wait();
-
-            subscribedComponentManager.Verify(
-            sjcp => sjcp.PushJobConfigUpdateAsync(
-                It.Is((JobConfigUpdateNotification val) =>
-                   val.Analysers.Contains("Analyser1")
-                       && val.Analysers.Contains("Analyser2")
-                   && val.Networks.Contains("Network1")
-                    && val.TopicQuery == "topic1 and topic2")),
-                    Times.Once());
-
-            subscribedComponentManager.VerifyNoOtherCalls();
-
-        }
-
         [TestMethod]
         public async Task SubmittedJobConfigIntegrationTest()
         {
