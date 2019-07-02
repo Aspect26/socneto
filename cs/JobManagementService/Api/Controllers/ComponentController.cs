@@ -52,9 +52,17 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("/api/job/submit")]
-        public async Task< ActionResult<JobSubmitResponse>> SubmitJob(JobSubmitRequest jobSubmitRequest)
+        public async Task< ActionResult<JobSubmitResponse>> SubmitJob(
+            //[FromBody]JobSubmitRequest jobSubmitRequest
+            )
         {
             // TODO validation
+            var jobSubmitRequest = new JobSubmitRequest
+            {
+                SelectedAnalysers = new List<string>(),
+                TopicQuery = "SQ_1 and SQ_2",
+                SelectedNetworks = new List<string>()
+            };
 
             var jobConfigUpdateNotification = new JobConfigUpdateNotification(
                 jobSubmitRequest.SelectedAnalysers,
@@ -66,8 +74,5 @@ namespace Api.Controllers
             var jobSubmitReponse = new JobSubmitResponse();
             return Ok(jobSubmitReponse);
         }
-
-        
     }
-
 }

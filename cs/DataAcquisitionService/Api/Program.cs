@@ -61,9 +61,9 @@ namespace Api
             var registrationRequest = new RegistrationRequest()
             {
                 ComponentId = componentOptions.Value.ComponentId,
-                ComponentType = componentOptions.Value.ComponentType
+                ComponentType = componentOptions.Value.ComponentType,
+                UpdateChannelName = componentOptions.Value.UpdateChannelName
             };
-
 
             try
             {

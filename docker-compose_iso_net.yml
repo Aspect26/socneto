@@ -22,8 +22,6 @@ services:
     build: './cs/JobManagementService'
     networks:
       - kafka-network
-    ports:
-      - '5000:5000'
   data-acquisition-service:
     build: './cs/DataAcquisitionService'
     networks:
