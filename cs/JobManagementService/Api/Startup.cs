@@ -1,6 +1,7 @@
 ﻿using Domain.Abstract;
 using Domain.ComponentManagement;
 using Domain.Registration;
+using Domain.SubmittedJobConfiguration;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,8 @@ namespace Api
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
+            services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
+            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
             services.AddSingleton<IComponentRegistry, ComponentRegistry>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
             

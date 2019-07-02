@@ -72,6 +72,7 @@ namespace Domain.ComponentManagement
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
                         networkCmp.ChannelName,
                         notification);
+                    _logger.LogInformation("Config pushed to: {componentName}", network);
                 }
                 else
                 {
@@ -81,7 +82,8 @@ namespace Domain.ComponentManagement
             }
         }
 
-        private async Task PushAnalyserJobConfig(JobConfigUpdateNotification jobConfigUpdateNotification)
+        private async Task PushAnalyserJobConfig(
+            JobConfigUpdateNotification jobConfigUpdateNotification)
         {
             foreach (var analyser in jobConfigUpdateNotification.Analysers)
             {
@@ -95,6 +97,7 @@ namespace Domain.ComponentManagement
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
                         analyserCmp.ChannelName,
                         notification);
+                    _logger.LogInformation("Config pushed to: {componentName}", analyser);
                 }
                 else
                 {
