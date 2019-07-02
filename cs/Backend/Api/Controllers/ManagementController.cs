@@ -27,7 +27,6 @@ namespace Socneto.Api.Controllers
         [Route("api/heart-beat")]
         public ActionResult<string> HeartBeat()
         {
-
             var status = new
             {
                 TimeStamp = DateTime.Now.ToString("s")
