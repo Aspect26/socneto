@@ -20,9 +20,9 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
+            await Task.Delay(TimeSpan.FromMinutes(1));
             var app = CreateWebHostBuilder(args)
                 .Build();
-
             await InitializeApplication(app);
 
             app.Run();

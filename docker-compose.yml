@@ -20,10 +20,10 @@ services:
     container_name: kafka_server
   job-management-service:
     build: './cs/JobManagementService'
+    ports:
+      - '6009:6009'
     networks:
       - kafka-network
-    ports:
-      - '5000:5000'
   data-acquisition-service:
     build: './cs/DataAcquisitionService'
     networks:
