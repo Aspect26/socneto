@@ -9,16 +9,19 @@ namespace Domain.Models
 
         public string ComponentId { get; }
 
-        public MessageBrokerChannelModel(string componentId)
+        public string UpdateChannelName { get; }
+
+        public MessageBrokerChannelModel(string componentId, string configUpdateChannelName)
         {
             ComponentId = componentId;
-            
+            UpdateChannelName = configUpdateChannelName;
         }
 
         public static MessageBrokerChannelModel FromRequest(RegistrationRequestMessage request)
         {
             return new MessageBrokerChannelModel(
-                request.ComponentId
+                request.ComponentId,
+                request.UpdateChannelName
             );
         }
     }

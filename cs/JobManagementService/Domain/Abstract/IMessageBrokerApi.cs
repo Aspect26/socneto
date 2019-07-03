@@ -5,6 +5,6 @@ namespace Domain.Abstract
 {
     public interface IMessageBrokerApi
     {
-        Task<CreateChannelResult> CreateChannel(MessageBrokerChannelModel channelModel);
+        Task CreateChannel(MessageBrokerChannelModel channelModel);
     }
 }

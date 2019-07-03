@@ -48,7 +48,19 @@ namespace Domain.Registration
                 registrationRequest);
 
             var registrationRequestMessage = JsonConvert.DeserializeObject<RegistrationRequestMessage>(registrationRequest);
-            await _registrationRequestProcessor.ProcessRequest(registrationRequestMessage);
+            try
+            {
+
+                await _registrationRequestProcessor.ProcessRequestAsync(registrationRequestMessage);
+            }
+            catch (ArgumentException ae)
+            {
+                _logger.LogError("Format error: {errorMessage}", ae.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Unexpected error: {errorMessage}",e.Message);
+            }
         }
     }
 }

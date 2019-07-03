@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Models;
 
 namespace Domain.ComponentManagement
@@ -14,7 +15,9 @@ namespace Domain.ComponentManagement
 
         public bool AddOrUpdate(ComponentRegistrationModel componentRegistrationModel)
         {
-            var subscribedComponent = new SubscribedComponent(componentRegistrationModel.ComponentType,
+            var subscribedComponent = new SubscribedComponent(
+                componentRegistrationModel.ComponentId,
+                componentRegistrationModel.ComponentType,
                 componentRegistrationModel.ChannelId);
 
             if (!_registeredComponents.TryAdd(componentRegistrationModel.ComponentId, subscribedComponent))
@@ -34,7 +37,45 @@ namespace Domain.ComponentManagement
             return true;
         }
 
+        public bool TryGetNetworkComponent(string componentId, out SubscribedComponent component )
+        {
+            var desiredComponentName = "Network";
+            return TryGetComponent(componentId, desiredComponentName,out component);
+        }
+
+        public IList<SubscribedComponent> GetRegisteredComponents()
+        {
+            return _registeredComponents.Values.ToList();
+        }
+
+        public bool TryGetAnalyserComponent(string componentId, out SubscribedComponent component)
+        {
+            var desiredComponentName = "Analyser";
+            return TryGetComponent(componentId, desiredComponentName, out component);
+        }
         
+        private bool TryGetComponent(string componentId, string desiredComponentName, out SubscribedComponent component)
+        {
+            component = null;
+            if (_registeredComponents.TryGetValue(componentId, out var val))
+            {
+                // TODO remove constant
+                if (val.ComponentType != desiredComponentName)
+                {
+                    return false;
+                }
+                else
+                {
+                    component = val;
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         public IList<SubscribedComponent> GetAllByType(string componentType)
         {
