@@ -20,7 +20,7 @@
     "Api": {
       "commandName": "Project",
       "launchBrowser": false,
-      "launchUrl": "api/values",
+      "launchUrl": "api/components/networks",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

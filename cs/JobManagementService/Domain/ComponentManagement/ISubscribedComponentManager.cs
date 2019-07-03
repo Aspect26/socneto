@@ -1,17 +1,17 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Models;
+using Domain.SubmittedJobConfiguration;
 
-namespace Domain
+namespace Domain.ComponentManagement
 {
     public interface ISubscribedComponentManager
     {
         void SubscribeComponent(ComponentRegistrationModel componentRegistrationModel);
 
-        // todo
-        // Task PushJobConfiguration();
+        Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification);
+        IList<SubscribedComponent> GetAvaliableNetworks();
+
+        IList<SubscribedComponent> GetAvaliableAnalysers();
     }
-
-
-    
 }

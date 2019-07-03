@@ -1,60 +1,63 @@
-﻿//using System;
-//using System.Threading.Tasks;
-//using Confluent.Kafka;
-//using Microsoft.Extensions.Logging;
-//using Microsoft.Extensions.Options;
-//using Socneto.Domain;
-//using Socneto.Domain.Models;
+﻿using System;
+using System.Threading.Tasks;
+using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Domain;
+using Domain.Abstract;
 
-//namespace Socneto.Infrastructure.Kafka
-//{
-//    public class KafkaProducer:IResultProducer
-//    {
-//        private readonly ILogger<KafkaProducer> _logger;
-//        private readonly string _serverAddress;
-        
-//        private readonly string _produceTopic;
+namespace Infrastructure.Kafka
+{
+    public class KafkaProducer : IMessageBrokerProducer
+    {
+        private readonly ILogger<KafkaProducer> _logger;
+        private readonly string _serverAddress;
 
-//        public KafkaProducer(IOptions<KafkaOptions> kafkaOptionsObject, IOptions<TaskOptions> taskOptionObject, ILogger<KafkaProducer> logger)
-//        {
+        public KafkaProducer(IOptions<KafkaOptions> kafkaOptionsObject, ILogger<KafkaProducer> logger)
+        {
 
-//            if (string.IsNullOrEmpty(kafkaOptionsObject.Value.ServerAddress))
-//                throw new ArgumentNullException(nameof(kafkaOptionsObject.Value.ServerAddress));
-//            _logger = logger;
-//            _serverAddress = kafkaOptionsObject.Value.ServerAddress;
+            if (string.IsNullOrEmpty(kafkaOptionsObject.Value.ServerAddress))
+                throw new ArgumentNullException(nameof(kafkaOptionsObject.Value.ServerAddress));
+            _logger = logger;
+            _serverAddress = kafkaOptionsObject.Value.ServerAddress;
+
+        }
+        public async Task ProduceAsync(string channelName, MessageBrokerMessage message)
+        {
+            var config = new ProducerConfig { BootstrapServers = _serverAddress };
+
+            var producerBuilder = new ProducerBuilder<string, string>(config);
+            producerBuilder.SetErrorHandler(
+                (producer, error) => { _logger.LogError(error.Reason); }
+            );
 
 
+            using (var producer = producerBuilder.Build())
+            {
 
-//            if (string.IsNullOrEmpty(taskOptionObject.Value.ProduceTopic))
-//                throw new ArgumentNullException(nameof(taskOptionObject.Value.ProduceTopic));
+                try
+                {
+                    // Note: Awaiting the asynchronous produce request below prevents flow of execution
+                    // from proceeding until the acknowledgement from the broker is received (at the 
+                    // expense of low throughput).
 
-//            _produceTopic = taskOptionObject.Value.ProduceTopic;
+                    var deliveryReport = await producer.ProduceAsync(
+                        channelName, KafkaMessage.FromMessageBrokerMessage(message)
+                        );
+
+                    //producer.Produce(
+                    //    channelName, KafkaMessage.FromMessageBrokerMessage(message)
+                    //);
 
 
-//        }
-//        public async Task ProduceAsync(Message message)
-//        {
-//            var config = new ProducerConfig { BootstrapServers = _serverAddress };
+                    //_logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                }
+                catch (ProduceException<string, string> e)
+                {
+                    _logger.LogError($"failed to deliver message: {e.Message} [{e.Error.Code}]");
+                }
+            }
+        }
+    }
 
-//            using (var producer = new ProducerBuilder<string, string>(config).Build())
-//            {
-//                try
-//                {
-//                    // Note: Awaiting the asynchronous produce request below prevents flow of execution
-//                    // from proceeding until the acknowledgement from the broker is received (at the 
-//                    // expense of low throughput).
-//                    var deliveryReport = await producer.ProduceAsync(
-//                        _produceTopic, KafkaMessage.ToKafka(message)
-//                        );
-
-//                    _logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
-//                }
-//                catch (ProduceException<string, string> e)
-//                {
-//                    _logger.LogError($"failed to deliver message: {e.Message} [{e.Error.Code}]");
-//                }
-//            }
-//        }
-//    }
-
-//}
+}

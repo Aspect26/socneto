@@ -1,14 +1,19 @@
-﻿//using Confluent.Kafka;
+﻿using Confluent.Kafka;
+using Domain;
 
-//namespace Socneto.Infrastructure.Kafka
-//{
-//    public class KafkaMessage: Message<string,string>
-//    {
+namespace Infrastructure.Kafka
+{
 
-//        public static KafkaMessage ToKafka(Message message)
-//        {
-//            return new KafkaMessage() { Key= message.Key, Value = message.Value};
-//        }
-//    }
-
-//}
+    public class KafkaMessage : Message<string, string>
+    {
+        public static KafkaMessage FromMessageBrokerMessage
+            (MessageBrokerMessage registrationRequest)
+        {
+            return new KafkaMessage()
+            {
+                Key = registrationRequest.Key,
+                Value = registrationRequest.JsonPayloadPayload
+            };
+        }
+    }
+}
