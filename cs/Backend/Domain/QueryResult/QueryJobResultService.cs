@@ -27,7 +27,7 @@ namespace Socneto.Domain.QueryResult
                     return new Post
                     {
                         Keywords = new List<string>() { topics[rand % topics.Length] },
-                        Sentiment = (double)(rand % 2),
+                        Sentiment = (double)(rand) / int.MaxValue,
                         Text = RandomDataGenerator.RandomString(64 + rand % 64),
                         UserId = hc,
                         DateTime = RandomDataGenerator.GetRandomDate(r + hc)
