@@ -6,7 +6,7 @@ import 'package:angular_forms/angular_forms.dart';
 import 'package:quiver/time.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/SocialNetwork.dart';
-import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:sw_project/src/services/socneto_data_service.dart';
 
 
 @Component(
@@ -51,7 +51,7 @@ class CreateJobComponent {
     SocialNetwork("Reddit", "www.reddit.com"),
   ];
 
-  final SocnetoService _socnetoService;
+  final SocnetoDataService _socnetoDataService;
 
   String jobName = "";
   num maxPostsCount = 150;
@@ -65,7 +65,7 @@ class CreateJobComponent {
   final SelectionModel<SocialNetwork> socialNetworksSelectionModel = SelectionModel<SocialNetwork>.multi();
   final StringSelectionOptions<SocialNetwork> socialNetworksOptions = StringSelectionOptions<SocialNetwork>(_socialNetworks);
 
-  CreateJobComponent(this._socnetoService);
+  CreateJobComponent(this._socnetoDataService);
 
   static ItemRenderer socialNetworkItemRenderer = newCachingItemRenderer<dynamic>(
           (network) => "${network.name} (${network.url})");
@@ -76,7 +76,7 @@ class CreateJobComponent {
 
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
-      this._socnetoService.submitNewJob(this.jobName).then((jobId) {
+      this._socnetoDataService.submitNewJob(this.jobName).then((jobId) {
         this._clear(); Toastr.success("New Job", "New job created successfully!");
       }, onError: (error) {
         Toastr.error( "New Job", "Could not create the new job :(");

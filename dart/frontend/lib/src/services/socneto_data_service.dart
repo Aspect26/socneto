@@ -6,12 +6,12 @@ import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/http_service_basic_auth_base.dart';
 
-class SocnetoService extends HttpServiceBasicAuthBase {
+class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   static const String API_URL = "http://acheron.ms.mff.cuni.cz:39103";
   static const String API_PREFIX = "api";
 
-  SocnetoService() : super(API_URL, API_PREFIX);
+  SocnetoDataService() : super(API_URL, API_PREFIX);
 
   Future<int> login(String username, String password) async {
     this.setCredentials(username, password);
