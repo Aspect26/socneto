@@ -18,6 +18,10 @@ services:
     networks:
       - kafka-network
     container_name: kafka_server
+  backend:
+    build: './cs/Backend'
+    ports: 
+      - '15155:15155'
   job-management-service:
     build: './cs/JobManagementService'
     ports:
