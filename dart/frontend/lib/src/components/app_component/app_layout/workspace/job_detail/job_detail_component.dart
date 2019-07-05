@@ -10,7 +10,7 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
-import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:sw_project/src/services/socneto_data_service.dart';
 
 import 'job_keywords_graph_component/job_keywords_graph_component.dart';
 
@@ -41,9 +41,9 @@ class JobDetailComponent implements OnActivate {
 
   Job job;
   List<Post> posts = [];
-  SocnetoService _socnetoService;
+  SocnetoDataService _socnetoDataService;
 
-  JobDetailComponent(this._socnetoService);
+  JobDetailComponent(this._socnetoDataService);
 
   @override
   void onActivate(_, RouterState routerState) async {
@@ -54,8 +54,8 @@ class JobDetailComponent implements OnActivate {
   }
 
   void _setJob(String jobId) async {
-    this.job = await this._socnetoService.getJob(jobId);
-    this.posts = await this._socnetoService.getJobPosts(jobId);
+    this.job = await this._socnetoDataService.getJob(jobId);
+    this.posts = await this._socnetoDataService.getJobPosts(jobId);
   }
 
 }
