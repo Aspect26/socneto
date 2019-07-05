@@ -19,7 +19,7 @@ services:
       - kafka-network
     container_name: kafka_server
   backend:
-    build: './cs'
+    build: './cs/Backend'
     ports: 
       - '15155:15155'
     networks:
