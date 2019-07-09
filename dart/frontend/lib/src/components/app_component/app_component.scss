@@ -3,6 +3,8 @@
 @import "package:sw_project/src/components/app_component/app_layout/login/login_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/jobs_list/jobs_list_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/component_select_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_keywords_graph_component/job_keywords_graph_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.scss";
@@ -16,6 +18,8 @@
   @include posts-list-component($theme);
   @include create-job-component($theme);
   @include login-component($theme);
+  @include components-select-component($theme);
+  @include component-select-component($theme);
 }
 
 .theme-red-light {
