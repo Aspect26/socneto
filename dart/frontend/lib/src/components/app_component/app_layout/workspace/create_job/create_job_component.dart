@@ -88,7 +88,7 @@ class CreateJobComponent implements OnInit {
 
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
-      this._socnetoJobManagementService.submitNewJob(this.jobName).then((jobId) {
+      this._socnetoJobManagementService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers).then((jobId) {
         this._clear(); Toastr.success("New Job", "New job created successfully!");
       }, onError: (error) {
         Toastr.error( "New Job", "Could not create the new job :(");
