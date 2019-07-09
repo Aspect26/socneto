@@ -23,10 +23,20 @@
         </div>
 
         Social Networks:
-        <components-select [components]="availableSocialNetworks" (change)="onSocialNetworksSelectionChange($event)"></components-select>
+        <components-select
+                [components]="availableSocialNetworks"
+                [loading]="loadingSocialNetworks"
+                (change)="onSocialNetworksSelectionChange($event)"
+                (refresh)="onSocialNetworksRefresh()">
+        </components-select>
 
         Data analyzers:
-        <components-select [components]="availableDataAnalyzers" (change)="onDataAnalyzersSelectionChange($event)"></components-select>
+        <components-select
+                [components]="availableDataAnalyzers"
+                [loading]="loadingDataAnalyzers"
+                (change)="onDataAnalyzersSelectionChange($event)"
+                (refresh)="onDataAnalyzersRefresh()">
+        </components-select>
 
         <div>
             Number of posts:

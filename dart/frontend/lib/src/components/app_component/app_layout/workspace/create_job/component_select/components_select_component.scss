@@ -20,6 +20,14 @@
           align-self: center;
         }
       }
+
+      .error-message {
+        color: red;
+
+        img {
+          cursor: pointer;
+        }
+      }
     }
 
   }
