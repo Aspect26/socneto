@@ -8,13 +8,13 @@ namespace Api.Models
     {
 
         public ComponentsResponse(
-            string componenId,
+            string componentId,
             string componentType)
         {
             ComponentType = componentType;
-            ComponenId = componenId;
+            ComponentId = componentId;
         }
         public string ComponentType { get;  }
-        public string ComponenId { get;  }
+        public string ComponentId { get;  }
     }
 }
