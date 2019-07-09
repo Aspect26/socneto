@@ -8,7 +8,7 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
-import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/utils.dart';
 
 
@@ -38,13 +38,13 @@ class JobsListComponent implements AfterChanges {
   @Input()
   int userId;
 
-  final SocnetoService _socnetoService;
+  final SocnetoDataService _socnetoDataService;
   final Router _router;
 
   List<Job> jobs = [];
   Job selectedJob;
 
-  JobsListComponent(this._socnetoService, this._router);
+  JobsListComponent(this._socnetoDataService, this._router);
 
   @override
   void ngAfterChanges() async {
@@ -82,7 +82,7 @@ class JobsListComponent implements AfterChanges {
 
   void _loadData() async {
     try {
-      this.jobs = await this._socnetoService.getUserJobs(this.userId);
+      this.jobs = await this._socnetoDataService.getUserJobs(this.userId);
       this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
       this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
     } catch (e) {

@@ -35,3 +35,7 @@ String getDurationString(Duration duration) {
 String _plural(int count, String singular, String plural) {
   return count.abs() != 1? plural : singular;
 }
+
+T getEnumByString<T>(List<T> allEnumValues, String value, T defaultValue) {
+  return allEnumValues.firstWhere((t) => t.toString() == "${T.toString()}.$value", orElse: () => null)  ?? defaultValue;
+}

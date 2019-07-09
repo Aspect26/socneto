@@ -1,0 +1,34 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin components-select-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  components-select {
+
+    section {
+      display: flex;
+      padding: 20px;
+
+      .component-wrapper {
+        margin-right: 20px;
+
+        .component-image-wrapper {
+          align-self: center;
+        }
+      }
+
+      .error-message {
+        color: red;
+
+        img {
+          cursor: pointer;
+        }
+      }
+    }
+
+  }
+}
