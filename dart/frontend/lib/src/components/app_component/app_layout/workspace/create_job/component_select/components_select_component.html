@@ -1,0 +1,12 @@
+<section>
+    <div *ngFor="let component of components" class="mdc-card mdc-card component-wrapper">
+        <component-select [component]="component" (change)="componentToggled(component, $event)"></component-select>
+    </div>
+
+    <material-progress *ngIf="loading" [indeterminate]="true"></material-progress>
+
+    <div *ngIf="!loading && components.isEmpty" class="error-message">
+        Could not fetch any component!
+        <img src="/packages/sw_project/static/images/icons/refresh.png" alt="Refresh" height="20px" (click)="onRefreshClick()">
+    </div>
+</section>
