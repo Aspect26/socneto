@@ -51,7 +51,6 @@ class ComponentsSelectComponent implements AfterChanges {
   ComponentsSelectComponent();
 
   void ngAfterChanges() {
-    print(this.loading);
     this.selectedComponents = []..addAll(this.components);
   }
 
