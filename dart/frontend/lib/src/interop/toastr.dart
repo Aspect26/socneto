@@ -7,13 +7,14 @@ import 'package:js/js_util.dart';
 typedef ToastrNotificationFn = Function(String message,
       [String title, dynamic options]);
 
+@JS()
 class ToastrInterface {
-  external ToastrNotificationFn get info;
-  external ToastrNotificationFn get success;
-  external ToastrNotificationFn get error;
-  external ToastrNotificationFn get warning;
-  external Function get remove;
-  external Function get clear;
+  @JS() external ToastrNotificationFn get info;
+  @JS() external ToastrNotificationFn get success;
+  @JS() external ToastrNotificationFn get error;
+  @JS() external ToastrNotificationFn get warning;
+  @JS() external Function get remove;
+  @JS() external Function get clear;
 }
 
 @JS()
