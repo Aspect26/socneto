@@ -9,8 +9,6 @@ import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
 
-import '../../../../../utils.dart';
-
 
 @Component(
   selector: 'create-job',
@@ -55,6 +53,9 @@ class CreateJobComponent implements OnInit {
   List<SocnetoComponent> availableSocialNetworks = [];
   List<SocnetoComponent> availableDataAnalyzers = [];
 
+  bool loadingSocialNetworks = true;
+  bool loadingDataAnalyzers = true;
+
   String jobName = "";
   String topic = "";
   List<SocnetoComponent> selectedSocialNetworks = [];
@@ -69,16 +70,9 @@ class CreateJobComponent implements OnInit {
 
   CreateJobComponent(this._socnetoJobManagementService);
 
-  void ngOnInit() {
-    this._socnetoJobManagementService.getAvailableNetworks().then((networks) {
-      this.availableSocialNetworks = networks;
-    });
-
-    this._socnetoJobManagementService.getAvailableAnalyzers().then((analyzers) {
-      this.availableDataAnalyzers = analyzers;
-    });
-
-    getEnumByString<ComponentSpecialization>(ComponentSpecialization.values, "reddit", ComponentSpecialization.other);
+  void ngOnInit() async {
+    this._loadSocialNetworks();
+    this._loadDataAnalyzers();
   }
 
   isQueryValid() {
@@ -100,8 +94,40 @@ class CreateJobComponent implements OnInit {
     this.selectedSocialNetworks = networks;
   }
 
+  onSocialNetworksRefresh() {
+    this._loadSocialNetworks();
+  }
+
   onDataAnalyzersSelectionChange(List<SocnetoComponent> analyzers) {
     this.selectedDataAnalyzers = analyzers;
+  }
+
+  onDataAnalyzersRefresh() {
+    this._loadDataAnalyzers();
+  }
+
+  _loadSocialNetworks() async {
+    this.loadingSocialNetworks = true;
+    this.availableSocialNetworks = [];
+
+    try {
+      this.availableSocialNetworks = await this._socnetoJobManagementService.getAvailableNetworks();
+    } catch (_) {
+    } finally {
+      this.loadingSocialNetworks = false;
+    }
+  }
+
+  _loadDataAnalyzers() async {
+    this.loadingDataAnalyzers = true;
+    this.availableDataAnalyzers = [];
+
+    try {
+      this.availableDataAnalyzers = await this._socnetoJobManagementService.getAvailableAnalyzers();
+    } catch (_) {
+    } finally {
+      this.loadingDataAnalyzers = false;
+    }
   }
 
   _clear() {

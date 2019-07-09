@@ -15,6 +15,7 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
     MaterialButtonComponent,
     MaterialIconComponent,
     MaterialCheckboxComponent,
+    MaterialProgressComponent,
     materialInputDirectives,
 
     MaterialMultilineInputComponent,
@@ -37,16 +38,20 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
 class ComponentsSelectComponent implements AfterChanges {
 
   @Input() List<SocnetoComponent> components;
+  @Input() bool loading = false;
 
   final _changeController = StreamController<List<SocnetoComponent>>();
   @Output() Stream<List<SocnetoComponent>> get change => _changeController.stream;
+
+  final _refreshController = StreamController<bool>();
+  @Output() Stream<bool> get refresh => _refreshController.stream;
 
   List<SocnetoComponent> selectedComponents = [];
 
   ComponentsSelectComponent();
 
   void ngAfterChanges() {
-    print(this.components.length);
+    print(this.loading);
     this.selectedComponents = []..addAll(this.components);
   }
 
@@ -58,6 +63,10 @@ class ComponentsSelectComponent implements AfterChanges {
     }
 
     this._changeController.add(this.selectedComponents);
+  }
+
+  void onRefreshClick() {
+    this._refreshController.add(true);
   }
 
 }
