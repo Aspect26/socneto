@@ -5,7 +5,7 @@
         <div>
             Title:
             <material-input
-                    label="Name of the job (to be easily identifiable)"
+                    label="Name of the job"
                     floatingLabel
                     [(ngModel)]="jobName"
                     class="labeled-input title-input">
@@ -13,15 +13,20 @@
         </div>
 
         <div>
-            Social networks:
-            <material-dropdown-select
-                    [buttonText]="socialSelectLabel"
-                    [selection]="socialNetworksSelectionModel"
-                    [options]="socialNetworksOptions"
-                    [itemRenderer]="socialNetworkItemRenderer"
-                    class="labeled-input">
-            </material-dropdown-select>
+            Topic:
+            <material-input
+                    label="The topic to be queried"
+                    floatingLabel
+                    [(ngModel)]="topic"
+                    class="labeled-input title-input">
+            </material-input>
         </div>
+
+        Social Networks:
+        <components-select [components]="availableSocialNetworks" (change)="onSocialNetworksSelectionChange($event)"></components-select>
+
+        Data analyzers:
+        <components-select [components]="availableDataAnalyzers" (change)="onDataAnalyzersSelectionChange($event)"></components-select>
 
         <div>
             Number of posts:

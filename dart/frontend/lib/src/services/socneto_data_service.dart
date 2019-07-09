@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:sw_project/src/models/CreateJobResponse.dart';
 import 'package:sw_project/src/models/JobResult.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -34,8 +33,5 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     var jobResult = await this.get<JobResult>("job/$jobId/result", (result) => JobResult.fromMap(result));
     return jobResult.posts;
   }
-
-  Future<String> submitNewJob(String query) async =>
-      (await this.post<CreateJobResponse>("job/submit", { "query": query}, (result) => CreateJobResponse.fromMap(result))).jobId;
 
 }

@@ -4,9 +4,12 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:quiver/time.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/SocialNetwork.dart';
-import 'package:sw_project/src/services/socneto_data_service.dart';
+import 'package:sw_project/src/models/SocnetoComponent.dart';
+import 'package:sw_project/src/services/socneto_job_management_service.dart';
+
+import '../../../../../utils.dart';
 
 
 @Component(
@@ -33,7 +36,9 @@ import 'package:sw_project/src/services/socneto_data_service.dart';
     MaterialPaperTooltipComponent,
     MaterialTooltipTargetDirective,
 
-    NgIf
+    NgIf,
+
+    ComponentsSelectComponent,
   ],
   templateUrl: 'create_job_component.html',
   styleUrls: ['create_job_component.css'],
@@ -43,40 +48,47 @@ import 'package:sw_project/src/services/socneto_data_service.dart';
     datepickerBindings
   ],
 )
-class CreateJobComponent {
+class CreateJobComponent implements OnInit {
 
-  static const List<SocialNetwork> _socialNetworks = [
-    SocialNetwork("Facebook", "www.facebook.com"),
-    SocialNetwork("Twitter", "www.twitter.com"),
-    SocialNetwork("Reddit", "www.reddit.com"),
-  ];
+  final SocnetoJobManagementService _socnetoJobManagementService;
 
-  final SocnetoDataService _socnetoDataService;
+  List<SocnetoComponent> availableSocialNetworks = [];
+  List<SocnetoComponent> availableDataAnalyzers = [];
 
   String jobName = "";
+  String topic = "";
+  List<SocnetoComponent> selectedSocialNetworks = [];
+  List<SocnetoComponent> selectedDataAnalyzers = [];
   num maxPostsCount = 150;
   bool unlimitedPostsCount = false;
   bool isContinuous = false;
-  DateTime dateFrom = new DateTime.now();
-  DatepickerComparison dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(new Clock()).range);
+  DateTime dateFrom = DateTime.now();
+  DatepickerComparison dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(Clock()).range);
   DateTime timeFrom = DateTime.now();
   DateTime timeTo = DateTime.now();
 
-  final SelectionModel<SocialNetwork> socialNetworksSelectionModel = SelectionModel<SocialNetwork>.multi();
-  final StringSelectionOptions<SocialNetwork> socialNetworksOptions = StringSelectionOptions<SocialNetwork>(_socialNetworks);
+  CreateJobComponent(this._socnetoJobManagementService);
 
-  CreateJobComponent(this._socnetoDataService);
+  void ngOnInit() {
+    this._socnetoJobManagementService.getAvailableNetworks().then((networks) {
+      this.availableSocialNetworks = networks;
+    });
 
-  static ItemRenderer socialNetworkItemRenderer = newCachingItemRenderer<dynamic>(
-          (network) => "${network.name} (${network.url})");
+    this._socnetoJobManagementService.getAvailableAnalyzers().then((analyzers) {
+      this.availableDataAnalyzers = analyzers;
+    });
+
+    getEnumByString<ComponentSpecialization>(ComponentSpecialization.values, "reddit", ComponentSpecialization.other);
+  }
 
   isQueryValid() {
-    return this.jobName != null && this.jobName.isNotEmpty && this.socialNetworksSelectionModel.isNotEmpty;
+    return this.jobName != null && this.jobName.isNotEmpty && this.topic != null
+        && this.topic.isNotEmpty && this.selectedSocialNetworks.isNotEmpty && this.selectedDataAnalyzers.isNotEmpty;
   }
 
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
-      this._socnetoDataService.submitNewJob(this.jobName).then((jobId) {
+      this._socnetoJobManagementService.submitNewJob(this.jobName).then((jobId) {
         this._clear(); Toastr.success("New Job", "New job created successfully!");
       }, onError: (error) {
         Toastr.error( "New Job", "Could not create the new job :(");
@@ -84,25 +96,26 @@ class CreateJobComponent {
     }
   }
 
-  String get socialSelectLabel {
-    var selectedSocialNetworks = this.socialNetworksSelectionModel.selectedValues;
-    if (selectedSocialNetworks.isEmpty) {
-      return "No social networks selected";
-    } else {
-      return selectedSocialNetworks.map((network) => network.name).join(", ");
-    }
+  onSocialNetworksSelectionChange(List<SocnetoComponent> networks) {
+    this.selectedSocialNetworks = networks;
+  }
+
+  onDataAnalyzersSelectionChange(List<SocnetoComponent> analyzers) {
+    this.selectedDataAnalyzers = analyzers;
   }
 
   _clear() {
     this.jobName = "";
+    this.topic = "";
     this.maxPostsCount = 150;
     this.unlimitedPostsCount = false;
     this.isContinuous = false;
     this.dateFrom = DateTime.now();
-    this.dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(new Clock()).range);
+    this.dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(Clock()).range);
     this.timeFrom = DateTime.now();
     this.timeTo = DateTime.now();
-    this.socialNetworksSelectionModel.clear();
+    this.selectedSocialNetworks.clear();
+    this.selectedDataAnalyzers.clear();
   }
 
 }
