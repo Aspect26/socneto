@@ -45,6 +45,10 @@ namespace Api
 
             services.AddSingleton<IDataAcquirer, DataGeneratorAcquirer>();
 
+
+            services.Configure<RandomGeneratorOptions>(
+                Configuration.GetSection("DataAcquisitionService:RandomGeneratorOptions"));
+
             services.Configure<ComponentOptions>(
                 Configuration.GetSection("DataAcquisitionService:ComponentOptions"));
 
