@@ -6,16 +6,34 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Acquisition;
 using Domain.Model;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataGenerator
 {
+    public class RandomGeneratorOptions
+    {
+        public TimeSpan DownloadDelay { get; set; }
+        public int Seed { get; set; }
+    }
+
     public class DataGeneratorAcquirer :IDataAcquirer
     {
-        private Random _random = new Random(123);
-        
-        public async  Task<DataAcquirerOutputModel> AcquireBatchAsync(DataAcquirerInputModel acquirerInputModel, CancellationToken cancellationToken)
+        private readonly Random _random ;
+        private readonly TimeSpan _downloadDelay;
+
+        public DataGeneratorAcquirer(
+            IOptions<RandomGeneratorOptions> randomGenratorOptionsAccessor
+            )
         {
-            await Task.Delay(TimeSpan.FromSeconds(10));
+            _downloadDelay = randomGenratorOptionsAccessor.Value.DownloadDelay;
+            _random = new Random(randomGenratorOptionsAccessor.Value.Seed);
+        }
+
+        public async  Task<DataAcquirerOutputModel> AcquireBatchAsync(
+            DataAcquirerInputModel acquirerInputModel, 
+            CancellationToken cancellationToken)
+        {
+            await Task.Delay(_downloadDelay);
 
             var uniPosts = Enumerable
                 .Range(0, 100)
