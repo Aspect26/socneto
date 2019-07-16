@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Socneto.Api.Extensions;
-using Socneto.Api.Helpers;
 using Socneto.Api.Models;
 using Socneto.Domain;
 using Socneto.Domain.QueryResult;
@@ -29,7 +27,7 @@ namespace Socneto.Api.Controllers
         [Route("api/user/{userId}/jobs")]
         public async Task<ActionResult<List<JobStatusResponse>>> GetJobStatuses([FromRoute]int userId)
         {
-            if (!IsAuthorized(userId))
+            if (! await IsAuthorizedToSeeUser(userId))
                 return Unauthorized();
             
             var jobStatuses = await _queryUserJobService.GetJobStatuses(userId);
@@ -55,9 +53,13 @@ namespace Socneto.Api.Controllers
             return Ok(loginResponse);
         }
         
-        private bool IsAuthorized(int userId)
+        private async Task<bool> IsAuthorizedToSeeUser(int userId)
         {
-            return userId == User.GetUserId();
+            if (!User.Identity.IsAuthenticated)
+                return false;
+            
+            var user = await _userService.GetUserByName(User.Identity.Name);
+            return userId == user.Id;
         }
 
     }

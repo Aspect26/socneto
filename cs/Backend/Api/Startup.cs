@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Bazinga.AspNetCore.Authentication.Basic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Socneto.Api.Helpers;
+using Socneto.Api.Authentication;
 using Socneto.Domain;
 using Socneto.Domain.QueryResult;
 using Socneto.Infrastructure.Kafka;
@@ -47,9 +47,8 @@ namespace Socneto.Api
                 });
             });
 
-            // TODO: use Bazinga.AspNetCore.Authentication.Basic nuget package for this
-            services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
+                .AddBasicAuthentication<SimpleBasicCredentialVerifier>();
 
             services
                 .AddTransient<IJobService, JobService>()

@@ -25,5 +25,11 @@ namespace Socneto.Domain
             
             return user;
         }
+
+        public async Task<User> GetUserByName(string username)
+        {
+            var user = await Task.Run(() => _users.SingleOrDefault(x => x.Username == username));
+            return user;
+        }
     }
 }
