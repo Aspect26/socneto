@@ -26,7 +26,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/status")]
         public async Task<ActionResult<JobStatusResponse>> GetJobStatus([FromRoute]Guid jobId)
         {
-            if (!IsAuthorized(jobId))
+            if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
             var jobStatus = await _queryJobResultService.GetJobStatus(jobId);
@@ -40,7 +40,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/result")]
         public async Task<ActionResult<JobResultResponse>> GetJobResult([FromRoute]Guid jobId)
         {
-            if (!IsAuthorized(jobId))
+            if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
             var jobResult = await _queryJobResultService.GetJobResult(jobId);
@@ -49,7 +49,7 @@ namespace Socneto.Api.Controllers
             return Ok(jobResultResponse);
         }
         
-        private bool IsAuthorized(Guid jobId)
+        private bool IsAuthorizedToSeeJob(Guid jobId)
         {
             // TODO: check if the job belongs to the authorized user
             return true;
