@@ -78,9 +78,15 @@ namespace Tests
             var subscribedCompnentLogger = new Mock<ILogger<SubscribedComponentManager>>();
             var componentConfigNotifierMock = new Mock<IComponentConfigUpdateNotifier>();
 
+            var componentOptions = Options.Create(new SubscribedComponentManagerOptions()
+            {
+                // TODO
+            });
+
             var subscribedComponentManager = new SubscribedComponentManager(
                 componentRegistry,
                 componentConfigNotifierMock.Object,
+                componentOptions,
                 subscribedCompnentLogger.Object
             );
 
