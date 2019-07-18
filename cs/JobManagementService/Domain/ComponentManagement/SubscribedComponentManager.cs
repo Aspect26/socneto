@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Domain.ComponentManagement
 {
@@ -13,14 +14,50 @@ namespace Domain.ComponentManagement
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
         private readonly ILogger<SubscribedComponentManager> _logger;
+        private readonly string _analyserInputChannelName;
+        private readonly string _analyserOutputChannelName;
+        private readonly string _dataAcquisitionOutputChannelName;
+        //private string _storageInputChannelName;
 
-        public SubscribedComponentManager(IComponentRegistry componentRegistry,
+        public SubscribedComponentManager(
+            IComponentRegistry componentRegistry,
             IComponentConfigUpdateNotifier componentConfigUpdateNotifier,
+            IOptions<SubscribedComponentManagerOptions> subscribedComponentManagerOptionsAccessor, 
             ILogger<SubscribedComponentManager> logger
         )
         {
             _componentRegistry = componentRegistry;
             _componentConfigUpdateNotifier = componentConfigUpdateNotifier;
+            if (string.IsNullOrWhiteSpace(
+                subscribedComponentManagerOptionsAccessor.Value.AnalyserInputChannelName))
+            {
+                throw new ArgumentNullException();
+            }
+            _analyserInputChannelName = subscribedComponentManagerOptionsAccessor.Value.AnalyserInputChannelName;
+
+            if (string.IsNullOrWhiteSpace(
+                subscribedComponentManagerOptionsAccessor.Value.AnalyserOutputChannelName))
+            {
+                throw new ArgumentNullException();
+            }
+
+            _analyserOutputChannelName = subscribedComponentManagerOptionsAccessor.Value.AnalyserOutputChannelName;
+
+            if (string.IsNullOrWhiteSpace(
+                subscribedComponentManagerOptionsAccessor.Value.DataAcquisitionOutputChannelName))
+            {
+                throw new ArgumentNullException();
+            }
+
+            _dataAcquisitionOutputChannelName =
+                subscribedComponentManagerOptionsAccessor.Value.DataAcquisitionOutputChannelName;
+            //if (string.IsNullOrWhiteSpace(
+            //    subscribedComponentManagerOptionsAccessor.Value.StorageInputChannelName))
+            //{
+            //    throw new ArgumentNullException();
+            //}
+            //_storageInputChannelName = subscribedComponentManagerOptionsAccessor.Value.StorageInputChannelName;
+            
             _logger = logger;
         }
 
@@ -36,9 +73,9 @@ namespace Domain.ComponentManagement
 
         public async Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification)
         {
+            await PushNetworkDataAcquisitionJobConfig(jobConfigUpdateNotification);
             await PushAnalyserJobConfig(jobConfigUpdateNotification);
 
-            await PushNetworkDataAcquisitionJobConfig(jobConfigUpdateNotification);
         }
 
         public IList<SubscribedComponent> GetAvaliableNetworks()
@@ -61,12 +98,14 @@ namespace Domain.ComponentManagement
             {
                 if (_componentRegistry.TryGetNetworkComponent(network, out var networkCmp))
                 {
-                    var notification = new ComponentConfigUpdateNotification
+                    var notification = new DataAcquisitionConfigUpdateNotification
                     {
-                        Attributes = new Dictionary<string, string>()
-                        {
-                            {"TopicQuery", jobConfigUpdateNotification.TopicQuery}
-                        }
+                        // TODO
+                        //"TopicQuery", jobConfigUpdateNotification.TopicQuery,
+                        //Attributes = new Dictionary<string, string>()
+                        //{
+                        //},
+                        //OutputMessageBrokerChannel = _dataAcquisitionOutputChannelName,
                     };
 
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
@@ -89,14 +128,17 @@ namespace Domain.ComponentManagement
             {
                 if (_componentRegistry.TryGetAnalyserComponent(analyser, out var analyserCmp))
                 {
-                    var notification = new ComponentConfigUpdateNotification
+                    var notification = new AnalyserConfigUpdateNotification()
                     {
-                        // TODO
+                        Attributes = new Dictionary<string, string>(),
+                        OutputMessageBrokerChannel = _analyserOutputChannelName,
+                        InputMessageBrokerChannel = _analyserInputChannelName
                     };
 
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
                         analyserCmp.ChannelName,
                         notification);
+
                     _logger.LogInformation("Config pushed to: {componentName}", analyser);
                 }
                 else
