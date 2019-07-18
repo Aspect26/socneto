@@ -11,8 +11,7 @@ This project offer a framework allowing the users to analyze data related to a c
 
 # Outline
 
-- [High level description](HighLevel.md)
-- [Responsibilities and planning](ResponsibilitiesAndPlanning.md)
+- [ProjectDescription](HighLevel.md)
 - [Architecture](Architecture.md)
   - [Data acquisition](DataAcquisition.md)
   - [Analyser](Analyser.md)
@@ -21,3 +20,10 @@ This project offer a framework allowing the users to analyze data related to a c
   - [Front end](FrontEnd.md)
   - [API](WebApi.md)
 - [DevOps](DevOps.md)
+
+
+<!-- #### Future work
+
+*!This phase is not part of the software project goal.* 
+
+The project is designed to be easily migrated to a cloud when needed.  -->
