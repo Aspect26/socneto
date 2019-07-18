@@ -3,12 +3,15 @@ using Newtonsoft.Json;
 
 namespace Domain.Models
 {
-    public class AnalyserConfigUpdateNotification
+    public class DataAcquisitionConfigUpdateNotification
     {
+
+        //TODO add
+        //jobid
+
         [JsonProperty("attributes")]
         public Dictionary<string, string> Attributes { get; set; }
-        [JsonProperty("inputMessageBrokerChannel")]
-        public string InputMessageBrokerChannel { get; set; }
+
         [JsonProperty("outputMessageBrokerChannel")]
         public string OutputMessageBrokerChannel { get; set; }
     }

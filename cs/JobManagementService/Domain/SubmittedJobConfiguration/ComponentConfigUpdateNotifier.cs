@@ -19,7 +19,7 @@ namespace Domain.SubmittedJobConfiguration
             _messageBrokerProducer = messageBrokerProducer;
             _logger = logger;
         }
-        public async Task NotifyComponentAsync(string componentConfigChannelName, ComponentConfigUpdateNotification notification)
+        public async Task NotifyComponentAsync(string componentConfigChannelName, object notification)
         {
             var json = JsonConvert.SerializeObject(notification);
             var message = new MessageBrokerMessage("job-config-notification",json);
