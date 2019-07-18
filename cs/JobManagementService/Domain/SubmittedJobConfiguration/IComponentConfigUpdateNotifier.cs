@@ -5,6 +5,6 @@ namespace Domain.SubmittedJobConfiguration
 {
     public interface IComponentConfigUpdateNotifier
     {
-        Task NotifyComponentAsync(string componentConfigChannelName, ComponentConfigUpdateNotification notification);
+        Task NotifyComponentAsync(string componentConfigChannelName, object notification);
     }
 }

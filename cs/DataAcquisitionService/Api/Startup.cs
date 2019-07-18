@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
+using Domain.Acquisition;
 using Domain.JobConfiguration;
+using Domain.JobManagement;
 using Domain.Registration;
+using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,13 +37,17 @@ namespace Api
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
             
-            services.AddTransient<IJobConfigUpdateProcessor,JobConfigUpdateProcessor>();
+            services.AddTransient<IJobManager,JobManager>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
 
+            services.AddSingleton<IDataAcquirer, DataGeneratorAcquirer>();
 
+
+            services.Configure<RandomGeneratorOptions>(
+                Configuration.GetSection("DataAcquisitionService:RandomGeneratorOptions"));
 
             services.Configure<ComponentOptions>(
                 Configuration.GetSection("DataAcquisitionService:ComponentOptions"));

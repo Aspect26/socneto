@@ -1,0 +1,13 @@
+{
+    "registrationRequestOptions": {
+        "registrationChannelName": "job_management.registration.request"
+    },
+    "kafkaOptions": {
+        "serverAddress": "kafka_server:9092"
+    },
+    "componentOptions": {
+        "componentId": "Analyser_test1",
+        "componentType": "Analyser",
+        "updateChannelName": "job_management.job_configuration.Analyser_test1"
+    }
+}
