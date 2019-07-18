@@ -12,6 +12,7 @@ This project offer a framework allowing the users to analyze data related to a c
 # Outline
 
 - [High level description](HighLevel.md)
+- [Responsibilities and planning](ResponsibilitiesAndPlanning.md)
 - [Architecture](Architecture.md)
   - [Data acquisition](DataAcquisition.md)
   - [Analyser](Analyser.md)
@@ -20,4 +21,3 @@ This project offer a framework allowing the users to analyze data related to a c
   - [Front end](FrontEnd.md)
   - [API](WebApi.md)
 - [DevOps](DevOps.md)
-- [Responsibilities and planning](ResponsibilitiesAndPlanning.md)
