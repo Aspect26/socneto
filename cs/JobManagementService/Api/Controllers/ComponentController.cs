@@ -70,8 +70,8 @@ namespace Api.Controllers
                 return BadRequest(e.Message);
             }
 
-            var jobSubmitReponse = new JobSubmitResponse();
-            return Ok(jobSubmitReponse);
+            var jobSubmitResponse = new JobSubmitResponse();
+            return Ok(jobSubmitResponse);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain;
 using Domain.JobConfiguration;
+using Domain.JobManagement;
 using Domain.Registration;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -20,9 +21,12 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
-            await Task.Delay(TimeSpan.FromMinutes(1));
+            var delay = TimeSpan.FromMinutes(1);
+            Console.WriteLine($"Waiting {delay}");
+            await Task.Delay(delay);
             var app = CreateWebHostBuilder(args)
                 .Build();
+
             await InitializeApplication(app);
 
             app.Run();

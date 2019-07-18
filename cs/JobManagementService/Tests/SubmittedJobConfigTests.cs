@@ -47,7 +47,7 @@ namespace Tests
                     "network_2",
                     "j.c.n_2",
                     "Network")));
-            
+
             var messageBrokerProducerMock = new Mock<IMessageBrokerProducer>();
             var componentConfigNotifierLoggerMock = new Mock<ILogger<ComponentConfigUpdateNotifier>>();
             var componentConfigNotifier = new ComponentConfigUpdateNotifier(
@@ -58,25 +58,30 @@ namespace Tests
 
             var subscribedCompnentLogger = new Mock<ILogger<SubscribedComponentManager>>();
 
+            var componentOptions = Options.Create(new SubscribedComponentManagerOptions()
+            {
+                // TODO
+            });
+
             var subscribedComponentManager = new SubscribedComponentManager(
                 componentRegistry,
                 componentConfigNotifier,
-                subscribedCompnentLogger.Object
-                    );
+                componentOptions,
+                subscribedCompnentLogger.Object);
 
             var notification = new JobConfigUpdateNotification(
-                new List<string>() {"analyser_1", "analyser_2"},
-                new List<string>() {"network_1", "network_2"},
+                new List<string>() { "analyser_1", "analyser_2" },
+                new List<string>() { "network_1", "network_2" },
                 "Topic1 and Topic2");
-            
+
             // Act
             await subscribedComponentManager.PushJobConfigUpdateAsync(notification);
 
-            
+
             messageBrokerProducerMock.Verify(
-                mbp=>mbp.ProduceAsync(It.Is<string>(cn=>cn=="j.c.a_1"),
+                mbp => mbp.ProduceAsync(It.Is<string>(cn => cn == "j.c.a_1"),
                     It.IsAny<MessageBrokerMessage>()
-                    ),Times.Once);
+                    ), Times.Once);
 
             messageBrokerProducerMock.Verify(
                 mbp => mbp.ProduceAsync(It.Is<string>(cn => cn == "j.c.a_2"),
