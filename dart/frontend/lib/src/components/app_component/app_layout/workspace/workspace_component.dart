@@ -25,7 +25,7 @@ class WorkspaceComponent implements OnActivate {
 
   @override
   void onActivate(RouterState previous, RouterState current) {
-    this.userId = int.parse(current.parameters["userId"]);
+    this.userId = int.parse(current.parameters[RouteParams.workspaceUserId]);
   }
 
 }
