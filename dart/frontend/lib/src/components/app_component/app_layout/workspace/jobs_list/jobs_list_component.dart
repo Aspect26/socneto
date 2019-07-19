@@ -58,7 +58,7 @@ class JobsListComponent implements AfterChanges {
   }
 
   void selectJob(Job job) {
-    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"userId": "${this.userId}", "jobId": "${job.id}"}));
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.userId, job.id)));
   }
 
   String getProcessingTime(Job job) {
@@ -77,7 +77,7 @@ class JobsListComponent implements AfterChanges {
   }
 
   void onCreateNewJob(_) {
-    this._router.navigate(RoutePaths.createJob.toUrl(parameters: {"userId": "${this.userId}"}));
+    this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(userId)));
   }
 
   void _loadData() async {
@@ -91,11 +91,11 @@ class JobsListComponent implements AfterChanges {
   }
 
   void _setSelectedJob(RouterState routerState) {
-    if (routerState == null || !routerState.parameters.containsKey("jobId")) {
+    if (routerState == null || !routerState.parameters.containsKey(RouteParams.jobDetailJobId)) {
       this.selectedJob = null;
     }
 
-    var selectedJobId = routerState.parameters["jobId"];
+    var selectedJobId = routerState.parameters[RouteParams.jobDetailJobId];
     try {
       this.selectedJob = this.jobs.firstWhere((job) => job.id == selectedJobId);
     } catch (error) {
