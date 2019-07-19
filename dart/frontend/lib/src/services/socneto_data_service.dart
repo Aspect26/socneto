@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:sw_project/src/models/JobResult.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/http_service_basic_auth_base.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
@@ -13,9 +14,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   SocnetoDataService() : super(API_URL, API_PREFIX);
 
-  Future<int> login(String username, String password) async {
-    this.setCredentials(username, password);
-    return await 2;
+  Future<User> login(String username, String password) async {
+  var data = { "username": username, "password": password };
+    return await this.post<User>("user/login", data, (result) => User.fromMap(result));
   }
 
   Future<Job> getJob(String jobId) async =>
