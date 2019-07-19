@@ -4,7 +4,6 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:sw_project/src/handlers/http_error_handlers.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/routes.dart';
@@ -54,6 +53,7 @@ class LoginComponent {
 
   String username;
   String password;
+  bool wrongCredentials = false;
 
   LoginComponent(this._socnetoService, this._router);
 
@@ -63,31 +63,19 @@ class LoginComponent {
 
   onLogin(UIEvent event) {
     if (this.isInputValid()) {
+      this.wrongCredentials = false;
       this._socnetoService.login(username, password).then((User user) {
         this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.id)));
-      }, onError: (error) {
-        print(error.statusCode);
-        this._onCantLogin();
-      });
+      }, onError: (error) => this._onCantLogin(error));
     }
   }
   
-  _onCantLogin() {
-    // TODO: more info
-    Toastr.error("Login", "Can't login with the provided credentials");
-  }
-
-}
-
-class IncorrectCredentialsErrorHandler implements HttpErrorHandler {
-
-  @override
-  bool onHttpError(HttpException httpException) {
-    if (httpException.statusCode != 400) {
-      return false;
+  _onCantLogin(HttpException error) {
+    if (error.statusCode == 400) {
+      Toastr.error("Login", "The provided credentials are wrong");
+    } else {
+      Toastr.error("Login", "Unknown error occured - can't login");
     }
-
-    return true;
   }
 
 }
