@@ -1,13 +1,11 @@
 # SOCNETO specification
 
-This document contains specification of SOCNETO project.
-
 For more than a decade already, there has been an enormous growth of social networks and their audiences. As people post about their life and experiences, comment on other people’s posts and discuss all sorts of topics, they generate a tremendous amount of data that are stored in these networks. It is virtually impossible for a user to get a concise overview about any given topic.
 
-This project offer a framework allowing the users to analyze data related to a chosen topic from given social networks.
+This project offers a framework allowing the users to analyze data related to a chosen topic from given social networks.
 
 ```
-GuidesLines
+GuideLines
 - Neodkazujte se na Wikipedii (ani v diplomkách apod.). Buď dejte odkaz na něco sofistikovaného (specifikaci, knihu, o;dborný článek, web produktu apod.) nebo nic. 
 - Odkazy by bylo dobré dělat standardním způsobem ([2, 16, 4] a číslovaný seznam na konci)
 ```
@@ -16,13 +14,13 @@ GuidesLines
 
 Socneto is an extensible framework allowing user to analyse content across multiple social networks. Analysis and social network data collector can be provided by user. 
 
-Social networks offers free access to data, although the amount is limited by number of records per minute and age of the post which restrict us from downloading and analyzing large amount of historical data. 
+Social networks offer free access to data, although the amount is limited by number of records per minute and age of the post which restrict us from downloading and analyzing large amount of historical data. 
 
-To overcome those limitation, Socneto focuses on continuous analysis e.g. it watches for any new posts or comments to the followed topic. It downloads the data, analyses them, stores the results and updates respective statistics. User can submit several jobs simultaneously.
+To overcome those limitationz, Socneto focuses on continuous analysis e.g. it watches for any new posts or comments to the followed topic. It downloads the data, analyses them, stores the results and updates respective statistics. User can submit several jobs simultaneously.
 
 ![endless-pipeline](images/endless-pipeline.png)
 
-The project support only basic form of data analysis such as topic extraction and a complex one - sentiment analysis supporting english and czech languages. In terms of data acquisition, there are two supported social networks Twitter and Reddit. Both of them supports open API with limited access to the data. If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by own implementation. 
+The project supports only basic form of data analysis such as topic extraction and a complex one - sentiment analysis supporting english and czech languages. In terms of data acquisition, there are two supported social networks Twitter and Reddit. Both of them support open API with limited access to the data. If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by own implementation. 
 
 This project does not serve to any specific user group, it tackles the problem of creating concise overview and designing a multi-purpose platform. It aims to give the user an ability to get a glimpse of prevailing public opinion concerning a given topic in a user-friendly form.
 
@@ -81,7 +79,7 @@ The process of development is divided into the following approximately equally l
 
 #### Asynchronous communication PoC
 
-The application relies upon asynchronous communication which should to be tested in a production environment which requires to get access to an infrastructure with multiple machines. 
+The application relies upon asynchronous communication which should be tested in a production environment which requires to get access to an infrastructure with multiple machines. 
 
 Result should prove that the idea is  plausible. At the beginning, the test will feature only test data acquisition component and a test analyser but as the development advances, they will get replaced with production version and the other types components will get connected as well. 
 
@@ -93,7 +91,7 @@ At the same time, samples of front-end and analysers will be developed by Júliu
 
 #### Data flow
 
-As the platform stabilizes, more focus is put to proper data acquisition, storage and querying. When user submits job, all components has to cooperate in order to deliver expected results.
+As the platform stabilizes, more focus is put to proper data acquisition, storage and querying. When user submits job, all components have to cooperate in order to deliver expected results.
 
 At this point, storage is build to store all data e.g. data from social network and application data needed for a proper job execution. It will be followed by proper implementation of data acquisition component downloading data and feeding them to an analyser. This will be also responsibility of Jaroslav Knotek and Lukáš Kolek.
 
