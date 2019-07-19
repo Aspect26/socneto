@@ -64,17 +64,17 @@ class JobKeywordsGraphComponent implements AfterViewInit, AfterChanges {
   }
 
   void _transformPostsIntoData() {
-    this.graphData = new List<Map>();
+    this.graphData = List<Map>();
 
-    var allKeywords = new List<Keyword>();
-    var keywordsToPosts = new Map<String, List<Post>>();
+    var allKeywords = List<Keyword>();
+    var keywordsToPosts = Map<String, List<Post>>();
 
     for (var post in this.posts) {
       for (var keyword in post.keywords) {
         if (keywordsToPosts.containsKey(keyword)) {
           keywordsToPosts[keyword].add(post);
         } else {
-          keywordsToPosts[keyword] = new List<Post>();
+          keywordsToPosts[keyword] = List<Post>();
           keywordsToPosts[keyword].add(post);
         }
       };
@@ -109,7 +109,7 @@ class JobKeywordsGraphComponent implements AfterViewInit, AfterChanges {
       dataLabels.add("${selectedKeyword.keyword}");
     }
 
-    context.callMethod('createLineChart', [".graph-line-chart", new JsObject.jsify(dataSets), new JsObject.jsify(dataLabels)]);
+    context.callMethod('createLineChart', [".graph-line-chart", JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
   }
 
   void addKeywordTextChange(String text) {
