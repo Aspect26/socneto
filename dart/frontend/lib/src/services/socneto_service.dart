@@ -1,6 +1,7 @@
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
+import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
 
@@ -9,7 +10,7 @@ class SocnetoService {
   final _dataService = SocnetoDataService();
   final _job_management_service = SocnetoJobManagementService();
 
-  Future<int> login(String username, String password) async {
+  Future<User> login(String username, String password) async {
     var result = await this._dataService.login(username, password);
 
     if (result != null) {

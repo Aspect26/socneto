@@ -18,6 +18,7 @@ class HttpServiceBase {
   }
 
   Future<T> post<T>(String path, Map data, Function(Map) mapJson) async {
+    print("POST");
     var response = await this.httpPost(path, data);
     return this._extractJson<T>(response, mapJson);
   }
