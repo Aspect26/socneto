@@ -5,6 +5,7 @@ import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/interop/toastr.dart';
+import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
@@ -60,9 +61,9 @@ class LoginComponent {
 
   onLogin(UIEvent event) {
     if (this.isInputValid()) {
-      this._socnetoService.login(username, password).then((userId) {
+      this._socnetoService.login(username, password).then((User user) {
         // TODO: this userID should be somwhere as a constant
-        this._router.navigate(RoutePaths.workspace.toUrl(parameters: {"userId": '${userId}'}));
+        this._router.navigate(RoutePaths.workspace.toUrl(parameters: {"userId": '${user.id}'}));
       }, onError: (error) {
         this._onCantLogin();
       });
