@@ -13,7 +13,7 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/wor
 @Component(
     selector: 'app-layout',
     templateUrl: 'app_layout_component.html',
-    styleUrls: const [
+    styleUrls: [
       'app_layout_component.css',
       'package:angular_components/app_layout/layout.scss.css'
     ],

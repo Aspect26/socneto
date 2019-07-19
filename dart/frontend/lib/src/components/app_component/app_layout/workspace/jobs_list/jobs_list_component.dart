@@ -8,7 +8,7 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
-import 'package:sw_project/src/services/socneto_data_service.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 import 'package:sw_project/src/utils.dart';
 
 
@@ -38,13 +38,13 @@ class JobsListComponent implements AfterChanges {
   @Input()
   int userId;
 
-  final SocnetoDataService _socnetoDataService;
+  final SocnetoService _socnetoService;
   final Router _router;
 
   List<Job> jobs = [];
   Job selectedJob;
 
-  JobsListComponent(this._socnetoDataService, this._router);
+  JobsListComponent(this._socnetoService, this._router);
 
   @override
   void ngAfterChanges() async {
@@ -58,7 +58,7 @@ class JobsListComponent implements AfterChanges {
   }
 
   void selectJob(Job job) {
-    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: {"userId": "${this.userId}", "jobId": "${job.id}"}));
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.userId, job.id)));
   }
 
   String getProcessingTime(Job job) {
@@ -77,12 +77,12 @@ class JobsListComponent implements AfterChanges {
   }
 
   void onCreateNewJob(_) {
-    this._router.navigate(RoutePaths.createJob.toUrl(parameters: {"userId": "${this.userId}"}));
+    this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(userId)));
   }
 
   void _loadData() async {
     try {
-      this.jobs = await this._socnetoDataService.getUserJobs(this.userId);
+      this.jobs = await this._socnetoService.getUserJobs(this.userId);
       this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
       this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
     } catch (e) {
@@ -91,11 +91,11 @@ class JobsListComponent implements AfterChanges {
   }
 
   void _setSelectedJob(RouterState routerState) {
-    if (routerState == null || !routerState.parameters.containsKey("jobId")) {
+    if (routerState == null || !routerState.parameters.containsKey(RouteParams.jobDetailJobId)) {
       this.selectedJob = null;
     }
 
-    var selectedJobId = routerState.parameters["jobId"];
+    var selectedJobId = routerState.parameters[RouteParams.jobDetailJobId];
     try {
       this.selectedJob = this.jobs.firstWhere((job) => job.id == selectedJobId);
     } catch (error) {
