@@ -7,7 +7,8 @@ import 'package:sw_project/src/services/http_service_basic_auth_base.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 
-  static const String API_URL = "http://acheron.ms.mff.cuni.cz:39103";
+  static const String API_URL = "http://localhost:5000";
+  // static const String API_URL = "http://acheron.ms.mff.cuni.cz:39103";
   static const String API_PREFIX = "api";
 
   SocnetoDataService() : super(API_URL, API_PREFIX);
@@ -15,10 +16,6 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<int> login(String username, String password) async {
     this.setCredentials(username, password);
     return await 2;
-  }
-
-  void logout() {
-    this.unsetCredentials();
   }
 
   Future<Job> getJob(String jobId) async =>

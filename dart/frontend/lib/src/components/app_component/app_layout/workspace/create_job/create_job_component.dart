@@ -7,7 +7,7 @@ import 'package:quiver/time.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
-import 'package:sw_project/src/services/socneto_job_management_service.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 
 
 @Component(
@@ -48,7 +48,7 @@ import 'package:sw_project/src/services/socneto_job_management_service.dart';
 )
 class CreateJobComponent implements OnInit {
 
-  final SocnetoJobManagementService _socnetoJobManagementService;
+  final SocnetoService _socnetoService;
 
   List<SocnetoComponent> availableSocialNetworks = [];
   List<SocnetoComponent> availableDataAnalyzers = [];
@@ -68,7 +68,7 @@ class CreateJobComponent implements OnInit {
   DateTime timeFrom = DateTime.now();
   DateTime timeTo = DateTime.now();
 
-  CreateJobComponent(this._socnetoJobManagementService);
+  CreateJobComponent(this._socnetoService);
 
   void ngOnInit() async {
     this._loadSocialNetworks();
@@ -82,7 +82,7 @@ class CreateJobComponent implements OnInit {
 
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
-      this._socnetoJobManagementService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers).then((jobId) {
+      this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers).then((jobId) {
         this._clear(); Toastr.success("New Job", "New job created successfully!");
       }, onError: (error) {
         Toastr.error( "New Job", "Could not create the new job :(");
@@ -111,7 +111,7 @@ class CreateJobComponent implements OnInit {
     this.availableSocialNetworks = [];
 
     try {
-      this.availableSocialNetworks = await this._socnetoJobManagementService.getAvailableNetworks();
+      this.availableSocialNetworks = await this._socnetoService.getAvailableNetworks();
     } catch (_) {
     } finally {
       this.loadingSocialNetworks = false;
@@ -123,7 +123,7 @@ class CreateJobComponent implements OnInit {
     this.availableDataAnalyzers = [];
 
     try {
-      this.availableDataAnalyzers = await this._socnetoJobManagementService.getAvailableAnalyzers();
+      this.availableDataAnalyzers = await this._socnetoService.getAvailableAnalyzers();
     } catch (_) {
     } finally {
       this.loadingDataAnalyzers = false;
