@@ -7,8 +7,8 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/workspace_component.dart';
+import 'package:sw_project/src/routes.dart';
 
 @Component(
     selector: 'app-layout',
