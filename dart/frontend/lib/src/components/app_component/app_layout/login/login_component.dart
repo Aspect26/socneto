@@ -6,7 +6,7 @@ import 'package:angular_forms/angular_forms.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/routes.dart';
-import 'package:sw_project/src/services/socneto_data_service.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 
 
 @Component(
@@ -46,13 +46,13 @@ import 'package:sw_project/src/services/socneto_data_service.dart';
 )
 class LoginComponent {
 
-  final SocnetoDataService _socnetoDataService;
+  final SocnetoService _socnetoService;
   final Router _router;
 
   String username;
   String password;
 
-  LoginComponent(this._socnetoDataService, this._router);
+  LoginComponent(this._socnetoService, this._router);
 
   bool isInputValid() {
     return username != null && username.isNotEmpty && password != null && password.isNotEmpty;
@@ -60,7 +60,7 @@ class LoginComponent {
 
   onLogin(UIEvent event) {
     if (this.isInputValid()) {
-      this._socnetoDataService.login(username, password).then((userId) {
+      this._socnetoService.login(username, password).then((userId) {
         // TODO: this userID should be somwhere as a constant
         this._router.navigate(RoutePaths.workspace.toUrl(parameters: {"userId": '${userId}'}));
       }, onError: (error) {
