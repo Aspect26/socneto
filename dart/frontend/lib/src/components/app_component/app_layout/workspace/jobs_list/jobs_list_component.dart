@@ -6,6 +6,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/handlers/http_error_handlers.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
@@ -81,13 +82,9 @@ class JobsListComponent implements AfterChanges {
   }
 
   void _loadData() async {
-    try {
-      this.jobs = await this._socnetoService.getUserJobs(this.userId);
-      this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
-      this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
-    } catch (e) {
-      // TODO: some error?
-    }
+    this.jobs = await this._socnetoService.getUserJobs(this.userId, onError: [UnauthorizedHttpErrorHandler(this._router)]);
+    this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
+    this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
   }
 
   void _setSelectedJob(RouterState routerState) {
