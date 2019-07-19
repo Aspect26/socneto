@@ -62,8 +62,7 @@ class LoginComponent {
   onLogin(UIEvent event) {
     if (this.isInputValid()) {
       this._socnetoService.login(username, password).then((User user) {
-        // TODO: this userID should be somwhere as a constant
-        this._router.navigate(RoutePaths.workspace.toUrl(parameters: {"userId": '${user.id}'}));
+        this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.id)));
       }, onError: (error) {
         this._onCantLogin();
       });
