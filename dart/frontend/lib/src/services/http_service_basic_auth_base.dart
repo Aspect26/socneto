@@ -20,7 +20,7 @@ abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
   @override
   Future<Response> httpGet(String path, { Map<String, String> headers }) async {
     if (this._base64Credentials != null) {
-      headers = this.appendHeader(headers, "authorization", "Basic $_base64Credentials");
+      headers = this._appendAuthorizationHeader(headers);
     }
 
     return await super.httpGet(path, headers: headers);
@@ -28,11 +28,15 @@ abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
 
   @override
   Future<Response> httpPost(String path, Map data, {Map<String, String> headers}) async {
-    if (this._base64Credentials) {
-      headers = this.appendHeader(headers, "authorization", "Basic $_base64Credentials");
+    if (this._base64Credentials != null) {
+      headers = this._appendAuthorizationHeader(headers);
     }
 
     return await super.httpPost(path, data, headers: headers);
+  }
+
+  Map<String, String> _appendAuthorizationHeader(Map<String, String> headers) {
+    return this.appendHeader(headers, "Authorization", "Basic $_base64Credentials");
   }
 
 }
