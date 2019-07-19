@@ -12,21 +12,23 @@ GuideLines
 
 ## High level description
 
-Socneto is an extensible framework allowing user to analyse content across multiple social networks. Analysis and social network data collector can be provided by user. 
+Socneto is an extensible framework allowing user to analyse content across multiple social networks.This project tackles the problem of creating concise overview and designing a multi-purpose platform. It aims to give the user an ability to get a glimpse of prevailing public opinion concerning a given topic in a user-friendly form.
 
 Social networks offer free access to data, although the amount is limited by number of records per minute and age of the post which restrict us from downloading and analyzing large amount of historical data. 
 
-To overcome those limitationz, Socneto focuses on continuous analysis e.g. it watches for any new posts or comments to the followed topic. It downloads the data, analyses them, stores the results and updates respective statistics. User can submit several jobs simultaneously.
+To adapt to those limitations, Socneto offers continuous analysis instead of one times jobs. It continuously downloads data and updated reports 
 
 ![endless-pipeline](images/endless-pipeline.png)
 
-The project supports only basic form of data analysis such as topic extraction and a complex one - sentiment analysis supporting english and czech languages. In terms of data acquisition, there are two supported social networks Twitter and Reddit. Both of them support open API with limited access to the data. If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by own implementation. 
+The project supports only limited types of data analyses such as topic extraction and sentiment analysis supporting english and czech languages. 
 
-This project does not serve to any specific user group, it tackles the problem of creating concise overview and designing a multi-purpose platform. It aims to give the user an ability to get a glimpse of prevailing public opinion concerning a given topic in a user-friendly form.
+In terms of data acquisition, Socneto supports two main social networks Twitter and Reddit. Both of them support limited free API or unlimited API for users who have paid accounts. 
+
+If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by users own implementation. 
 
 ## Use case 
 
-Generally, a user specifies a topic for analysis and selects data sources and type of analyses to be used. The system then starts collecting and analyzing data. User can then see summary in form of sentiment chart, significant keywords or post examples with the option to explore and search through them. 
+Generally, a user specifies a topic of interest, required analysis and social network to be used. The system then starts collecting and analyzing data. User can then see summary in form of sentiment chart, significant keywords or post examples with the option to explore and search through them. 
 
 A typical use cases is studying sentiment about a public topic (traffic, medicine etc.) after an important press conference, tracking the opinion evolution about a new product on the market, or comparing stock market values and the general public sentiment peaks of a company of interest.
 
