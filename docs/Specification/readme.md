@@ -223,8 +223,23 @@ What should user know now
 
 ### API 
 
-What is backend and what it offers (conceptually)
-**TODO Július**
+The backend API works using HTTP protocol and REST architecture. It works as a (protection / access) layer between frontend and storage modules of SOCNETO framework. It provides access to the authorized users to their jobs, their results and visualisation definitions.
+
+#### Authentication and authorization
+
+To provide protection of the data, almost each API call requires the user to be authenticated and authorized for their usage. These calls expect *Authorization* HTTP header to be filled. As perfect data protection is out of scope of this work, we use only *Basic authorization* for simplicity. After authenticating the user the backend also verifies, whether the user is authorized to read the data he is requesting. If not, a message with HTTP status code *401 (Unauthorized)* is returned. If the user is authoried, the requested data is returned.
+
+For frontend to be able to implement login, the backend contains login call. This call expects username and password in body and returns the user object which corresponds to the given credentials. If there is no such user status code *400 (Bad Request)* is returned.
+
+#### Jobs
+
+The API provides calls to request list of user's jobs, their details and their results. Only authorized users are able to see these data. The user is able to access only those jobs (including their details and results) he submitted. 
+
+The API also contains endpoint for submiting a new job. This endpoint expects correct job definition otherwise returns HTTP status code *400 (Bad Request)*. The correct definition contains title, topic, non-empty list of data acquirer components to be used, non-empty list of data analyzer components to be used and number of posts to fetch (if not unlimited). *JobId* is returned if the job was successfuly created.
+
+#### Visualisation definitions
+
+The user needs to be able to store and load the definitions of his visualisations (see Frontend - Job Detail section). The backend provides API to list already defined visualisations of user's job and to define a new one.
 
 ### Front end 
 
