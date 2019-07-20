@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Socneto.Api.Authentication;
 using Socneto.Domain;
 using Socneto.Domain.QueryResult;
+using Socneto.Domain.Services;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -57,6 +58,7 @@ namespace Socneto.Api
                 .AddTransient<IQueryUserJobService, QueryUserJobService>()
                 .AddTransient<IResultProducer, KafkaProducer>()
                 .AddTransient<IUserService, UserService>()
+                .AddTransient<IStorageService, StorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"));
         }
