@@ -12,10 +12,17 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
   SocnetoJobManagementService() : super(API_URL, API_PREFIX);
 
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
-      await this.getList<SocnetoComponent> ("components/networks", (result) => SocnetoComponent.fromMap(result));
+      // await this.getList<SocnetoComponent> ("components/networks", (result) => SocnetoComponent.fromMap(result));
+      await [SocnetoComponent("Facebook", ComponentType.dataAcquirer, ComponentSpecialization.facebook),
+        SocnetoComponent("Facebook 2", ComponentType.dataAcquirer, ComponentSpecialization.facebook),
+        SocnetoComponent("Twitter", ComponentType.dataAcquirer, ComponentSpecialization.twitter),
+        SocnetoComponent("Custom", ComponentType.dataAcquirer, ComponentSpecialization.other),
+        SocnetoComponent("Reddit", ComponentType.dataAcquirer, ComponentSpecialization.reddit), ];
 
   Future<List<SocnetoComponent>> getAvailableAnalyzers() async =>
-      await this.getList<SocnetoComponent> ("components/analysers", (result) => SocnetoComponent.fromMap(result));
+      // await this.getList<SocnetoComponent> ("components/analysers", (result) => SocnetoComponent.fromMap(result));
+      await [SocnetoComponent("Sentiment", ComponentType.dataAnalyzer, ComponentSpecialization.other),
+        SocnetoComponent("Keywords", ComponentType.dataAnalyzer, ComponentSpecialization.other) ];
 
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers) async {
     var data = {

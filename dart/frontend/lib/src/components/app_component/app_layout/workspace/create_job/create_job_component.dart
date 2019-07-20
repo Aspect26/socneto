@@ -3,7 +3,6 @@ import 'dart:html';
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
-import 'package:quiver/time.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -48,6 +47,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class CreateJobComponent implements OnInit {
 
+  static final int _MAX_NUMBER_OF_POSTS = 1500;
+
   final SocnetoService _socnetoService;
 
   List<SocnetoComponent> availableSocialNetworks = [];
@@ -60,13 +61,8 @@ class CreateJobComponent implements OnInit {
   String topic = "";
   List<SocnetoComponent> selectedSocialNetworks = [];
   List<SocnetoComponent> selectedDataAnalyzers = [];
-  num maxPostsCount = 150;
+  num maxPostsCount = _MAX_NUMBER_OF_POSTS;
   bool unlimitedPostsCount = false;
-  bool isContinuous = false;
-  DateTime dateFrom = DateTime.now();
-  DatepickerComparison dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(Clock()).range);
-  DateTime timeFrom = DateTime.now();
-  DateTime timeTo = DateTime.now();
 
   CreateJobComponent(this._socnetoService);
 
@@ -133,13 +129,8 @@ class CreateJobComponent implements OnInit {
   _clear() {
     this.jobName = "";
     this.topic = "";
-    this.maxPostsCount = 150;
+    this.maxPostsCount = _MAX_NUMBER_OF_POSTS;
     this.unlimitedPostsCount = false;
-    this.isContinuous = false;
-    this.dateFrom = DateTime.now();
-    this.dateRange = DatepickerComparison.noComparison(DatepickerPreset.thisWeek(Clock()).range);
-    this.timeFrom = DateTime.now();
-    this.timeTo = DateTime.now();
     this.selectedSocialNetworks.clear();
     this.selectedDataAnalyzers.clear();
   }
