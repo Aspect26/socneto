@@ -9,16 +9,6 @@
     app-layout {
         font-family: $font-family;
 
-        header.material-header {
-            background-color: get-color($primary);
-            font-family: $font-family;
-        }
-
-        material-content {
-            min-height: 100vh;
-            background-color: get-color($background, 700);
-        }
-
     }
 
 }
