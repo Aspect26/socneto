@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:sw_project/src/services/http_service_base.dart';
+import 'package:sw_project/src/services/base/http_service_base.dart';
 
 abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
 

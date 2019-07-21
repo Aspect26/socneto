@@ -6,6 +6,7 @@ import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 
@@ -79,10 +80,9 @@ class CreateJobComponent implements OnInit {
   onSubmit(UIEvent e) {
     if (this.isQueryValid()) {
       this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers).then((jobId) {
-        this._clear(); Toastr.success("New Job", "New job created successfully!");
-      }, onError: (error) {
-        Toastr.error( "New Job", "Could not create the new job :(");
-      });
+        this._clear();
+        Toastr.success("New Job", "New job created successfully!");
+      }, onError: this._onSubmitError);
     }
   }
 
@@ -124,6 +124,10 @@ class CreateJobComponent implements OnInit {
     } finally {
       this.loadingDataAnalyzers = false;
     }
+  }
+
+  _onSubmitError(HttpException exception) {
+    Toastr.error( "New Job", "Could not create the new job :(");
   }
 
   _clear() {
