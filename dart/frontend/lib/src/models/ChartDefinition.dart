@@ -6,3 +6,8 @@ class ChartDefinition {
   ChartDefinition.fromMap(Map data) :
       dataJsonPath = data["dataJsonPath"];
 }
+
+enum ChartType {
+  line,
+  pie
+}

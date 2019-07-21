@@ -19,21 +19,7 @@
         </div>
 
         Chart type:
-        <material-radio-group>
-
-            <material-radio
-                    value="Pie">Pie chart
-            </material-radio>
-
-            <material-radio
-                    value="line">Line chart
-            </material-radio>
-
-            <material-radio
-                    value="bar">Bar chart
-            </material-radio>
-
-        </material-radio-group>
+        <chart-type-select (change)="onChartTypeSelected($event)"></chart-type-select>
 
         <br>
 
@@ -44,9 +30,8 @@
         </material-input>
 
         <div footer>
-            <material-button autoFocus class="close-button" (trigger)="onSubmit()">
-                Submit
-            </material-button>
+            <material-button *ngIf="isDefinitionCorrect()" autoFocus class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="!isDefinitionCorrect()" autoFocus disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
         </div>
 
     </material-dialog>

@@ -6,7 +6,9 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_type_select/chart_type_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
+import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
@@ -32,6 +34,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialTooltipDirective,
     MaterialDialogComponent,
     ModalComponent,
+    ChartTypeSelectComponent,
     NgFor,
     NgIf,
   ],
@@ -49,6 +52,7 @@ class CreateChartButtonComponent {
 
   String errorMessage;
   String jsonPath = "";
+  ChartType chartType;
 
   CreateChartButtonComponent(this._socnetoService);
 
@@ -64,6 +68,10 @@ class CreateChartButtonComponent {
   }
 
   void onSubmit() async {
+    if (!this.isDefinitionCorrect()) {
+      this.errorMessage = "Incorrect chart definition";
+      return;
+    }
     try {
       await this._socnetoService.createJobChartDefinition(job.id, jsonPath);
     } catch (e) {
@@ -71,6 +79,14 @@ class CreateChartButtonComponent {
       return;
     }
     this.showCreateDialog = false;
+  }
+
+  void onChartTypeSelected(ChartType chartType) {
+    this.chartType = chartType;
+  }
+
+  bool isDefinitionCorrect() {
+    return this.chartType != null && this.jsonPath.isNotEmpty;
   }
 
   void _reset() {
