@@ -9,5 +9,28 @@
 
   create-chart-button {
 
+    .create-chart-button-wrapper {
+      display: flex;
+      height: 200px;
+      padding: 42px;
+      border: 25px solid #f77b72;
+      border-radius: 75px;
+      justify-content: center;
+
+      .add-icon {
+        path {
+          fill: get-color($primary, 300);
+        }
+      }
+    }
+
+    .create-chart-button-wrapper:hover {
+      background-color:  get-color($background, 400);
+    }
+
+    .create-chart-button-wrapper:active {
+      background-color:  get-color($background, 600);
+    }
+
   }
 }
