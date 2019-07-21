@@ -1,0 +1,61 @@
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/style/style.scss";
+
+@import 'package:angular_components/material_progress/mixins';
+
+
+@mixin material-theme($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  material-input {
+    .baseline {
+      .underline {
+        .focused-underline {
+          background-color: get-color($primary, A700);
+        }
+      }
+    }
+  }
+
+  material-button {
+    background-color: get-color($primary, 500);
+    color: get-color-contrast($primary, 500)
+  }
+
+  material-header {
+    background-color: get-color($primary);
+  }
+
+  material-content {
+    background-color: get-color($background, 700);
+  }
+
+  /* NOTE: this is not working for some reason :(
+  @include material-progress-theme(
+          $indeterminate-color: get-color($primary, 100),
+          $active-color: get-color($primary, 500),
+          $secondary-color: get-color($primary, 200)
+  );
+   */
+
+  material-progress {
+    .progress-container.indeterminate {
+      background-color: get-color($primary, 100);
+    }
+
+    .progress-container.indeterminate > .secondary-progress {
+      background-color: get-color($primary, 500);
+    }
+
+    .active-progress {
+      background-color: get-color($primary, 500);
+    }
+
+    .secondary-progress {
+      background-color: get-color($primary, 200) !important;
+    }
+  }
+
+}
