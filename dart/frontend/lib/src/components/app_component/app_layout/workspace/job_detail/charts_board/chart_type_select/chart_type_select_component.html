@@ -1,0 +1,8 @@
+<div class="mdc-card wrapper">
+    <div *ngFor="let chartType of chartTypes" [class.disabled]="selected != chartType" (click)="onSelectionChange(chartType)" class="chart-type-selector">
+        <p>{{ getChartTitle(chartType) }}</p>
+        <div class="chart-type-image-wrapper">
+            <img [src]="getIcon(chartType)" alt="Chart image">
+        </div>
+    </div>
+</div>
