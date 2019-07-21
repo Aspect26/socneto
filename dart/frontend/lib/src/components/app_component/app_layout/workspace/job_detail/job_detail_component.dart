@@ -60,17 +60,9 @@ class JobDetailComponent implements OnActivate {
     try {
       this.job = await this._socnetoService.getJob(jobId);
       this.posts = await this._socnetoService.getJobPosts(jobId);
-    } on HttpException catch (e) {
-      this._onHttpError(e);
+    } on NotAuthorizedException {
+      await this._router.navigate(RoutePaths.notAuthorized.toUrl());
     }
-  }
-
-  void _onHttpError(HttpException exception) {
-    if (exception.statusCode == 401) {
-      this._router.navigate(RoutePaths.notAuthorized.toUrl());
-    }
-
-    throw exception;
   }
 
 }
