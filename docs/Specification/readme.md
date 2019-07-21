@@ -99,11 +99,11 @@ At this point, storage is build to store all data e.g. data from social network 
 
 The sentiment analyser is expected to be the most complex and the most risky part of the whole project. It will require great deal of effort to develop, test and finally integrate it into the framework. This will be supervised by Petra Doubravová and Jan Pavlovský.
 
-At this point, first result will start to emerge. To visualize them a front-end will be developed by Jůlius Flimmel.
+At this point, first result will start to emerge. To visualize them a front-end will be developed by Július Flimmel.
 
 #### Polishing
 
-The last phase focuses on extendibility and deployment. The application will be extended by the other data acquisition component connecting to Reddit, and a analyser covering simple topic extraction. 
+The last phase focuses on extendibility and deployment as well as improving precision of supported analysers. The application will be extended by the other data acquisition component connecting to Reddit, and a analyser covering simple topic extraction. 
 
 Once all the component are ready, project will start to finalize with testing sessions, documenting and creating deploying guides helping user to start the project from zero. 
 
@@ -113,12 +113,9 @@ Once all the component are ready, project will start to finalize with testing se
 
 ## Platform architecture
 
-The framework has on service oriented architecture (acronym SOA, see [wiki](https://en.wikipedia.org/wiki/Service-oriented_architecture)). SOA allows for versatility, separation of concerns and future extension.
+The framework uses service oriented architecture and a message broker used for communication among the services allowing for high throughput and multi-producer multi-consumer communication. 
 
-Communication between the services is provided by distributed publish/subscribe message broker Kafka (see [Documentation](https://kafka.apache.org/documentation/)). It will allow us to create flexible data flow pipeline since components are not required to know predecessor or successor.
-
-<basic kafka flow picture>
-
+As was already stated, Socneto consist of multiple data acquirers, multiple analysers, front-end and a storage. On the top of it, it also contains a service responsible for their proper function of the framework as a whole: component management and metric processing. 
 
 ### Storage
 
@@ -131,8 +128,10 @@ Communication between the services is provided by distributed publish/subscribe 
 
 ### Components
 
-Each service has unique responsibility given by functional requirements (ref ...).
+**Work in progress**
 
+
+Each service has unique responsibility given by functional requirements (ref ...).
 
 * API gateway - Exposes [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) api allowing users to submit jobs and query results of their jobs.
 * Data Acquirer - downloads requested data from a given source
@@ -153,7 +152,43 @@ Each service has unique responsibility given by functional requirements (ref ...
 
 #### Analysers
 
-**TODO Jara**
+The analyzers will process each post they receive from the acquirers. After analyzing a post they will send the result to the storage. Because these analyses will be used by other components (mainly frontend), the analyzers' output will need to be in some standardized form. As this output will be mainly processed by a computer, we decided to use a computer friendly JSON format.
+
+The structure of the JSON will need to be robust and simple enough, so that the user of frontend may easily specify which data he wants to visualize using JSONPath. The structure of the output is following:
+```json
+{
+    "analyzer_name": {
+        "analysis_1": { "type": "number", "value": 0.56 },
+        "analysis_2": { "type": "string", "value": "rainbow" },
+        "analysis_3": { "type": "[string]", "value": ["friends", "games", "movies" ] }
+    }
+}
+```
+The whole analysis is packed in one object named after the analyzer. As the analyzer may compute multiple analyses at once, each one will be also represented by one object named after the analysis. The object representing the analysis has a strict format. It contains exactly two attributes:
+ * *type*: specifying the type of the result. The supported types will be *number* (including integers and floating point values), *string* and *lists* of these two. Lists of lists will *not* be supported,
+ * *value*: the actual result of the analysis
+
+There may be multiple analyzers in our framework, so all their outputs are inserted into one analysis object. We don't use arrays of objects but named objects instead, so that the user may easily specify analyzer and analysis in JSONPath when creating a new chart on frontend.
+
+Here we provide an example of a post's complete analysis. It contains analyses from two analyzers - *keywords* and *topic*. Keywords analyzer returns one analysis called *top-10* where the values are found keywords in the post. The topic analyzer returns one analysis, *accuracy*, specifying how much the post corresponds to the given topic.
+```json
+{
+    "keywords": {
+        "top-10": {
+            "type": "[string]",
+            "value": [
+                "Friends", "Games", "Movies", ...
+            ]
+        }
+    },
+    "topic": {
+        "accuracy": {
+            "type": "number",
+            "value": 0.86
+        }
+    },
+}
+```
 
 #### Storage wrappers
 
@@ -168,6 +203,9 @@ It offers components to subscribe to a topic, to which producer sends data. Mult
 <event diagram opposing to http approach >
 
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
+**TODO Jara** component management
+
+**TODO Jara** docker
 
 **TODO all**: mention complexity and what we will actually implement. Don't be too specifit
 
@@ -220,6 +258,10 @@ Rules
 
 What should user know now
  -->
+
+### System monitoring
+
+**TODO Lukas**
 
 ### API 
 
@@ -289,7 +331,7 @@ Only users with admin privileges are able to access this component. It serves to
   - 3rd party solution
   - impacts every component
 
-## Development
+## Development [If we need more pages]
 
 This section describes what tools will be used in order to comply with software engineering best practises.
 
