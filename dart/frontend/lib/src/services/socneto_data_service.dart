@@ -4,7 +4,7 @@ import 'package:sw_project/src/models/JobResult.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/User.dart';
-import 'package:sw_project/src/services/http_service_basic_auth_base.dart';
+import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 
@@ -22,10 +22,8 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<Job> getJob(String jobId) async =>
     await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
-  Future<List<Job>> getUserJobs(int userId) async {
-    return await this.getList<Job>(
-        "user/$userId/jobs", (result) => Job.fromMap(result));
-  }
+  Future<List<Job>> getUserJobs(int userId) async =>
+    await this.getList<Job>("user/$userId/jobs", (result) => Job.fromMap(result));
 
   Future<List<Post>> getJobPosts(String jobId) async {
     var jobResult = await this.get<JobResult>("job/$jobId/result", (result) => JobResult.fromMap(result));
