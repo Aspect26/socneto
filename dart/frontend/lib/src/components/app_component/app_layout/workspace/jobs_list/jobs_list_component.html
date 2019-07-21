@@ -1,25 +1,23 @@
-<section>
-    <div class="mdc-card mdc-card">
-        <h2>Your jobs</h2>
-        <material-list focusList>
-            <material-select-item (trigger)="onCreateNewJob($event)" class="special">
-                <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
-                Create Job
-            </material-select-item>
+<div class="mdc-card jobs-list-card">
+    <h2>Your jobs</h2>
+    <material-list focusList>
+        <material-select-item (trigger)="onCreateNewJob($event)" class="special">
+            <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
+            Create Job
+        </material-select-item>
 
-            <material-select-item *ngFor="let job of jobs" (trigger)="selectJob(job)" focusItem [selected]="job == selectedJob">
-                <material-icon *ngIf="job.finished" icon="check" class="material-list-item-primary" aria-hidden="true"></material-icon>
-                <material-icon *ngIf="!job.finished" icon="loop" class="material-list-item-primary" aria-hidden="true"></material-icon>
+        <material-select-item *ngFor="let job of jobs" (trigger)="selectJob(job)" focusItem [selected]="job == selectedJob">
+            <material-icon *ngIf="job.finished" icon="check" class="material-list-item-primary" aria-hidden="true"></material-icon>
+            <material-icon *ngIf="!job.finished" icon="loop" class="material-list-item-primary" aria-hidden="true"></material-icon>
 
-                <div>
-                    <b>{{job.name}}</b> <br>
-                    Created at: {{ getHumanReadableDate(job.startedAt) }} <br>
-                    <span *ngIf="!job.finished" class="secondary">
-                        In progress for {{ getProcessingTime(job) }}
-                    </span>
-                </div>
+            <div>
+                <b>{{job.name}}</b> <br>
+                Created at: {{ getHumanReadableDate(job.startedAt) }} <br>
+                <span *ngIf="!job.finished" class="secondary">
+                    In progress for {{ getProcessingTime(job) }}
+                </span>
+            </div>
 
-            </material-select-item>
-        </material-list>
-    </div>
-</section>
+        </material-select-item>
+    </material-list>
+</div>
