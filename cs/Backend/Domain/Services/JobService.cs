@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain
+namespace Socneto.Domain.Services
 {
     public class JobService : IJobService
     {
