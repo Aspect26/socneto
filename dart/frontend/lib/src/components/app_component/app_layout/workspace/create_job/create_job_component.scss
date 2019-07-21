@@ -10,8 +10,6 @@
   create-job {
 
     .create-job-card {
-      background-color: get-color($background, 200);
-      font-family: $font-family;
       padding: 20px;
 
       h3 {
@@ -21,18 +19,6 @@
 
       i {
         color: get-color($primary, 500);
-      }
-
-      material-input {
-
-        .focused-underline {
-          background-color: get-color($primary, 400);
-        }
-
-        .focused.label-text:not(.disabled) {
-          color: get-color($primary, 400);
-        }
-
       }
 
       .labeled-input {
