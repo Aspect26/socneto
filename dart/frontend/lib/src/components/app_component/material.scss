@@ -58,6 +58,15 @@
     }
   }
 
+  header.material-header {
+    background-color: get-color($primary);
+  }
+
+  material-content {
+    min-height: 100vh;
+    background-color: get-color($background, 700);
+  }
+
   .mdc-card {
     background-color: get-color($background, 200);
   }
