@@ -8,33 +8,36 @@
 
   login {
 
-    font-family: $font-family;
+    .container {
+      flex-direction: column;
+      height: 500px;
 
-    .mdc-card {
-      margin: auto;
-      padding: 20px;
-      width: 20%;
-      background-color: get-color($background, 200);
-
-      h2 {
-        margin: 5px;
-        text-align: center;
-        color: get-color($primary);
+      .space {
+        flex: 20%;
       }
 
-      material-input {
-        width: 100%;
-      }
+      .login-card {
+        margin: auto;
+        padding: 20px;
+        width: 20%;
 
-      material-button {
-        background-color: get-color($primary, 500);
-      }
+        h2 {
+          margin: 5px;
+          text-align: center;
+          color: get-color($primary);
+        }
 
-      .login-button {
-        color: get-color($primary, A100)
-      }
+        .label {
+          font-weight: bold;
+        }
 
+        material-input {
+          width: 100%;
+        }
+
+      }
     }
+
   }
 
 }

@@ -13,31 +13,6 @@
       margin-left: 15px;
     }
 
-    material-input {
-
-      .focused-underline {
-        background-color: get-color($primary, 400);
-      }
-
-    }
-
-    material-chip {
-      background-color: get-color($background, 400);
-
-      .delete-icon {
-        fill: get-color($background, 600);
-      }
-    }
-
-    material-chip:hover {
-      cursor: pointer;
-      background-color: get-color($background, 300);
-
-      .delete-icon {
-        fill: get-color($background, 500);
-      }
-    }
-
   }
 
 }

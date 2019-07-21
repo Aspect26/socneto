@@ -6,7 +6,7 @@ import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
-import 'package:sw_project/src/services/http_service_basic_auth_base.dart';
+import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 

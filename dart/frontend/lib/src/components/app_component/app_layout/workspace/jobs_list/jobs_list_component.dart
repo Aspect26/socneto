@@ -8,6 +8,7 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 import 'package:sw_project/src/utils.dart';
 
@@ -83,11 +84,13 @@ class JobsListComponent implements AfterChanges {
   void _loadData() async {
     try {
       this.jobs = await this._socnetoService.getUserJobs(this.userId);
-      this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
-      this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
-    } catch (e) {
-      // TODO: some error?
+    } on HttpException catch (e) {
+      this.jobs = [];
+      this._onLoadDataError(e);
     }
+
+    this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
+    this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
   }
 
   void _setSelectedJob(RouterState routerState) {
@@ -101,6 +104,14 @@ class JobsListComponent implements AfterChanges {
     } catch (error) {
       this.selectedJob = null;
     }
+  }
+
+  void _onLoadDataError(HttpException error) {
+    if (error.statusCode == 401) {
+      this._router.navigate(RoutePaths.notAuthorized.toUrl());
+    }
+
+    throw error;
   }
 
 }
