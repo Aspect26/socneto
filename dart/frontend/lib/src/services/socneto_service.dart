@@ -2,7 +2,6 @@ import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/User.dart';
-import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
 
@@ -23,11 +22,11 @@ class SocnetoService {
     return result;
   }
 
-  Future<Job> getJob(String jobId, { Function(HttpException) onError }) async =>
+  Future<Job> getJob(String jobId) async =>
       await this._dataService.getJob(jobId);
-  Future<List<Job>> getUserJobs(int userId, { Function(HttpException) onError }) async =>
+  Future<List<Job>> getUserJobs(int userId) async =>
       await this._dataService.getUserJobs(userId);
-  Future<List<Post>> getJobPosts(String jobId, { Function(HttpException) onError }) async =>
+  Future<List<Post>> getJobPosts(String jobId) async =>
       await this._dataService.getJobPosts(jobId);
 
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
