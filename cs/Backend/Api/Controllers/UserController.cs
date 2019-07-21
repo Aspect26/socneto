@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Socneto.Api.Models;
-using Socneto.Domain;
 using Socneto.Domain.QueryResult;
+using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
 {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain
+namespace Socneto.Domain.Services
 {
     public class UserService : IUserService
     {
