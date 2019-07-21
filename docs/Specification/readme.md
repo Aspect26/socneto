@@ -113,9 +113,21 @@ Once all the component are ready, project will start to finalize with testing se
 
 ## Platform architecture
 
-The framework uses service oriented architecture and a message broker used for communication among the services allowing for high throughput and multi-producer multi-consumer communication. 
+The framework uses service oriented architecture. Each service runs in a separate container. Containers(except front-end and respective back-end) communicate using a message broker `Kafka` which allows for high throughput and multi-producer multi-consumer communication. 
 
-As was already stated, Socneto consist of multiple data acquirers, multiple analysers, front-end and a storage. On the top of it, it also contains a service responsible for their proper function of the framework as a whole: component management and metric processing. 
+In order to deliver requested data to the user multiple components must cooperate
+
+-data acquirers, 
+- analysers, 
+- front-end
+- a storage. 
+
+On the top of it, it also contains a service responsible for their proper function of the framework as a whole: job management and metric processing. 
+
+Job management is responsible for proper cooperation of all components. There is a dedicated service to support that: `Job management service`. It is the component that receives a job, defined by user and transforms it to multiple tailor-made requests for all involved components.
+
+For example, if user defines a task that requires sentiment analysis of data from Twitter, `Job management service` delivers job configuration to the component responsible for twitter data acquisition and connects it to the sentiment analysis input. No other component is aware that this particular job is performed. 
+
 
 ### Storage
 
@@ -126,9 +138,18 @@ As was already stated, Socneto consist of multiple data acquirers, multiple anal
   - posts and analysed data
   - app data
 
+### Acquiring data
+
+A request for data acquisition contains information about requested data in a form of a query, output channels where to send data and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
+
+Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits [todo https://developer.twitter.com/en/docs/basics/rate-limits] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval.
+
+Socnet will support acquiring data from both of those sites with use of 3rd party libraries `LinqToTwitter` and `Reddit.Net`. Both of them will make it easier to comply with api limits and tackle respective communication. Both of data acquirers will be written in c#.
+<!-- 
 ### Components
 
 **Work in progress**
+
 
 
 Each service has unique responsibility given by functional requirements (ref ...).
@@ -142,15 +163,16 @@ Each service has unique responsibility given by functional requirements (ref ...
 
 #### Data acquirer
 
+
 **TODO Jara**
 
 - requires credentials
 - what will be implemented 
 - what will be integrated
 
-> Pokud už víte, přidala bych konkrétní fakta např. k databázovým systémům (jaké konkrétně, jaká mají případně omezení apod.), ke zdrojům dat (co povolují stáhnout, jak apod.). 
+> Pokud už víte, přidala bych konkrétní fakta např. k databázovým systémům (jaké konkrétně, jaká mají případně omezení apod.), ke zdrojům dat (co povolují stáhnout, jak apod.).  -->
 
-#### Analysers
+### Analysers
 
 The analyzers will process each post they receive from the acquirers. After analyzing a post they will send the result to the storage. Because these analyses will be used by other components (mainly frontend), the analyzers' output will need to be in some standardized form. As this output will be mainly processed by a computer, we decided to use a computer friendly JSON format.
 
@@ -200,64 +222,15 @@ As was previously stated, data are exchanged using message broker. The main reas
 
 It offers components to subscribe to a topic, to which producer sends data. Multiple producers can publish data to the same topic and kafka makes sure to deliver them to all subscriber. It also keeps track of which message was delivered and which was not delivered yet, so if any component temporarily disconnects, it can continue at work once the connection is up again. 
 
-<event diagram opposing to http approach >
-
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
-**TODO Jara** component management
-
-**TODO Jara** docker
 
 **TODO all**: mention complexity and what we will actually implement. Don't be too specifit
 
-<!-- The system is implemented as docker containers (expecting single application in each container). Each container is given an address of a the job management service.
+**TODO component management - registration, job specification**
 
-When a container starts it requests(pull) a network configuration from the job management service. The configuration contains input and output topics for a given module e.g. module must be registered before its first use. 
+<!-- When the container starts, it must register job configuration callback to receive configuration of each submited job.
 
-Also, when the container starts, it must register job configuration callback to receive configuration of each submited job.
-
-
-When user submits job on UI, it gets to a Job Management Service(foreman?). It will parse the job and **distributes**(push) respective configuration to all nodes.
-
-### Configuration
-
-Two types
-- node [obsolete]
-- job
-
-[obsolete]
-Node config contains[**TODO** remove]
-- input topic(which the node listens to)
-- output topic(into which it produces)
-
-
-Job configs varies for each component type (if flexible pipeline then for each node)(acquirer, analyser and storage). When the job starts, each component receives tailored configuration(that's why they have to be registered).
-
-*From top of my head*
-
-Acquirer job config
-- Networks credentials
-
-Analyser
-- dunno 
-
-Storage
-- dunno
-- 
-Rules
-
-- on startup
-  - job config 2 node (node is alias for any component) channel is established
-    - defined by name 
-    - one way
-  - node accepts configuration or control message (input output topic) per job subnmit (which also contains input and output topic **allows for flexible pipeline**)
-- fixed configuration per node
-  - NodeUniqueId (prefix for the topics + metrics identifier)
-  - MetricCollectorTopic
-- Metrics
-  - collects events and failures
-
-What should user know now
- -->
+When user submits job on UI, it gets to a Job Management Service(foreman?). It will parse the job and **distributes**(push) respective configuration to all nodes. -->
 
 ### System monitoring
 
