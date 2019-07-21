@@ -7,6 +7,7 @@ import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
 
+
 class SocnetoService {
 
   final _dataService = SocnetoDataService();
@@ -24,21 +25,21 @@ class SocnetoService {
   }
 
   Future<Job> getJob(String jobId) async =>
-    this._dataService.getJob(jobId);
+      await this._dataService.getJob(jobId);
   Future<List<Job>> getUserJobs(int userId) async =>
-    this._dataService.getUserJobs(userId);
+      await this._dataService.getUserJobs(userId);
   Future<List<Post>> getJobPosts(String jobId) async =>
-    this._dataService.getJobPosts(jobId);
+      await this._dataService.getJobPosts(jobId);
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
-    this._dataService.getJobChartDefinitions(jobId);
+      await this._dataService.getJobChartDefinitions(jobId);
   Future<Success> createJobChartDefinition(String jobId, String jsonPath) async =>
-    this._dataService.createJobChartDefinition(jobId, jsonPath);
+      await this._dataService.createJobChartDefinition(jobId, jsonPath);
 
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
-    this._job_management_service.getAvailableNetworks();
+      await this._job_management_service.getAvailableNetworks();
   Future<List<SocnetoComponent>> getAvailableAnalyzers() async =>
-    this._job_management_service.getAvailableAnalyzers();
+      await this._job_management_service.getAvailableAnalyzers();
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers) async =>
-    this._job_management_service.submitNewJob(query, networks, analyzers);
+      await this._job_management_service.submitNewJob(query, networks, analyzers);
 
 }

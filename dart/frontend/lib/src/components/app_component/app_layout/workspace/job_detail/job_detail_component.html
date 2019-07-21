@@ -1,24 +1,22 @@
-<section>
-    <div class="mdc-card mdc-card">
-        <div *ngIf="job != null">
-            <h3>{{ job.name }}</h3>
+<div class="mdc-card job-detail-card">
+    <div *ngIf="job != null">
+        <h3>{{ job.name }}</h3>
 
-            <material-tab-panel class="tab-panel" [activeTabIndex]="0">
+        <material-tab-panel class="tab-panel" [activeTabIndex]="0">
 
-                <material-tab label="Charts board">
-                    <charts-board [job]="job"></charts-board>
-                </material-tab>
+            <material-tab label="Charts board">
+                <charts-board [job]="job"></charts-board>
+            </material-tab>
 
-                <material-tab label="Keywords sentiment chart">
-                    <job-keywords-graph [posts]="posts"></job-keywords-graph>
-                </material-tab>
+            <material-tab label="Keywords sentiment chart">
+                <job-keywords-graph [posts]="posts"></job-keywords-graph>
+            </material-tab>
 
-                <material-tab label="Posts">
-                    <posts-list [posts]="posts"></posts-list>
-                </material-tab>
+            <material-tab label="Posts">
+                <posts-list [posts]="posts"></posts-list>
+            </material-tab>
 
-            </material-tab-panel>
+        </material-tab-panel>
 
-        </div>
     </div>
-</section>
+</div>

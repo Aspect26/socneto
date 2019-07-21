@@ -11,9 +11,11 @@
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_type_select/chart_type_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.scss";
+@import "package:sw_project/src/components/app_component/material.scss";
 
 
 @mixin apply-theme($theme) {
+  @include material-theme($theme);
   @include app-layout-component($theme);
   @include jobs-list-component($theme);
   @include job-detail-component($theme);
