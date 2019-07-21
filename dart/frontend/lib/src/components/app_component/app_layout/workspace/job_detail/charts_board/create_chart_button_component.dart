@@ -6,7 +6,7 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
-import 'package:sw_project/src/models/ChartDefinition.dart';
+import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
@@ -23,23 +23,64 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialSelectItemComponent,
     MaterialTabPanelComponent,
     MaterialTabComponent,
+    MaterialRadioComponent,
+    MaterialRadioGroupComponent,
+    MaterialInputComponent,
+    AutoDismissDirective,
+    AutoFocusDirective,
+    MaterialButtonComponent,
+    MaterialTooltipDirective,
+    MaterialDialogComponent,
+    ModalComponent,
     NgFor,
     NgIf,
   ],
   templateUrl: 'create_chart_button_component.html',
   styleUrls: ['create_chart_button_component.css'],
-  providers: [materialProviders],
+  providers: [materialProviders, overlayBindings],
 )
-class CreateChartButtonComponent implements AfterChanges {
+class CreateChartButtonComponent {
 
   @Input() Job job;
 
   final SocnetoService _socnetoService;
 
+  bool showCreateDialog = false;
+
+  String errorMessage;
+  String jsonPath = "";
+
   CreateChartButtonComponent(this._socnetoService);
 
-  @override
-  void ngAfterChanges() async {
+  void onClick() {
+    if (!this.showCreateDialog) {
+      this.showCreateDialog = true;
+      this._reset();
+    }
+  }
+
+  void onCloseDialog() {
+    this.showCreateDialog = false;
+  }
+
+  void onSubmit() async {
+    try {
+      await this._socnetoService.createJobChartDefinition(job.id, jsonPath);
+    } catch (e) {
+      this._handleHttpException(e);
+      return;
+    }
+    this.showCreateDialog = false;
+  }
+
+  void _reset() {
+    this.jsonPath = "";
+    this.errorMessage = null;
+  }
+
+  // TODO: catch HttpException here when corresponding branch is merged
+  void _handleHttpException(e) {
+    Toastr.error("Error", "Could not submit the job");
   }
 
 }

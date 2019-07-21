@@ -4,6 +4,7 @@ import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JobResult.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/http_service_basic_auth_base.dart';
 
@@ -33,5 +34,10 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
     await this.getList<ChartDefinition>("charts/$jobId", (result) => ChartDefinition.fromMap(result));
+
+  Future<Success> createJobChartDefinition(String jobId, String jsonPath) async {
+    var data = { "jobId": jobId, "jsonPath": jsonPath };
+    return this.post<Success>("charts/create", data, (result) => Success.fromMap(result));
+  }
 
 }
