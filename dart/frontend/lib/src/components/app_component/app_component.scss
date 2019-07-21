@@ -7,6 +7,8 @@
 @import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_keywords_graph_component/job_keywords_graph_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.scss";
 
 
@@ -20,6 +22,8 @@
   @include login-component($theme);
   @include components-select-component($theme);
   @include component-select-component($theme);
+  @include charts-board-component($theme);
+  @include create-chart-button-component($theme)
 }
 
 .theme-red-light {
