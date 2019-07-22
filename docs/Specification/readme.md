@@ -22,7 +22,7 @@ To adapt to those limitations, Socneto offers continuous analysis instead of one
 
 The project supports only limited types of data analyses such as topic extraction and sentiment analysis supporting english and czech languages. 
 
-In terms of data acquisition, Socneto supports two main social networks Twitter and Reddit. Both of them support limited free API or unlimited API for users who have paid accounts. 
+In terms of data acquisition, Socneto supports two main social networks Twitter [^1] and Reddit[2]. Both of them support limited free API or unlimited API for users who have paid accounts. 
 
 If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by users own implementation. 
 
@@ -113,21 +113,11 @@ Once all the component are ready, project will start to finalize with testing se
 
 ## Platform architecture
 
-The framework uses service oriented architecture. Each service runs in a separate container. Containers(except front-end and respective back-end) communicate using a message broker `Kafka` which allows for high throughput and multi-producer multi-consumer communication. 
+The framework uses service oriented architecture. Each service runs in a separate docker container. Packing services into docker container makes deployment easier since all required dependencies are present inside the container. 
 
-In order to deliver requested data to the user multiple components must cooperate
+Containers(except front-end and respective back-end) communicate using a message broker Kafka [^3] which allows for high throughput and multi-producer multi-consumer communication. (For more details, please refer to <<Communication>>).
 
--data acquirers, 
-- analysers, 
-- front-end
-- a storage. 
-
-On the top of it, it also contains a service responsible for their proper function of the framework as a whole: job management and metric processing. 
-
-Job management is responsible for proper cooperation of all components. There is a dedicated service to support that: `Job management service`. It is the component that receives a job, defined by user and transforms it to multiple tailor-made requests for all involved components.
-
-For example, if user defines a task that requires sentiment analysis of data from Twitter, `Job management service` delivers job configuration to the component responsible for twitter data acquisition and connects it to the sentiment analysis input. No other component is aware that this particular job is performed. 
-
+**TODO link intro to the next section**
 
 ### Storage
 
@@ -142,9 +132,9 @@ For example, if user defines a task that requires sentiment analysis of data fro
 
 A request for data acquisition contains information about requested data in a form of a query, output channels where to send data and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
 
-Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits [todo https://developer.twitter.com/en/docs/basics/rate-limits] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval.
+Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits[^5] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval.
 
-Socneto will support acquiring data from both of those sites with use of 3rd party libraries `LinqToTwitter` and `Reddit.Net`. Both of them will make it easier to comply with api limits and tackle respective communication. Both of data acquirers will be written in c#.
+Socneto will support acquiring data from both of those sites with use of 3rd party libraries `LinqToTwitter`[^6] and `Reddit.Net`[^7]. Both of them will make it easier to comply with api limits and tackle respective communication. Both of data acquirers will be written in c#.
 
 ### Analysers
 
@@ -201,6 +191,10 @@ It offers components to subscribe to a topic, to which producer sends data. Mult
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
 
 Main pitfall of asynchronous communication a lack of feedback from receiver. More specifically sender is not sure whether anyone is actually listening. In order to tackle this problem, Job Management Service(JMS) was introduced. 
+
+Job management is responsible for proper cooperation of all components. JMS is the component that receives a job, defined by user and transforms it to multiple tailor-made requests for all involved components.
+
+For example, if user defines a task that requires sentiment analysis of data from Twitter, JMS delivers job configuration to the component responsible for twitter data acquisition and connects it to the sentiment analysis input. No other component is aware that this particular job is performed. 
 
 When any container starts, the first thing it does is to register itself and provide information about its type and unique id. This way it gets connected to the system and user can select it (in case of data acquirer or analyser). 
 
@@ -266,36 +260,20 @@ TODO: write more here (how to access it, how does it work?)
 Only users with admin privileges are able to access this component. It serves to make the user able to add, remove or configure data analyzer and data acquirer components.
 
 
-### Features
+### Extensibility
 
-- extensibility
-  - TODO Analyses
-  - TODO Data sources
-  - TODO Visualization
-  - how does it work
-- ELK Metrics
-  - what we will track
-  - 3rd party solution
-  - impacts every component
+Socneto framework main feature is an extensibility. A user can implement his own data acquirer or an analyser by creating an application that implements 
 
-## Development [If we need more pages]
+- component registration flow in order to connect the component to the system
+- input/output API
 
-This section describes what tools will be used in order to comply with software engineering best practises.
+This application can run in a docker as the rest of the system or it just has to be able to connect to the message broker Kafka. 
 
-### Deployment
+## References
 
-Services are deployed in form of container. For the deployment and following container management [Kubernetes](https://kubernetes.io/) orchestration system is employed. 
-
-### Versioning
-
-Code is versioned using Git repository.
-- code reviews
-- branching model
-
-### CI/CD and automation
-
-CI/CD is implemented using [TeamCity](https://www.jetbrains.com/teamcity/). It allows for a deployment pipeline definition in which code in the repository get automatically tested, then containerized and deployed. This pipeline is triggered by push to a given branch of the repository.
-
-### Testing
-
-What we want to focus on during testing
+[^1]: https://twitter.com
+[^2]: https://reddit.com
+[^3]: https://kafka.apache.org/
+[^5]: https://developer.twitter.com/en/docs/basics/rate-limits
+[^6]: https://github.com/JoeMayo/LinqToTwitter
+[^7]: https://github.com/sirkris/Reddit.NET
