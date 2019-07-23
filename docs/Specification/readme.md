@@ -118,15 +118,54 @@ The framework uses service oriented architecture. Each service runs in a separat
 Containers(except front-end and respective back-end) communicate using a message broker Kafka [^3] which allows for high throughput and multi-producer multi-consumer communication. (For more details, please refer to <<Communication>>).
 
 **TODO link intro to the next section**
+### Data
 
-### Storage
+Data store is designed for running on a different machine without internet connection for better security, different technical requirements
+for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created
+for a transparent communication with all databases.
 
-**TODO Lukas**
+#### Store components
 
-- mention data retention
-- what will be stored
-  - posts and analysed data
-  - app data
+- Database interfase
+  - This component makes abstraction over an implemented polyglot for the rest of platform. Consists of "public" API for communication
+  with the web app BE and Kafka client for receiving analyzed posts from analyzers and internal clients for databases.
+
+- Relation database
+  - Usage: internal data such as users, jobs, logs, configurations etc.
+  - Requirements: Storage for relational data with possible JSON fields
+  - Used implementation: PostgreSQL
+
+- NoSQL database
+  - Usage: internal data such as users, jobs, logs, configurations etc.
+  - Requirements: NoSql storage
+  - Used implementation: MongoDB
+
+- Search engine
+  - Usage: searching in anayzed posts
+  - Requirements: full text search
+  - Used implementation: Elasticsearch
+
+_Any database nor search engine is not hardly coded and should be possible to replace it with a different component. Only a client interface
+needs to be implemented._
+
+_Elastic community doesn't recommend to use elasticsearch as the main data storage, therefore the application storage consist of more data
+storage platforms._
+
+##### API
+
+- REST CRUD API for internal storage
+- REST Read API for analyzed posts
+- REST Search API for analyzed posts
+- Write Kafka message listeners
+
+##### Entities
+
+Main expected entities with mandatory fields:
+
+- User: userId, password
+- Job: id, userId, job config, timestamp
+- Log: componentId, timestamp, status, message, additional data
+- Post: id, jobId, ordinal post with additional info, list of analysis
 
 ### Acquiring data
 
