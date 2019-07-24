@@ -177,27 +177,31 @@ Here we provide an example of a post's complete analysis. It contains analyses f
 
 Implementation of the types of analyses requires different amount of effort but integrating them will cost the same. Both of those services will be written in python and will require additional effort to integrate it into the system.
 
+### Communication
 
-### Communication/Cooperation
+Each service runs in a separate docker container. Packing services into docker container makes deployment easier since all required dependencies are present inside the container. Containers(except front-end and respective back-end) communicate using a message broker Kafka [3] which allows for high throughput and multi-producer multi-consumer communication. 
 
-Each service runs in a separate docker container. Packing services into docker container makes deployment easier since all required dependencies are present inside the container. Containers(except front-end and respective back-end) communicate using a message broker Kafka [3] which allows for high throughput and multi-producer multi-consumer communication. The main reason to adopt it was its suitability to event driven systems. The framework fires multiple events to which multiple (at the same time) components can react. 
+In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. Data processing is difficult to cover by request/response model. More elegant and simplier solution is to use publish/subscriber model which Kafka supports.
 
-In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. This complex can be implemented using standard request/response model but more elegant solution is to use publish/subscriber model.
-
-It offers components to subscribe to a topic, to which producer sends data. Multiple producers can publish data to the same topic and kafka makes sure to deliver them to all subscriber. It also keeps track of which message was delivered and which was not delivered yet, so if any component temporarily disconnects, it can continue at work once the connection is up again. 
+The services responsible for acquiring the data(producers in kafka terminology) produce data to a given channel that are delivered to all services that listening on this channel(comsumers). It also keeps track of which message was delivered and which was not delivered yet, so if any component temporarily disconnects, it can continue at work once the connection is up again. 
 
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
 
+### Cooperation
+
 Main pitfall of asynchronous communication a lack of feedback from receiver. More specifically sender is not sure whether anyone is actually listening. In order to tackle this problem, Job Management Service(JMS) was introduced. 
 
-Job management is responsible for proper cooperation of all components. JMS is the component that receives a job, defined by user and transforms it to multiple tailor-made requests for all involved components.
+Job management is responsible for proper cooperation of all components. JMS is the component that each component need to register to before the system start working. When user submits a job, JMS transforms it to multiple tailor-made requests for all involved components. Each request contains configuration that influences which data belonging to a given job will be redirected to each output. 
 
-For example, if user defines a task that requires sentiment analysis of data from Twitter, JMS delivers job configuration to the component responsible for twitter data acquisition and connects it to the sentiment analysis input. No other component is aware that this particular job is performed. 
+For example, if user submits a job _A_ that requires sentiment analysis of data from Twitter and Reddit with respective paid account credentials, the required types of analyses are topic modeling and sentiment analysis. JMS delivers job configuration with twitter credentials only to twitter data acquiring service, reddit credentials to reddit data aqcuiring service and directs output of data related to the given job to the both of the analyser servcies. Situation might get complicated when another job _B_ is submited requiring only data from twitter and a topic modelling. JMS will configure selected components to handle data of the given job differently without affecting the already running job.
 
-When any container starts, the first thing it does is to register itself and provide information about its type and unique id. This way it gets connected to the system and user can select it (in case of data acquirer or analyser). 
+The data routing of the parallel jobs A and B is visualised on the following picture.
+
+![routing](images/socneto-data-routing.png)
+
+_The picture shows two jobs running in parallel._
 
 To make sure that components are up an running, some system monitoring was implemented.
-
 
 ### Data
 
@@ -322,6 +326,10 @@ Socneto framework main feature is an extensibility. A user can implement his own
 - input/output API
 
 This application can run in a docker as the rest of the system or it just has to be able to connect to the message broker Kafka. 
+
+### Deployment 
+
+**TODO**
 
 ## References
 
