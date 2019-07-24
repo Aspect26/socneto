@@ -104,7 +104,11 @@ Two types of linguistic tasks will be implemented:
 
 Intention of the projec is not to implement completely new solution, but use existing third-party packages and customize them. Some training data will be needed for this purpouse, which is a little bit problematic in the case of czech language. We do not assume anotation of new data. For this reason and also for a difficulty of topic modeling, we do not expect human-like results. As it was said before, platform will be easily exensible by another implementation of analysis.
 
-There is need to prepare some train and test data sets - to gather data, clean them, divide into sets.
+Both tasks involve 
+
+- preparation(gathering and cleaning) of training and testing data 
+- integration and customization of existing packages
+- adapting to two languages czech and english and different data e.g. possible long texts from reddit and very short and concise twitter posts.
 
 ### Topic modeling (TM)
 This is generally a difficult problem for both languages, because it is not clear, what is the wanted result and also some language-specific rules are too complex to be solved automaticaly yet. In addition, twitter data are typicaly really short, no full sentences, mixture of languages, emtoticons and broking gramatical rules, so classical approach to this task will not work very well.
@@ -121,8 +125,8 @@ frequency, LDA and maybe entity linking, as for czech existing knowledge base is
 Topics for hierarchiacal structures like posts + their comments must be find for post and related comments together. Result of this kind of analysis is set of key words related to the post/post+comments structure.
 
 ### Sentiment analysis (SA)
-Quite subjective task. Output of this analysis is at the first place polarity - negative, positive, neutral. Model is based on BERT [8], and last layer must be implemented according  to the task and trained.
 
+Quite subjective task. Output of this analysis is at the first place polarity - negative, positive, neutral. Model is based on BERT [8], and last layer must be implemented according to the task and trained. Progress at this field is consulted with members of UVFAL.
 
 ## Platform architecture
 
