@@ -205,9 +205,7 @@ To make sure that components are up an running, some system monitoring was imple
 
 ### Data
 
-Data store is designed for running on a different machine without internet connection for better security, different technical requirements
-for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created
-for a transparent communication with all databases.
+Data store is designed for running on a different machine without internet connection for better security, different technical requirements for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created for a transparent communication with all databases.
 
 #### Store components
 
@@ -230,7 +228,7 @@ for a transparent communication with all databases.
   - Requirements: full text search
   - Used implementation: Elasticsearch
 
-_Any database nor search engine is not hardly coded and should be possible to replace it with a different component. Only a client interface
+_Any database nor search engine is not hard-coded and should be possible to replace it with a different component. Only a client interface
 needs to be implemented._
 
 _Elastic community doesn't recommend to use elasticsearch as the main data storage, therefore the application storage consist of more data
@@ -311,16 +309,18 @@ The job detail component contains list of user specified visualisations of the a
 
 At first, the component contains no visualisations. The user has to specify which data from the analyses he wants to be visualized. This approach gives the user a great degree of freedom instead of being presented by hardwired charts. When creating a new chart, the user only has to select the type of chart (pie chart, line chart, ... TODO: which types we want to support?), and write a JSONPath to the attrribute to be visualised (see Analyser output part). These definitions of charts are then stored in our storage, so the user does not need to create them each time.
 
-TODO: screen maybe (list of visualisations, new visualisation, list of posts)
+<!--- TODO: screen maybe (list of visualisations, new visualisation, list of posts) --->
 
 #### Admin
 TODO: write more here (how to access it, how does it work?)
 Only users with admin privileges are able to access this component. It serves to make the user able to add, remove or configure data analyzer and data acquirer components.
+### System health
 
+A system that consist of multiple components is hard to maintain. In order to simplify investigation of failing services and to speed up recovery process, the framework will store and manage all metrics using ELK stack[4]. Proper metric tracking requires definition of system wide guidelines of what values will be tracked and what alarms should be fired when componets are malfunctionning. Integration of this system requires its installation on our infrastructure and integration in each service.
 
 ### Extensibility
 
-Socneto framework main feature is an extensibility. A user can implement his own data acquirer or an analyser by creating an application that implements 
+Socneto framework allows user to extend data acquisition, analysis and visualisation as well. Data acquisition and analysis services must follow an API and must run in a docker file. 
 
 - component registration flow in order to connect the component to the system
 - input/output API
@@ -329,13 +329,14 @@ This application can run in a docker as the rest of the system or it just has to
 
 ### Deployment 
 
-**TODO**
+The easiest way to deploy Socneto is to use deployment script in order to download all required docker containers and start them at once. This way depends on a valid system configuration and existing storage and metrics systems. 
 
 ## References
 
 [1]: https://twitter.com
 [2]: https://reddit.com
 [3]: https://kafka.apache.org/
+[4]: https://www.elastic.co/what-is/elk-stack
 [5]: https://developer.twitter.com/en/docs/basics/rate-limits
 [6]: https://github.com/JoeMayo/LinqToTwitter
 [7]: https://github.com/sirkris/Reddit.NET
