@@ -332,7 +332,7 @@ This application can run in a docker as the rest of the system or it just has to
 The easiest way to deploy Socneto is to use deployment script in order to download all required docker containers and start them at once. This way depends on a valid system configuration and existing storage and metrics systems. 
 
 ## References
-
+```
 [1]: https://twitter.com
 [2]: https://reddit.com
 [3]: https://kafka.apache.org/
@@ -340,3 +340,4 @@ The easiest way to deploy Socneto is to use deployment script in order to downlo
 [5]: https://developer.twitter.com/en/docs/basics/rate-limits
 [6]: https://github.com/JoeMayo/LinqToTwitter
 [7]: https://github.com/sirkris/Reddit.NET
+```
