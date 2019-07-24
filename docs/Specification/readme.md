@@ -4,15 +4,9 @@ For more than a decade already, there has been an enormous growth of social netw
 
 This project offers a framework allowing the users to analyze data related to a chosen topic from given social networks.
 
-```
-GuideLines
-- Neodkazujte se na Wikipedii (ani v diplomkách apod.). Buď dejte odkaz na něco sofistikovaného (specifikaci, knihu, o;dborný článek, web produktu apod.) nebo nic. 
-- Odkazy by bylo dobré dělat standardním způsobem ([2, 16, 4] a číslovaný seznam na konci)
-```
-
 ## High level description
 
-Socneto is an extensible framework allowing user to analyse content across multiple social networks.This project tackles the problem of creating concise overview and designing a multi-purpose platform. It aims to give the user an ability to get a glimpse of prevailing public opinion concerning a given topic in a user-friendly form.
+Socneto is an extensible framework allowing user to analyse content across multiple social networks. It aims to give the user an ability to get an concise overview of a public opinion concerning a given topic in a user-friendly form based on a data collected across social networks.
 
 Social networks offer free access to data, although the amount is limited by number of records per minute and age of the post which restrict us from downloading and analyzing large amount of historical data. 
 
@@ -20,43 +14,40 @@ To adapt to those limitations, Socneto offers continuous analysis instead of one
 
 ![endless-pipeline](images/endless-pipeline.png)
 
-The project supports only limited types of data analyses such as topic extraction and sentiment analysis supporting english and czech languages. 
+The project supports only limited types of data analyses such as topic extraction and sentiment analysis supporting english and czech languages. Additional types of analysis can be supplied by user himself. 
 
-In terms of data acquisition, Socneto supports two main social networks Twitter and Reddit. Both of them support limited free API or unlimited API for users who have paid accounts. 
-
-If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by users own implementation. 
+In terms of data acquisition, Socneto supports two main social networks Twitter [1] and Reddit[2]. Both of them support limited free API used by default or an unlimited API for users who have paid accounts. Additional social network adapters can be also supplied by user.
 
 ## Use case 
 
-Generally, a user specifies a topic of interest, required analysis and social network to be used. The system then starts collecting and analyzing data. User can then see summary in form of sentiment chart, significant keywords or post examples with the option to explore and search through them. 
+Generally, a user specifies a topic of interest, selects type(s) of analysis required and social networks to be used as data source. The system then starts collecting respective data, run them through analysers and store results. User can then see results either in tabular version or visualized with customizabled charts.
 
 A typical use cases is studying sentiment about a public topic (traffic, medicine etc.) after an important press conference, tracking the opinion evolution about a new product on the market, or comparing stock market values and the general public sentiment peaks of a company of interest.
 
-The framework runs on premises thus a user is responsible for handling security and connecting to storage compliant with GDPR rules. 
+The framework runs on premises thus a user is responsible for handling security and connecting to storage compliant with GDPR rules, thus security of the system and a Security of the data are both responsibilities of a user. 
 
 ## An architectural overview
 
-This project is intended to be an application allowing user to add its own data sources, their expected analysis and define visualization which is reflected in the project architecture. 
+This project is designed to be a platform processing data from various sources focusing on data from social networks. Data themselves have little value for end user if they are not analysed and visualized properly. To reflect those priorities, layers of the project architecture can be visualized as follows  
 
 ![layers](images/socneto-layers.png)
 
 _This picture shows conceptual separation of application responsibilities. The most important part is to develop the data processing platform, then to properly analyse the data and present them to the user. (we are aware that the customer might think otherwise)_
 
-The essential part of this project is a data processing platform responsible for data acquisition, data storage and cooperation among all components to successfully deliver any results to the user. 
+The backbone part of this project is a data processing platform responsible for data acquisition, data storage and cooperation among all components to successfully deliver any results to the user. 
 
 In order to interpret acquired data correctly an analysis is performed. There are many possible approaches how to analyse data from the internet, thus analyses has to be extensible by the user to fit his needs. 
 
 Analysed data are then presented to the user in a concise form supported by visualizations and sample data.
 
-Requirements stated above are solved by various cooperating modules. Those modules are connected together forming a pipeline with modules dedicated to data acquisition, analysis, persistance and also to module managing the pipeline's behavior. The components will be described in details in a chapter [Platform](##Platform)
+Requirements stated above are solved by various cooperating modules. Those modules are connected together forming a pipeline with modules dedicated to data acquisition, analysis, persistance and also to module managing the pipeline's behavior. 
 
 ![simplified pipeline](images/socneto-arch-simple.png)
-_Diagram shows simplified pipeline processing data_
-
+_Diagram shows simplified version of the pipeline processing data_
 
 ## Planning
 
-The following section offers and insight into the team composition, members' responsibilities and project milestones.
+The following section offers and insight into the team composition, responsibilities of members and project milestones.
 
 ### Team
 
@@ -73,25 +64,23 @@ The following section offers and insight into the team composition, members' res
 
 The development follows agile practices. In the beginning, the team will meet every week to cooperate on an analysis and an application design. 
 
-Once the analysis turns into specification and is defended, the team divides into two group cooperating on separate parts data platform and machine learning. At this point team will meet once in two week or when required. 
+Once the analysis turns into specification and is defended, the team divides into two group cooperating on separate parts focusing on a data platform and machine learning reflected in analysers. 
 
-Best results are achieved when the team works together. The cooperation will be encouraged by day-long workshop when the whole team meets at one place personally in order to progress.
+Best results are achieved when the team works together. The cooperation will be encouraged by several all-day-long workshops when the whole team meets at one place personally in order to progress.
 
 The process of development is divided into the following approximately equally long milestones.
 
-#### Asynchronous communication PoC
+#### 1. Idea proof-of-concept(PoC)
 
 The application relies upon asynchronous communication which should be tested in a production environment which requires to get access to an infrastructure with multiple machines. 
 
 Result should prove that the idea is  plausible. At the beginning, the test will feature only test data acquisition component and a test analyser but as the development advances, they will get replaced with production version and the other types components will get connected as well. 
 
-The result of this phase will be working simplified platform for a data flow implementation. The platform will be capable of coordinating all components and allowing us to create a pipeline in order to implement solid data flow.
+The result of this phase will be working simplified platform for a data flow implementation and a final specification reflecting gained experience. The platform will be capable of coordinating all components and allowing us to create a pipeline in order to implement solid data flow.
 
-This task is responsibility of Jaroslav Knotek and Lukáš Kolek.
+This PoC is responsibility of Jaroslav Knotek and Lukáš Kolek. At the same time, samples of front-end and analysers will be developed by Július Flimmel and Petra Doubravová respectively.
 
-At the same time, samples of front-end and analysers will be developed by Július Flimmel and Petra Doubravová respectively.
-
-#### Data flow
+#### 2. Data flow
 
 As the platform stabilizes, more focus is put to proper data acquisition, storage and querying. When user submits job, all components have to cooperate in order to deliver expected results.
 
@@ -101,7 +90,7 @@ The sentiment analyser is expected to be the most complex and the most risky par
 
 At this point, first result will start to emerge. To visualize them a front-end will be developed by Július Flimmel.
 
-#### Polishing
+#### 3. Finishing and polishing
 
 The last phase focuses on extendibility and deployment as well as improving precision of supported analysers. The application will be extended by the other data acquisition component connecting to Reddit, and a analyser covering simple topic extraction. 
 
@@ -132,78 +121,48 @@ frequency, LDA and maybe entity linking, as for czech existing knowledge base is
 Topics for hierarchiacal structures like posts + their comments must be find for post and related comments together. Result of this kind of analysis is set of key words related to the post/post+comments structure.
 
 ### Sentiment analysis (SA)
-Quite subjective task. Output of this analysis is at the first place polarity - negative, positive, neutral. Model is based on BERT [1], and last layer must be implemented according  to the task and trained.
-
-Using BERT:
-https://github.com/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
+Quite subjective task. Output of this analysis is at the first place polarity - negative, positive, neutral. Model is based on BERT [8], and last layer must be implemented according  to the task and trained.
 
 
 ## Platform architecture
 
-The framework uses service oriented architecture. Each service runs in a separate container. Containers(except front-end and respective back-end) communicate using a message broker `Kafka` which allows for high throughput and multi-producer multi-consumer communication. 
+Platform is separated to three different tiers 
 
-In order to deliver requested data to the user multiple components must cooperate
+- Data processing tier
+- Analysers
+- Front-end(visualisation)
 
--data acquirers, 
-- analysers, 
-- front-end
-- a storage. 
+Each tier consists of several services responsible for a sub domain. Service oriented architecture improves separation of concern and also allows us to implement each service in different language that fits the problem the most. For example, data processing services are implemented in well-established enterprise-level languages such as java or c#. On the other hand, analysers are better off being implemented using less strict language such as python offering number of libraries related to our cause.
 
-On the top of it, it also contains a service responsible for their proper function of the framework as a whole: job management and metric processing. 
+The Data processing tier consists of services acquiring and storing data, cooperation of all components, system health and data processing pipeline management.  Analyser tier consist of various services responsible for analysing data of a given format and are expected to produce data of a given format. Front end serves user to understand the results on the first glimpse.
 
-Job management is responsible for proper cooperation of all components. There is a dedicated service to support that: `Job management service`. It is the component that receives a job, defined by user and transforms it to multiple tailor-made requests for all involved components.
+The backbone of the whole pipeline is to acquire data that user request by submitting a job definition containing query, selected analysers and selected social networks. The platform translates it to tailored configuration made uniquely for each component. 
 
-For example, if user defines a task that requires sentiment analysis of data from Twitter, `Job management service` delivers job configuration to the component responsible for twitter data acquisition and connects it to the sentiment analysis input. No other component is aware that this particular job is performed. 
-
-
-### Storage
-
-**TODO Lukas**
-
-- mention data retention
-- what will be stored
-  - posts and analysed data
-  - app data
+Design of the whole framework requires a lot of effort in order to avoid common pitfalls of school project. Main possible weak spots would be communication among multiple services, customizations and extensibility and last but not least testing.
 
 ### Acquiring data
 
-A request for data acquisition contains information about requested data in a form of a query, output channels where to send data and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
+A request for data acquisition contains information about requested data in a form of a query and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
 
-Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits [todo https://developer.twitter.com/en/docs/basics/rate-limits] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval.
+Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits[5] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval. However both apis restrict free users from downloading large amount of data and also it does not allow access to data older than 7 days. Even thouth that those limits are very restricting, continuous analysis saves the day.
 
-Socnet will support acquiring data from both of those sites with use of 3rd party libraries `LinqToTwitter` and `Reddit.Net`. Both of them will make it easier to comply with api limits and tackle respective communication. Both of data acquirers will be written in c#.
-<!-- 
-### Components
+Output of each data acquirer follows the system-wide format of unified post data(UPD) that features 
 
-**Work in progress**
+- text
+- creation or modificaiton time
+- link to related post (in case of a comment or retweet)
+- user id
 
+Socneto will support acquiring data from twitter and reddit with use of 3rd party libraries `LinqToTwitter`[6] and `Reddit.Net`[7] respecively. Both of them will make it easier to comply with api limits and tackle respective communication. Each library has its own dedicated service and both of the will be written in c#. 
 
-
-Each service has unique responsibility given by functional requirements (ref ...).
-
-* API gateway - Exposes [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) api allowing users to submit jobs and query results of their jobs.
-* Data Acquirer - downloads requested data from a given source
-  * This module can be extended using client-implemented adapters 
-* Analyser - performs sentiment analysis of a given text
-* Database storage - stores analysed data along with source text. Also stores application data.
-* Job management service - contains all jobs necessary to successful job execution.
-
-#### Data acquirer
-
-
-**TODO Jara**
-
-- requires credentials
-- what will be implemented 
-- what will be integrated
-
-> Pokud už víte, přidala bych konkrétní fakta např. k databázovým systémům (jaké konkrétně, jaká mají případně omezení apod.), ke zdrojům dat (co povolují stáhnout, jak apod.).  -->
+Implementation of the data acquirer mainly consist of integration of the respective services in the whole system.
 
 ### Analysers
 
-The analyzers will process each post they receive from the acquirers. After analyzing a post they will send the result to the storage. Because these analyses will be used by other components (mainly frontend), the analyzers' output will need to be in some standardized form. As this output will be mainly processed by a computer, we decided to use a computer friendly JSON format.
+Each type of analysis reside in its own service. The input format is the same as output of data acquisition services. The analyzers will process data received from the acquirers. After analyzing each post they send the result to the storage. Because results of the analysers are the used by frontend, the analyzers' output will need to be in some standardized form. As this output will be mainly processed by a computer, we decided to use a computer friendly JSON format.
 
 The structure of the JSON will need to be robust and simple enough, so that the user of frontend may easily specify which data he wants to visualize using JSONPath. The structure of the output is following:
+
 ```json
 {
     "analyzer_name": {
@@ -213,6 +172,7 @@ The structure of the JSON will need to be robust and simple enough, so that the 
     }
 }
 ```
+
 The whole analysis is packed in one object named after the analyzer. As the analyzer may compute multiple analyses at once, each one will be also represented by one object named after the analysis. The object representing the analysis has a strict format. It contains exactly two attributes:
  * *type*: specifying the type of the result. The supported types will be *number* (including integers and floating point values), *string* and *lists* of these two. Lists of lists will *not* be supported,
  * *value*: the actual result of the analysis
@@ -239,29 +199,90 @@ Here we provide an example of a post's complete analysis. It contains analyses f
 }
 ```
 
-#### Storage wrappers
+Implementation of the types of analyses requires different amount of effort but integrating them will cost the same. Both of those services will be written in python and will require additional effort to integrate it into the system.
 
-**TODO Lukas**
+### Communication
 
-### Communication/Cooperation
+Each service runs in a separate docker container. Packing services into docker container makes deployment easier since all required dependencies are present inside the container. Containers(except front-end and respective back-end) communicate using a message broker Kafka [3] which allows for high throughput and multi-producer multi-consumer communication. 
 
-As was previously stated, data are exchanged using message broker. The main reason to adopt it was its suitability to event driven systems. The framework fires multiple events to which multiple (at the same time) components can react. In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. This complex can be implemented using standard request/response model but more elegant solution is to use publish/subscriber model.
+In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. Data processing is difficult to cover by request/response model. More elegant and simplier solution is to use publish/subscriber model which Kafka supports.
 
-It offers components to subscribe to a topic, to which producer sends data. Multiple producers can publish data to the same topic and kafka makes sure to deliver them to all subscriber. It also keeps track of which message was delivered and which was not delivered yet, so if any component temporarily disconnects, it can continue at work once the connection is up again. 
+The services responsible for acquiring the data(producers in kafka terminology) produce data to a given channel that are delivered to all services that listening on this channel(comsumers). It also keeps track of which message was delivered and which was not delivered yet, so if any component temporarily disconnects, it can continue at work once the connection is up again. 
 
 Another benefit of message broker is that particular services does not aware of a sender of its input data and of receiver of its output. It makes it easy to configure data flow.
 
-**TODO all**: mention complexity and what we will actually implement. Don't be too specifit
+### Cooperation
 
-**TODO component management - registration, job specification**
+Main pitfall of asynchronous communication a lack of feedback from receiver. More specifically sender is not sure whether anyone is actually listening. In order to tackle this problem, Job Management Service(JMS) was introduced. 
 
-<!-- When the container starts, it must register job configuration callback to receive configuration of each submited job.
+Job management is responsible for proper cooperation of all components. JMS is the component that each component need to register to before the system start working. When user submits a job, JMS transforms it to multiple tailor-made requests for all involved components. Each request contains configuration that influences which data belonging to a given job will be redirected to each output. 
 
-When user submits job on UI, it gets to a Job Management Service(foreman?). It will parse the job and **distributes**(push) respective configuration to all nodes. -->
+For example, if user submits a job _A_ that requires sentiment analysis of data from Twitter and Reddit with respective paid account credentials, the required types of analyses are topic modeling and sentiment analysis. JMS delivers job configuration with twitter credentials only to twitter data acquiring service, reddit credentials to reddit data aqcuiring service and directs output of data related to the given job to the both of the analyser servcies. Situation might get complicated when another job _B_ is submited requiring only data from twitter and a topic modelling. JMS will configure selected components to handle data of the given job differently without affecting the already running job.
+
+The data routing of the parallel jobs A and B is visualised on the following picture.
+
+![routing](images/socneto-data-routing.png)
+
+_The picture shows two jobs running in parallel._
+
+To make sure that components are up an running, some system monitoring was implemented.
+
+### Data
+
+Data store is designed for running on a different machine without internet connection for better security, different technical requirements for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created for a transparent communication with all databases.
+
+#### Store components
+
+- Database interfase
+  - This component makes abstraction over an implemented polyglot for the rest of platform. Consists of "public" API for communication
+  with the web app BE and Kafka client for receiving analyzed posts from analyzers and internal clients for databases.
+
+- Relation database
+  - Usage: internal data such as users, jobs, logs, configurations etc.
+  - Requirements: Storage for relational data with possible JSON fields
+  - Used implementation: PostgreSQL
+
+- NoSQL database
+  - Usage: internal data such as users, jobs, logs, configurations etc.
+  - Requirements: NoSql storage
+  - Used implementation: MongoDB
+
+- Search engine
+  - Usage: searching in anayzed posts
+  - Requirements: full text search
+  - Used implementation: Elasticsearch
+
+_Any database nor search engine is not hard-coded and should be possible to replace it with a different component. Only a client interface
+needs to be implemented._
+
+_Elastic community doesn't recommend to use elasticsearch as the main data storage, therefore the application storage consist of more data
+storage platforms._
+
+#### API
+
+- REST CRUD API for internal storage
+- REST Read API for analyzed posts
+- REST Search API for analyzed posts
+- Write Kafka message listeners
+
+#### Entities
+
+Main expected entities with mandatory fields:
+
+- User: userId, password
+- Job: id, userId, job config, timestamp
+- Log: componentId, timestamp, status, message, additional data
+- Post: id, jobId, ordinal post with additional info, list of analysis
+
+![socneto-db](images/socneto-db.png)
+_Storage architecture_
 
 ### System monitoring
 
-**TODO Lukas**
+The application architecture is loosely coupled, which brings a lot of possible orchestration problems. Platform should contain a component, which is responsible for collecting logs from analyzers, acquirers and possibly data storage. As the platform is already using Elasticsearch, a ELK stack <link> is efficient for this propose. Logstash <link> is responsible for collecting logs from the application, for communication is also reused already mentioned Kafka, Elasticsearch <link> is need for storing logs and Kibana <link> for visualization. Logs will be also persisted inside relational database.
+
+_It is expected that only some technical user - admin will have permission for Kibana dashboard with logs. On the other hand basic statuses
+of running jobs will be also displayed for a user in our UI._
 
 ### API 
 
@@ -312,38 +333,27 @@ The job detail component contains list of user specified visualisations of the a
 
 At first, the component contains no visualisations. The user has to specify which data from the analyses he wants to be visualized. This approach gives the user a great degree of freedom instead of being presented by hardwired charts. When creating a new chart, the user only has to select the type of chart (pie chart, line chart, ... TODO: which types we want to support?), and write a JSONPath to the attrribute to be visualised (see Analyser output part). These definitions of charts are then stored in our storage, so the user does not need to create them each time.
 
-TODO: screen maybe (list of visualisations, new visualisation, list of posts)
+<!--- TODO: screen maybe (list of visualisations, new visualisation, list of posts) --->
 
 #### Admin
 TODO: write more here (how to access it, how does it work?)
 Only users with admin privileges are able to access this component. It serves to make the user able to add, remove or configure data analyzer and data acquirer components.
+### System health
 
+A system that consist of multiple components is hard to maintain. In order to simplify investigation of failing services and to speed up recovery process, the framework will store and manage all metrics using ELK stack[4]. Proper metric tracking requires definition of system wide guidelines of what values will be tracked and what alarms should be fired when componets are malfunctionning. Integration of this system requires its installation on our infrastructure and integration in each service.
 
-### Features
+### Extensibility
 
-- extensibility
-  - TODO Analyses
-  - TODO Data sources
-  - TODO Visualization
-  - how does it work
-- ELK Metrics
-  - what we will track
-  - 3rd party solution
-  - impacts every component
+Socneto framework allows user to extend data acquisition, analysis and visualisation as well. Data acquisition and analysis services must follow an API and must run in a docker file. 
 
-## Development [If we need more pages]
+- component registration flow in order to connect the component to the system
+- input/output API
 
-This section describes what tools will be used in order to comply with software engineering best practises.
+This application can run in a docker as the rest of the system or it just has to be able to connect to the message broker Kafka. 
 
-### Deployment
+### Deployment 
 
-Services are deployed in form of container. For the deployment and following container management [Kubernetes](https://kubernetes.io/) orchestration system is employed. 
-
-### Versioning
-
-Code is versioned using Git repository.
-- code reviews
-- branching model
+The easiest way to deploy Socneto is to use deployment script in order to download all required docker containers and start them at once. This way depends on a valid system configuration and existing storage and metrics systems. 
 
 ### CI/CD and automation
 
@@ -353,5 +363,14 @@ CI/CD is implemented using [TeamCity](https://www.jetbrains.com/teamcity/). It a
 
 What we want to focus on during testing
 
-# References
-[1] BERT: https://arxiv.org/abs/1810.04805
+## References
+```
+[1]: https://twitter.com
+[2]: https://reddit.com
+[3]: https://kafka.apache.org/
+[4]: https://www.elastic.co/what-is/elk-stack
+[5]: https://developer.twitter.com/en/docs/basics/rate-limits
+[6]: https://github.com/JoeMayo/LinqToTwitter
+[7]: https://github.com/sirkris/Reddit.NET
+[8]: BERT: https://arxiv.org/abs/1810.04805
+```
