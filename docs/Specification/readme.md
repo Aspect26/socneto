@@ -4,15 +4,9 @@ For more than a decade already, there has been an enormous growth of social netw
 
 This project offers a framework allowing the users to analyze data related to a chosen topic from given social networks.
 
-```
-GuideLines
-- Neodkazujte se na Wikipedii (ani v diplomkách apod.). Buď dejte odkaz na něco sofistikovaného (specifikaci, knihu, o;dborný článek, web produktu apod.) nebo nic. 
-- Odkazy by bylo dobré dělat standardním způsobem ([2, 16, 4] a číslovaný seznam na konci)
-```
-
 ## High level description
 
-Socneto is an extensible framework allowing user to analyse content across multiple social networks.This project tackles the problem of creating concise overview and designing a multi-purpose platform. It aims to give the user an ability to get a glimpse of prevailing public opinion concerning a given topic in a user-friendly form.
+Socneto is an extensible framework allowing user to analyse content across multiple social networks. It aims to give the user an ability to get an concise overview of a public opinion concerning a given topic in a user-friendly form based on a data collected across social networks.
 
 Social networks offer free access to data, although the amount is limited by number of records per minute and age of the post which restrict us from downloading and analyzing large amount of historical data. 
 
@@ -20,39 +14,36 @@ To adapt to those limitations, Socneto offers continuous analysis instead of one
 
 ![endless-pipeline](images/endless-pipeline.png)
 
-The project supports only limited types of data analyses such as topic extraction and sentiment analysis supporting english and czech languages. 
+The project supports only limited types of data analyses such as topic extraction and sentiment analysis supporting english and czech languages. Additional types of analysis can be supplied by user himself. 
 
-In terms of data acquisition, Socneto supports two main social networks Twitter [^1] and Reddit[2]. Both of them support limited free API or unlimited API for users who have paid accounts. 
-
-If user requires additional analysis to be made or any other data to be downloaded, it can be done by extending the framework by users own implementation. 
+In terms of data acquisition, Socneto supports two main social networks Twitter [1] and Reddit[2]. Both of them support limited free API used by default or an unlimited API for users who have paid accounts. Additional social network adapters can be also supplied by user.
 
 ## Use case 
 
-Generally, a user specifies a topic of interest, required analysis and social network to be used. The system then starts collecting and analyzing data. User can then see summary in form of sentiment chart, significant keywords or post examples with the option to explore and search through them. 
+Generally, a user specifies a topic of interest, selects type(s) of analysis required and social networks to be used as data source. The system then starts collecting respective data, run them through analysers and store results. User can then see results either in tabular version or visualized with customizabled charts.
 
 A typical use cases is studying sentiment about a public topic (traffic, medicine etc.) after an important press conference, tracking the opinion evolution about a new product on the market, or comparing stock market values and the general public sentiment peaks of a company of interest.
 
-The framework runs on premises thus a user is responsible for handling security and connecting to storage compliant with GDPR rules. 
+The framework runs on premises thus a user is responsible for handling security and connecting to storage compliant with GDPR rules, thus security of the system and a Security of the data are both responsibilities of a user. 
 
 ## An architectural overview
 
-This project is intended to be an application allowing user to add its own data sources, their expected analysis and define visualization which is reflected in the project architecture. 
+This project is designed to be a platform processing data from various sources focusing on data from social networks. Data themselves have little value for end user if they are not analysed and visualized properly. To reflect those priorities, layers of the project architecture can be visualized as follows  
 
 ![layers](images/socneto-layers.png)
 
 _This picture shows conceptual separation of application responsibilities. The most important part is to develop the data processing platform, then to properly analyse the data and present them to the user. (we are aware that the customer might think otherwise)_
 
-The essential part of this project is a data processing platform responsible for data acquisition, data storage and cooperation among all components to successfully deliver any results to the user. 
+The backbone part of this project is a data processing platform responsible for data acquisition, data storage and cooperation among all components to successfully deliver any results to the user. 
 
 In order to interpret acquired data correctly an analysis is performed. There are many possible approaches how to analyse data from the internet, thus analyses has to be extensible by the user to fit his needs. 
 
 Analysed data are then presented to the user in a concise form supported by visualizations and sample data.
 
-Requirements stated above are solved by various cooperating modules. Those modules are connected together forming a pipeline with modules dedicated to data acquisition, analysis, persistance and also to module managing the pipeline's behavior. The components will be described in details in a chapter [Platform](##Platform)
+Requirements stated above are solved by various cooperating modules. Those modules are connected together forming a pipeline with modules dedicated to data acquisition, analysis, persistance and also to module managing the pipeline's behavior. 
 
 ![simplified pipeline](images/socneto-arch-simple.png)
-_Diagram shows simplified pipeline processing data_
-
+_Diagram shows simplified version of the pipeline processing data_
 
 ## Planning
 
@@ -314,9 +305,9 @@ This application can run in a docker as the rest of the system or it just has to
 
 ## References
 
-[^1]: https://twitter.com
-[^2]: https://reddit.com
-[^3]: https://kafka.apache.org/
-[^5]: https://developer.twitter.com/en/docs/basics/rate-limits
-[^6]: https://github.com/JoeMayo/LinqToTwitter
-[^7]: https://github.com/sirkris/Reddit.NET
+[1]: https://twitter.com
+[2]: https://reddit.com
+[3]: https://kafka.apache.org/
+[5]: https://developer.twitter.com/en/docs/basics/rate-limits
+[6]: https://github.com/JoeMayo/LinqToTwitter
+[7]: https://github.com/sirkris/Reddit.NET
