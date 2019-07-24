@@ -47,7 +47,7 @@ _Diagram shows simplified version of the pipeline processing data_
 
 ## Planning
 
-The following section offers and insight into the team composition, members' responsibilities and project milestones.
+The following section offers and insight into the team composition, responsibilities of members and project milestones.
 
 ### Team
 
@@ -64,25 +64,23 @@ The following section offers and insight into the team composition, members' res
 
 The development follows agile practices. In the beginning, the team will meet every week to cooperate on an analysis and an application design. 
 
-Once the analysis turns into specification and is defended, the team divides into two group cooperating on separate parts data platform and machine learning. At this point team will meet once in two week or when required. 
+Once the analysis turns into specification and is defended, the team divides into two group cooperating on separate parts focusing on a data platform and machine learning reflected in analysers. 
 
-Best results are achieved when the team works together. The cooperation will be encouraged by day-long workshop when the whole team meets at one place personally in order to progress.
+Best results are achieved when the team works together. The cooperation will be encouraged by several all-day-long workshops when the whole team meets at one place personally in order to progress.
 
 The process of development is divided into the following approximately equally long milestones.
 
-#### Asynchronous communication PoC
+#### 1. Idea proof-of-concept(PoC)
 
 The application relies upon asynchronous communication which should be tested in a production environment which requires to get access to an infrastructure with multiple machines. 
 
 Result should prove that the idea is  plausible. At the beginning, the test will feature only test data acquisition component and a test analyser but as the development advances, they will get replaced with production version and the other types components will get connected as well. 
 
-The result of this phase will be working simplified platform for a data flow implementation. The platform will be capable of coordinating all components and allowing us to create a pipeline in order to implement solid data flow.
+The result of this phase will be working simplified platform for a data flow implementation and a final specification reflecting gained experience. The platform will be capable of coordinating all components and allowing us to create a pipeline in order to implement solid data flow.
 
-This task is responsibility of Jaroslav Knotek and Lukáš Kolek.
+This PoC is responsibility of Jaroslav Knotek and Lukáš Kolek. At the same time, samples of front-end and analysers will be developed by Július Flimmel and Petra Doubravová respectively.
 
-At the same time, samples of front-end and analysers will be developed by Július Flimmel and Petra Doubravová respectively.
-
-#### Data flow
+#### 2. Data flow
 
 As the platform stabilizes, more focus is put to proper data acquisition, storage and querying. When user submits job, all components have to cooperate in order to deliver expected results.
 
@@ -92,7 +90,7 @@ The sentiment analyser is expected to be the most complex and the most risky par
 
 At this point, first result will start to emerge. To visualize them a front-end will be developed by Július Flimmel.
 
-#### Polishing
+#### 3. Finishing and polishing
 
 The last phase focuses on extendibility and deployment as well as improving precision of supported analysers. The application will be extended by the other data acquisition component connecting to Reddit, and a analyser covering simple topic extraction. 
 
@@ -104,25 +102,43 @@ Once all the component are ready, project will start to finalize with testing se
 
 ## Platform architecture
 
-The framework uses service oriented architecture. Each service runs in a separate docker container. Packing services into docker container makes deployment easier since all required dependencies are present inside the container. 
+Platform is separated to three different tiers 
 
-Containers(except front-end and respective back-end) communicate using a message broker Kafka [^3] which allows for high throughput and multi-producer multi-consumer communication. (For more details, please refer to <<Communication>>).
+- Data processing tier
+- Analysers
+- Front-end(visualisation)
 
-**TODO link intro to the next section**
+Each tier consists of several services responsible for a sub domain. Service oriented architecture improves separation of concern and also allows us to implement each service in different language that fits the problem the most. For example, data processing services are implemented in well-established enterprise-level languages such as java or c#. On the other hand, analysers are better off being implemented using less strict language such as python offering number of libraries related to our cause.
+
+The Data processing tier consists of services acquiring and storing data, cooperation of all components, system health and data processing pipeline management.  Analyser tier consist of various services responsible for analysing data of a given format and are expected to produce data of a given format. Front end serves user to understand the results on the first glimpse.
+
+The backbone of the whole pipeline is to acquire data that user request by submitting a job definition containing query, selected analysers and selected social networks. The platform translates it to tailored configuration made uniquely for each component. 
+
+Design of the whole framework requires a lot of effort in order to avoid common pitfalls of school project. Main possible weak spots would be communication among multiple services, customizations and extensibility and last but not least testing.
 
 ### Acquiring data
 
-A request for data acquisition contains information about requested data in a form of a query, output channels where to send data and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
+A request for data acquisition contains information about requested data in a form of a query and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
 
-Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits[^5] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval.
+Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits[5] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval. However both apis restrict free users from downloading large amount of data and also it does not allow access to data older than 7 days. Even thouth that those limits are very restricting, continuous analysis saves the day.
 
-Socneto will support acquiring data from both of those sites with use of 3rd party libraries `LinqToTwitter`[^6] and `Reddit.Net`[^7]. Both of them will make it easier to comply with api limits and tackle respective communication. Both of data acquirers will be written in c#.
+Output of each data acquirer follows the system-wide format of unified post data(UPD) that features 
+
+- text
+- creation or modificaiton time
+- link to related post (in case of a comment or retweet)
+- user id
+
+Socneto will support acquiring data from twitter and reddit with use of 3rd party libraries `LinqToTwitter`[6] and `Reddit.Net`[7] respecively. Both of them will make it easier to comply with api limits and tackle respective communication. Each library has its own dedicated service and both of the will be written in c#. 
+
+Implementation of the data acquirer mainly consist of integration of the respective services in the whole system.
 
 ### Analysers
 
-The analyzers will process each post they receive from the acquirers. After analyzing a post they will send the result to the storage. Because these analyses will be used by other components (mainly frontend), the analyzers' output will need to be in some standardized form. As this output will be mainly processed by a computer, we decided to use a computer friendly JSON format.
+Each type of analysis reside in its own service. The input format is the same as output of data acquisition services. The analyzers will process data received from the acquirers. After analyzing each post they send the result to the storage. Because results of the analysers are the used by frontend, the analyzers' output will need to be in some standardized form. As this output will be mainly processed by a computer, we decided to use a computer friendly JSON format.
 
 The structure of the JSON will need to be robust and simple enough, so that the user of frontend may easily specify which data he wants to visualize using JSONPath. The structure of the output is following:
+
 ```json
 {
     "analyzer_name": {
@@ -132,6 +148,7 @@ The structure of the JSON will need to be robust and simple enough, so that the 
     }
 }
 ```
+
 The whole analysis is packed in one object named after the analyzer. As the analyzer may compute multiple analyses at once, each one will be also represented by one object named after the analysis. The object representing the analysis has a strict format. It contains exactly two attributes:
  * *type*: specifying the type of the result. The supported types will be *number* (including integers and floating point values), *string* and *lists* of these two. Lists of lists will *not* be supported,
  * *value*: the actual result of the analysis
@@ -158,9 +175,12 @@ Here we provide an example of a post's complete analysis. It contains analyses f
 }
 ```
 
+Implementation of the types of analyses requires different amount of effort but integrating them will cost the same. Both of those services will be written in python and will require additional effort to integrate it into the system.
+
+
 ### Communication/Cooperation
 
-As was previously stated, data are exchanged using message broker `Kafka`. The main reason to adopt it was its suitability to event driven systems. The framework fires multiple events to which multiple (at the same time) components can react. 
+Each service runs in a separate docker container. Packing services into docker container makes deployment easier since all required dependencies are present inside the container. Containers(except front-end and respective back-end) communicate using a message broker Kafka [3] which allows for high throughput and multi-producer multi-consumer communication. The main reason to adopt it was its suitability to event driven systems. The framework fires multiple events to which multiple (at the same time) components can react. 
 
 In our case, data can be acquired from multiple data sources at the same time and send to multiple analysis modules. This complex can be implemented using standard request/response model but more elegant solution is to use publish/subscriber model.
 
