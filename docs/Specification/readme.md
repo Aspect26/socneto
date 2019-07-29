@@ -243,7 +243,7 @@ To make sure that components are up an running, some system monitoring was imple
 
 ### Data
 
-Data store is designed for running on a different machine without internet connection for better security, different technical requirements for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created for a transparent communication with all databases.
+Data store is designed for running on a different machine without a public network connection for better security, different technical requirements for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created for a transparent communication with all databases. More databeses were chosen for better sacability and partitioning.
 
 #### Store components
 
@@ -254,23 +254,22 @@ Data store is designed for running on a different machine without internet conne
 - Relation database
   - Usage: internal data such as users, jobs, logs, configurations etc.
   - Requirements: Storage for relational data with possible JSON fields
-  - Used implementation: PostgreSQL
+  - Used implementation: [PostgreSQL](https://www.postgresql.org)
 
 - NoSQL database
   - Usage: internal data such as users, jobs, logs, configurations etc.
   - Requirements: NoSql storage
-  - Used implementation: MongoDB
+  - Used implementation: [MongoDB](https://www.mongodb.com)
 
 - Search engine
   - Usage: searching in anayzed posts
   - Requirements: full text search
-  - Used implementation: Elasticsearch
+  - Used implementation: [Elasticsearch](https://www.elastic.co/products/elasticsearch)
 
 _Any database nor search engine is not hard-coded and should be possible to replace it with a different component. Only a client interface
 needs to be implemented._
 
-_Elastic community doesn't recommend to use elasticsearch as the main data storage, therefore the application storage consist of more data
-storage platforms._
+_It is more common to not use Elasticsearch as a primary database. In latest versions Elastic improved and removed some berriers for this approach. But we decided to implement our storage "traditional" way and duplicate data in Elasticsearch._
 
 #### API
 
@@ -289,14 +288,14 @@ Main expected entities with mandatory fields:
 - Post: id, jobId, ordinal post with additional info, list of analysis
 
 ![socneto-db](images/socneto-db.png)
+
 _Storage architecture_
 
 ### System monitoring
 
-The application architecture is loosely coupled, which brings a lot of possible orchestration problems. Platform should contain a component, which is responsible for collecting logs from analyzers, acquirers and possibly data storage. As the platform is already using Elasticsearch, a ELK stack <link> is efficient for this propose. Logstash <link> is responsible for collecting logs from the application, for communication is also reused already mentioned Kafka, Elasticsearch <link> is need for storing logs and Kibana <link> for visualization. Logs will be also persisted inside relational database.
+The application architecture is loosely coupled, which brings a lot of possible orchestration problems. Platform should contain a component, which is responsible for collecting logs from analyzers, acquirers and possibly data storage. As the platform is already using Elasticsearch, a [ELK stack](https://www.elastic.co/products/elastic-stack)  is efficient for this propose. [Logstash](https://www.elastic.co/products/logstash) is responsible for collecting logs from the application, for communication is also reused already mentioned Kafka, Elasticsearch is need for storing logs and [Kibana](https://www.elastic.co/products/kibana) for visualization. Logs will be also persisted inside relational database.
 
-_It is expected that only some technical user - admin will have permission for Kibana dashboard with logs. On the other hand basic statuses
-of running jobs will be also displayed for a user in our UI._
+_It is expected that only some technical user - admin will have permission for Kibana dashboard with logs. On the other hand basic statuses of running jobs will be also displayed for a user in our UI._
 
 ### API 
 
