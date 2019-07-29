@@ -243,7 +243,7 @@ To make sure that components are up an running, some system monitoring was imple
 
 ### Data
 
-Data store is designed for running on a different machine without a public network connection for better security, different technical requirements for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created for a transparent communication with all databases. More databeses were chosen for better sacability and partitioning.
+Data store is designed for running on a different machine without a public network connection for better security, different technical requirements for machines and possible scalability. Behind a storage interface are several databases for different purposes and the interface is created for a transparent communication with all databases. More databeses were chosen for better sacability and partitioning data by their usage (internal application data vs analyzed posts).
 
 #### Store components
 
