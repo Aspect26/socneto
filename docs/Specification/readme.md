@@ -68,17 +68,25 @@ Once the analysis turns into specification and is defended, the team divides int
 
 Best results are achieved when the team works together. The cooperation will be encouraged by several all-day-long workshops when the whole team meets at one place personally in order to progress.
 
-The process of development is divided into the following approximately equally long milestones.
+The process of development is divided into three  approximately equally long phases. The first one focuses on creating proof-of-concept(PoC) making sure that project's assumptions are not false. In the second phase, the team focuses on setting up proper storage, implementing advanced features such as sentiment analysis or proper result visualization and last but not least implementing mocked parts properly. The last part consists of creating deployment guide, writing documentation and testing. 
 
-#### 1. Idea proof-of-concept(PoC)
+The plan described is vizualised on the following picture which shows three phases with key milestones. Greyed out parts represent already finished milestones. The following sections will describe each phase in detail.
 
-The application relies upon asynchronous communication which should be tested in a production environment which requires to get access to an infrastructure with multiple machines. 
+![planning_visualization](images\socneto-planning-tiers.png)
 
-Result should prove that the idea is  plausible. At the beginning, the test will feature only test data acquisition component and a test analyser but as the development advances, they will get replaced with production version and the other types components will get connected as well. 
+#### 1. Proof-of-concept
 
-The result of this phase will be working simplified platform for a data flow implementation and a final specification reflecting gained experience. The platform will be capable of coordinating all components and allowing us to create a pipeline in order to implement solid data flow.
+The application relies heavily upon asynchronous communication between all components. To prove that the idea is plausible, communication should be tested by mocked components configured to communicate with given components using Kafka and random data.
 
-This PoC is responsibility of Jaroslav Knotek and Lukáš Kolek. At the same time, samples of front-end and analysers will be developed by Július Flimmel and Petra Doubravová respectively.
+This PoC runs on infrastructure which consist of several virtual machines provided by the university. 
+
+This phase should have proved that the idea is plausible. At the beginning, the test featured only test data acquisition component and a test analyser but as the development advances, they will get replaced with production version and the other types components will get connected as well. 
+
+The product of this phase is working simplified platform supporting basic data flow and a final specification reflecting gained experience. The platform is capable of coordinating all components which is necessary to support basic user interaction e.g. submitting job and querying results.
+
+This PoC was responsibility of Jaroslav Knotek and Lukáš Kolek. At the same time, samples of front-end and analysers were developed by Július Flimmel and Petra Doubravová respectively.
+
+This phase is already finished. The next step is to implement proper data flow and implement all mocked components.
 
 #### 2. Data flow
 
@@ -88,13 +96,13 @@ At this point, storage is build to store all data e.g. data from social network 
 
 The sentiment analyser is expected to be the most complex and the most risky part of the whole project. It will require great deal of effort to develop, test and finally integrate it into the framework. This will be supervised by Petra Doubravová and Jan Pavlovský.
 
-At this point, first result will start to emerge. To visualize them a front-end will be developed by Július Flimmel.
+At this point, first result will start to emerge. We will start collecting data and start creating overview based on real data. The result visualization will be developed by Július Flimmel.
 
 #### 3. Finishing and polishing
 
 The last phase focuses on extendibility and deployment as well as improving precision of supported analysers. The application will be extended by the other data acquisition component connecting to Reddit, and a analyser covering simple topic extraction. 
 
-Once all the component are ready, project will start to finalize with testing sessions, documenting and creating deploying guides helping user to start the project from zero. 
+Once all the component are ready, project will start to finalize with testing sessions that will focus on technical aspect of the framework but also on a user interaction. At this point we will have found a partner that will supply us with his data in exchange for our services. At this time we are communicating with few community service associations such as Hlídači státu or Milion chvilek pro demokracii whom we want to offer our services. 
 
 ## Supported analyses
 
@@ -111,6 +119,7 @@ Both tasks involve
 - adapting to two languages czech and english and different data e.g. possible long texts from reddit and very short and concise twitter posts.
 
 ### Topic modeling (TM)
+
 This is generally a difficult problem for both languages, because it is not clear, what is the wanted result and also some language-specific rules are too complex to be solved automaticaly yet. In addition, twitter data are typicaly really short, no full sentences, mixture of languages, emtoticons and broking gramatical rules, so classical approach to this task will not work very well.
 
 Possible approaches :
@@ -146,9 +155,12 @@ Design of the whole framework requires a lot of effort in order to avoid common 
 
 ### Acquiring data
 
-A request for data acquisition contains information about requested data in a form of a query and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
+The api limits restrict amount of data being downloaded in a given time interval. For exampletwitter standard api limits[5] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval. Those limit must be reflected in each data acquirer. 
 
-Data acquirers works continuously in order to tackle api limits. For example, twitter standard api limits[5] allows connected application to lookup-by-query 450 posts or access 900 post by id in 15 minutes long interval. Reddit has less strict limits allowing 600 request per 10 minute interval. However both apis restrict free users from downloading large amount of data and also it does not allow access to data older than 7 days. Even thouth that those limits are very restricting, continuous analysis saves the day.
+
+Both apis restrict free users from downloading large amount of data and also it does not allow access to data older than 7 days. Even though that the limits are very restricting, continuous analysis saves the day, it downloads small portion of the up-to-date data, analyses and immediately updates the results
+
+A request for data acquisition contains information about requested data in a form of a query and optionally credentials if user does not want to use default one. Then the data acquirer starts downloading data until user explicitly stop it. 
 
 Output of each data acquirer follows the system-wide format of unified post data(UPD) that features 
 
@@ -157,9 +169,7 @@ Output of each data acquirer follows the system-wide format of unified post data
 - link to related post (in case of a comment or retweet)
 - user id
 
-Socneto will support acquiring data from twitter and reddit with use of 3rd party libraries `LinqToTwitter`[6] and `Reddit.Net`[7] respecively. Both of them will make it easier to comply with api limits and tackle respective communication. Each library has its own dedicated service and both of the will be written in c#. 
-
-Implementation of the data acquirer mainly consist of integration of the respective services in the whole system.
+Socneto will support acquiring data from Twitter and Reddit with use of 3rd party libraries `LinqToTwitter`[6] and `Reddit.Net`[7] respecively. Both of them will make it easier to comply with api limits and tackle respective communication(limits must be reflected in each component itself). Each library has its own dedicated service and both of the will be written in c#.
 
 ### Analysers
 
@@ -362,10 +372,6 @@ The easiest way to deploy Socneto is to use deployment script in order to downlo
 ### CI/CD and automation
 
 CI/CD is implemented using [TeamCity](https://www.jetbrains.com/teamcity/). It allows for a deployment pipeline definition in which code in the repository get automatically tested, then containerized and deployed. This pipeline is triggered by push to a given branch of the repository.
-
-### Testing
-
-What we want to focus on during testing
 
 ## References
 ```
