@@ -56,11 +56,13 @@ namespace Api.Controllers
             [FromBody]JobSubmitRequest jobSubmitRequest
             )
         {
-
+            var jobId = Guid.NewGuid();
             var jobConfigUpdateNotification = new JobConfigUpdateNotification(
+                jobId,
                 jobSubmitRequest.SelectedAnalysers,
                 jobSubmitRequest.SelectedNetworks,
                 jobSubmitRequest.TopicQuery);
+
             try
             {
                 await _subscribedComponentManager.PushJobConfigUpdateAsync(jobConfigUpdateNotification);

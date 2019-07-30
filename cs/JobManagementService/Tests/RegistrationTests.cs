@@ -77,16 +77,10 @@ namespace Tests
             var componentRegistry = new ComponentRegistry();
             var subscribedCompnentLogger = new Mock<ILogger<SubscribedComponentManager>>();
             var componentConfigNotifierMock = new Mock<IComponentConfigUpdateNotifier>();
-
-            var componentOptions = Options.Create(new SubscribedComponentManagerOptions()
-            {
-                // TODO
-            });
-
+            
             var subscribedComponentManager = new SubscribedComponentManager(
                 componentRegistry,
                 componentConfigNotifierMock.Object,
-                componentOptions,
                 subscribedCompnentLogger.Object
             );
 
@@ -113,7 +107,9 @@ namespace Tests
             var request = new RegistrationRequestMessage
             {
                 ComponentType = componentType,
-                ComponentId = componentId
+                ComponentId = componentId,
+                UpdateChannelName = "update_channel",
+                InputChannelName =  "input_channel"
             };
 
             await registrationRequestProcessor.ProcessRequestAsync(request);
