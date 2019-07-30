@@ -51,11 +51,18 @@ namespace Domain.Registration
                     , nameof(request.UpdateChannelName));
             }
 
+            if (string.IsNullOrWhiteSpace(request.InputChannelName))
+            {
+                throw new ArgumentException("Argument must be valid channel name"
+                    , nameof(request.InputChannelName));
+            }
+
             var channelModel = MessageBrokerChannelModel.FromRequest(request);
             
             var componentRegisterModel = new ComponentRegistrationModel(
                 request.ComponentId,
                 request.UpdateChannelName,
+                request.InputChannelName,
                 request.ComponentType);
             try
             {

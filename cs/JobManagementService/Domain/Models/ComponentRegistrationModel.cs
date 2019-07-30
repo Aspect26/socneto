@@ -3,14 +3,21 @@
     public class ComponentRegistrationModel
     {
         public string ComponentId { get; }
-        public string ChannelId { get; }
+        public string UpdateChannelId { get; }
         public string ComponentType { get; }
+        public string InputChannelId { get; }
         
-        public ComponentRegistrationModel(string componentId, string channelId, string requestComponentType)
+        public ComponentRegistrationModel(
+            string componentId, 
+            string updateChannelId, 
+            string inputChannelId,
+            string requestComponentType)
         {
             ComponentId = componentId;
-            ChannelId = channelId;
+            UpdateChannelId = updateChannelId;
+            InputChannelId = inputChannelId;
             ComponentType = requestComponentType;
         }
+
     }
 }
