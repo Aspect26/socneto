@@ -15,7 +15,6 @@ import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
-import 'job_keywords_graph_component/job_keywords_graph_component.dart';
 
 @Component(
   selector: 'job-detail',
@@ -29,7 +28,6 @@ import 'job_keywords_graph_component/job_keywords_graph_component.dart';
     MaterialSelectItemComponent,
     MaterialTabPanelComponent,
     MaterialTabComponent,
-    JobKeywordsGraphComponent,
     PostsListComponent,
     ChartsBoardComponent,
     NgFor,
