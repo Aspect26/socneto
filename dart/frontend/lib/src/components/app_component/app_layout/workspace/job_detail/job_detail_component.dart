@@ -7,13 +7,14 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/routes.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
-import 'job_keywords_graph_component/job_keywords_graph_component.dart';
 
 @Component(
   selector: 'job-detail',
@@ -27,8 +28,8 @@ import 'job_keywords_graph_component/job_keywords_graph_component.dart';
     MaterialSelectItemComponent,
     MaterialTabPanelComponent,
     MaterialTabComponent,
-    JobKeywordsGraphComponent,
     PostsListComponent,
+    ChartsBoardComponent,
     NgFor,
     NgIf,
   ],
@@ -40,11 +41,13 @@ import 'job_keywords_graph_component/job_keywords_graph_component.dart';
 )
 class JobDetailComponent implements OnActivate {
 
+  final Router _router;
+  final SocnetoService _socnetoService;
+
   Job job;
   List<Post> posts = [];
-  SocnetoService _socnetoService;
 
-  JobDetailComponent(this._socnetoService);
+  JobDetailComponent(this._socnetoService, this._router);
 
   @override
   void onActivate(_, RouterState routerState) async {
@@ -54,8 +57,12 @@ class JobDetailComponent implements OnActivate {
   }
 
   void _setJob(String jobId) async {
-    this.job = await this._socnetoService.getJob(jobId);
-    this.posts = await this._socnetoService.getJobPosts(jobId);
+    try {
+      this.job = await this._socnetoService.getJob(jobId);
+      this.posts = await this._socnetoService.getJobPosts(jobId);
+    } on NotAuthorizedException {
+      await this._router.navigate(RoutePaths.notAuthorized.toUrl());
+    }
   }
 
 }

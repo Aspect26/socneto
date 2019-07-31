@@ -1,0 +1,65 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+
+@mixin create-chart-button-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  create-chart-button {
+
+    .create-chart-button-wrapper {
+      display: flex;
+      height: 200px;
+      padding: 42px;
+      border: 25px solid #f77b72;
+      border-radius: 75px;
+      justify-content: center;
+
+      .add-icon {
+        path {
+          fill: get-color($primary, 300);
+        }
+      }
+    }
+
+    .create-chart-button-wrapper:hover {
+      background-color:  get-color($background, 400);
+    }
+
+    .create-chart-button-wrapper:active {
+      background-color:  get-color($background, 600);
+    }
+
+  }
+
+  material-dialog {
+
+    font-family: $font-family;
+    background-color: get-color($background, 100);
+
+    header {
+      background-color: get-color($primary, 400) !important;
+
+      div {
+        display: flex;
+        justify-content: space-between;
+
+        material-icon {
+          color: get-color($background, 100);
+        }
+      }
+
+    }
+
+    footer {
+      material-button {
+        background-color: get-color($primary, 500);
+        color: get-color-contrast($primary, 500);
+      }
+    }
+  }
+}

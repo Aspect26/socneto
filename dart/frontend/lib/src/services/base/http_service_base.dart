@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 
 class HttpServiceBase {
 
@@ -14,16 +15,19 @@ class HttpServiceBase {
 
   Future<T> get<T>(String path, Function(Map) mapJson) async {
     var response = await this.httpGet(path);
+    this._checkResponseStatusCode(response);
     return this._extractJson<T>(response, mapJson);
   }
 
   Future<T> post<T>(String path, Map data, Function(Map) mapJson) async {
     var response = await this.httpPost(path, data);
+    this._checkResponseStatusCode(response);
     return this._extractJson<T>(response, mapJson);
   }
 
   Future<List<T>> getList<T>(String path, Function(Map) mapJson) async {
     var response = await this.httpGet(path);
+    this._checkResponseStatusCode(response);
     return this._extractJsonList<T>(response, mapJson);
   }
 
@@ -45,6 +49,18 @@ class HttpServiceBase {
 
     headers[headerName] = headerValue;
     return headers;
+  }
+
+  void _checkResponseStatusCode(Response response) {
+    switch (response.statusCode) {
+      case 200: return;
+      case 400: throw BadRequestException(); break;
+      case 401: throw NotAuthorizedException(); break;
+      case 403: throw ForbiddenException(); break;
+      case 404: throw NotFoundException(); break;
+      case 500: throw InternalServerErrorException(); break;
+      default: throw HttpException(response.statusCode, "No description"); break;
+    }
   }
 
   List<T> _extractJsonList<T>(Response response, Function(Map) mapJson) {

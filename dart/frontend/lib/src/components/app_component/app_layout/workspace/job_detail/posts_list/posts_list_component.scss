@@ -40,24 +40,6 @@
         }
       }
 
-      .panel {
-        background-color: get-color($background, 400);
-        border-radius: 5px;
-
-        i {
-          color: get-color($primary, A700);
-        }
-      }
-
-      .panel.open,
-      .header.closed:not(.is-disabled):hover,
-      .header.closed:not(.is-disabled):focus,
-      .panel.open:not(.is-disabled):hover,
-      .panel.open:not(.is-disabled):focus {
-        background-color: get-color($background, 300);
-        border-radius: 5px;
-      }
-
     }
   }
 

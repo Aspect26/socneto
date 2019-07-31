@@ -55,3 +55,5 @@ disown -h <id>
 - create nuget packages for duplicate code
 - At this point, we split downloaded data per post - we are aware that it is not efficient but it suffice now. In the future, data will fit kafka message limit (256kb?)
 - The project is designed to be easily migrated to a cloud when needed. 
+
+TODO unipost

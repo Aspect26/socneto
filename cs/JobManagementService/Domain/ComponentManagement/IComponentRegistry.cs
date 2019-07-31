@@ -10,6 +10,8 @@ namespace Domain.ComponentManagement
         bool TryGetAnalyserComponent(string componentId, out SubscribedComponent component);
         bool TryGetNetworkComponent(string componentId, out SubscribedComponent component);
 
+        SubscribedComponent GetRegisteredStorage();
+
         IList<SubscribedComponent> GetRegisteredComponents();
     }
 }
