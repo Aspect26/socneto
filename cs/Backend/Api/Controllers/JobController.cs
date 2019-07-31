@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +36,19 @@ namespace Socneto.Api.Controllers
 
             var jobStatusResponse = JobStatusResponse.FromModel(jobStatus);
             return Ok(jobStatusResponse);
+        }
+        
+        [HttpGet]
+        [Route("api/job/{jobId:guid}/analysis")]
+        public async Task<ActionResult<List<AnalyzedPostDto>>> GetJobAnalysis([FromRoute]Guid jobId)
+        {
+            if (!IsAuthorizedToSeeJob(jobId))
+                return Unauthorized();
+            
+            var analyzedPosts = await _queryJobResultService.GetJobAnalysis(jobId);
+
+            var mappedAnalyzedPosts = analyzedPosts.Select(AnalyzedPostDto.FromModel).ToList();
+            return Ok(mappedAnalyzedPosts);
         }
 
         [AllowAnonymous]

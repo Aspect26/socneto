@@ -7,6 +7,7 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/routes.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 
@@ -52,6 +53,7 @@ class LoginComponent {
 
   String username;
   String password;
+  bool wrongCredentials = false;
 
   LoginComponent(this._socnetoService, this._router);
 
@@ -61,17 +63,19 @@ class LoginComponent {
 
   onLogin(UIEvent event) {
     if (this.isInputValid()) {
+      this.wrongCredentials = false;
       this._socnetoService.login(username, password).then((User user) {
         this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.id)));
-      }, onError: (error) {
-        this._onCantLogin();
-      });
+      }, onError: (error) => this._onCantLogin(error));
     }
   }
   
-  _onCantLogin() {
-    // TODO: more info
-    Toastr.error("Login", "Can't login with the provided credentials");
+  _onCantLogin(HttpException error) {
+    if (error.statusCode == 400) {
+      Toastr.error("Login", "The provided credentials are wrong");
+    } else {
+      Toastr.error("Login", "Unknown error occured - can't login");
+    }
   }
 
 }

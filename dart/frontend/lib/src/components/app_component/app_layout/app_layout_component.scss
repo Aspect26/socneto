@@ -6,14 +6,8 @@
     $primary: map-get($theme, primary);
     $background: map-get($theme, background);
 
-    header.material-header {
-        background-color: get-color($primary);
+    app-layout {
         font-family: $font-family;
-    }
-
-    material-content {
-        min-height: 100vh;
-        background-color: get-color($background, 700);
     }
 
 }

@@ -4,16 +4,19 @@
     {
         public string ComponentId { get; }
         public string ComponentType { get; }
-        public string ChannelName { get; }
+        public string InputChannelName { get; }
+        public string UpdateChannelName { get; }
 
         public SubscribedComponent(
             string componentId,
-            string componentType, 
-            string channelName)
+            string componentType,
+            string inputChannelName,
+            string updateChannelName)
         {
             ComponentId = componentId;
             ComponentType = componentType;
-            ChannelName = channelName;
+            InputChannelName = inputChannelName;
+            UpdateChannelName = updateChannelName;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Models;
@@ -18,7 +19,10 @@ namespace Domain.ComponentManagement
             var subscribedComponent = new SubscribedComponent(
                 componentRegistrationModel.ComponentId,
                 componentRegistrationModel.ComponentType,
-                componentRegistrationModel.ChannelId);
+                componentRegistrationModel.InputChannelId,
+                componentRegistrationModel.UpdateChannelId);
+
+
 
             if (!_registeredComponents.TryAdd(componentRegistrationModel.ComponentId, subscribedComponent))
             {
@@ -39,8 +43,15 @@ namespace Domain.ComponentManagement
 
         public bool TryGetNetworkComponent(string componentId, out SubscribedComponent component )
         {
-            var desiredComponentName = "Network";
+            const string desiredComponentName = "Network";
             return TryGetComponent(componentId, desiredComponentName,out component);
+        }
+
+        public SubscribedComponent GetRegisteredStorage()
+        {
+            return _registeredComponents
+                .Values
+                .FirstOrDefault(r => r.ComponentType == "Storage");
         }
 
         public IList<SubscribedComponent> GetRegisteredComponents()
@@ -54,13 +65,13 @@ namespace Domain.ComponentManagement
             return TryGetComponent(componentId, desiredComponentName, out component);
         }
         
-        private bool TryGetComponent(string componentId, string desiredComponentName, out SubscribedComponent component)
+        private bool TryGetComponent(string componentId, string desiredComponentType, out SubscribedComponent component)
         {
             component = null;
             if (_registeredComponents.TryGetValue(componentId, out var val))
             {
                 // TODO remove constant
-                if (val.ComponentType != desiredComponentName)
+                if (val.ComponentType != desiredComponentType)
                 {
                     return false;
                 }
