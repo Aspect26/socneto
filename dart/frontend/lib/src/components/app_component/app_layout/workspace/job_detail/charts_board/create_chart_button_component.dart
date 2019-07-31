@@ -10,6 +10,7 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 
@@ -72,17 +73,30 @@ class CreateChartButtonComponent {
       this.errorMessage = "Incorrect chart definition";
       return;
     }
+
+    Success response;
     try {
-      await this._socnetoService.createJobChartDefinition(job.id, jsonPath);
+      response = await this._socnetoService.createJobChartDefinition(job.id, ChartDefinition(jsonPath, chartType));
     } catch (e) {
       this._handleHttpException(e);
       return;
     }
+
+    if (response.success) {
+      Toastr.success("Success", "The chart was successfully created!");
+    } else {
+      Toastr.success("Error", "Could not create the chart :(");
+    }
+
     this.showCreateDialog = false;
   }
 
   void onChartTypeSelected(ChartType chartType) {
     this.chartType = chartType;
+  }
+
+  void onJasonPathChange(String jsonPath) {
+    this.jsonPath = jsonPath;
   }
 
   bool isDefinitionCorrect() {
@@ -96,7 +110,7 @@ class CreateChartButtonComponent {
 
   // TODO: catch HttpException here when corresponding branch is merged
   void _handleHttpException(e) {
-    Toastr.error("Error", "Could not submit the job");
+    Toastr.error("Error", "Could not submit the chart definition: ${e.toString()}");
   }
 
 }

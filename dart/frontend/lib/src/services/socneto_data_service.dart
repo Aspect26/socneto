@@ -33,11 +33,14 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   }
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
-    await this.getList<ChartDefinition>("charts/$jobId", (result) => ChartDefinition.fromMap(result));
+    await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
 
-  Future<Success> createJobChartDefinition(String jobId, String jsonPath) async {
-    var data = { "jobId": jobId, "jsonPath": jsonPath };
-    return this.post<Success>("charts/create", data, (result) => Success.fromMap(result));
+  Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
+    var data = {
+      "ChartType": chartDefinition.chartType.toString().split('.').last,
+      "DataJsonPath": chartDefinition.dataJsonPath
+    };
+    return this.post<Success>("job/$jobId/charts/create", data, (result) => Success.fromMap(result));
   }
 
 }

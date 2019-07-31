@@ -31,18 +31,20 @@ import 'package:sw_project/src/models/ChartDefinition.dart';
     materialProviders,
   ],
 )
-class ChartTypeSelectComponent {
+class ChartTypeSelectComponent implements OnInit {
 
   final String _iconsLocation = "packages/sw_project/static/images/charts";
-  final List<ChartType> chartTypes = [ChartType.line, ChartType.pie];
+  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Pie];
 
   final _changeController = StreamController<ChartType>();
   @Output() Stream<ChartType> get change => _changeController.stream;
 
   ChartType selected;
 
-  ChartTypeSelectComponent();
-
+  @override
+  void ngOnInit() {
+    this.onSelectionChange(chartTypes[0]);
+  }
 
   void onSelectionChange(ChartType selectedType) {
     this.selected = selectedType;
@@ -51,8 +53,8 @@ class ChartTypeSelectComponent {
 
   String getChartTitle(ChartType chartType) {
     switch (chartType) {
-      case ChartType.line: return "Line";
-      case ChartType.pie: return "Pie";
+      case ChartType.Line: return "Line";
+      case ChartType.Pie: return "Pie";
       default: return "Chart";
     }
   }
@@ -60,8 +62,8 @@ class ChartTypeSelectComponent {
   String getIcon(ChartType chartType) {
     String iconName = "";
     switch (chartType) {
-      case ChartType.line: iconName = "line.png"; break;
-      case ChartType.pie: iconName = "pie.png"; break;
+      case ChartType.Line: iconName = "line.png"; break;
+      case ChartType.Pie: iconName = "pie.png"; break;
     }
 
     return "${this._iconsLocation}/$iconName";
