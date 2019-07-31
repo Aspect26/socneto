@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:js';
 
 import 'package:angular/angular.dart';
@@ -39,13 +40,15 @@ class ChartComponent implements AfterChanges {
 
   @Input() ChartDefinition chartDefinition;
   @Input() List<AnalyzedPost> analyzedPosts;
+  @Input() String chartId;
 
   List<dynamic> graphData = [];
 
   @override
   void ngAfterChanges() {
-    if (this.chartDefinition != null && this.analyzedPosts != null) {
-      this._showChart();
+    if (this.chartDefinition != null && this.analyzedPosts != null && this.chartId != null) {
+      // The charts needs to be created after this element was already created
+      Timer(Duration(milliseconds: 500), this._showChart);
     }
   }
 
@@ -73,7 +76,8 @@ class ChartComponent implements AfterChanges {
     var dataLabels = [this.chartDefinition.dataJsonPath.split(".")[1]];
 
     // TODO: make custom JS library from the graph-line-chart and interop it at least
-    context.callMethod('createLineChart', [".graph-line-chart", JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
+    var domSelector = "#${this.chartId}";
+    context.callMethod('createLineChart', [domSelector, JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
   }
 
   dynamic _getAnalysisValue(dynamic analysis) {

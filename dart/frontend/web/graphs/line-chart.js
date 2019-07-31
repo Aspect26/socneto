@@ -41,6 +41,8 @@ function createLineChart(selector, datasets, datalabels) {
         })
         .curve(d3.curveMonotoneX);
 
+    console.log(`JS ${selector}`);
+    console.log(d3.select(selector));
     var svg = d3.select(selector)
         .append("svg")
         .attr("width", w)
