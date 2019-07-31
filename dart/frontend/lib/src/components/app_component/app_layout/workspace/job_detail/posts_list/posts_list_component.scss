@@ -21,18 +21,6 @@
           color: get-color($primary, A700);
         }
 
-        @for $i from 0 through 100 {
-          .sentiment-#{$i} {
-            display: inline-block;
-            vertical-align: middle;
-
-            width: 10px;
-            height: 30px;
-            background-color: hsl($i, 100%, 50%);
-            margin-right: 10px;
-          }
-        }
-
         .name {
           max-width: 98%;
           display: inline-block;

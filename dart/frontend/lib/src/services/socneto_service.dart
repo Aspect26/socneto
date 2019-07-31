@@ -27,8 +27,8 @@ class SocnetoService {
 
   Future<Job> getJob(String jobId) async =>
       await this._dataService.getJob(jobId);
-  Future<List<Job>> getUserJobs(int userId) async =>
-      await this._dataService.getUserJobs(userId);
+  Future<List<Job>> getUserJobs(String username) async =>
+      await this._dataService.getUserJobs(username);
   Future<List<Post>> getJobPosts(String jobId) async =>
       await this._dataService.getJobPosts(jobId);
   Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>

@@ -9,6 +9,6 @@ class AnalyzedPost {
 
   AnalyzedPost.fromMap(Map data) :
         jobId = data["jobId"],
-        post = data["post"] != null? Post.fromMap(data["post"]) : null,
+        post = Post.fromMap(data["post"]),
         analysis = data["analysis"];
 }

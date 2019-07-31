@@ -36,8 +36,7 @@ import 'package:sw_project/src/utils.dart';
 )
 class JobsListComponent implements AfterChanges {
 
-  @Input()
-  int userId;
+  @Input() String username;
 
   final SocnetoService _socnetoService;
   final Router _router;
@@ -59,7 +58,7 @@ class JobsListComponent implements AfterChanges {
   }
 
   void selectJob(Job job) {
-    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.userId, job.id)));
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, job.id)));
   }
 
   String getProcessingTime(Job job) {
@@ -78,12 +77,12 @@ class JobsListComponent implements AfterChanges {
   }
 
   void onCreateNewJob(_) {
-    this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(userId)));
+    this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(this.username)));
   }
 
   void _loadData() async {
     try {
-      this.jobs = await this._socnetoService.getUserJobs(this.userId);
+      this.jobs = await this._socnetoService.getUserJobs(this.username);
     } on HttpException catch (e) {
       this.jobs = [];
       this._onLoadDataError(e);

@@ -23,13 +23,13 @@ namespace Socneto.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/user/{userId}/jobs")]
-        public async Task<ActionResult<List<JobStatusResponse>>> GetJobStatuses([FromRoute]int userId)
+        [Route("api/user/{username}/jobs")]
+        public async Task<ActionResult<List<JobStatusResponse>>> GetJobStatuses([FromRoute]string username)
         {
-            if (! await IsAuthorizedToSeeUser(userId))
+            if (!IsAuthorizedToSeeUser(username))
                 return Unauthorized();
             
-            var jobStatuses = await _jobService.GetJobStatuses(userId);
+            var jobStatuses = await _jobService.GetJobStatuses(username);
 
             var mappedJobStatuses = jobStatuses
                 .Select(JobStatusResponse.FromModel)
@@ -52,13 +52,12 @@ namespace Socneto.Api.Controllers
             return Ok(loginResponse);
         }
         
-        private async Task<bool> IsAuthorizedToSeeUser(int userId)
+        private bool IsAuthorizedToSeeUser(string username)
         {
             if (!User.Identity.IsAuthenticated)
                 return false;
             
-            var user = await _userService.GetUserByName(User.Identity.Name);
-            return userId == user.Id;
+            return username == User.Identity.Name;
         }
 
     }

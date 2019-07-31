@@ -1,10 +1,8 @@
 class User {
   final String username;
-  final int id;
 
-  const User(this.username, this.id);
+  const User(this.username);
 
   User.fromMap(Map data) :
-        username = data["username"] ?? "",
-        id = data["id"];
+        username = data["username"] ?? "";
 }
