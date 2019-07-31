@@ -29,7 +29,7 @@ function createLineChart(selector, datasets, datalabels) {
         .range([0, chartWidth]);
 
     var yScale = d3.scaleLinear()
-        .domain([0, 1])
+        .domain([-1, 1])
         .range([chartHeight, 0]);
 
     var line = d3.line()

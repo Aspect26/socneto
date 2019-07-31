@@ -4,7 +4,6 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/AnalysisValue.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 
@@ -71,22 +70,21 @@ class ChartComponent implements AfterChanges {
 
   void _refreshGraph() {
     var dataSets = [this.graphData];
-    var dataLabels = ["label"];
+    var dataLabels = [this.chartDefinition.dataJsonPath.split(".")[1]];
 
     // TODO: make custom JS library from the graph-line-chart and interop it at least
     context.callMethod('createLineChart', [".graph-line-chart", JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
   }
 
-  dynamic _getAnalysisValue(Map<String, Map<String, AnalysisValue>> analysis) {
+  dynamic _getAnalysisValue(dynamic analysis) {
     var pathParts = this.chartDefinition.dataJsonPath.split(".");
     if (pathParts.length != 2) {
       Toastr.error("Error", "Wrong data path: ${this.chartDefinition.dataJsonPath}");
       return 0;
     }
 
-    if (analysis.containsKey(pathParts[0]) && analysis[pathParts[0]].containsKey(pathParts[1])) {
-      return analysis[pathParts[0]][pathParts[1]].value;
-    }
+    var value = analysis[pathParts[0]][pathParts[1]]["value"];
+    return value;
   }
 
 }

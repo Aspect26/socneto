@@ -55,14 +55,14 @@ class ChartsBoardComponent implements AfterChanges {
       this.analyzedPosts = await this._socnetoService.getJobAnalysis(this.job.id);
     } catch (e) {
       // TODO: HttpException when merged
-      Toastr.error("Posts", "Could not fetch analyzed posts for this job");
+      Toastr.error("Posts", "Could not fetch analyzed posts for this job: ${e.toString()}");
     }
 
     try {
       this.chartDefinitions = await this._socnetoService.getJobChartDefinitions(this.job.id);
     } catch(e) {
       // TODO: HttpException when merged
-      Toastr.error("Charts", "Could not fetch charts for this job");
+      Toastr.error("Charts", "Could not fetch charts for this job: ${e.toString()}");
     }
 
   }
