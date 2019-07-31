@@ -1,14 +1,12 @@
 class Post {
+  final String authorId;
   final String text;
-  final double sentiment;
-  final List<String> keywords;
   final DateTime postedAt;
 
-  Post(this.text, this.sentiment, this.keywords, this.postedAt);
+  Post(this.authorId, this.text, this.postedAt);
 
   Post.fromMap(Map data) :
-    text = data["text"],
-    sentiment = data["sentiment"],
-    keywords = (data["keywords"] as List<dynamic>).map((d) => d.toString()).toList(),
-    postedAt = data["dateTime"] != null? DateTime.parse(data["dateTime"]) : null;
+      authorId = data["authorId"],
+      text = data["text"],
+      postedAt = data["postedAt"] != null? DateTime.parse(data["postedAt"]) : null;
 }

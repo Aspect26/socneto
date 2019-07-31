@@ -63,7 +63,9 @@ class ChartComponent implements AfterChanges {
 
   void _transformPostsIntoData() {
     this.graphData = List<dynamic>();
-    this.analyzedPosts.sort((a, b) => a.post.postedAt.compareTo(b.post.postedAt));
+    this.analyzedPosts.sort((a, b) {
+      return a.post.postedAt.compareTo(b.post.postedAt);
+    });
 
     for (var post in this.analyzedPosts) {
       var value = this._getAnalysisValue(post.analysis);
