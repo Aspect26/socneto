@@ -1,6 +1,9 @@
+import 'package:sw_project/src/models/AnalyzedPost.dart';
+import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
+import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
@@ -28,6 +31,12 @@ class SocnetoService {
       await this._dataService.getUserJobs(userId);
   Future<List<Post>> getJobPosts(String jobId) async =>
       await this._dataService.getJobPosts(jobId);
+  Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
+      await this._dataService.getJobAnalysis(jobId);
+  Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
+      await this._dataService.getJobChartDefinitions(jobId);
+  Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async =>
+      await this._dataService.createJobChartDefinition(jobId, chartDefinition);
 
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
       await this._job_management_service.getAvailableNetworks();

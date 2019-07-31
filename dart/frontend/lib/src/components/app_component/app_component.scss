@@ -6,7 +6,10 @@
 @import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/component_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/components_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.scss";
-@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_keywords_graph_component/job_keywords_graph_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_type_select/chart_type_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.scss";
 @import "package:sw_project/src/components/app_component/material.scss";
 
@@ -16,12 +19,15 @@
   @include app-layout-component($theme);
   @include jobs-list-component($theme);
   @include job-detail-component($theme);
-  @include job-keywords-graph-component($theme);
   @include posts-list-component($theme);
   @include create-job-component($theme);
   @include login-component($theme);
   @include components-select-component($theme);
   @include component-select-component($theme);
+  @include charts-board-component($theme);
+  @include create-chart-button-component($theme);
+  @include chart-type-select-component($theme);
+  @include chart-component($theme);
 }
 
 .theme-red-light {

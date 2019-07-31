@@ -1,0 +1,41 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin chart-type-select-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  chart-type-select {
+
+    .wrapper {
+      display: flex;
+      flex-direction: row;
+
+      .chart-type-selector {
+        padding: 10px 30px;
+        margin: 0 10px;
+        display: flex;
+        flex-direction: column;
+        background-color: map-get($background, 100);
+        cursor: pointer;
+
+        p {
+          align-self: center;
+        }
+
+      }
+
+      div.disabled {
+        background-color: map-get($background, 900);
+
+        img {
+          filter: grayscale(100%);
+          -webkit-filter: grayscale(100%);
+        }
+      }
+    }
+  }
+
+}
