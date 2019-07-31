@@ -1,4 +1,4 @@
-﻿namespace Socneto.Domain
+﻿namespace Socneto.Domain.Models
 {
     public class UniPost
     {

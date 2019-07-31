@@ -2,7 +2,7 @@
 using System.Linq;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain
+namespace Socneto.Domain.Services.Mock
 {
     public class RandomDataGenerator
     {
@@ -24,8 +24,8 @@ namespace Socneto.Domain
                 StartedAt = startedAt,
                 FinishedAt = finishedAt,
                 HasFinished = finishedAt.HasValue,
-                UserId = hc,
-                JobName = RandomString(10)
+                JobName = RandomString(10),
+                Username = "admin"
 
             };
             return jobStatusResponse;

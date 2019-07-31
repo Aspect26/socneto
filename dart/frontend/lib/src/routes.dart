@@ -11,7 +11,7 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/wel
 
 class RoutePaths {
   static final login = RoutePath(path: 'login');
-  static final workspace = RoutePath(path: 'workspace/:${RouteParams.workspaceUserId}');
+  static final workspace = RoutePath(path: 'workspace/:${RouteParams.workspaceUserName}');
   static final notAuthorized = RoutePath(path: 'not-authorized');
 
   static final workspaceHome = RoutePath(path: '', parent: RoutePaths.workspace);
@@ -20,15 +20,15 @@ class RoutePaths {
 }
 
 class RouteParams {
-  static final workspaceUserId = "userId";
+  static final workspaceUserName = "userName";
   static final jobDetailJobId = "jobId";
 
-  static Map<String, String> workspaceParams(int userId) => {
-    workspaceUserId: "$userId"
+  static Map<String, String> workspaceParams(String username) => {
+    workspaceUserName: "$username"
   };
 
-  static Map<String, String> jobDetailParams(int userId, String jobId) => {
-    workspaceUserId: "$userId",
+  static Map<String, String> jobDetailParams(String username, String jobId) => {
+    workspaceUserName: "$username",
     jobDetailJobId: jobId
   };
 }

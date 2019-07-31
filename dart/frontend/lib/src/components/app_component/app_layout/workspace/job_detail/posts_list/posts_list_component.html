@@ -2,13 +2,10 @@
                          expandIcon="comment"
                          [showSaveCancel]="false">
     <div name>
-        <div class="sentiment-{{(post.sentiment * 100).round()}}"></div>
-
         <div class="name">
             <span class="title">Post:</span>
             {{post.text}}
         </div>
     </div>
 
-    Keywords: {{ post.keywords.join(', ') }}
 </material-expansionpanel>

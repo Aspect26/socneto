@@ -6,14 +6,11 @@ namespace Socneto.Api.Models
     {
         public string Username { get; set; }
         
-        public int Id { get; set; }
-
         public static LoginResponse FromModel(User user)
         {
             return new LoginResponse()
             {
                 Username = user.Username,
-                Id = user.Id
             };
         }
     }

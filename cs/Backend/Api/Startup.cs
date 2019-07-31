@@ -6,7 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Socneto.Api.Authentication;
 using Socneto.Domain;
-using Socneto.Domain.QueryResult;
+using Socneto.Domain.Services;
+using Socneto.Domain.Services.Mock;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -51,12 +52,11 @@ namespace Socneto.Api
                 .AddBasicAuthentication<SimpleBasicCredentialVerifier>();
 
             services
+                .AddTransient<IResultProducer, KafkaProducer>()
                 .AddTransient<IJobService, JobService>()
                 .AddTransient<IResultProducer, KafkaProducer>()
-                .AddTransient<IQueryJobResultService, QueryJobResultService>()
-                .AddTransient<IQueryUserJobService, QueryUserJobService>()
-                .AddTransient<IResultProducer, KafkaProducer>()
                 .AddTransient<IUserService, UserService>()
+                .AddTransient<IStorageService, MockStorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"));
         }
