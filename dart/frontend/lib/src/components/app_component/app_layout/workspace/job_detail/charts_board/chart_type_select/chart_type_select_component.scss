@@ -15,6 +15,7 @@
 
       .chart-type-selector {
         padding: 10px 30px;
+        margin: 0 10px;
         display: flex;
         flex-direction: column;
         background-color: map-get($background, 100);

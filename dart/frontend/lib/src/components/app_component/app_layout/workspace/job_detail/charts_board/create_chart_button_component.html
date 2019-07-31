@@ -25,13 +25,12 @@
 
         <material-input
                 label="JSONPath to data"
-                floatingLabel
-                [(ngModel)]="jsonPath">
+                (inputKeyPress)="jsonPath = $event">
         </material-input>
 
         <div footer>
-            <material-button *ngIf="isDefinitionCorrect()" autoFocus class="close-button" (trigger)="onSubmit()">Submit</material-button>
-            <material-button *ngIf="!isDefinitionCorrect()" autoFocus disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="isDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="!isDefinitionCorrect()" disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
         </div>
 
     </material-dialog>
