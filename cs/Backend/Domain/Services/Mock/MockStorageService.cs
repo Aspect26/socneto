@@ -1,55 +1,49 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain.Services
+namespace Socneto.Domain.Services.Mock
 {
-    public class JobResultService : IJobResultService
+    public class MockStorageService : IStorageService
     {
         
-        public Task<JobStatus> GetJobStatus(Guid jobId)
+        private readonly List<User> _users = new List<User>
+        { 
+            new User { Username = "admin", Password = "admin" } 
+        };
+        
+        public async Task<User> GetUser(string username)
         {
-            return Task.FromResult( RandomDataGenerator.GetRandomJobStatusResponse(jobId));
+            return await Task.Run(() => _users.SingleOrDefault(x => x.Username == username));
         }
 
-        public Task<JobResult> GetJobResult(Guid jobId)
+        public async Task<IList<JobStatus>> GetUserJobs(string username)
         {
-            var hc = Math.Abs(jobId.GetHashCode());
-            var topics = new[] { "Guns", "Cars", "Friends", "Cartoon", "Sunshine" };
+            var random = new Random(username.GetHashCode());
 
-            var posts = Enumerable.Range(0, hc % 100)
+            var jobStatuses =  (IList<JobStatus>)Enumerable.Range(0, random.Next(5, 15))
                 .Select(r =>
                 {
-                    var rand = new Random(r + hc).Next(int.MaxValue);
-                    return new Post
-                    {
-                        Keywords = new List<string>() { topics[rand % topics.Length] },
-                        Sentiment = (double)(rand) / int.MaxValue,
-                        Text = RandomDataGenerator.RandomString(64 + rand % 64),
-                        UserId = hc,
-                        DateTime = RandomDataGenerator.GetRandomDate(r + hc)
-                    };
+                    var arr = new byte[16];
+                    random.NextBytes(arr);
+                    return new Guid(arr);
                 })
+                .Select(RandomDataGenerator.GetRandomJobStatusResponse)
                 .ToList();
 
-
-            var jobResultResponse = new JobResult
-            {
-                InputQuery = topics[hc % topics.Length],
-                Posts = posts,
-                JobId = jobId
-            };
-
-            return Task.FromResult(jobResultResponse);
+            return await Task.FromResult(jobStatuses);
         }
 
-        public Task<List<AnalyzedPost>> GetJobAnalysis(Guid jobId)
+        public async Task<JobStatus> GetJob(Guid jobId)
+        {
+            return await Task.FromResult(RandomDataGenerator.GetRandomJobStatusResponse(jobId));
+        }
+
+        public async Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId)
         {
             var hc = Math.Abs(jobId.GetHashCode());
-            var topics = new[] { "Guns", "Cars", "Friends", "Cartoon", "Sunshine" };
-
             var posts = Enumerable.Range(0, hc % 100)
                 .Select(r =>
                 {
@@ -57,11 +51,9 @@ namespace Socneto.Domain.Services
                     var rand = random.Next(int.MaxValue);
                     var post = new Post
                     {
-                        Keywords = new List<string>() { topics[rand % topics.Length] },
-                        Sentiment = (double)(rand) / int.MaxValue,
+                        AuthorId = RandomDataGenerator.RandomString(10),
                         Text = RandomDataGenerator.RandomString(64 + rand % 64),
-                        UserId = hc,
-                        DateTime = RandomDataGenerator.GetRandomDate(r + hc)
+                        PostedAt = RandomDataGenerator.GetRandomDate(r + hc)
                     };
 
                     return new AnalyzedPost
@@ -93,7 +85,7 @@ namespace Socneto.Domain.Services
                 .ToList();
             
 
-            return Task.FromResult(posts);
+            return await Task.FromResult(posts);
         }
     }
 }

@@ -21,11 +21,11 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
 )
 class WorkspaceComponent implements OnActivate {
 
-  int userId;
+  String username;
 
   @override
   void onActivate(RouterState previous, RouterState current) {
-    this.userId = int.parse(current.parameters[RouteParams.workspaceUserId]);
+    this.username = current.parameters[RouteParams.workspaceUserName];
   }
 
 }

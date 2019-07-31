@@ -13,58 +13,59 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-        private readonly IJobResultService _jobResultService;
+        private readonly IJobService _jobService;
+        private readonly IStorageService _storageService;
 
 
-        public JobController(IJobResultService jobResultService)
+        public JobController(IJobService jobService, IStorageService storageService)
         {
-            _jobResultService = jobResultService;
+            _jobService = jobService;
+            _storageService = storageService;
         }
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/status")]
         public async Task<ActionResult<JobStatusResponse>> GetJobStatus([FromRoute]Guid jobId)
         {
-            if (!IsAuthorizedToSeeJob(jobId))
+            if (! await IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
-            var jobStatus = await _jobResultService.GetJobStatus(jobId);
+            var jobStatus = await _jobService.GetJobStatus(jobId);
 
             var jobStatusResponse = JobStatusResponse.FromModel(jobStatus);
             return Ok(jobStatusResponse);
+        }
+
+        [HttpGet]
+        [Route("api/job/{jobId:guid}/posts")]
+        public async Task<ActionResult<List<PostDto>>> GetJobPosts([FromRoute] Guid jobId)
+        {
+            if (! await  IsAuthorizedToSeeJob(jobId))
+                return Unauthorized();
+            
+            var posts = await _jobService.GetJobPosts(jobId);
+
+            var mappedPosts = posts.Select(PostDto.FromValue).ToList();
+            return Ok(mappedPosts);
         }
         
         [HttpGet]
         [Route("api/job/{jobId:guid}/analysis")]
         public async Task<ActionResult<List<AnalyzedPostDto>>> GetJobAnalysis([FromRoute]Guid jobId)
         {
-            if (!IsAuthorizedToSeeJob(jobId))
+            if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
-            var analyzedPosts = await _jobResultService.GetJobAnalysis(jobId);
+            var analyzedPosts = await _jobService.GetJobAnalysis(jobId);
 
             var mappedAnalyzedPosts = analyzedPosts.Select(AnalyzedPostDto.FromModel).ToList();
             return Ok(mappedAnalyzedPosts);
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("api/job/{jobId:guid}/result")]
-        public async Task<ActionResult<JobResultResponse>> GetJobResult([FromRoute]Guid jobId)
+        private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)
         {
-            if (!IsAuthorizedToSeeJob(jobId))
-                return Unauthorized();
-            
-            var jobResult = await _jobResultService.GetJobResult(jobId);
-
-            var jobResultResponse = JobResultResponse.FromModel(jobResult);
-            return Ok(jobResultResponse);
-        }
-        
-        private bool IsAuthorizedToSeeJob(Guid jobId)
-        {
-            // TODO: check if the job belongs to the authorized user
-            return true;
+            var job = await _storageService.GetJob(jobId);
+            return job.Username == User.Identity.Name;
         }
     }
 }

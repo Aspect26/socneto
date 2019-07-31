@@ -65,7 +65,7 @@ class LoginComponent {
     if (this.isInputValid()) {
       this.wrongCredentials = false;
       this._socnetoService.login(username, password).then((User user) {
-        this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.id)));
+        this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.username)));
       }, onError: (error) => this._onCantLogin(error));
     }
   }

@@ -1,28 +1,41 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
+using System.Linq;
 
 namespace Socneto.Domain.Services
 {
-    public class JobService : IJobService 
+    public class JobService : IJobService
     {
-        public Task<IList<JobStatus>> GetJobStatuses(int userId)
+
+        private IStorageService _storageService;
+        
+        public JobService(IStorageService storageService)
         {
-            var random = new Random(userId);
+            _storageService = storageService;
+        }
 
-            var jobStatuses =  (IList<JobStatus>)Enumerable.Range(0, random.Next(5, 15))
-                .Select(r =>
-                {
-                    var arr = new byte[16];
-                    random.NextBytes(arr);
-                    return new Guid(arr);
-                })
-                .Select(RandomDataGenerator.GetRandomJobStatusResponse)
-                .ToList();
+        public async Task<JobStatus> GetJobStatus(Guid jobId)
+        {
+            return await _storageService.GetJob(jobId);
+        }
 
-            return Task.FromResult(jobStatuses);
+        public async Task<IList<JobStatus>> GetJobStatuses(string username)
+        {
+            return await _storageService.GetUserJobs(username);
+        }
+
+        public async Task<IList<Post>> GetJobPosts(Guid jobId)
+        {
+            // TODO: better ask for new storage call specifically for posts only
+            var analyzedPosts = await _storageService.GetAnalyzedPosts(jobId);
+            return analyzedPosts.Select(analyzedPost => analyzedPost.Post).ToList();
+        }
+
+        public async Task<IList<AnalyzedPost>> GetJobAnalysis(Guid jobId)
+        {
+            return await _storageService.GetAnalyzedPosts(jobId);
         }
     }
 }

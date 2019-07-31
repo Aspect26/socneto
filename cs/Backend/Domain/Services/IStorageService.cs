@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
@@ -6,13 +7,13 @@ namespace Socneto.Domain.Services
 {
     public interface IStorageService
     {
-        Task<User> GetUser(int userId);
+        Task<User> GetUser(string username);
 
-        Task<List<JobStatus>> GetUserJobs(int userId);
+        Task<IList<JobStatus>> GetUserJobs(string username);
 
-        Task<JobStatus> GetJob(string jobId);
+        Task<JobStatus> GetJob(Guid jobId);
 
-        Task<List<Post>> GetAnalyzedPosts(string jobId);
+        Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId);
         
     }
 }
