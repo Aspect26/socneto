@@ -1,10 +1,9 @@
-import 'package:sw_project/src/models/AnalysisValue.dart';
 import 'package:sw_project/src/models/Post.dart';
 
 class AnalyzedPost {
   final String jobId;
   final Post post;
-  final Map<String, Map<String, AnalysisValue>> analysis;
+  final dynamic analysis;
 
   AnalyzedPost(this.jobId, this.post, this.analysis);
 
