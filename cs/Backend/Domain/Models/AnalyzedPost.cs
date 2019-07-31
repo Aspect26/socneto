@@ -3,16 +3,14 @@ using System.Collections.Generic;
 
 namespace Socneto.Domain.Models
 {
-    public class Post
+    public class AnalyzedPost
     {
-        public string Text { get; set; }
+        public int Id { get; set; }
+        
+        public Guid JobId { get; set; }
 
-        public double Sentiment { get; set; }
+        public Post Post { get; set; }
 
-        public DateTime DateTime { get; set; }
-
-        public int UserId { get; set; }
-
-        public List<string> Keywords { get; set; }
+        public Dictionary<string,  Dictionary<string, AnalysisValue>> Analysis { get; set; }
     }
 }
