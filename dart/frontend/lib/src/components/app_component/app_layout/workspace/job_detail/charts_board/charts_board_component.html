@@ -1,5 +1,2 @@
-<div *ngFor="let chartDefinition of chartDefinitions">
-    Chart definition
-</div>
-
+<chart *ngFor="let chartDefinition of chartDefinitions" [chartDefinition]="chartDefinition" [analyzedPosts]="analyzedPosts"></chart>
 <create-chart-button [job]="job"></create-chart-button>

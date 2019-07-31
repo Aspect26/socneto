@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JobResult.dart';
 import 'package:sw_project/src/models/Post.dart';
@@ -31,6 +32,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     var jobResult = await this.get<JobResult>("job/$jobId/result", (result) => JobResult.fromMap(result));
     return jobResult.posts;
   }
+
+  Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
+    await this.getList<AnalyzedPost>("job/$jobId/analysis", (result) => AnalyzedPost.fromMap(result));
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
     await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));

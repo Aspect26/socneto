@@ -1,3 +1,4 @@
+import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
@@ -30,6 +31,8 @@ class SocnetoService {
       await this._dataService.getUserJobs(userId);
   Future<List<Post>> getJobPosts(String jobId) async =>
       await this._dataService.getJobPosts(jobId);
+  Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
+      await this._dataService.getJobAnalysis(jobId);
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
       await this._dataService.getJobChartDefinitions(jobId);
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async =>
