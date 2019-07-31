@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain.QueryResult
+namespace Socneto.Domain.Services
 {
-    public interface IQueryJobResultService
+    public interface IJobResultService
     {
         Task<JobStatus> GetJobStatus(Guid jobId);
         Task<JobResult> GetJobResult(Guid jobId);

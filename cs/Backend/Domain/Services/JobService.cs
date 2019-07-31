@@ -1,48 +1,28 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Socneto.Domain.Models;
 
 namespace Socneto.Domain.Services
 {
-    public class JobService : IJobService
+    public class JobService : IJobService 
     {
-
-        private readonly IResultProducer _producer;
-        private readonly ILogger<JobService> _logger;
-
-
-        public JobService(IResultProducer producer, ILogger<JobService> logger)
+        public Task<IList<JobStatus>> GetJobStatuses(int userId)
         {
-            _producer = producer;
-            _logger = logger;
-        }
-        
-        public async Task<JobSubmitResult> SubmitJob(JobSubmitInput jobInput)
-        {
-            var guid = Guid.NewGuid();
+            var random = new Random(userId);
 
-            _logger.LogInformation("Processing data");
-            
-            var job = new JobDataRequest()
-            {
-                JobId = guid,
-                Query = jobInput.Query
-            };
-
-            var json = JsonConvert.SerializeObject(job);
-            
-            await _producer.ProduceAsync(
-                new Models.Message()
+            var jobStatuses =  (IList<JobStatus>)Enumerable.Range(0, random.Next(5, 15))
+                .Select(r =>
                 {
-                    // this is not required
-                    Key = "Request",
-                    Value = json
-                }
-            );
+                    var arr = new byte[16];
+                    random.NextBytes(arr);
+                    return new Guid(arr);
+                })
+                .Select(RandomDataGenerator.GetRandomJobStatusResponse)
+                .ToList();
 
-            return new JobSubmitResult() { JobId = guid };
+            return Task.FromResult(jobStatuses);
         }
     }
 }
