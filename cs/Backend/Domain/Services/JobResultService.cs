@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
 
-namespace Socneto.Domain.QueryResult
+namespace Socneto.Domain.Services
 {
-    public class QueryJobResultService : IQueryJobResultService
+    public class JobResultService : IJobResultService
     {
         
         public Task<JobStatus> GetJobStatus(Guid jobId)

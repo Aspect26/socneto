@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Socneto.Api.Models;
-using Socneto.Domain;
-using Socneto.Domain.QueryResult;
 using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
@@ -15,14 +13,12 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-        private readonly IJobService _jobService;
-        private readonly IQueryJobResultService _queryJobResultService;
+        private readonly IJobResultService _jobResultService;
 
 
-        public JobController(IJobService jobService, IQueryJobResultService queryJobResultService)
+        public JobController(IJobResultService jobResultService)
         {
-            _jobService = jobService;
-            _queryJobResultService = queryJobResultService;
+            _jobResultService = jobResultService;
         }
 
         [HttpGet]
@@ -32,7 +28,7 @@ namespace Socneto.Api.Controllers
             if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
-            var jobStatus = await _queryJobResultService.GetJobStatus(jobId);
+            var jobStatus = await _jobResultService.GetJobStatus(jobId);
 
             var jobStatusResponse = JobStatusResponse.FromModel(jobStatus);
             return Ok(jobStatusResponse);
@@ -45,7 +41,7 @@ namespace Socneto.Api.Controllers
             if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
-            var analyzedPosts = await _queryJobResultService.GetJobAnalysis(jobId);
+            var analyzedPosts = await _jobResultService.GetJobAnalysis(jobId);
 
             var mappedAnalyzedPosts = analyzedPosts.Select(AnalyzedPostDto.FromModel).ToList();
             return Ok(mappedAnalyzedPosts);
@@ -59,7 +55,7 @@ namespace Socneto.Api.Controllers
             if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
-            var jobResult = await _queryJobResultService.GetJobResult(jobId);
+            var jobResult = await _jobResultService.GetJobResult(jobId);
 
             var jobResultResponse = JobResultResponse.FromModel(jobResult);
             return Ok(jobResultResponse);

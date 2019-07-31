@@ -8,6 +8,7 @@ namespace Socneto.Domain.Services
 {
     public class StorageService : IStorageService
     {
+        // TODO: update host
         private const string Host = "http://localhost:5001";
         private readonly HttpClient _client = new HttpClient();
         
