@@ -344,13 +344,9 @@ This component aims to easy, user-friendly ability to submit a new job. We use M
 #### Job detail
 The job detail component contains list of user specified visualisations of the analyzed data. It also contains a paginated list of all acquired posts and their analyses.
 
-At first, the component contains no visualisations. The user has to specify which data from the analyses he wants to be visualized. This approach gives the user a great degree of freedom instead of being presented by hardwired charts. When creating a new chart, the user only has to select the type of chart (pie chart, line chart, ... TODO: which types we want to support?), and write a JSONPath to the attrribute to be visualised (see Analyser output part). These definitions of charts are then stored in our storage, so the user does not need to create them each time.
+At first, the component contains no visualisations. The user has to specify which data from the analyses he wants to be visualized. This approach gives the user a great degree of freedom instead of being presented by hardwired charts. When creating a new chart, the user only has to select the type of chart (pie chart or line chart), and write a JSONPath to the attrribute to be visualised (see Analyser output part). These definitions of charts are then stored in our storage, so the user does not need to create them each time.
+![List of user defined charts](./images/fe_charts.png)
 
-<!--- TODO: screen maybe (list of visualisations, new visualisation, list of posts) --->
-
-#### Admin
-TODO: write more here (how to access it, how does it work?)
-Only users with admin privileges are able to access this component. It serves to make the user able to add, remove or configure data analyzer and data acquirer components.
 ### System health
 
 A system that consist of multiple components is hard to maintain. In order to simplify investigation of failing services and to speed up recovery process, the framework will store and manage all metrics using ELK stack[4]. Proper metric tracking requires definition of system wide guidelines of what values will be tracked and what alarms should be fired when componets are malfunctionning. Integration of this system requires its installation on our infrastructure and integration in each service.
