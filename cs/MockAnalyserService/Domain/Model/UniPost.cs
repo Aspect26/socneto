@@ -6,6 +6,8 @@ namespace Domain.Model
 {
     public class UniPost
     {
+        public UniPost() { }
+        
         private UniPost(string postId, string text, string source, string userId, string postDateTime, string jobId)
         {
             PostId = postId;
