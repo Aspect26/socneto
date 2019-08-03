@@ -23,4 +23,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="movie_tweets_100k.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
