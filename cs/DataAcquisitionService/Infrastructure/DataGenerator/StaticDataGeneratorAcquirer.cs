@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Domain.Acquisition;
 using Domain.Model;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataGenerator
-{
-
+{ 
     public class StaticDataGeneratorAcquirer : IDataAcquirer
     {
+        private readonly ILogger<StaticDataGeneratorAcquirer> _logger;
         private readonly Random _random;
         private readonly TimeSpan _downloadDelay;
         private readonly string _staticDataPath;
@@ -37,9 +38,11 @@ namespace Infrastructure.DataGenerator
         }
 
         public StaticDataGeneratorAcquirer(
+            ILogger<StaticDataGeneratorAcquirer> logger,
             IOptions<StaticGeneratorOptions> randomGenratorOptionsAccessor
             )
         {
+            _logger = logger;
             _downloadDelay = randomGenratorOptionsAccessor.Value.DownloadDelay;
             _random = new Random(randomGenratorOptionsAccessor.Value.Seed);
             _staticDataPath = randomGenratorOptionsAccessor.Value.StaticDataPath;
@@ -49,10 +52,13 @@ namespace Infrastructure.DataGenerator
             DataAcquirerInputModel acquirerInputModel,
             CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Collecting stuff");
             var waitTask = Task.Delay(_downloadDelay);
 
             if (_records == null)
             {
+                _logger.LogInformation("Parsing results");
+
                 using (var reader = new StreamReader(_staticDataPath))
                 using (var csv = new CsvReader(reader))
                 {
@@ -65,9 +71,11 @@ namespace Infrastructure.DataGenerator
                         .ToList();
                 }
 
+            _logger.LogInformation("Parsing done");
             }
-            
+
             await waitTask;
+
 
             var random100 = Enumerable
                 .Range(0, 100)

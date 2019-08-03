@@ -40,10 +40,15 @@ namespace Api
             services.AddTransient<IJobManager,JobManager>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
-            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
-            services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
 
-            services.AddSingleton<IDataAcquirer, RandomDataGeneratorAcquirer>();
+#if DEBUG
+            services.AddTransient<IMessageBrokerProducer, MockProducer>();
+            services.AddTransient<IMessageBrokerConsumer, MockConsumer>();
+#else
+            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+           services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+#endif
+            services.AddSingleton<IDataAcquirer, StaticDataGeneratorAcquirer>();
 
 
             services.Configure<RandomGeneratorOptions>(

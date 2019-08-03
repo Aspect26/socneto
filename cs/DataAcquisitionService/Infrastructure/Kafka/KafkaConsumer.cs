@@ -1,13 +1,72 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Domain;
 using Domain.Abstract;
+using Domain.JobConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Kafka
 {
+    public class MockConsumer : IMessageBrokerConsumer
+    {
+        private readonly ILogger<MockConsumer> _logger;
+
+        public MockConsumer(ILogger<MockConsumer> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task ConsumeAsync(string consumeTopic,
+            Func<string, Task> onRecieveAction,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Topic {}", consumeTopic);
+
+            if (consumeTopic == "job_management.job_configuration.DataAcquirer_test1")
+            {
+                await Task.Delay(TimeSpan.FromSeconds(10));
+
+                var config = new DataAcquirerJobConfig()
+                {
+                    JobId = Guid.NewGuid(),
+                    Attributes = new Dictionary<string, string>
+                    {
+                        {"TopicQuery","FooBar"}
+                    },
+                    OutputMessageBrokerChannels = new string[] { "s1", "a1", "a2" }
+                };
+
+                var json = JsonConvert.SerializeObject(config);
+                await onRecieveAction(json);
+            }
+
+            await Task.Delay(TimeSpan.MaxValue);
+        }
+    }
+
+    public class MockProducer : IMessageBrokerProducer
+    {
+        private readonly ILogger<MockProducer> _logger;
+
+        public MockProducer(ILogger<MockProducer> logger)
+        {
+            _logger = logger;
+        }
+        public Task ProduceAsync(string topic, MessageBrokerMessage message)
+        {
+            _logger.LogInformation("Topic {}, Message {}",
+                topic,
+                message.JsonPayloadPayload);
+
+            return Task.CompletedTask;
+        }
+    }
+
     public class KafkaConsumer : IMessageBrokerConsumer
     {
         private readonly ILogger<KafkaConsumer> _logger;
