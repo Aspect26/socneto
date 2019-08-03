@@ -10,18 +10,12 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataGenerator
 {
-    public class RandomGeneratorOptions
-    {
-        public TimeSpan DownloadDelay { get; set; }
-        public int Seed { get; set; }
-    }
-
-    public class DataGeneratorAcquirer :IDataAcquirer
+    public class RandomDataGeneratorAcquirer :IDataAcquirer
     {
         private readonly Random _random ;
         private readonly TimeSpan _downloadDelay;
 
-        public DataGeneratorAcquirer(
+        public RandomDataGeneratorAcquirer(
             IOptions<RandomGeneratorOptions> randomGenratorOptionsAccessor
             )
         {
