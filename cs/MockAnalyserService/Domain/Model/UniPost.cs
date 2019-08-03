@@ -8,7 +8,13 @@ namespace Domain.Model
     {
         public UniPost() { }
         
-        private UniPost(string postId, string text, string source, string userId, string postDateTime, string jobId)
+        private UniPost(
+            string postId, 
+            string text, 
+            string source, 
+            string userId, 
+            string postDateTime, 
+            Guid jobId)
         {
             PostId = postId;
             Text = text;
@@ -22,7 +28,7 @@ namespace Domain.Model
         public string PostId { set; get; }
 
         [JsonProperty("jobId")]
-        public string JobId { get; set; }
+        public Guid JobId { get; set; }
 
         [JsonProperty("text")]
         public string Text { get; set; }
@@ -36,7 +42,13 @@ namespace Domain.Model
         [JsonProperty("postDateTime")]
         public string PostDateTime { get; set; }
 
-        public static UniPost FromValues(string postId, string text, string source, string userId, string dateTimeString, string jobId)
+        public static UniPost FromValues(
+            string postId, 
+            string text, 
+            string source, 
+            string userId, 
+            string dateTimeString, 
+            Guid jobId)
         {
             return new UniPost(postId, text, source, userId, dateTimeString, jobId);
         }

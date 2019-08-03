@@ -14,7 +14,7 @@ namespace Domain.PostAnalysis
         private readonly IMessageBrokerConsumer _messageBrokerConsumer;
         private readonly IMessageBrokerProducer _producer;
         private readonly IAnalyser _analyser;
-        private readonly IJobConfigService _jobConfigService;
+        private readonly IJobManager _jobManager;
         private readonly string _inputChannelName;
         private readonly string _componentId;
         public bool ConnectionEstablished { get; private set; } = false;
@@ -24,7 +24,7 @@ namespace Domain.PostAnalysis
             IMessageBrokerConsumer messageBrokerConsumer,
             IMessageBrokerProducer producer,
             IAnalyser analyser,
-            IJobConfigService jobConfigService,
+            IJobManager jobManager,
             IOptions<ComponentOptions> componentOptionsAccessor)
         {
             if (string.IsNullOrEmpty(componentOptionsAccessor.Value.InputChannelName))
@@ -34,9 +34,9 @@ namespace Domain.PostAnalysis
             }
 
             _messageBrokerConsumer = messageBrokerConsumer;
-            _jobConfigService = jobConfigService;
             _producer = producer;
             _analyser = analyser;
+            _jobManager = jobManager;
 
             _inputChannelName = componentOptionsAccessor.Value.InputChannelName;
             _componentId = componentOptionsAccessor.Value.ComponentId;
@@ -65,7 +65,8 @@ namespace Domain.PostAnalysis
                 "analyzed-post",
                 sendObjectJson);
 
-            var outputChannelName = _jobConfigService.GetCurrentConfig().OutputChannelName;
+            var outputChannelName= _jobManager.GetJobConfigOutput(post.JobId);
+            
             await _producer.ProduceAsync(outputChannelName, messageBrokerMessage);
         }
     }
