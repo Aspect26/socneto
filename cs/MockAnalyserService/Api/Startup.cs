@@ -33,12 +33,17 @@ namespace Api
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
             
-            services.AddTransient<IJobConfigService, JobConfigService>();
+            services.AddSingleton<IJobManager, JobManager>();
             services.AddTransient<IAnalyser, MockAnalyser>();
             services.AddTransient<IRegistrationService, RegistrationService>();
-            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
-            services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
 
+#if DEBUG
+            services.AddTransient<IMessageBrokerProducer, MockProducer>();
+            services.AddTransient<IMessageBrokerConsumer, MockConsumer>();
+#else
+            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+           services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+#endif
             services.Configure<ComponentOptions>(
                 Configuration.GetSection("DataAcquisitionService:ComponentOptions"));
 

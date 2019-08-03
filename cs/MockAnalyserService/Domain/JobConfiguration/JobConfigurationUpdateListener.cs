@@ -10,14 +10,14 @@ namespace Domain.JobConfiguration
     public class JobConfigurationUpdateListener
     {
         private readonly IMessageBrokerConsumer _messageBrokerConsumer;
-        private readonly IJobConfigService _jobConfigService;
+        private readonly IJobManager _jobManager;
+
         private readonly string _updateChannelName;
-        public bool ConnectionEstablished { get; private set; } = false;
 
 
         public JobConfigurationUpdateListener(
             IMessageBrokerConsumer messageBrokerConsumer,
-            IJobConfigService jobConfigService,
+        IJobManager jobManager,
             IOptions<ComponentOptions> componentOptionsAccessor)
         {
             if (string.IsNullOrEmpty(componentOptionsAccessor.Value.UpdateChannelName))
@@ -27,15 +27,11 @@ namespace Domain.JobConfiguration
             }
 
             _messageBrokerConsumer = messageBrokerConsumer;
-            _jobConfigService = jobConfigService;
+            _jobManager = jobManager;
 
             _updateChannelName = componentOptionsAccessor.Value.UpdateChannelName;
         }
-
-        public void OnConnectionEstablished()
-        {
-            ConnectionEstablished = true;
-        }
+        
         public Task ListenAsync(CancellationToken token)
         {
             return _messageBrokerConsumer.ConsumeAsync(
@@ -44,10 +40,11 @@ namespace Domain.JobConfiguration
                 token);
         }
 
-        private async Task ProcessJobConfigAsync(string configJson)
+        private Task ProcessJobConfigAsync(string configJson)
         {
             var jobConfig = JsonConvert.DeserializeObject<DataAnalyzerJobConfig>(configJson);
-            _jobConfigService.SetCurrentConfig(jobConfig);
+            _jobManager.Register(jobConfig);
+            return Task.CompletedTask;
         }
     }
 }

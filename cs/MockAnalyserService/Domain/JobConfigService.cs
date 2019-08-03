@@ -1,26 +1,65 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Domain.Abstract;
+using Domain.Analyser;
 using Domain.JobConfiguration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Domain
 {
-    public interface IJobConfigService
+    public interface IJobManager
     {
-        void SetCurrentConfig(DataAnalyzerJobConfig jobConfig);
-
-        DataAnalyzerJobConfig GetCurrentConfig();
+        void Register(DataAnalyzerJobConfig jobConfig);
+        string GetJobConfigOutput(Guid postJobId);
     }
-
-    public class JobConfigService : IJobConfigService
+    public class JobManager : IJobManager
     {
-        private DataAnalyzerJobConfig _config;
-        
-        public void SetCurrentConfig(DataAnalyzerJobConfig jobConfig)
+        private class JobManagerJobRecord
         {
-            _config = jobConfig;
+            public Guid JobId { get; set; }
+            public string Output { get; set; }
+        }
+        
+        private readonly ILogger<JobManager> _logger;
+
+        // concurent dictionary does not suffice
+        private readonly object _dictionaryLock = new object();
+        private readonly Dictionary<Guid, JobManagerJobRecord> _runningJobsRecords
+            = new Dictionary<Guid, JobManagerJobRecord>();
+
+
+        public JobManager(
+            ILogger<JobManager> logger)
+        {
+            _logger = logger;
+        }
+        
+
+
+        public void Register(DataAnalyzerJobConfig jobConfig)
+        {
+            lock (_dictionaryLock)
+            {
+                var json = JsonConvert.SerializeObject(jobConfig);
+                _logger.LogInformation("Config recieved {}", json);
+
+                var jobManagerJobRecord = new JobManagerJobRecord
+                {
+                    JobId = jobConfig.JobId,
+                    Output = jobConfig.OutputChannelName
+                };
+
+                _runningJobsRecords.TryAdd(jobManagerJobRecord.JobId, jobManagerJobRecord);
+                
+            }
         }
 
-        public DataAnalyzerJobConfig GetCurrentConfig()
+        public string GetJobConfigOutput(Guid postJobId)
         {
-            return _config;
+            return _runningJobsRecords[postJobId].Output;
         }
     }
 }
