@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
@@ -25,7 +26,7 @@ namespace Tests
                     DownloadDelay = TimeSpan.FromSeconds(2),
                     Seed = 123
                 });
-            var dataAcquirer = new DataGeneratorAcquirer(randomGeneratorOptions);
+            var dataAcquirer = new RandomDataGeneratorAcquirer(randomGeneratorOptions);
             var messageBrokerMock = new Mock<IMessageBrokerProducer>();
             var loggerMock = new Mock<ILogger<JobManager>>();
             var jobManager = new JobManager(
@@ -38,8 +39,12 @@ namespace Tests
             var dataAcquirerJobConfig = new DataAcquirerJobConfig
             {
                 JobId = guid,
-                Query = "Foo-Bar",
-                OutputChannelName = "test.channel.name"
+                Attributes = new Dictionary<string, string>()
+                {
+                    {"TopicQuery","Foo-Bar"}
+                },
+
+                OutputMessageBrokerChannels = new string[]{"test.channel.name"}
             };
 
             await jobManager.StartDownloadingAsync(
