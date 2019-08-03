@@ -15,9 +15,6 @@ using Newtonsoft.Json;
 
 namespace Domain.JobManagement
 {
-
-
-
     public interface IJobManager
     {
         Task StartDownloadingAsync(DataAcquirerJobConfig jobConfig);
@@ -97,7 +94,7 @@ namespace Domain.JobManagement
         {
             var dataAcquirerInputModel = new DataAcquirerInputModel
             {
-                Query = jobConfig.Query,
+                Query = jobConfig.Attributes["TopicQuery"],
                 NetworkCredentials = new DataAcquirerCredentials
                 {
                     Password = "foo-bar",
@@ -119,12 +116,22 @@ namespace Domain.JobManagement
                             "acquired-data-post",
                             jsonData);
 
-                        await _producer.ProduceAsync(jobConfig.OutputChannelName,
+                        await SendToOutputs(jobConfig.OutputMessageBrokerChannels, 
                             messageBrokerMessage);
                     }
                 }
             }
             catch (TaskCanceledException) { }
+        }
+
+        private async Task SendToOutputs(string[] outputChannels, 
+            MessageBrokerMessage messageBrokerMessage)
+        {
+            foreach (var outputChannel in outputChannels)
+            {
+                await _producer.ProduceAsync(outputChannel,
+                    messageBrokerMessage);
+            }
         }
 
         public async Task StopDownloadingTasks()
@@ -145,7 +152,7 @@ namespace Domain.JobManagement
                 {
                     await jobRecord.JobTask;
                 }
-                catch (TaskCanceledException){}
+                catch (TaskCanceledException) { }
             }
 
             _runningJobsRecords.Clear();

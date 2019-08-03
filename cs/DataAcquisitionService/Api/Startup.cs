@@ -43,10 +43,13 @@ namespace Api
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
 
-            services.AddSingleton<IDataAcquirer, DataGeneratorAcquirer>();
+            services.AddSingleton<IDataAcquirer, RandomDataGeneratorAcquirer>();
 
 
             services.Configure<RandomGeneratorOptions>(
+                Configuration.GetSection("DataAcquisitionService:RandomGeneratorOptions"));
+
+            services.Configure<StaticGeneratorOptions>(
                 Configuration.GetSection("DataAcquisitionService:RandomGeneratorOptions"));
 
             services.Configure<ComponentOptions>(
