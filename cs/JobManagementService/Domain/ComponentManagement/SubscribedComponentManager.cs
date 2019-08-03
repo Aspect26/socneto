@@ -14,7 +14,7 @@ namespace Domain.ComponentManagement
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
         private readonly ILogger<SubscribedComponentManager> _logger;
-        
+
         public SubscribedComponentManager(
             IComponentRegistry componentRegistry,
             IComponentConfigUpdateNotifier componentConfigUpdateNotifier,
@@ -23,7 +23,7 @@ namespace Domain.ComponentManagement
         {
             _componentRegistry = componentRegistry;
             _componentConfigUpdateNotifier = componentConfigUpdateNotifier;
-          
+
             _logger = logger;
         }
 
@@ -42,7 +42,8 @@ namespace Domain.ComponentManagement
             var storage = _componentRegistry.GetRegisteredStorage();
             if (storage == null)
             {
-                throw new InvalidOperationException("No storage is present. Job can't be done");
+                _logger.LogWarning("No storage component was registered");
+                //throw new InvalidOperationException("No storage is present. Job can't be done");
             }
 
             var storageChannelName = storage.InputChannelName;
@@ -51,12 +52,14 @@ namespace Domain.ComponentManagement
                 storage,
                 jobConfigUpdateNotification);
 
-            await PushNetworkDataAcquisitionJobConfig(
+            var analysers = await PushAnalyserJobConfig(
                 storageChannelName,
                 jobConfigUpdateNotification);
 
-            await PushAnalyserJobConfig(
+            var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
+            await PushNetworkDataAcquisitionJobConfig(
                 storageChannelName,
+                analysersInputs,
                 jobConfigUpdateNotification);
         }
 
@@ -69,7 +72,7 @@ namespace Domain.ComponentManagement
                 JobId = jobConfigUpdateNotification.JobId,
                 Attributes = new Dictionary<string, string>()
                 {
-                    
+
                 }
             };
 
@@ -95,21 +98,27 @@ namespace Domain.ComponentManagement
 
         private async Task PushNetworkDataAcquisitionJobConfig(
             string storageChannelName,
+            IEnumerable<string> selectedAnalysersChannels,
             JobConfigUpdateNotification jobConfigUpdateNotification)
         {
+
+            var outputChannels = selectedAnalysersChannels.Concat(new[] { storageChannelName, }).ToArray();
+
+            var notification = new DataAcquisitionConfigUpdateNotification
+            {
+                JobId = jobConfigUpdateNotification.JobId,
+                Attributes = new Dictionary<string, string>()
+                {
+                    {"TopicQuery", jobConfigUpdateNotification.TopicQuery }
+                },
+                OutputMessageBrokerChannels = outputChannels,
+            };
+
             foreach (var network in jobConfigUpdateNotification.Networks)
             {
                 if (_componentRegistry.TryGetNetworkComponent(network, out var networkCmp))
                 {
-                    var notification = new DataAcquisitionConfigUpdateNotification
-                    {
-                        JobId = jobConfigUpdateNotification.JobId,
-                        Attributes = new Dictionary<string, string>()
-                        {
-                            {"TopicQuery", jobConfigUpdateNotification.TopicQuery }
-                        },
-                        OutputMessageBrokerChannels = jobConfigUpdateNotification.Analysers.ToArray(),
-                    };
+                    
 
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
                         networkCmp.UpdateChannelName,
@@ -118,39 +127,45 @@ namespace Domain.ComponentManagement
                 }
                 else
                 {
-                    const string errorMessage = 
+                    const string errorMessage =
                         "Network data acquisition component {analyserName} was not registered";
                     _logger.LogWarning(errorMessage, network);
                 }
             }
         }
 
-        private async Task PushAnalyserJobConfig(
+        private async Task<List<SubscribedComponent>> PushAnalyserJobConfig(
             string storageChannelName,
             JobConfigUpdateNotification jobConfigUpdateNotification)
         {
+
+            var analysers = new List<SubscribedComponent>();
             foreach (var analyser in jobConfigUpdateNotification.Analysers)
             {
                 if (_componentRegistry.TryGetAnalyserComponent(analyser, out var analyserCmp))
                 {
-                    var notification = new AnalyserConfigUpdateNotification()
-                    {
-                        JobId =  jobConfigUpdateNotification.JobId,
-                        Attributes = new Dictionary<string, string>(),
-                        OutputMessageBrokerChannels =  new []{storageChannelName},
-                    };
-
-                    await _componentConfigUpdateNotifier.NotifyComponentAsync(
-                        analyserCmp.UpdateChannelName,
-                        notification);
-
-                    _logger.LogInformation("Config pushed to: {componentName}", analyser);
+                    analysers.Add(analyserCmp);
                 }
                 else
                 {
                     _logger.LogWarning("Analyser {analyserName} was not registered", analyser);
                 }
             }
+
+
+            var notification = new AnalyserConfigUpdateNotification()
+            {
+                JobId = jobConfigUpdateNotification.JobId,
+                Attributes = new Dictionary<string, string>(),
+                OutputMessageBrokerChannels = new[] { storageChannelName },
+            };
+            var configUpdateTasks = analysers.Select(analyserCmp =>
+                _componentConfigUpdateNotifier.NotifyComponentAsync(
+                    analyserCmp.UpdateChannelName,
+                    notification));
+            await Task.WhenAll(configUpdateTasks);
+            return analysers;
         }
     }
+
 }
