@@ -20,8 +20,17 @@ services:
     container_name: kafka_server
   backend:
     build: './cs/Backend'
+    networks:
+      - kafka-network
     ports: 
       - '15155:15155'
+  storage:
+    build: './java/storage'
+    networks:
+      - kafka-network
+    ports:
+      - '8080:8080'
+    container_name: storage_service
   job-management-service:
     build: './cs/JobManagementService'
     ports:
@@ -30,6 +39,10 @@ services:
       - kafka-network
   data-acquisition-service:
     build: './cs/DataAcquisitionService'
+    networks:
+      - kafka-network
+  mock-analyser-service:
+    build: './cs/MockAnalyserService'
     networks:
       - kafka-network
 networks:

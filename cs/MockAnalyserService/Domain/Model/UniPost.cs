@@ -6,8 +6,10 @@ namespace Domain.Model
 {
     public class UniPost
     {
-        public UniPost() { }
-        
+        public UniPost()
+        {
+            
+        }
         private UniPost(
             string postId, 
             string text, 
@@ -36,10 +38,10 @@ namespace Domain.Model
         [JsonProperty("source")]
         public string Source { get; set; }
 
-        [JsonProperty("userId")]
+        [JsonProperty("authorId")]
         public string UserId { get; set; }
 
-        [JsonProperty("postDateTime")]
+        [JsonProperty("dateTime")]
         public string PostDateTime { get; set; }
 
         public static UniPost FromValues(

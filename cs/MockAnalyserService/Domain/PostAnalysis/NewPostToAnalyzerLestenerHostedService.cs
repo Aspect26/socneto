@@ -25,16 +25,6 @@ namespace Domain.PostAnalysis
             _logger.LogInformation("Service {serviceName} started",
                 nameof(NewPostToAnalyzerLestenerHostedService));
 
-            // wait until this module gets registered
-            while (!_newPostToAnalyzeListener.ConnectionEstablished)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            }
-
             _listenTask = _newPostToAnalyzeListener.ListenAsync(_cancellationTokenSource.Token);
         }
 

@@ -7,4 +7,8 @@ namespace Socneto.Domain
     {
         Task ProduceAsync( Message message);
     }
+
+    public interface IMessageBrokerProducer
+    { }
+
 }

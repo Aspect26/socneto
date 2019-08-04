@@ -24,17 +24,22 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
-            services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
+#if DEBUG
+            services.AddSingleton<IMessageBrokerConsumer, MockKafka>();
+            services.AddTransient<IMessageBrokerProducer, MockKafka>();
+#else
+            services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+#endif
             services.AddSingleton<IComponentRegistry, ComponentRegistry>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
-            
+
             services.Configure<RegistrationRequestOptions>(
                 Configuration.GetSection("JobManagementService:RegistrationRequestOptions")
                 );
@@ -52,7 +57,7 @@ namespace Api
             }
 
             app.UseMvc();
-            
+
         }
     }
 }

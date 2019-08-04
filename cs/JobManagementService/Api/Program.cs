@@ -22,7 +22,9 @@ namespace Api
 
         public static async Task MainAsync(string[] args)
         {
-            await Task.Delay(TimeSpan.FromMinutes(1));
+#if !DEBUG
+            await Task.Delay(TimeSpan.FromSeconds(30));
+#endif
             var app = CreateWebHostBuilder(args).Build();
             app.Run();
         }

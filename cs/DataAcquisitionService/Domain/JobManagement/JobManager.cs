@@ -95,6 +95,7 @@ namespace Domain.JobManagement
             var dataAcquirerInputModel = new DataAcquirerInputModel
             {
                 Query = jobConfig.Attributes["TopicQuery"],
+                JobId = jobConfig.JobId,
                 NetworkCredentials = new DataAcquirerCredentials
                 {
                     Password = "foo-bar",

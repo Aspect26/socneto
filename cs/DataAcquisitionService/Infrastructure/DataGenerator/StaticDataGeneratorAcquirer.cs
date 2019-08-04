@@ -64,10 +64,12 @@ namespace Infrastructure.DataGenerator
                 {
                     _records = csv.GetRecords<MovieSetEntity>()
                         .Select(r => UniPost.FromValues(
+                            Guid.NewGuid().ToString(),
                                 r.Text,
                                 "STATIC_TEST",
                                 r.User,
-                                DateTime.Now.ToString("s")))
+                                DateTime.Now.ToString("s"),
+                        acquirerInputModel.JobId))
                         .ToList();
                 }
 
