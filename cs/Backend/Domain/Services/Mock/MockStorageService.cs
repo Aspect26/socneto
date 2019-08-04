@@ -8,12 +8,12 @@ namespace Socneto.Domain.Services.Mock
 {
     public class MockStorageService : IStorageService
     {
-        
+
         private readonly List<User> _users = new List<User>
-        { 
-            new User { Username = "admin", Password = "admin" } 
+        {
+            new User { Username = "admin", Password = "admin" }
         };
-        
+
         public async Task<User> GetUser(string username)
         {
             return await Task.Run(() => _users.SingleOrDefault(x => x.Username == username));
@@ -23,7 +23,7 @@ namespace Socneto.Domain.Services.Mock
         {
             var random = new Random(username.GetHashCode());
 
-            var jobStatuses =  (IList<JobStatus>)Enumerable.Range(0, random.Next(5, 15))
+            var jobStatuses = (IList<JobStatus>)Enumerable.Range(0, random.Next(5, 15))
                 .Select(r =>
                 {
                     var arr = new byte[16];
@@ -60,8 +60,9 @@ namespace Socneto.Domain.Services.Mock
                     {
                         JobId = jobId,
                         Post = post,
-                        Analysis = new Dictionary<string, Dictionary<string, AnalysisValue>> ()
-                        {
+                        Analyses = new[]
+                            {
+                                new Dictionary<string, Dictionary<string, AnalysisValue>>() {
                             { "sentiment", new Dictionary<string, AnalysisValue>
                                 {
                                     { "polarity", new AnalysisValue
@@ -80,10 +81,11 @@ namespace Socneto.Domain.Services.Mock
                                 }
                             }
                         }
+                                }
                     };
                 })
                 .ToList();
-            
+
 
             return await Task.FromResult(posts);
         }
