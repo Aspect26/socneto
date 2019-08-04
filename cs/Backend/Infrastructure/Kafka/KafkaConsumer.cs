@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Socneto.Domain;
+using Socneto.Domain.Models;
 
 namespace Socneto.Infrastructure.Kafka
 {
@@ -117,6 +119,27 @@ namespace Socneto.Infrastructure.Kafka
                     consumer.Close();
                 }
             }
+        }
+    }
+
+    public class MockKafka : IResultProducer
+    {
+        private readonly ILogger<MockKafka> _logger;
+
+        public MockKafka(ILogger<MockKafka> logger)
+        {
+            _logger = logger;
+        }
+
+        private static Guid _jobId = Guid.NewGuid();
+      
+        public Task ProduceAsync(Message message)
+        {
+            _logger.LogInformation("Topic {}, Message {}",
+                message.Key,
+                message.Value);
+
+            return Task.CompletedTask;
         }
     }
 }

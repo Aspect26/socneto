@@ -47,7 +47,6 @@ namespace Api
         private static void StartListeningToJobConfigs(IWebHost app)
         {
             var jobConfigurationUpdateListener = app.Services.GetRequiredService<NewPostToAnalyzeListener>();
-            jobConfigurationUpdateListener.OnConnectionEstablished();
         }
 
         private static async Task RegisterComponent(IWebHost app, ILogger<Program> logger)
@@ -62,7 +61,8 @@ namespace Api
             {
                 ComponentId = componentOptions.Value.ComponentId,
                 ComponentType = componentOptions.Value.ComponentType,
-                UpdateChannelName = componentOptions.Value.InputChannelName
+                InputChannelName = componentOptions.Value.InputChannelName,
+                UpdateChannelName = componentOptions.Value.UpdateChannelName
             };
 
             try

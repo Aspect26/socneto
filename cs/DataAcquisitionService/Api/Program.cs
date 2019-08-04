@@ -68,6 +68,7 @@ namespace Api
             {
                 ComponentId = componentOptions.Value.ComponentId,
                 ComponentType = componentOptions.Value.ComponentType,
+                InputChannelName = componentOptions.Value.InputChannelName,
                 UpdateChannelName = componentOptions.Value.UpdateChannelName
             };
 

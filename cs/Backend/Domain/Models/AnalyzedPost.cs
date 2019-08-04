@@ -5,6 +5,8 @@ namespace Socneto.Domain.Models
 {
     public class AnalyzedPost
     {
+        
+        [Obsolete("Is this supposed to be here?")]
         public int Id { get; set; }
         
         public Guid JobId { get; set; }

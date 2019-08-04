@@ -50,10 +50,12 @@ namespace Infrastructure.DataGenerator
             var dateTimeString = DateTime.Now.ToString("s");
 
             return UniPost.FromValues(
+                Guid.NewGuid().ToString(),
                 postText,
                 postSource,
                 postUser,
-                dateTimeString);
+                dateTimeString,
+                Guid.NewGuid());
         }
 
         private static DateTime GetRandomDate(int seed)

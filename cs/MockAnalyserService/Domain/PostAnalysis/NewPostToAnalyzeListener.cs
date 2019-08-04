@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain.Abstract;
 using Domain.Analyser;
 using Domain.Model;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -15,6 +16,7 @@ namespace Domain.PostAnalysis
         private readonly IMessageBrokerProducer _producer;
         private readonly IAnalyser _analyser;
         private readonly IJobManager _jobManager;
+        private readonly ILogger<NewPostToAnalyzeListener> _logger;
         private readonly string _inputChannelName;
         private readonly string _componentId;
         public bool ConnectionEstablished { get; private set; } = false;
@@ -25,7 +27,8 @@ namespace Domain.PostAnalysis
             IMessageBrokerProducer producer,
             IAnalyser analyser,
             IJobManager jobManager,
-            IOptions<ComponentOptions> componentOptionsAccessor)
+            IOptions<ComponentOptions> componentOptionsAccessor,
+            ILogger<NewPostToAnalyzeListener> logger)
         {
             if (string.IsNullOrEmpty(componentOptionsAccessor.Value.InputChannelName))
             {
@@ -37,15 +40,13 @@ namespace Domain.PostAnalysis
             _producer = producer;
             _analyser = analyser;
             _jobManager = jobManager;
+            _logger = logger;
 
             _inputChannelName = componentOptionsAccessor.Value.InputChannelName;
             _componentId = componentOptionsAccessor.Value.ComponentId;
         }
 
-        public void OnConnectionEstablished()
-        {
-            ConnectionEstablished = true;
-        }
+
         public Task ListenAsync(CancellationToken token)
         {
             return _messageBrokerConsumer.ConsumeAsync(
@@ -56,17 +57,31 @@ namespace Domain.PostAnalysis
 
         private async Task ProcessNewPostAsync(string postJson)
         {
-            var post = JsonConvert.DeserializeObject<UniPost>(postJson);
-            var analysis = await _analyser.AnalyzePost(post);
-            var sendObject = AnalysisResponse.FromData(_componentId, post, analysis);
-            var sendObjectJson = JsonConvert.SerializeObject(sendObject);
-            
+            _logger.LogInformation("ROJ: {roj}",postJson);
+            string outputChannelName = null;
+            string sendObjectJson = null;
+            try
+
+            {
+
+
+                var post = JsonConvert.DeserializeObject<UniPost>(postJson);
+                var analysis = await _analyser.AnalyzePost(post);
+                var sendObject = AnalysisResponse.FromData(_componentId, post, analysis);
+                sendObjectJson = JsonConvert.SerializeObject(sendObject);
+
+                outputChannelName = "job_management.component_data_analyzed_input.storage_db";
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Analysing error {err}",e.Message);
+                return;
+            }
+
+            _logger.LogInformation("SOJ: {soj}",sendObjectJson);
             var messageBrokerMessage = new MessageBrokerMessage(
                 "analyzed-post",
                 sendObjectJson);
-
-            var outputChannelName= _jobManager.GetJobConfigOutput(post.JobId);
-            
             await _producer.ProduceAsync(outputChannelName, messageBrokerMessage);
         }
     }

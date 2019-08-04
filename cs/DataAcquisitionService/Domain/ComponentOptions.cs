@@ -5,6 +5,7 @@
         public string ComponentType { get; set; }
         public string ComponentId { get; set; }
 
+        public string InputChannelName { get; set; }
         public string UpdateChannelName { get; set; }
     }
 }

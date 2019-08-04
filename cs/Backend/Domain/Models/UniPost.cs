@@ -1,23 +1,53 @@
-﻿namespace Socneto.Domain.Models
+﻿using System;
+using Newtonsoft.Json;
+
+namespace Socneto.Domain.Models
 {
     public class UniPost
     {
-        private UniPost(string text, string source, int userId, string dateTime)
+        private UniPost(
+            string postId,
+            string text,
+            string source,
+            string userId,
+            string postDateTime,
+            Guid jobId)
         {
+            PostId = postId;
             Text = text;
-            UserIdId = userId;
-            Source= source;
-            DateTime = dateTime;
+            UserId = userId;
+            Source = source;
+            PostDateTime = postDateTime;
+            JobId = jobId;
         }
+
+        [JsonProperty("postId")]
+        public string PostId { set; get; }
+
+        [JsonProperty("jobId")]
+        public Guid JobId { get; set; }
+
+        [JsonProperty("text")]
         public string Text { get; set; }
+
+        [JsonProperty("source")]
         public string Source { get; set; }
-        public int UserIdId { get; set; }
 
-        public string DateTime { get; set; }
+        [JsonProperty("authorId")]
+        public string UserId { get; set; }
 
-        public static UniPost FromValues(string text, string source, int userId, string dateTimeString)
+        [JsonProperty("dateTime")]
+        public string PostDateTime { get; set; }
+
+        public static UniPost FromValues(
+            string postId,
+            string text,
+            string source,
+            string userId,
+            string dateTimeString,
+            Guid jobId)
         {
-            return new UniPost(text, source, userId, dateTimeString);
+            return new UniPost(postId, text, source, userId, dateTimeString, jobId);
         }
 
     }

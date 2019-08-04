@@ -52,9 +52,12 @@ namespace Socneto.Api
                 .AddBasicAuthentication<SimpleBasicCredentialVerifier>();
 
             services
+#if DEBUG
+                .AddTransient<IResultProducer, MockKafka>()
+#else
                 .AddTransient<IResultProducer, KafkaProducer>()
+#endif
                 .AddTransient<IJobService, JobService>()
-                .AddTransient<IResultProducer, KafkaProducer>()
                 .AddTransient<IUserService, UserService>()
                 .AddTransient<IStorageService, MockStorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))

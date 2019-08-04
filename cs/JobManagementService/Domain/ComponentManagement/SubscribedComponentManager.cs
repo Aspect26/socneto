@@ -6,6 +6,7 @@ using Domain.Models;
 using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Domain.ComponentManagement
 {
@@ -39,29 +40,29 @@ namespace Domain.ComponentManagement
 
         public async Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification)
         {
-            // app.topic.toDbRaw=job_management.component_data_input.storage_db
-            // app.topic.toDbAnalyzed = job_management.component_data_analyzed_input.storage_db
             
-            var storage = _componentRegistry.GetRegisteredStorage();
-            if (storage == null)
-            {
-                _logger.LogWarning("No storage component was registered");
-                //throw new InvalidOperationException("No storage is present. Job can't be done");
-            }
+            //var storage = _componentRegistry.GetRegisteredStorage();
+            //if (storage == null)
+            //{
+            //    _logger.LogWarning("No storage component was registered");
+            //    //throw new InvalidOperationException("No storage is present. Job can't be done");
+            //}
 
-            var storageChannelName = storage.InputChannelName;
+            //var storageChannelName = storage.InputChannelName;
 
-            await PushStorageJobConfig(
-                storage,
-                jobConfigUpdateNotification);
+            //await PushStorageJobConfig(
+            //    storage,
+            //    jobConfigUpdateNotification);
 
+            var aStorageChannelName = "job_management.component_data_analyzed_input.storage_db";
             var analysers = await PushAnalyserJobConfig(
-                storageChannelName,
+                aStorageChannelName,
                 jobConfigUpdateNotification);
 
             var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
+            var dStorageChannelName = "job_management.component_data_input.storage_db";
             await PushNetworkDataAcquisitionJobConfig(
-                storageChannelName,
+                dStorageChannelName,
                 analysersInputs,
                 jobConfigUpdateNotification);
         }
@@ -121,12 +122,12 @@ namespace Domain.ComponentManagement
             {
                 if (_componentRegistry.TryGetNetworkComponent(network, out var networkCmp))
                 {
-                    
-
+                    _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
+                        network,
+                        JsonConvert.SerializeObject(notification));
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
                         networkCmp.UpdateChannelName,
                         notification);
-                    _logger.LogInformation("Config pushed to: {componentName}", network);
                 }
                 else
                 {
@@ -163,9 +164,18 @@ namespace Domain.ComponentManagement
                 OutputMessageBrokerChannels = new[] { storageChannelName },
             };
             var configUpdateTasks = analysers.Select(analyserCmp =>
-                _componentConfigUpdateNotifier.NotifyComponentAsync(
+            {
+                _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
+                    analyserCmp,
+                    JsonConvert.SerializeObject(notification));
+                var analyserTask = _componentConfigUpdateNotifier.NotifyComponentAsync(
                     analyserCmp.UpdateChannelName,
-                    notification));
+                    notification);
+
+
+                return analyserTask;
+
+            });
             await Task.WhenAll(configUpdateTasks);
             return analysers;
         }
