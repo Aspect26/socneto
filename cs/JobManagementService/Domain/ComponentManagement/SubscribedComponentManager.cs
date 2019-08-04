@@ -39,6 +39,9 @@ namespace Domain.ComponentManagement
 
         public async Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification)
         {
+            // app.topic.toDbRaw=job_management.component_data_input.storage_db
+            // app.topic.toDbAnalyzed = job_management.component_data_analyzed_input.storage_db
+            
             var storage = _componentRegistry.GetRegisteredStorage();
             if (storage == null)
             {

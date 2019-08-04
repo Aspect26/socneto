@@ -11,6 +11,6 @@ namespace Socneto.Domain.Models
 
         public Post Post { get; set; }
 
-        public Dictionary<string,  Dictionary<string, AnalysisValue>> Analysis { get; set; }
+        public Dictionary<string,  Dictionary<string, AnalysisValue>>[] Analyses { get; set; }
     }
 }
