@@ -29,7 +29,7 @@ services:
     networks:
       - kafka-network
     ports:
-      - '8080:8080'
+      - '8888:8888'
     container_name: storage_service
   job-management-service:
     build: './cs/JobManagementService'
