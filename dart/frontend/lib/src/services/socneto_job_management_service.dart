@@ -6,23 +6,16 @@ import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
 class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
 
-  static const String API_URL = "http://acheron.ms.mff.cuni.cz:39103";
+  static const String API_URL = "http://localhost:6009";
   static const String API_PREFIX = "api";
 
   SocnetoJobManagementService() : super(API_URL, API_PREFIX);
 
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
-      // await this.getList<SocnetoComponent> ("components/networks", (result) => SocnetoComponent.fromMap(result));
-      await [SocnetoComponent("Facebook", ComponentType.dataAcquirer, ComponentSpecialization.facebook),
-        SocnetoComponent("Facebook 2", ComponentType.dataAcquirer, ComponentSpecialization.facebook),
-        SocnetoComponent("Twitter", ComponentType.dataAcquirer, ComponentSpecialization.twitter),
-        SocnetoComponent("Custom", ComponentType.dataAcquirer, ComponentSpecialization.other),
-        SocnetoComponent("Reddit", ComponentType.dataAcquirer, ComponentSpecialization.reddit), ];
+      await this.getList<SocnetoComponent> ("components/networks", (result) => SocnetoComponent.fromMap(result));
 
   Future<List<SocnetoComponent>> getAvailableAnalyzers() async =>
-      // await this.getList<SocnetoComponent> ("components/analysers", (result) => SocnetoComponent.fromMap(result));
-      await [SocnetoComponent("Sentiment", ComponentType.dataAnalyzer, ComponentSpecialization.other),
-        SocnetoComponent("Keywords", ComponentType.dataAnalyzer, ComponentSpecialization.other) ];
+      await this.getList<SocnetoComponent> ("components/analysers", (result) => SocnetoComponent.fromMap(result));
 
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers) async {
     var data = {
