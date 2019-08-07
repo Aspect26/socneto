@@ -80,7 +80,7 @@ namespace Infrastructure.DataGenerator
 
 
             var random100 = Enumerable
-                .Range(0, 100)
+                .Range(0, 10)
                 .Select(r => _random.Next(0, _records.Count))
                 .Select(r => _records[r])
                 .ToList();
