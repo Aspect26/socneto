@@ -59,7 +59,7 @@ namespace Socneto.Api
 #endif
                 .AddTransient<IJobService, JobService>()
                 .AddTransient<IUserService, UserService>()
-                .AddTransient<IStorageService, MockStorageService>()
+                .AddTransient<IStorageService, StorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"));
         }

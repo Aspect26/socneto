@@ -8,7 +8,7 @@ namespace Socneto.Domain.Services
 {
     public class StorageService : IStorageService
     {
-        private const string Host = "http://storage_service:8080";
+        private const string Host = "http://storage_service:8888";
         private readonly HttpClient _client = new HttpClient();
         
         public async Task<User> GetUser(string username)
