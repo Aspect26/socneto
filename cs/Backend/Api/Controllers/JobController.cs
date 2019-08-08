@@ -64,6 +64,8 @@ namespace Socneto.Api.Controllers
 
         private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)
         {
+            return true;
+            // TODO: remove this when FE stores credentials in localstorage
             var job = await _storageService.GetJob(jobId);
             return job.Username == User.Identity.Name;
         }

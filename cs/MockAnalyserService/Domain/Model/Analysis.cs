@@ -1,11 +1,12 @@
-using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Domain.Model
 {
     public class Analysis
     {
-        public Dictionary<String, Dictionary<String, AnalysisValue>> Data { get; set; }
+        public Dictionary<string, AnalysisValue> Data { get; set; }
     }
 
     public class AnalysisValue
@@ -13,6 +14,7 @@ namespace Domain.Model
         // TODO: omg dynamic
         public dynamic Value { get; set; }
         
+        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisValueType ValueType { get; set; }
         
     }
