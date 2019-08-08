@@ -64,11 +64,13 @@ class ChartComponent implements AfterChanges {
   void _transformPostsIntoData() {
     this.graphData = List<dynamic>();
     this.analyzedPosts.sort((a, b) {
+      if (a.post.postedAt == null) Toastr.error("Post data", "Post '${a.post.text}' is missing date");
+      if (b.post.postedAt == null) Toastr.error("Post data", "Post '${b.post.text}' is missing date");
       return a.post.postedAt.compareTo(b.post.postedAt);
     });
 
     for (var post in this.analyzedPosts) {
-      var value = this._getAnalysisValue(post.analysis);
+      var value = this._getAnalysisValue(post.analyses);
       this.graphData.add({'y': value, 'date': post.post.postedAt.toIso8601String()});
     }
   }
@@ -82,15 +84,20 @@ class ChartComponent implements AfterChanges {
     context.callMethod('createLineChart', [domSelector, JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
   }
 
-  dynamic _getAnalysisValue(dynamic analysis) {
+  dynamic _getAnalysisValue(dynamic analyses) {
     var pathParts = this.chartDefinition.dataJsonPath.split(".");
     if (pathParts.length != 2) {
       Toastr.error("Error", "Wrong data path: ${this.chartDefinition.dataJsonPath}");
       return 0;
     }
 
-    var value = analysis[pathParts[0]][pathParts[1]]["value"];
-    return value;
+    for (dynamic analysis in analyses) {
+      if (analysis[pathParts[0]] != null && analysis[pathParts[0]][pathParts[1]] != null) {
+        return analysis[pathParts[0]][pathParts[1]]["value"];
+      }
+    }
+
+    return 0;
   }
 
 }

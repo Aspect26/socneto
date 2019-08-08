@@ -10,8 +10,6 @@ namespace Socneto.Api.Models
         
         public string Text { get; set; }
 
-        // TODO: remove this ignore when datetimes are sent, not longs
-        [JsonIgnore]
         public DateTime PostedAt { get; set; }
 
         public static PostDto FromValue(Post post)
