@@ -8,7 +8,7 @@ using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -54,6 +54,8 @@ namespace Socneto.Api.Controllers
         
         private bool IsAuthorizedToSeeUser(string username)
         {
+            return true;
+            // TODO: remove this when FE stores credentials in localstorage
             if (!User.Identity.IsAuthenticated)
                 return false;
             

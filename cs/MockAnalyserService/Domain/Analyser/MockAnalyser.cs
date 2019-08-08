@@ -19,18 +19,15 @@ namespace Domain.Analyser
 
             var analysis = new Analysis
             {
-                Data = new Dictionary<string, Dictionary<string, AnalysisValue>>
+                Data = new Dictionary<string, AnalysisValue>
                 {
-                    ["sentiment"] = new Dictionary<string, AnalysisValue>
+                    ["polarity"] = new AnalysisValue
                     {
-                        ["polarity"] = new AnalysisValue
-                        {
-                            Value = (random.NextDouble() - 0.5) * 2, ValueType = AnalysisValueType.Number
-                        },
-                        ["accuracy"] = new AnalysisValue
-                        {
-                            Value = random.NextDouble()
-                        }
+                        Value = (random.NextDouble() - 0.5) * 2, ValueType = AnalysisValueType.Number
+                    },
+                    ["accuracy"] = new AnalysisValue
+                    {
+                        Value = random.NextDouble()
                     }
                 }
             };
