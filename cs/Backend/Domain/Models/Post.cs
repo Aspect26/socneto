@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Socneto.Domain.Helpers;
 
 namespace Socneto.Domain.Models
 {
@@ -9,8 +10,7 @@ namespace Socneto.Domain.Models
         
         public string Text { get; set; }
 
-        // TODO: remove this when we return actual datetime object
-        [JsonIgnore]
+        [JsonConverter(typeof(JsonMillisecondsToDateTimeConverter))]
         public DateTime PostedAt { get; set; }
     }
 }
