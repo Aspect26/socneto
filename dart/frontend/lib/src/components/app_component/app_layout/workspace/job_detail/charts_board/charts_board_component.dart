@@ -12,6 +12,7 @@ import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 
@@ -53,15 +54,13 @@ class ChartsBoardComponent implements AfterChanges {
   void ngAfterChanges() async {
     try {
       this.analyzedPosts = await this._socnetoService.getJobAnalysis(this.job.id);
-    } catch (e) {
-      // TODO: HttpException when merged
+    } on HttpException catch (e) {
       Toastr.error("Posts", "Could not fetch analyzed posts for this job: ${e.toString()}");
     }
 
     try {
       this.chartDefinitions = await this._socnetoService.getJobChartDefinitions(this.job.id);
-    } catch(e) {
-      // TODO: HttpException when merged
+    } on HttpException catch(e) {
       Toastr.error("Charts", "Could not fetch charts for this job: ${e.toString()}");
     }
 
