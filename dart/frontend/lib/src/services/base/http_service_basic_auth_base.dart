@@ -20,6 +20,10 @@ abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
     this._base64Credentials = null;
   }
 
+  String getAuthToken() {
+    return this._base64Credentials;
+  }
+
   @override
   Future<Response> httpGet(String path, { Map<String, String> headers }) async {
     if (this._base64Credentials != null) {

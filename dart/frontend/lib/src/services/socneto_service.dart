@@ -5,6 +5,7 @@ import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
+import 'package:sw_project/src/services/local_storage_service.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
 
@@ -13,6 +14,7 @@ class SocnetoService {
 
   final _dataService = SocnetoDataService();
   final _job_management_service = SocnetoJobManagementService();
+  final _local_storage_service = LocalStorageService();
 
   Future<User> login(String username, String password) async {
     var result = await this._dataService.login(username, password);
@@ -20,6 +22,7 @@ class SocnetoService {
     if (result != null) {
       this._dataService.setCredentials(username, password);
       this._job_management_service.setCredentials(username, password);
+      this._local_storage_service.storeToken(this._dataService.getAuthToken());
     }
 
     return result;
