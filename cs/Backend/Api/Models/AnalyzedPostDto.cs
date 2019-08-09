@@ -10,7 +10,6 @@ namespace Socneto.Api.Models
 
         public PostDto PostDto { get; set; }
 
-        // TODO Julius : analyses were changed to 
         public Dictionary<string,  Dictionary<string, AnalysisValue>>[] Analyses { get; set; }
 
         public static AnalyzedPostDto FromModel(AnalyzedPost post)

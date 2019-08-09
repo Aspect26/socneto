@@ -16,13 +16,26 @@ class SocnetoService {
   final _job_management_service = SocnetoJobManagementService();
   final _local_storage_service = LocalStorageService();
 
+  User tryLoginFromLocalStorage() {
+    var userData = this._local_storage_service.loadUsernameToken();
+    if (userData != null) {
+      var username = userData[0];
+      var authToken = userData[1];
+      this._dataService.setToken(authToken);
+      this._job_management_service.setToken(authToken);
+      return User(username);
+    } else {
+      return null;
+    }
+  }
+
   Future<User> login(String username, String password) async {
     var result = await this._dataService.login(username, password);
 
     if (result != null) {
       this._dataService.setCredentials(username, password);
       this._job_management_service.setCredentials(username, password);
-      this._local_storage_service.storeToken(this._dataService.getAuthToken());
+      this._local_storage_service.storeToken(username, this._dataService.getAuthToken());
     }
 
     return result;

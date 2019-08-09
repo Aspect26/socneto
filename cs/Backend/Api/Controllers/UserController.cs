@@ -54,8 +54,6 @@ namespace Socneto.Api.Controllers
         
         private bool IsAuthorizedToSeeUser(string username)
         {
-            return true;
-            // TODO: remove this when FE stores credentials in localstorage
             if (!User.Identity.IsAuthenticated)
                 return false;
             
