@@ -15,4 +15,10 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class AppComponent {
 
+  final SocnetoService _socnetoService;
+
+  AppComponent(this._socnetoService) {
+    this._socnetoService.tryLoginFromLocalStorage();
+  }
+
 }

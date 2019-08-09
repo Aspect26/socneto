@@ -7,13 +7,14 @@ abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
 
   var _base64Credentials;
 
-  HttpServiceBasicAuthBase(String api_url, String api_prefix) : super(api_url, api_prefix) {
-    // TODO: remove this when auth is being stored to localstorage!
-    this._base64Credentials = base64Encode(utf8.encode("admin:admin"));
-  }
+  HttpServiceBasicAuthBase(String api_url, String api_prefix) : super(api_url, api_prefix);
 
   void setCredentials(String username, String password) {
     this._base64Credentials = base64Encode(utf8.encode("$username:$password"));
+  }
+
+  void setToken(String authToken) {
+    this._base64Credentials = authToken;
   }
 
   void unsetCredentials() {
