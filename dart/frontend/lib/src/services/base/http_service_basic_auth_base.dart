@@ -13,8 +13,16 @@ abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
     this._base64Credentials = base64Encode(utf8.encode("$username:$password"));
   }
 
+  void setToken(String authToken) {
+    this._base64Credentials = authToken;
+  }
+
   void unsetCredentials() {
     this._base64Credentials = null;
+  }
+
+  String getAuthToken() {
+    return this._base64Credentials;
   }
 
   @override

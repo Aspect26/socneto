@@ -23,8 +23,8 @@ namespace Socneto.Api.Controllers
 
             // TODO: get from DB
             var chartDefinitions = new List<ChartDefinition>();
-            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, DataJsonPath = "sentiment.polarity"});
-            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, DataJsonPath = "sentiment.accuracy"});
+            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, DataJsonPath = "DataAnalyzer_Mock.polarity"});
+            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, DataJsonPath = "DataAnalyzer_Mock.accuracy"});
             
             var mappedChartDefinitions = chartDefinitions
                 .Select(ChartDefinitionDto.FromModel)

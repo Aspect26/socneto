@@ -8,7 +8,7 @@ using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {

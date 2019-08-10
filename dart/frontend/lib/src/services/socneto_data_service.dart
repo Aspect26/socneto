@@ -10,7 +10,7 @@ import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 
-  static const String API_URL = "http://localhost:5000";
+  static const String API_URL = "http://localhost:6010";
   // static const String API_URL = "http://acheron.ms.mff.cuni.cz:39103";
   static const String API_PREFIX = "api";
 

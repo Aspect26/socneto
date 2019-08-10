@@ -23,7 +23,8 @@ services:
     networks:
       - kafka-network
     ports: 
-      - '15155:15155'
+      - '6010:6010'
+    container_name: backend
   storage:
     build: './java/storage'
     networks:
@@ -37,6 +38,13 @@ services:
       - '6009:6009'
     networks:
       - kafka-network
+    container_name: job_management_service
+  frontend:
+    build: './dart'
+    ports: 
+      - '8080:8080'
+    networks:
+      - 'kafka-network'
   data-acquisition-service:
     build: './cs/DataAcquisitionService'
     networks:
