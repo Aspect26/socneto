@@ -8,9 +8,8 @@ namespace Socneto.Api.Models
     {
         public Guid JobId { get; set; }
 
-        public Post Post { get; set; }
+        public PostDto PostDto { get; set; }
 
-        // TODO Julius : analyses were changed to 
         public Dictionary<string,  Dictionary<string, AnalysisValue>>[] Analyses { get; set; }
 
         public static AnalyzedPostDto FromModel(AnalyzedPost post)
@@ -18,7 +17,7 @@ namespace Socneto.Api.Models
             return new AnalyzedPostDto
             {
                 JobId =  post.JobId,
-                Post = post.Post,
+                PostDto = PostDto.FromValue(post.Post),
                 Analyses = post.Analyses,
             };
         }

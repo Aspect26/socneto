@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Domain.Model
@@ -13,13 +14,13 @@ namespace Domain.Model
         public Guid JobId { get; set; }
 
         [JsonProperty("analysis")]
-        public Analysis Analysis { get; set; }
+        public Dictionary<string, AnalysisValue> Analysis { get; set; }
 
         public static AnalysisResponse FromData(string componentId, UniPost post, Analysis analysis)
         {
             return new AnalysisResponse
             {
-                Analysis = analysis,
+                Analysis = analysis.Data,
                 PostId = post.PostId,
                 JobId = post.JobId,
                 ComponentId = componentId

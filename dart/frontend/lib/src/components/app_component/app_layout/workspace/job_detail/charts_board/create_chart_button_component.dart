@@ -11,6 +11,7 @@ import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Success.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 
@@ -77,8 +78,8 @@ class CreateChartButtonComponent {
     Success response;
     try {
       response = await this._socnetoService.createJobChartDefinition(job.id, ChartDefinition(jsonPath, chartType));
-    } catch (e) {
-      this._handleHttpException(e);
+    } on HttpException catch (e) {
+      Toastr.error("Error", "Could not submit the chart definition: ${e.toString()}");
       return;
     }
 
@@ -106,11 +107,6 @@ class CreateChartButtonComponent {
   void _reset() {
     this.jsonPath = "";
     this.errorMessage = null;
-  }
-
-  // TODO: catch HttpException here when corresponding branch is merged
-  void _handleHttpException(e) {
-    Toastr.error("Error", "Could not submit the chart definition: ${e.toString()}");
   }
 
 }
