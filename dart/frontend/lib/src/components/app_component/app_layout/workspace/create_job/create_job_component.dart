@@ -77,12 +77,15 @@ class CreateJobComponent implements OnInit {
         && this.topic.isNotEmpty && this.selectedSocialNetworks.isNotEmpty && this.selectedDataAnalyzers.isNotEmpty;
   }
 
-  onSubmit(UIEvent e) {
+  onSubmit(UIEvent e) async {
     if (this.isQueryValid()) {
-      this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers).then((jobId) {
+      try {
+        await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers);
         this._clear();
         Toastr.success("New Job", "New job created successfully!");
-      }, onError: this._onSubmitError);
+      } on HttpException catch (e) {
+        this._onSubmitError(e);
+      }
     }
   }
 
