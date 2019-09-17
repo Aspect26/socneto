@@ -19,10 +19,23 @@ namespace Api
         }
 
         public IConfiguration Configuration { get; }
+        
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddHostedService<RegistrationRequestListenerHostedService>();
@@ -55,9 +68,9 @@ namespace Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseMvc();
-
         }
     }
 }
