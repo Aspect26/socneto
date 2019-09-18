@@ -52,6 +52,7 @@ class ComponentsSelectComponent implements AfterChanges {
 
   void ngAfterChanges() {
     this.selectedComponents = []..addAll(this.components);
+    this._changeController.add(this.selectedComponents);
   }
 
   void componentToggled(SocnetoComponent component, bool checked) {
