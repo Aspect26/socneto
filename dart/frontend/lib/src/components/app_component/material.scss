@@ -139,6 +139,10 @@
     }
   }
 
+  material-spinner {
+    border-color: get-color($primary, 400);
+  }
+
   .mdc-card {
     background-color: get-color($background, 200);
   }

@@ -26,6 +26,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialDateTimePickerComponent,
     MaterialDateRangePickerComponent,
     MaterialTimePickerComponent,
+    MaterialSpinnerComponent,
     DateRangeInputComponent,
     materialInputDirectives,
 
@@ -57,6 +58,7 @@ class CreateJobComponent implements OnInit {
 
   bool loadingSocialNetworks = true;
   bool loadingDataAnalyzers = true;
+  bool submitting = false;
 
   String jobName = "";
   String topic = "";
@@ -80,11 +82,14 @@ class CreateJobComponent implements OnInit {
   onSubmit(UIEvent e) async {
     if (this.isQueryValid()) {
       try {
+        this.submitting = true;
         await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers);
         this._clear();
         Toastr.success("New Job", "New job created successfully!");
       } on HttpException catch (e) {
         this._onSubmitError(e);
+      } finally {
+        this.submitting = false;
       }
     }
   }
