@@ -1,13 +1,13 @@
 FROM google/dart
 
 RUN mkdir /app
-ADD /frontend /app
+ADD ./ /app
 
 WORKDIR "/app"
 
 RUN pub get
 ENV PATH $PATH:/root/.pub-cache/bin
-RUN pub global activate webdev 2.0.6
+RUN pub global activate webdev 2.5.1
 
 RUN webdev build --release
 
