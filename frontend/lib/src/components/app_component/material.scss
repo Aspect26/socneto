@@ -1,0 +1,150 @@
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/style/style.scss";
+
+// TODO: check if we can use these mixins somehow
+@import 'package:angular_components/material_progress/_mixins.scss';
+@import 'package:angular_components/app_layout/_mixins.scss';
+
+
+@mixin material-theme($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  // TODO: create mixins from all of these
+  material-input {
+    .focused-underline {
+      background-color: get-color($primary, A700);
+    }
+
+    .focused.label-text:not(.disabled) {
+      color: get-color($primary, 400);
+    }
+  }
+
+  material-chip {
+    background-color: get-color($background, 400);
+
+    .delete-icon {
+      fill: get-color($background, 600);
+    }
+  }
+
+  material-chip:hover {
+    cursor: pointer;
+    background-color: get-color($background, 300);
+
+    .delete-icon {
+      fill: get-color($background, 500);
+    }
+  }
+
+  material-button {
+    background-color: get-color($primary, 500);
+    color: get-color-contrast($primary, 500)
+  }
+
+  material-header {
+    background-color: get-color($primary);
+  }
+
+  material-content {
+    background-color: get-color($background, 700);
+  }
+
+  material-progress {
+    .progress-container.indeterminate {
+      background-color: get-color($primary, 100);
+    }
+
+    .progress-container.indeterminate > .secondary-progress {
+      background-color: get-color($primary, 500);
+    }
+
+    .active-progress {
+      background-color: get-color($primary, 500);
+    }
+
+    .secondary-progress {
+      background-color: get-color($primary, 200) !important;
+    }
+  }
+
+  header.material-header {
+    background-color: get-color($primary);
+  }
+
+  material-content {
+    min-height: 100vh;
+    background-color: get-color($background, 700);
+  }
+
+  material-list {
+    background-color: get-color($background, 200);
+  }
+
+  material-select-item:hover {
+    background: get-color($background, 300);
+  }
+
+  material-select-item:focus {
+    background: get-color($background, 200);
+  }
+
+  material-select-item.special {
+    color: get-color($primary, 400);
+
+    i {
+      color: get-color($primary, 400);
+    }
+  }
+
+  material-select-item.selected {
+    background: get-color($background, 400);
+
+    .selected-accent {
+      background: get-color($background, 600);
+    }
+  }
+
+  material-tab-panel.tab-panel {
+    material-tab-strip {
+      .tab-indicator {
+        background: get-color($primary, 400);
+      }
+
+      tab-button.active {
+        color: get-color($primary, 400);
+      }
+    }
+  }
+
+  material-expansionpanel {
+    .panel {
+      background-color: get-color($background, 400);
+      border-radius: 5px;
+
+      i {
+        color: get-color($primary, A700);
+      }
+    }
+
+    .panel.open,
+    .header.closed:not(.is-disabled):hover,
+    .header.closed:not(.is-disabled):focus,
+    .panel.open:not(.is-disabled):hover,
+    .panel.open:not(.is-disabled):focus {
+      background-color: get-color($background, 300);
+      border-radius: 5px;
+    }
+  }
+
+  material-spinner {
+    border-color: get-color($primary, 400);
+  }
+
+  .mdc-card {
+    background-color: get-color($background, 200);
+  }
+
+}

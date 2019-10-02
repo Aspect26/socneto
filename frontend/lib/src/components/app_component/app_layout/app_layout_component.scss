@@ -1,0 +1,13 @@
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/style/style.scss";
+
+@mixin app-layout-component($theme) {
+
+    $primary: map-get($theme, primary);
+    $background: map-get($theme, background);
+
+    app-layout {
+        font-family: $font-family;
+    }
+
+}

@@ -1,0 +1,26 @@
+<div class="flex-container container">
+    <div class="space"></div>
+
+    <div class="mdc-card login-card">
+        <h2>Login</h2>
+
+        <span class="label">Username:</span>
+        <material-input
+                floatingLabel
+                [(ngModel)]="username"
+                class="labeled-input">
+        </material-input>
+
+        <span class="label">Password:</span>
+        <material-input
+                type="password"
+                floatingLabel
+                [(ngModel)]="password"
+                class="labeled-input">
+        </material-input>
+
+        <material-button *ngIf="isInputValid()"  raised (trigger)="onLogin($event)">Login</material-button>
+        <material-button *ngIf="!isInputValid()" raised disabled>Login</material-button>
+
+    </div>
+</div>

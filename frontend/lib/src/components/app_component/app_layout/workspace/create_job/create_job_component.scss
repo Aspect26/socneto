@@ -1,0 +1,43 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin create-job-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  create-job {
+
+    .create-job-card {
+      padding: 20px;
+
+      h3 {
+        text-align: center;
+        font-weight: normal;
+      }
+
+      i {
+        color: get-color($primary, 500);
+      }
+
+      .labeled-input {
+        margin-left: 15px;
+      }
+
+      .title-input {
+        width: 350px;
+      }
+
+      .submit-button {
+        margin: 10px;
+      }
+
+      .submit-spinner {
+        align-self: center;
+      }
+
+    }
+
+  }
+}

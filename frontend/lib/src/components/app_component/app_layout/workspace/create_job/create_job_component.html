@@ -1,0 +1,59 @@
+<section>
+    <div class="mdc-card create-job-card">
+        <h3>Create new job</h3>
+
+        <div>
+            Title:
+            <material-input
+                    label="Name of the job"
+                    floatingLabel
+                    [(ngModel)]="jobName"
+                    class="labeled-input title-input">
+            </material-input>
+        </div>
+
+        <div>
+            Topic:
+            <material-input
+                    label="The topic to be queried"
+                    floatingLabel
+                    [(ngModel)]="topic"
+                    class="labeled-input title-input">
+            </material-input>
+        </div>
+
+        Social Networks:
+        <components-select
+                [components]="availableSocialNetworks"
+                [loading]="loadingSocialNetworks"
+                (change)="onSocialNetworksSelectionChange($event)"
+                (refresh)="onSocialNetworksRefresh()">
+        </components-select>
+
+        Data analyzers:
+        <components-select
+                [components]="availableDataAnalyzers"
+                [loading]="loadingDataAnalyzers"
+                (change)="onDataAnalyzersSelectionChange($event)"
+                (refresh)="onDataAnalyzersRefresh()">
+        </components-select>
+
+        <div>
+            Number of posts:
+            <material-input
+                    label="Max"
+                    type="number"
+                    floatingLabel
+                    [disabled]="unlimitedPostsCount"
+                    [(ngModel)]="maxPostsCount"
+                    class="labeled-input">
+            </material-input>
+
+            <material-checkbox label="Unlimited" [(ngModel)]="unlimitedPostsCount"></material-checkbox>
+        </div>
+
+        <material-button *ngIf="!submitting && isQueryValid()"  raised (trigger)="onSubmit($event)" class="submit-button">Submit</material-button>
+        <material-button *ngIf="!submitting && !isQueryValid()" raised disabled class="submit-button">Submit</material-button>
+        <material-spinner *ngIf="submitting" class="submit-spinner"></material-spinner>
+    </div>
+</section>

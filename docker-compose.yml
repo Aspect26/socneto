@@ -14,14 +14,43 @@ services:
       - '9092:9092'
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      - ALLOW_PLAINTEXT_LISTENER=yes # TODO remove
     networks:
       - kafka-network
     container_name: kafka_server
   backend:
-    build: './cs'
+    build: './backend'
+    networks:
+      - kafka-network
     ports: 
-      - '15155:15155'
+      - '6010:6010'
+    container_name: backend
+  storage:
+    build: './storage/storage'
+    networks:
+      - kafka-network
+    ports:
+      - '8888:8888'
+    container_name: storage_service
+  job-management-service:
+    build: './job-management'
+    ports:
+      - '6009:6009'
+    networks:
+      - kafka-network
+    container_name: job_management_service
+  frontend:
+    build: './frontend'
+    ports: 
+      - '8080:8080'
+    networks:
+      - 'kafka-network'
+  data-acquisition-service:
+    build: './acquisition/MockAcquirer'
+    networks:
+      - kafka-network
+  mock-analyser-service:
+    build: './analysers/MockAnalyserService'
     networks:
       - kafka-network
 networks:
