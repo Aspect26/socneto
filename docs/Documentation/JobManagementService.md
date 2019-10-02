@@ -16,7 +16,8 @@ Format:
 ```
 {
     "componentId":"sent_analyser",
-    "version":"v1.23",
+    "componentType":"<analyser, dataaquirer>,
+    "updateChannelName":"job_management.registration.request"
 }
 ```
 Topic: `job_management.registration.request`

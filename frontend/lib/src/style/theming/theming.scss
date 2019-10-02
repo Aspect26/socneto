@@ -1,0 +1,25 @@
+@import "package:sw_project/src/style/theming/palettes.scss";
+
+
+@function get-color($color-palette, $type: 500) {
+  @return map-get($color-palette, $type);
+}
+
+@function get-color-contrast($color-palette, $type: 500) {
+  @return map-get(map-get($color-palette, contrast), $type);
+}
+
+@function light-theme($primary-color-palette) {
+  @return (
+          primary: $primary-color-palette,
+          background: $palette-white
+  );
+}
+
+
+@function dark-theme($primary-color-palette) {
+  @return (
+          primary: $primary-color-palette,
+          background: $palette-gray
+  );
+}

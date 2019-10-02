@@ -1,0 +1,34 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin posts-list-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  posts-list {
+    max-width: 100%;
+
+    material-expansionpanel {
+      .panel-name {
+        div {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+
+        .title {
+          color: get-color($primary, A700);
+        }
+
+        .name {
+          max-width: 98%;
+          display: inline-block;
+          vertical-align: middle;
+        }
+      }
+
+    }
+  }
+
+}

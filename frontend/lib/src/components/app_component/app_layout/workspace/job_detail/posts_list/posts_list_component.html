@@ -1,0 +1,11 @@
+<material-expansionpanel *ngFor="let post of posts"
+                         expandIcon="comment"
+                         [showSaveCancel]="false">
+    <div name>
+        <div class="name">
+            <span class="title">Post:</span>
+            {{post.text}}
+        </div>
+    </div>
+
+</material-expansionpanel>

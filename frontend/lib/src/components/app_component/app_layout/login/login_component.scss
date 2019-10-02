@@ -1,0 +1,43 @@
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/style/style.scss";
+
+@mixin login-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  login {
+
+    .container {
+      flex-direction: column;
+      height: 500px;
+
+      .space {
+        flex: 20%;
+      }
+
+      .login-card {
+        margin: auto;
+        padding: 20px;
+        width: 20%;
+
+        h2 {
+          margin: 5px;
+          text-align: center;
+          color: get-color($primary);
+        }
+
+        .label {
+          font-weight: bold;
+        }
+
+        material-input {
+          width: 100%;
+        }
+
+      }
+    }
+
+  }
+
+}
