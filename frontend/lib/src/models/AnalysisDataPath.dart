@@ -7,4 +7,8 @@ class AnalysisDataPath {
 
   AnalysisDataPath(this.analyser, this.property);
 
+  String toJsonPath() {
+    return "${this.analyser}.${this.property}";
+  }
+
 }

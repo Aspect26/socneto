@@ -107,8 +107,7 @@ class CreateChartButtonComponent {
 
     Success response;
     try {
-      // TODO: chart definition...
-      response = await this._socnetoService.createJobChartDefinition(job.id, ChartDefinition("...", chartType));
+      response = await this._socnetoService.createJobChartDefinition(job.id, ChartDefinition(this.dataPaths.map((dataPath) => dataPath.toJsonPath()).toList(), chartType));
     } on HttpException catch (e) {
       Toastr.error("Error", "Could not submit the chart definition: ${e.toString()}");
       return;
