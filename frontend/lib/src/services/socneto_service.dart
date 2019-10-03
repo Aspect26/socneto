@@ -2,6 +2,7 @@ import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
+import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
@@ -56,7 +57,7 @@ class SocnetoService {
 
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
       await this._job_management_service.getAvailableNetworks();
-  Future<List<SocnetoComponent>> getAvailableAnalyzers() async =>
+  Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       await this._job_management_service.getAvailableAnalyzers();
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers) async =>
       await this._job_management_service.submitNewJob(query, networks, analyzers);
