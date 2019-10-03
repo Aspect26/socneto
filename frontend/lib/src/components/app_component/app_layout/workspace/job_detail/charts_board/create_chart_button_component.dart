@@ -8,8 +8,10 @@ import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_type_select/chart_type_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
+import 'package:sw_project/src/models/AnalysisDataPath.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
@@ -18,6 +20,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
 @Component(
   selector: 'create-chart-button',
   directives: [
+    // TODO: move all the directives to some parent or something
     DeferredContentDirective,
     FocusItemDirective,
     FocusListDirective,
@@ -25,6 +28,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialListComponent,
     MaterialListItemComponent,
     MaterialSelectItemComponent,
+    MaterialDropdownSelectComponent,
     MaterialTabPanelComponent,
     MaterialTabComponent,
     MaterialRadioComponent,
@@ -35,6 +39,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialButtonComponent,
     MaterialTooltipDirective,
     MaterialDialogComponent,
+    MaterialFabComponent,
     ModalComponent,
     ChartTypeSelectComponent,
     NgFor,
@@ -50,13 +55,25 @@ class CreateChartButtonComponent {
 
   final SocnetoService _socnetoService;
 
+  List<SocnetoAnalyser> analysers = [];
+
   bool showCreateDialog = false;
 
   String errorMessage;
-  String jsonPath = "";
+  List<AnalysisDataPath> dataPaths = [];
   ChartType chartType;
 
-  CreateChartButtonComponent(this._socnetoService);
+  CreateChartButtonComponent(this._socnetoService) {
+    this.loadAnalyzers();
+  }
+
+  static final ItemRenderer itemRenderer = newCachingItemRenderer<dynamic>(
+          (analyser) => "${analyser.identifier}");
+
+  void loadAnalyzers() async {
+    // TODO: this should ask for analyzers of the selected job
+    this.analysers = await this._socnetoService.getAvailableAnalyzers();
+  }
 
   void onClick() {
     if (!this.showCreateDialog) {
@@ -69,6 +86,19 @@ class CreateChartButtonComponent {
     this.showCreateDialog = false;
   }
 
+  void onRemoveDataPath(AnalysisDataPath dataPath) {
+    this.dataPaths.remove(dataPath);
+  }
+
+  void onAddDataPath() {
+    if (this.analysers.isNotEmpty) {
+      final analyser = this.analysers[0];
+      this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties.isNotEmpty? analyser.properties[0] : ""));
+    } else {
+      this.dataPaths.add(AnalysisDataPath(null, ""));
+    }
+  }
+
   void onSubmit() async {
     if (!this.isDefinitionCorrect()) {
       this.errorMessage = "Incorrect chart definition";
@@ -77,7 +107,8 @@ class CreateChartButtonComponent {
 
     Success response;
     try {
-      response = await this._socnetoService.createJobChartDefinition(job.id, ChartDefinition(jsonPath, chartType));
+      // TODO: chart definition...
+      response = await this._socnetoService.createJobChartDefinition(job.id, ChartDefinition("...", chartType));
     } on HttpException catch (e) {
       Toastr.error("Error", "Could not submit the chart definition: ${e.toString()}");
       return;
@@ -96,16 +127,14 @@ class CreateChartButtonComponent {
     this.chartType = chartType;
   }
 
-  void onJasonPathChange(String jsonPath) {
-    this.jsonPath = jsonPath;
-  }
-
   bool isDefinitionCorrect() {
-    return this.chartType != null && this.jsonPath.isNotEmpty;
+    return this.chartType != null && this.dataPaths.isNotEmpty;
   }
 
   void _reset() {
-    this.jsonPath = "";
+    this.dataPaths = [];
+    this.onAddDataPath();
+
     this.errorMessage = null;
   }
 

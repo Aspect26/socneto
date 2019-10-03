@@ -143,6 +143,11 @@
     border-color: get-color($primary, 400);
   }
 
+  material-fab[mini] {
+    color: get-color($background, 200);
+    background-color: get-color($primary, 500);
+  }
+
   .mdc-card {
     background-color: get-color($background, 200);
   }
