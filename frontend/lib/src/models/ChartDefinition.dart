@@ -1,13 +1,13 @@
 import '../utils.dart';
 
 class ChartDefinition {
-  final String dataJsonPath;
+  final List<String> jsonDataPaths;
   final ChartType chartType;
 
-  ChartDefinition(this.dataJsonPath, this.chartType);
+  ChartDefinition(this.jsonDataPaths, this.chartType);
 
   ChartDefinition.fromMap(Map data) :
-      dataJsonPath = data["dataJsonPath"],
+      jsonDataPaths = data["jsonDataPaths"],
       chartType = getEnumByString(ChartType.values, data["chartType"], ChartType.Line);
 }
 
