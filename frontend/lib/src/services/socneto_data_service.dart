@@ -34,17 +34,12 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     await this.getList<AnalyzedPost>("job/$jobId/analysis", (result) => AnalyzedPost.fromMap(result));
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
-    // await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
-    // TODO: mock here
-    Future.value([
-      ChartDefinition(["DataAnalyzer_Mock.polarity"], ChartType.Line),
-      ChartDefinition(["DataAnalyzer_Mock.polarity", "DataAnalyzer_Mock.accuracy"], ChartType.Line)
-    ]);
+    await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var data = {
       "ChartType": chartDefinition.chartType.toString().split('.').last,
-      "DataJsonPath": chartDefinition.jsonDataPaths
+      "JsonDataPaths": chartDefinition.jsonDataPaths
     };
     return this.post<Success>("job/$jobId/charts/create", data, (result) => Success.fromMap(result));
   }

@@ -16,16 +16,8 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
       (await this.get<SocnetoComponentsResponse> ("components/networks", (result) => SocnetoComponentsResponse.fromMap(result))).components;
 
-  Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async {
+  Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
     (await this.get<SocnetoAnalysersResponse>("components/analysers", (result) => SocnetoAnalysersResponse.fromMap(result))).components;
-
-    // TODO: mock here
-    return Future.value([
-      SocnetoAnalyser("DataAnalyser_Mock", ComponentType.unknown, ComponentSpecialization.other, ["polarity", "accuracy"]),
-      SocnetoAnalyser("Topic analyser", ComponentType.unknown, ComponentSpecialization.other, ["topic"]),
-      SocnetoAnalyser("Star Wars analyser", ComponentType.unknown, ComponentSpecialization.other, ["Episode I", "Episode II", "Episode III", "Episode IV", "Episode V", "Episode VI", "Episode VII", "Episode VIII", "Episode IX"])
-    ]);
-  }
 
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers) async {
     var data = {

@@ -94,6 +94,10 @@ class ChartComponent implements AfterChanges {
   }
 
   Tuple2<String, dynamic> _getAnalysisValue(List<dynamic> analyses, String analysisPath) {
+
+    print(analyses);
+    print(analysisPath);
+
     var pathParts = analysisPath.split(".");
     if (pathParts.length != 2) {
       Toastr.error("Error", "Wrong data path: ${analysisPath}");
