@@ -93,8 +93,7 @@ class ChartComponent implements AfterChanges {
     context.callMethod('createLineChart', [domSelector, JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
   }
 
-  // TODO: omg dynamic?
-  Tuple2<dynamic, dynamic> _getAnalysisValue(dynamic analyses, String analysisPath) {
+  Tuple2<String, dynamic> _getAnalysisValue(List<dynamic> analyses, String analysisPath) {
     var pathParts = analysisPath.split(".");
     if (pathParts.length != 2) {
       Toastr.error("Error", "Wrong data path: ${analysisPath}");
