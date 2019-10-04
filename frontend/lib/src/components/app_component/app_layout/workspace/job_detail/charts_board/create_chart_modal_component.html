@@ -1,0 +1,61 @@
+<modal [(visible)]="displayed">
+    <material-dialog headered
+                     class="dialog"
+                     [error]="errorMessage">
+
+        <div header>
+            <h1>Create new chart</h1>
+            <material-button icon autoFocus (trigger)="onCloseDialog()">
+                <material-icon icon="close"></material-icon>
+            </material-button>
+        </div>
+
+        <chart-type-select (change)="onChartTypeSelected($event)"></chart-type-select>
+
+        <br>
+
+        <div *ngIf="analysers.isNotEmpty" class="data-paths">
+            <div *ngFor="let dataPath of dataPaths; let i = index" class="data-path-row">
+                <div class="data-path">
+                    <span class="label">
+                        Line {{ i + 1 }}:
+                    </span>
+                    <material-dropdown-select class="analyser-select"
+                                              buttonText="{{ dataPath.analyser.identifier }}"
+                                              [(selection)]="dataPath.analyser"
+                                              [options]="analysers"
+                                              [itemRenderer]="itemRenderer">
+                    </material-dropdown-select>
+
+                    <material-dropdown-select class="property-select"
+                                              buttonText="{{ dataPath.property }}"
+                                              [(selection)]="dataPath.property"
+                                              [options]="dataPath.analyser.properties">
+                    </material-dropdown-select>
+                </div>
+
+                <material-button icon (trigger)="onRemoveDataPath(dataPath)">
+                    <material-icon icon="remove"></material-icon>
+                </material-button>
+            </div>
+
+            <div>
+                <material-button icon (trigger)="onAddDataPath()">
+                    <material-icon icon="add"></material-icon>
+                </material-button>
+            </div>
+        </div>
+
+        <div *ngIf="analysers.isEmpty" class="info-box">
+            <span>
+                No analysers found for this job!
+            </span>
+        </div>
+
+        <div footer>
+            <material-button *ngIf="isDefinitionCorrect() && analysers.isNotEmpty" class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="!(isDefinitionCorrect() && analysers.isNotEmpty)" disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
+        </div>
+
+    </material-dialog>
+</modal>

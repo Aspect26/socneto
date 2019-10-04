@@ -7,6 +7,7 @@ environment:
 dependencies:
   angular: ^5.2.0
   angular_components: ^0.13.0
+  tuple: ^1.0.3
 
 dev_dependencies:
   angular_test: ^2.2.0

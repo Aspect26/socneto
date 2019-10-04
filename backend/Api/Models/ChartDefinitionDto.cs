@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
 {
     public class ChartDefinitionDto
     {
-        public string DataJsonPath { get; set; }
+        public List<string> JsonDataPaths { get; set; }
         
         public string ChartType { get; set; }
 
@@ -12,7 +13,7 @@ namespace Socneto.Api.Models
         {
             return new ChartDefinitionDto
             {
-                DataJsonPath = chartDefinition.DataJsonPath,
+                JsonDataPaths = chartDefinition.JsonDataPaths,
                 ChartType = chartDefinition.ChartType.ToString()
             };
         }

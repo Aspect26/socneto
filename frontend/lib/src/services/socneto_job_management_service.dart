@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:sw_project/src/models/CreateJobResponse.dart';
+import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/SocnetoComponentsResponse.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
@@ -15,8 +16,8 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
       (await this.get<SocnetoComponentsResponse> ("components/networks", (result) => SocnetoComponentsResponse.fromMap(result))).components;
 
-  Future<List<SocnetoComponent>> getAvailableAnalyzers() async =>
-      (await this.get<SocnetoComponentsResponse> ("components/analysers", (result) => SocnetoComponentsResponse.fromMap(result))).components;
+  Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
+    (await this.get<SocnetoAnalysersResponse>("components/analysers", (result) => SocnetoAnalysersResponse.fromMap(result))).components;
 
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers) async {
     var data = {

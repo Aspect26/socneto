@@ -4,34 +4,4 @@
     </svg>
 </div>
 
-<modal [(visible)]="showCreateDialog">
-    <material-dialog headered
-                     class="dialog"
-                     [error]="errorMessage"
-                     [autoDismissable]="true"
-                     (dismiss)="onCloseDialog()">
-
-        <div header>
-            <h1>Create new chart</h1>
-            <material-button icon autoFocus (trigger)="onCloseDialog()">
-                <material-icon icon="close"></material-icon>
-            </material-button>
-        </div>
-
-        Chart type:
-        <chart-type-select (change)="onChartTypeSelected($event)"></chart-type-select>
-
-        <br>
-
-        <material-input
-                label="JSONPath to data"
-                (inputKeyPress)="jsonPath = $event">
-        </material-input>
-
-        <div footer>
-            <material-button *ngIf="isDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
-            <material-button *ngIf="!isDefinitionCorrect()" disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
-        </div>
-
-    </material-dialog>
-</modal>
+<create-chart-modal [job]="job" (submit)="onSubmit($event)"></create-chart-modal>
