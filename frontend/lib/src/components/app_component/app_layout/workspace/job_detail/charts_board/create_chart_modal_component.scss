@@ -1,0 +1,82 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
+
+@mixin create-chart-modal-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  material-dialog {
+
+    font-family: $font-family;
+    background-color: get-color($background, 100);
+
+    header {
+      background-color: get-color($primary, 400) !important;
+
+      div {
+        display: flex;
+        justify-content: space-between;
+
+        material-icon {
+          color: get-color($background, 100);
+        }
+      }
+    }
+
+    .data-paths {
+      margin-bottom: 10px;
+
+      .data-path-row {
+        display: flex;
+
+        .data-path {
+          flex-grow: 1;
+          display: flex;
+          align-items: center;
+          align-content: center;
+
+          .label {
+            margin-right: 10px;
+          }
+
+          .analyser-select {
+            flex-grow: 1;
+            margin-right: 10px;
+          }
+
+          .property-select {
+            flex-grow: 1;
+          }
+        }
+      }
+
+      material-button {
+        background: transparent;
+        color: get-color($primary, 500);
+      }
+    }
+
+    .info-box {
+      text-align: center;
+
+      span {
+        font-size: 20px;
+        font-weight: bold;
+        color: get-color($primary, A700);
+      }
+    }
+
+    footer {
+      material-button {
+        background-color: get-color($primary, 500);
+        color: get-color-contrast($primary, 500);
+      }
+    }
+  }
+
+}
