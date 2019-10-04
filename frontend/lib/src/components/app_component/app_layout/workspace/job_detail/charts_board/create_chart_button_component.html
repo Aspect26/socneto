@@ -21,7 +21,7 @@
 
         <br>
 
-        <div class="data-paths">
+        <div *ngIf="analysers.isNotEmpty" class="data-paths">
             <div *ngFor="let dataPath of dataPaths; let i = index" class="data-path-row">
                 <div class="data-path">
                     <span class="label">
@@ -53,9 +53,15 @@
             </div>
         </div>
 
+        <div *ngIf="analysers.isEmpty" class="info-box">
+            <span>
+                No analysers found for this job!
+            </span>
+        </div>
+
         <div footer>
-            <material-button *ngIf="isDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
-            <material-button *ngIf="!isDefinitionCorrect()" disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="isDefinitionCorrect() && analysers.isNotEmpty" class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="!(isDefinitionCorrect() && analysers.isNotEmpty)" disabled class="close-button" (trigger)="onSubmit()">Submit</material-button>
         </div>
 
     </material-dialog>
