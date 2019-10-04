@@ -37,8 +37,6 @@ import 'package:tuple/tuple.dart';
 )
 class ChartComponent implements AfterChanges {
 
-  // TODO: currently supports only line chart
-
   @Input() ChartDefinition chartDefinition;
   @Input() List<AnalyzedPost> analyzedPosts;
   @Input() String chartId;
