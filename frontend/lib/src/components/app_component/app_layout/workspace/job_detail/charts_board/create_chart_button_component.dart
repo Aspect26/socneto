@@ -19,7 +19,6 @@ import 'package:sw_project/src/services/socneto_service.dart';
 @Component(
   selector: 'create-chart-button',
   directives: [
-    // TODO: move all the directives to some parent or something
     DeferredContentDirective,
     FocusItemDirective,
     FocusListDirective,
