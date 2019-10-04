@@ -12,6 +12,7 @@
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_type_select/chart_type_select_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.scss";
+@import "package:sw_project/src/components/shared/paginator/paginator_component.scss";
 @import "package:sw_project/src/components/app_component/material.scss";
 
 
@@ -30,6 +31,7 @@
   @include create-chart-modal-component($theme);
   @include chart-type-select-component($theme);
   @include chart-component($theme);
+  @include paginator-component($theme);
 }
 
 .theme-red-light {
