@@ -91,12 +91,12 @@ class CreateChartButtonComponent {
   }
 
   void onAddDataPath() {
-    if (this.analysers.isNotEmpty) {
-      final analyser = this.analysers[0];
-      this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties.isNotEmpty? analyser.properties[0] : ""));
-    } else {
-      this.dataPaths.add(AnalysisDataPath(null, ""));
+    if (this.analysers.isEmpty) {
+      return;
     }
+
+    final analyser = this.analysers[0];
+    this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties.isNotEmpty? analyser.properties[0] : ""));
   }
 
   void onSubmit() async {

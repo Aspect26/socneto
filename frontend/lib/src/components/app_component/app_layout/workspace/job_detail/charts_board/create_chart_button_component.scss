@@ -91,6 +91,16 @@
 
     }
 
+    .info-box {
+      text-align: center;
+
+      span {
+        font-size: 20px;
+        font-weight: bold;
+        color: get-color($primary, A700);
+      }
+    }
+
     footer {
       material-button {
         background-color: get-color($primary, 500);

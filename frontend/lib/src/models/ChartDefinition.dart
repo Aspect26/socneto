@@ -7,7 +7,7 @@ class ChartDefinition {
   ChartDefinition(this.jsonDataPaths, this.chartType);
 
   ChartDefinition.fromMap(Map data) :
-      jsonDataPaths = (data["jsonDataPaths"] as List<dynamic>).map((d) => d.toString()).toList(),
+      jsonDataPaths = (data["jsonDataPaths"] as List<dynamic>).cast<String>(),
       chartType = getEnumByString(ChartType.values, data["chartType"], ChartType.Line);
 }
 
