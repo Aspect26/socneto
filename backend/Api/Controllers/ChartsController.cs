@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Socneto.Api.Models;
 using Socneto.Domain.Models;
-using System.Linq;
 
 namespace Socneto.Api.Controllers
 {
@@ -23,8 +23,8 @@ namespace Socneto.Api.Controllers
 
             // TODO: get from DB
             var chartDefinitions = new List<ChartDefinition>();
-            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, DataJsonPath = "DataAnalyzer_Mock.polarity"});
-            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, DataJsonPath = "DataAnalyzer_Mock.accuracy"});
+            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, JsonDataPaths = new List<string>() { "DataAnalyzer_Mock.polarity" }});
+            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, JsonDataPaths = new List<string>() { "DataAnalyzer_Mock.polarity", "DataAnalyzer_Mock.accuracy" }});
             
             var mappedChartDefinitions = chartDefinitions
                 .Select(ChartDefinitionDto.FromModel)
@@ -47,7 +47,7 @@ namespace Socneto.Api.Controllers
 
             var chartDefinition = new ChartDefinition
             {
-                DataJsonPath = request.DataJsonPath,
+                JsonDataPaths = request.JsonDataPaths,
                 ChartType = chartType
             };
             

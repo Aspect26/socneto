@@ -1,8 +1,10 @@
+using System.Collections.Generic;
+
 namespace Socneto.Domain.Models
 {
     public class ChartDefinition
     {
-        public string DataJsonPath { get; set; }
+        public List<string> JsonDataPaths { get; set; }
         public ChartType ChartType { get; set; }
     }
 

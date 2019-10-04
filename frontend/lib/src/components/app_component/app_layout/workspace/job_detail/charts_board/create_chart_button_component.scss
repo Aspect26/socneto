@@ -3,6 +3,7 @@
 
 @import 'package:angular_components/css/material/material';
 @import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
 
 @mixin create-chart-button-component($theme) {
 
@@ -34,32 +35,5 @@
       background-color:  get-color($background, 600);
     }
 
-  }
-
-  material-dialog {
-
-    font-family: $font-family;
-    background-color: get-color($background, 100);
-
-    header {
-      background-color: get-color($primary, 400) !important;
-
-      div {
-        display: flex;
-        justify-content: space-between;
-
-        material-icon {
-          color: get-color($background, 100);
-        }
-      }
-
-    }
-
-    footer {
-      material-button {
-        background-color: get-color($primary, 500);
-        color: get-color-contrast($primary, 500);
-      }
-    }
   }
 }

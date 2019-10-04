@@ -7,6 +7,7 @@ import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
+import 'package:tuple/tuple.dart';
 
 
 @Component(
@@ -42,7 +43,7 @@ class ChartComponent implements AfterChanges {
   @Input() List<AnalyzedPost> analyzedPosts;
   @Input() String chartId;
 
-  List<dynamic> graphData = [];
+  Map<String, List<dynamic>> graphData = {};
 
   @override
   void ngAfterChanges() {
@@ -62,7 +63,7 @@ class ChartComponent implements AfterChanges {
   }
 
   void _transformPostsIntoData() {
-    this.graphData = List<dynamic>();
+    this.graphData = Map<String, List<dynamic>>();
     this.analyzedPosts.sort((a, b) {
       if (a.post.postedAt == null) Toastr.error("Post data", "Post '${a.post.text}' is missing date");
       if (b.post.postedAt == null) Toastr.error("Post data", "Post '${b.post.text}' is missing date");
@@ -70,34 +71,42 @@ class ChartComponent implements AfterChanges {
     });
 
     for (var post in this.analyzedPosts) {
-      var value = this._getAnalysisValue(post.analyses);
-      this.graphData.add({'y': value, 'date': post.post.postedAt.toIso8601String()});
+      for (var analysisPath in this.chartDefinition.jsonDataPaths) {
+        var keyValue = this._getAnalysisValue(post.analyses, analysisPath);
+        if (keyValue == null) {
+          continue;
+        }
+
+        this.graphData.putIfAbsent(keyValue.item1, () => List<dynamic>());
+        var value = keyValue.item2;
+        this.graphData[keyValue.item1].add({'y': value, 'date': post.post.postedAt.toIso8601String()});
+      }
     }
   }
 
   void _refreshGraph() {
-    var dataSets = [this.graphData];
-    var dataLabels = [this.chartDefinition.dataJsonPath.split(".")[1]];
+    var dataSets = this.graphData.values.toList();
+    var dataLabels = this.chartDefinition.jsonDataPaths.map((jsonDataPath) => jsonDataPath.split(".")[1]);
 
     // TODO: make custom JS library from the graph-line-chart and interop it at least
     var domSelector = "#${this.chartId}";
     context.callMethod('createLineChart', [domSelector, JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
   }
 
-  dynamic _getAnalysisValue(dynamic analyses) {
-    var pathParts = this.chartDefinition.dataJsonPath.split(".");
+  Tuple2<String, dynamic> _getAnalysisValue(List<dynamic> analyses, String analysisPath) {
+    var pathParts = analysisPath.split(".");
     if (pathParts.length != 2) {
-      Toastr.error("Error", "Wrong data path: ${this.chartDefinition.dataJsonPath}");
-      return 0;
+      Toastr.error("Error", "Wrong data path: ${analysisPath}");
+      return null;
     }
 
     for (dynamic analysis in analyses) {
       if (analysis[pathParts[0]] != null && analysis[pathParts[0]][pathParts[1]] != null) {
-        return analysis[pathParts[0]][pathParts[1]]["value"];
+        return Tuple2(pathParts[1], analysis[pathParts[0]][pathParts[1]]["value"]);
       }
     }
 
-    return 0;
+    return null;
   }
 
 }
