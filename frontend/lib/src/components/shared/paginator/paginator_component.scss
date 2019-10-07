@@ -26,6 +26,8 @@
       border: 2px solid get-color($background);
       border-radius: 4px;
 
+      text-decoration: none;
+
       cursor: pointer;
 
       &:hover {
@@ -45,11 +47,15 @@
         height: 25px;
         line-height: 25px;
         text-align: center;
+        font-size: 13px;
       }
     }
 
     .divider {
       margin-right: $page-links-margin;
+      text-decoration: none;
+      color: get-color-contrast($background);
+      cursor: default;
     }
   }
 }
