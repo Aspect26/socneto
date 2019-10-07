@@ -1,4 +1,4 @@
-<ng-container *ngIf="paginator.currentPage - additionalPagesCount > 0">
+<ng-container *ngIf="paginator.currentPage - pages > 0">
 
     <a class="page-link" (click)="onPreviousPageClick()">
         <div>
@@ -14,7 +14,6 @@
         …
     </a>
 
-
 </ng-container>
 
 <a *ngFor="let pageNumber of pageLinks()" class="page-link" [ngClass]="{'current': pageNumber == paginator.currentPage }" (click)="onPageClick(pageNumber)" href="javascript:void(0)">
@@ -23,14 +22,14 @@
     </div>
 </a>
 
-<ng-container *ngIf="paginator.currentPage + additionalPagesCount < paginator.maxPage()">
+<ng-container *ngIf="paginator.currentPage + pages < paginator.maxPage()">
 
     <a href="javascript:void(0)" class="divider">
         …
     </a>
     <a class="page-link" (click)="onPageClick(paginator.maxPage())">
         <div>
-            {{ paginator.maxPage() }}
+            {{ paginator.maxPage() + 1 }}
         </div>
     </a>
     <a class="page-link" (click)="onNextPageClick()">
