@@ -6,6 +6,8 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
+import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -23,6 +25,7 @@ import 'package:sw_project/src/utils.dart';
     MaterialListComponent,
     MaterialListItemComponent,
     MaterialSelectItemComponent,
+    PaginatorComponent,
     NgFor,
     NgIf
   ],
@@ -38,10 +41,13 @@ class JobsListComponent implements AfterChanges {
 
   @Input() String username;
 
+  static final int PAGE_SIZE = 10;
   final SocnetoService _socnetoService;
   final Router _router;
 
+  Paginator paginator = Paginator(0, 0, PAGE_SIZE);
   List<Job> jobs = [];
+  List<Job> displayedJobs = [];
   Job selectedJob;
 
   JobsListComponent(this._socnetoService, this._router);
@@ -80,16 +86,24 @@ class JobsListComponent implements AfterChanges {
     this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(this.username)));
   }
 
+  void onPageChange(int page) {
+    this.paginator.currentPage = page;
+    this._updateDisplayedJobs();
+  }
+
   void _loadData() async {
     try {
       this.jobs = await this._socnetoService.getUserJobs(this.username);
+      this.paginator = Paginator(this.jobs.length, this.paginator.currentPage, PAGE_SIZE);
     } on HttpException catch (e) {
       this.jobs = [];
+      this.paginator = Paginator(0, 0, PAGE_SIZE);
       this._onLoadDataError(e);
     }
 
     this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
     this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
+    this._updateDisplayedJobs();
   }
 
   void _setSelectedJob(RouterState routerState) {
@@ -103,6 +117,17 @@ class JobsListComponent implements AfterChanges {
     } catch (error) {
       this.selectedJob = null;
     }
+  }
+
+  void _updateDisplayedJobs() {
+    final start = this.paginator.currentPage * this.paginator.pageSize;
+    var end = (this.paginator.currentPage + 1) * this.paginator.pageSize;
+
+    if (end > this.jobs.length) {
+      end = this.jobs.length;
+    }
+
+    this.displayedJobs = this.jobs.sublist(start, end);
   }
 
   void _onLoadDataError(HttpException error) {

@@ -1,0 +1,61 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
+
+@mixin paginator-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  paginator {
+    $page-links-margin: 5px;
+
+    display: flex;
+    margin: 10px 0;
+    align-items: center;
+
+    .page-link {
+      margin-right: $page-links-margin;
+
+      background-color: get-color($background, 300);
+      color: get-color-contrast($background, 300);
+
+      border: 2px solid get-color($background);
+      border-radius: 4px;
+
+      text-decoration: none;
+
+      cursor: pointer;
+
+      &:hover {
+        background-color: get-color($background, 700);
+        color: get-color-contrast($background, 700);
+      }
+
+      &.current {
+        border-color: get-color($primary);
+        background-color: get-color($primary, A700);
+        color: get-color-contrast($primary, A700);
+        cursor: default;
+      }
+
+      div {
+        min-width: 25px;
+        height: 25px;
+        line-height: 25px;
+        text-align: center;
+        font-size: 13px;
+      }
+    }
+
+    .divider {
+      margin-right: $page-links-margin;
+      text-decoration: none;
+      color: get-color-contrast($background);
+      cursor: default;
+    }
+  }
+}
