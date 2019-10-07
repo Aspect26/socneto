@@ -6,7 +6,7 @@
             Create Job
         </material-select-item>
 
-        <material-select-item *ngFor="let job of jobs" (trigger)="selectJob(job)" focusItem [selected]="job == selectedJob">
+        <material-select-item *ngFor="let job of displayedJobs" (trigger)="selectJob(job)" focusItem [selected]="job == selectedJob">
             <material-icon *ngIf="job.finished" icon="check" class="material-list-item-primary" aria-hidden="true"></material-icon>
             <material-icon *ngIf="!job.finished" icon="loop" class="material-list-item-primary" aria-hidden="true"></material-icon>
 
@@ -20,4 +20,10 @@
 
         </material-select-item>
     </material-list>
+
+    <div class="paginator">
+        <paginator *ngIf="jobs.length > PAGE_SIZE" [pages]="1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+    </div>
 </div>
+
+

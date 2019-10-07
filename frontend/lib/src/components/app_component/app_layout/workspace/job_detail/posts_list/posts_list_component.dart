@@ -16,6 +16,8 @@ import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_components/material_yes_no_buttons/material_yes_no_buttons.dart';
 import 'package:angular_forms/angular_forms.dart';
+import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
+import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/models/Post.dart';
 
 @Component(
@@ -39,6 +41,7 @@ import 'package:sw_project/src/models/Post.dart';
     MaterialListComponent,
     MaterialListItemComponent,
     MaterialSelectItemComponent,
+    PaginatorComponent,
     NgFor,
     NgIf,
   ],
@@ -49,8 +52,35 @@ import 'package:sw_project/src/models/Post.dart';
   styleUrls: ['posts_list_component.css'],
   encapsulation: ViewEncapsulation.None
 )
-class PostsListComponent {
+class PostsListComponent implements OnChanges {
 
-  @Input() List<Post> posts = [];
+    static const int _PAGE_SIZE = 20;
+
+    @Input() List<Post> posts = [];
+    List<Post> displayedPosts = [];
+
+    Paginator paginator = Paginator(0, 0, _PAGE_SIZE);
+
+    @override
+    void ngOnChanges(Map<String, SimpleChange> changes) {
+        this.paginator = Paginator(this.posts.length, this.paginator.currentPage, _PAGE_SIZE);
+        this._updateDisplayedPosts();
+    }
+
+    void onPageChange(int page) {
+        this.paginator.currentPage = page;
+        this._updateDisplayedPosts();
+    }
+
+    void _updateDisplayedPosts() {
+        final start = this.paginator.currentPage * this.paginator.pageSize;
+        var end = (this.paginator.currentPage + 1) * this.paginator.pageSize;
+
+        if (end > this.posts.length) {
+            end = this.posts.length;
+        }
+
+        this.displayedPosts = this.posts.sublist(start, end);
+    }
 
 }

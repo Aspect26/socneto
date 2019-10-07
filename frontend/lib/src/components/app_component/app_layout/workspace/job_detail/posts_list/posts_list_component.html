@@ -1,4 +1,6 @@
-<material-expansionpanel *ngFor="let post of posts"
+<paginator [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+
+<material-expansionpanel *ngFor="let post of displayedPosts"
                          expandIcon="comment"
                          [showSaveCancel]="false">
     <div name>
@@ -9,3 +11,5 @@
     </div>
 
 </material-expansionpanel>
+
+<paginator [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
