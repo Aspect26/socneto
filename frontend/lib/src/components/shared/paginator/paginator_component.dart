@@ -20,15 +20,14 @@ import 'Paginator.dart';
 class PaginatorComponent {
 
   @Input() Paginator paginator;
+  @Input() int pages = 2;
 
   final _pageClickController = StreamController<int>();
   @Output() Stream<int> get pageChange => _pageClickController.stream;
 
-  int additionalPagesCount = 2;
-
   List pageLinks() {
-    var firstPage = this.paginator.currentPage - this.additionalPagesCount;
-    var lastPage = this.paginator.currentPage + this.additionalPagesCount;
+    var firstPage = this.paginator.currentPage - this.pages;
+    var lastPage = this.paginator.currentPage + this.pages;
 
     if (firstPage < 0) {
       firstPage = 0;
