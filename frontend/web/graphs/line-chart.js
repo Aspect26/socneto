@@ -93,15 +93,26 @@ class LineChart {
     }
 
     _createChartLine(svg, dataSet, dataLabel, color, curve, index) {
-        svg.append("path")
+        let path = svg.append("path")
             .datum(dataSet)
             .attr("class", "line")
             .style('stroke', color)
             .attr("transform", "translate(" + this._LEGEND_WIDTH + ", 0)")
             .attr("d", curve);
 
-        svg.append("circle").attr("cx", 0).attr("cy", index * 20).attr("r", 6).style("fill", color);
-        svg.append("text").attr("x", 20).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle")
+        let legend = svg.append("g").attr("transform", "translate(0, " + 30 + ")").attr("class", "legend-entry");
+        legend.append("circle").attr("cx", 0).attr("cy", index * 20).attr("r", 6).style("fill", color);
+        legend.append("text").attr("x", 10).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");
+
+        legend
+            .on("mouseover", function(d, i) {
+                path.node().classList.add("selected");
+                legend.node().classList.add("selected");
+            })
+            .on("mouseout", function(d, i) {
+                path.node().classList.remove("selected");
+                legend.node().classList.remove("selected");
+            });
     }
 }
 
