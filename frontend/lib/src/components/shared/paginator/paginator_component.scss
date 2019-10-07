@@ -23,7 +23,7 @@
       background-color: get-color($background, 300);
       color: get-color-contrast($background, 300);
 
-      border: 2px solid get-color($primary);
+      border: 2px solid get-color($background);
       border-radius: 4px;
 
       cursor: pointer;
@@ -34,8 +34,9 @@
       }
 
       &.current {
-        background-color: get-color($primary);
-        color: get-color-contrast($primary);
+        border-color: get-color($primary);
+        background-color: get-color($primary, A700);
+        color: get-color-contrast($primary, A700);
         cursor: default;
       }
 
