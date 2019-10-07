@@ -1,6 +1,6 @@
 .line {
   fill: none;
-  stroke-width: 1px;
+  stroke-width: 2px;
 }
 
 .overlay {
@@ -16,4 +16,8 @@
 .focus circle {
     fill: none;
     stroke: steelblue;
+}
+
+text {
+    font-family: "MPlus1";
 }
