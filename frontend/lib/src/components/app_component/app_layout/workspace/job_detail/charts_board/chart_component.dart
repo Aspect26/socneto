@@ -77,7 +77,7 @@ class ChartComponent implements AfterChanges {
 
         this.graphData.putIfAbsent(keyValue.item1, () => List<dynamic>());
         var value = keyValue.item2;
-        this.graphData[keyValue.item1].add({'y': value, 'date': post.post.postedAt.toIso8601String()});
+        this.graphData[keyValue.item1].add({'value': value, 'date': post.post.postedAt.toIso8601String()});
       }
     }
   }
