@@ -37,7 +37,7 @@ class LineChart {
             this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve, index);
         }
 
-        this._createMouseHoverDivs(background, selector, xScale, dataSets);
+        this._createMouseHoverDivs(background, selector, xScale, dataSets, dataLabels);
     }
 
     _removeOld(selector) {
@@ -118,7 +118,7 @@ class LineChart {
             });
     }
 
-    _createMouseHoverDivs(svg, containerSelector, xScale, dataSets) {
+    _createMouseHoverDivs(svg, containerSelector, xScale, dataSets, dataLabels) {
         let mouseHoverDiv = d3.select(containerSelector).append("div")
             .attr("class", "tooltip")
             .style("opacity", 0);
@@ -131,6 +131,8 @@ class LineChart {
         // let verticalMarkerSvg = svg.append("g")
 
         let legendWidth = this._LEGEND_WIDTH;
+        let colors = this._LINE_COLORS;
+
         d3.select(containerSelector)
             .on('mouseover', function (d, i) {
                 mouseHoverDiv
@@ -165,6 +167,7 @@ class LineChart {
                 for (let i = 0; i < dataSets.length; i++) {
                     let dataSet = dataSets[i];
                     let previousDatum = null;
+                    currentValues.push("");
                     for (let j = 0; j < dataSet.length; j++) {
                         let datum = dataSet[j];
                         if (new Date(datum.date) > x) {
@@ -179,14 +182,19 @@ class LineChart {
                                 let valueInterpolation = positionBetween * valuesDiff;
                                 currentValue = previousDatum.value + valueInterpolation;
                             }
-                            currentValues.push(currentValue);
+                            currentValues[currentValues.length - 1] = currentValue;
                             break;
                         }
                         previousDatum = datum;
                     }
                 }
 
-                mouseHoverDiv.html("data: " + currentValues);
+                let tooltipHtml = "";
+                dataLabels.forEach(function (label, index) {
+                   let currentValue = currentValues[index];
+                   tooltipHtml = tooltipHtml.concat(`<span style="color: ${colors[index]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
+                });
+                mouseHoverDiv.html(tooltipHtml);
             });
     }
 
