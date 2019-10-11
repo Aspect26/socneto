@@ -168,12 +168,12 @@ class LineChart {
 
     _createMouseHoverTooltipHtml(position, xScale, dataSets, dataLabels) {
         let currentValues = this._getValuesAtPosition(position, xScale, dataSets, dataLabels);
+        currentValues.sort(function (a, b) { return b["value"] - a["value"] });
         let tooltipHtml = "";
         for (let index = 0; index < currentValues.length; index++) {
-            console.log(currentValues[index]);
             let label = currentValues[index]["label"];
             let currentValue = currentValues[index]["value"];
-            tooltipHtml = tooltipHtml.concat(`<span style="color: ${this._LINE_COLORS[index]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
+            tooltipHtml = tooltipHtml.concat(`<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
         }
 
         return tooltipHtml;
@@ -195,7 +195,8 @@ class LineChart {
                     }
                     currentValues.push({
                         "label": dataLabels[i],
-                        "value": currentValue
+                        "value": currentValue,
+                        "color": this._LINE_COLORS[i]
                     });
                     break;
                 }
