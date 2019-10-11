@@ -11,28 +11,24 @@ class LineChart {
         "#948B3D"
     ];
 
-    _CHART_MARGIN = {
-        top: 50,
-        right: 50,
-        bottom: 50,
-        left: 50
-    };
-
     _LEGEND_WIDTH = 150;
     _ELEMENT_HEIGHT = 450;
+    _CHART_PADDING_BOTTOM = 20;
+    _CHART_PADDING_RIGHT = 10;
 
     create(selector, dataSets, dataLabels) {
         this._removeOld(selector);
 
         let elementWidth = document.getElementsByClassName("tab-content")[0].clientWidth;
-        let chartWidth = elementWidth - this._CHART_MARGIN.left - this._CHART_MARGIN.right - this._LEGEND_WIDTH;
-        let chartHeight = this._ELEMENT_HEIGHT - this._CHART_MARGIN.top - this._CHART_MARGIN.bottom;
+        let chartWidth = elementWidth - this._LEGEND_WIDTH - this._CHART_PADDING_RIGHT;
+        let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_BOTTOM;
 
         let xScale = this._createXScale(dataSets, chartWidth);
         let yScale = this._createYScale(dataSets, chartHeight);
         let curve = this._createChartCurve(xScale, yScale);
 
         let svg = this._createSvg(selector, elementWidth);
+        let background = this._createBackground(svg, elementWidth);
         this._createXAxis(svg, xScale, chartHeight);
         this._createYAxis(svg, yScale);
 
@@ -40,6 +36,8 @@ class LineChart {
             let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
             this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve, index);
         }
+
+        this._createMouseHoverDivs(background, selector, xScale, dataSets);
     }
 
     _removeOld(selector) {
@@ -65,8 +63,7 @@ class LineChart {
             })
             .y(function (datum) {
                 return yScale(datum.value);
-            })
-            .curve(d3.curveMonotoneX);
+            });
     }
 
     _createSvg(selector, width) {
@@ -75,7 +72,13 @@ class LineChart {
             .attr("width", width)
             .attr("height", this._ELEMENT_HEIGHT)
             .append("g")
-            .attr("transform", "translate(" + this._CHART_MARGIN.left  + "," + this._CHART_MARGIN.top + ")");
+    }
+
+    _createBackground(svg, width) {
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", this._ELEMENT_HEIGHT);
     }
 
     _createXAxis(svg, xScale, chartHeight) {
@@ -101,8 +104,8 @@ class LineChart {
             .attr("d", curve);
 
         let legend = svg.append("g").attr("transform", "translate(0, " + 30 + ")").attr("class", "legend-entry");
-        legend.append("circle").attr("cx", 0).attr("cy", index * 20).attr("r", 6).style("fill", color);
-        legend.append("text").attr("x", 10).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");
+        legend.append("circle").attr("cx", 10).attr("cy", index * 20).attr("r", 6).style("fill", color);
+        legend.append("text").attr("x", 20).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");
 
         legend
             .on("mouseover", function(d, i) {
@@ -114,6 +117,79 @@ class LineChart {
                 legend.node().classList.remove("selected");
             });
     }
+
+    _createMouseHoverDivs(svg, containerSelector, xScale, dataSets) {
+        let mouseHoverDiv = d3.select(containerSelector).append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+
+        let verticalMarker = d3.select(containerSelector).append("div")
+            .attr("class", "vertical-marker")
+            .style("opacity", 0);
+
+        // let verticalMarkerSvg = svg.append("g")
+
+        let legendWidth = this._LEGEND_WIDTH;
+        d3.select(containerSelector)
+            .on('mouseover', function (d, i) {
+                mouseHoverDiv
+                    .transition()
+                    .duration(100)
+                    .style("opacity", 1);
+
+                verticalMarker
+                    .transition()
+                    .duration(100)
+                    .style("opacity", 0)
+            })
+            .on('mouseout', function (d, i) {
+                mouseHoverDiv.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+
+                verticalMarker.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+            })
+            .on('mousemove', function (d, _) {
+                mouseHoverDiv
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+
+                verticalMarker
+                    .style("left", (d3.event.pageX) + "px");
+
+                let x = xScale.invert(d3.mouse(this)[0] - legendWidth);
+                let currentValues = [];
+                for (let i = 0; i < dataSets.length; i++) {
+                    let dataSet = dataSets[i];
+                    let previousDatum = null;
+                    for (let j = 0; j < dataSet.length; j++) {
+                        let datum = dataSet[j];
+                        if (new Date(datum.date) > x) {
+                            let currentValue = datum.value;
+                            if (previousDatum != null) {
+                                let xTimeMillis = x.getTime();
+                                let previousTimeMillis = new Date(previousDatum.date).getTime();
+                                let nextTimeMillis = new Date(datum.date).getTime();
+                                let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
+
+                                let valuesDiff = datum.value - previousDatum.value;
+                                let valueInterpolation = positionBetween * valuesDiff;
+                                currentValue = previousDatum.value + valueInterpolation;
+                            }
+                            currentValues.push(currentValue);
+                            break;
+                        }
+                        previousDatum = datum;
+                    }
+                }
+
+                mouseHoverDiv.html("data: " + currentValues);
+            });
+    }
+
 }
 
 function createLineChart(selector, datasets, datalabels) {
