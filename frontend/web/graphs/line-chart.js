@@ -130,9 +130,7 @@ class LineChart {
 
         // let verticalMarkerSvg = svg.append("g")
 
-        let legendWidth = this._LEGEND_WIDTH;
-        let colors = this._LINE_COLORS;
-
+        let self = this;
         d3.select(containerSelector)
             .on('mouseover', function (d, i) {
                 mouseHoverDiv
@@ -162,40 +160,62 @@ class LineChart {
                 verticalMarker
                     .style("left", (d3.event.pageX) + "px");
 
-                let x = xScale.invert(d3.mouse(this)[0] - legendWidth);
-                let currentValues = [];
-                for (let i = 0; i < dataSets.length; i++) {
-                    let dataSet = dataSets[i];
-                    let previousDatum = null;
-                    currentValues.push("");
-                    for (let j = 0; j < dataSet.length; j++) {
-                        let datum = dataSet[j];
-                        if (new Date(datum.date) > x) {
-                            let currentValue = datum.value;
-                            if (previousDatum != null) {
-                                let xTimeMillis = x.getTime();
-                                let previousTimeMillis = new Date(previousDatum.date).getTime();
-                                let nextTimeMillis = new Date(datum.date).getTime();
-                                let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
-
-                                let valuesDiff = datum.value - previousDatum.value;
-                                let valueInterpolation = positionBetween * valuesDiff;
-                                currentValue = previousDatum.value + valueInterpolation;
-                            }
-                            currentValues[currentValues.length - 1] = currentValue;
-                            break;
-                        }
-                        previousDatum = datum;
-                    }
-                }
-
-                let tooltipHtml = "";
-                dataLabels.forEach(function (label, index) {
-                   let currentValue = currentValues[index];
-                   tooltipHtml = tooltipHtml.concat(`<span style="color: ${colors[index]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
-                });
+                let mouseChartPosition = d3.mouse(this)[0] - self._LEGEND_WIDTH;
+                let tooltipHtml = self._createMouseHoverTooltipHtml(mouseChartPosition, xScale, dataSets, dataLabels);
                 mouseHoverDiv.html(tooltipHtml);
             });
+    }
+
+    _createMouseHoverTooltipHtml(position, xScale, dataSets, dataLabels) {
+        let currentValues = this._getValuesAtPosition(position, xScale, dataSets, dataLabels);
+        let tooltipHtml = "";
+        for (let index = 0; index < currentValues.length; index++) {
+            console.log(currentValues[index]);
+            let label = currentValues[index]["label"];
+            let currentValue = currentValues[index]["value"];
+            tooltipHtml = tooltipHtml.concat(`<span style="color: ${this._LINE_COLORS[index]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
+        }
+
+        return tooltipHtml;
+    }
+
+    _getValuesAtPosition(position, xScale, dataSets, dataLabels) {
+        let x = xScale.invert(position);
+        let currentValues = [];
+
+        for (let i = 0; i < dataSets.length; i++) {
+            let dataSet = dataSets[i];
+            let previousDatum = null;
+            for (let j = 0; j < dataSet.length; j++) {
+                let datum = dataSet[j];
+                if (new Date(datum.date) > x) {
+                    let currentValue = datum.value;
+                    if (previousDatum != null) {
+                        currentValue = this._interpolateValue(x, previousDatum, datum);
+                    }
+                    currentValues.push({
+                        "label": dataLabels[i],
+                        "value": currentValue
+                    });
+                    break;
+                }
+                previousDatum = datum;
+            }
+        }
+
+        return currentValues;
+    }
+
+    _interpolateValue(currentX, previousDatum, nextDatum) {
+        let xTimeMillis = currentX.getTime();
+        let previousTimeMillis = new Date(previousDatum.date).getTime();
+        let nextTimeMillis = new Date(nextDatum.date).getTime();
+        let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
+
+        let valuesDiff = nextDatum.value - previousDatum.value;
+        let valueInterpolation = positionBetween * valuesDiff;
+
+        return previousDatum.value + valueInterpolation;
     }
 
 }
