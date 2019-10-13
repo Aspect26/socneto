@@ -30,11 +30,9 @@ namespace ConsoleApi.Twitter
                 .ConfigureSpecificOptions<TwitterCredentialsOptions>($"Twitter:Credentials")
                 .Build();
 
-
             var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
             var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
-
 
             var jobConfig = new DataAcquirerJobConfig()
             {

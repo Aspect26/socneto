@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{0F995856-8240-4883-80A4-C4F0E2627C89}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{2BE5263B-8452-4CC2-B328-C5DCC5352D00}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{F761074F-7A6C-4A85-8325-788AD08304EE}"
@@ -15,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApi.Twitter", "Conso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Mock", "WebApi.Mock\WebApi.Mock.csproj", "{D5C40B97-AD0B-4CAF-AAF9-485D40A25058}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{AADBECFB-96C7-42FA-ADFE-93C9D7AFEA66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{AADBECFB-96C7-42FA-ADFE-93C9D7AFEA66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApi.Reddit", "ConsoleApi.Reddit\ConsoleApi.Reddit.csproj", "{1A41A8A4-4BEC-41C0-9F9B-7282E89983AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApi.Reddit", "ConsoleApi.Reddit\ConsoleApi.Reddit.csproj", "{1A41A8A4-4BEC-41C0-9F9B-7282E89983AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0F995856-8240-4883-80A4-C4F0E2627C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F995856-8240-4883-80A4-C4F0E2627C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F995856-8240-4883-80A4-C4F0E2627C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F995856-8240-4883-80A4-C4F0E2627C89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2BE5263B-8452-4CC2-B328-C5DCC5352D00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BE5263B-8452-4CC2-B328-C5DCC5352D00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BE5263B-8452-4CC2-B328-C5DCC5352D00}.Release|Any CPU.ActiveCfg = Release|Any CPU
