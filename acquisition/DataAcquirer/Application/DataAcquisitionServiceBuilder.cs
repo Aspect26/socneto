@@ -30,14 +30,19 @@ namespace Application
             var builder = new ConfigurationBuilder()
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-#if DEBUG
-            builder.AddJsonFile($"appsettings.Development.json", true, true);
-#endif      
+            var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if( aspNetCoreEnv == "Development")
+            {
+                builder.AddJsonFile($"appsettings.Development.json", true, true);
+            }
             var configuration = builder.Build();
 
 
             var services = new ServiceCollection();
-            services.AddLogging(logging => logging.AddConsole().SetMinimumLevel(LogLevel.Information));
+            services.AddLogging(
+                logging => logging
+                .AddConsole()
+                .SetMinimumLevel(LogLevel.Information));
 
             // add the framework services
             services.AddSingleton<JobConfigurationUpdateListener>();
