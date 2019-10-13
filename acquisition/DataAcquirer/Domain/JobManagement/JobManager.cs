@@ -62,7 +62,7 @@ namespace Domain.JobManagement
                 }
 
                 var json = JsonConvert.SerializeObject(jobConfig);
-                _logger.LogInformation("Config recieved {}", json);
+                _logger.LogInformation("Config recieved {config}", json);
 
                 var cancellationTokenSource = new CancellationTokenSource();
                 var downloadingTask = StartJobAsync(jobConfig, cancellationTokenSource.Token).
@@ -95,7 +95,7 @@ namespace Domain.JobManagement
         {
             try
             {
-                
+
                 ulong fromIdPagingParameter = 0;
                 while (!cancellationToken.IsCancellationRequested)
                 {
@@ -103,23 +103,16 @@ namespace Domain.JobManagement
                     {
                         Query = jobConfig.Attributes["TopicQuery"],
                         JobId = jobConfig.JobId,
-                        NetworkCredentials = new DataAcquirerCredentials
-                        {
-                            AccessToken = jobConfig.Attributes["AccessToken"],
-                            AccessTokenSecret = jobConfig.Attributes["AccessTokenSecret"],
-                            ApiKey = jobConfig.Attributes["ApiKey"],
-                            ApiSecretKey = jobConfig.Attributes["ApiSecretKey"]
-                        },
                         NumberOfPostToRetrieve = 100,
-                        FromId = fromIdPagingParameter
-
+                        FromId = fromIdPagingParameter,
+                        Attributes = new DataAcquirerAttributes(jobConfig.Attributes)
                     };
+
                     var data = await _acquirer.AcquireBatchAsync(
                         dataAcquirerInputModel,
                         cancellationToken);
                     fromIdPagingParameter = data.MaxId;
-
-
+                    
                     foreach (var dataPost in data.Posts)
                     {
                         var jsonData = JsonConvert.SerializeObject(dataPost);
