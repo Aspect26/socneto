@@ -4,6 +4,7 @@ using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.Registration;
+using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -123,5 +124,10 @@ namespace Application
 
             
         }
+
+
+
+
+
     }
 }

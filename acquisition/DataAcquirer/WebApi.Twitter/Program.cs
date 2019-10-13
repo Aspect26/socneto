@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Application;
 using Domain;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
-using Domain.JobManagement;
 using Domain.Registration;
-using Infrastructure.DataGenerator;
-using Microsoft.AspNetCore;
+using Infrastructure.Twitter;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,12 +17,13 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
-            var app = new DataAcquisitionServiceWebApiBuilder(args)
-                .ConfigureSpecificOptions<RandomGeneratorOptions>("DataAcquisitionService:RandomGeneratorOptions")
-                .ConfigureSpecificOptions<StaticGeneratorOptions>("DataAcquisitionService:RandomGeneratorOptions")
-                .AddSingletonService<IDataAcquirer,StaticDataGeneratorAcquirer>()
-                .BuildWebHost();
 
+
+            var builder = new DataAcquisitionServiceWebApiBuilder(args)
+                .AddSingletonService<IDataAcquirer, TwitterDataAcqirer>();
+
+
+            var app = builder.BuildWebHost();
             await InitializeApplication(app);
 
             app.Run();
@@ -53,6 +47,7 @@ namespace Api
         private static async Task RegisterComponent(IWebHost app, ILogger<Program> logger)
         {
             var registration = app.Services.GetRequiredService<IRegistrationService>();
+
 
             var componentOptions = app.Services.GetRequiredService<IOptions<ComponentOptions>>();
 

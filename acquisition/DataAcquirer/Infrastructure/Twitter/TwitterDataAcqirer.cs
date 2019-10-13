@@ -80,10 +80,10 @@ namespace Infrastructure.Twitter
                 {
                     CredentialStore = new SingleUserInMemoryCredentialStore
                     {
-                        ConsumerKey = acquirerInputModel.NetworkCredentials.ApiKey,
-                        ConsumerSecret = acquirerInputModel.NetworkCredentials.ApiSecretKey,
-                        AccessToken = acquirerInputModel.NetworkCredentials.AccessToken,
-                        AccessTokenSecret = acquirerInputModel.NetworkCredentials.AccessTokenSecret
+                        ConsumerKey = acquirerInputModel.Attributes["ApiKey"],
+                        ConsumerSecret = acquirerInputModel.Attributes["ApiSecretKey"],
+                        AccessToken = acquirerInputModel.Attributes["AccessToken"],
+                        AccessTokenSecret = acquirerInputModel.Attributes["AccessTokenSecret"]
                     }
                 };
                 _twitterContext = new TwitterContext(auth);
@@ -93,7 +93,6 @@ namespace Infrastructure.Twitter
                 _logger.LogError("Error during context initialization", e.Message);
                 throw;
             }
-
         }
 
         private static UniPost FromStatus(DataAcquirerInputModel acquirerInputModel, Status item)

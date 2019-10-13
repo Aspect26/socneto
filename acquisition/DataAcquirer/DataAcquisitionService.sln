@@ -9,13 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{71D7E19E-8990-4C7F-8A45-CD795B2B1586}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApi.Twitter", "ConsoleApi\ConsoleApi.Twitter.csproj", "{1FA96AA7-1065-437D-8667-73FE0473F5FC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Mock", "WebApi.Mock\WebApi.Mock.csproj", "{D5C40B97-AD0B-4CAF-AAF9-485D40A25058}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.StaticData", "WebApi.Mock\WebApi.StaticData.csproj", "{D5C40B97-AD0B-4CAF-AAF9-485D40A25058}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{AADBECFB-96C7-42FA-ADFE-93C9D7AFEA66}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApi.Reddit", "ConsoleApi.Reddit\ConsoleApi.Reddit.csproj", "{1A41A8A4-4BEC-41C0-9F9B-7282E89983AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApi.Twitter", "ConsoleApi.Twitter\ConsoleApi.Twitter.csproj", "{EDD5D8D4-207F-46DA-9C58-5A49A260A585}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Twitter", "WebApi.Twitter\WebApi.Twitter.csproj", "{D279C11A-CA4B-4921-81A9-7183FF0FE8F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +37,6 @@ Global
 		{71D7E19E-8990-4C7F-8A45-CD795B2B1586}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71D7E19E-8990-4C7F-8A45-CD795B2B1586}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71D7E19E-8990-4C7F-8A45-CD795B2B1586}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1FA96AA7-1065-437D-8667-73FE0473F5FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FA96AA7-1065-437D-8667-73FE0473F5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FA96AA7-1065-437D-8667-73FE0473F5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FA96AA7-1065-437D-8667-73FE0473F5FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5C40B97-AD0B-4CAF-AAF9-485D40A25058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5C40B97-AD0B-4CAF-AAF9-485D40A25058}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5C40B97-AD0B-4CAF-AAF9-485D40A25058}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +49,14 @@ Global
 		{1A41A8A4-4BEC-41C0-9F9B-7282E89983AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A41A8A4-4BEC-41C0-9F9B-7282E89983AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A41A8A4-4BEC-41C0-9F9B-7282E89983AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD5D8D4-207F-46DA-9C58-5A49A260A585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD5D8D4-207F-46DA-9C58-5A49A260A585}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD5D8D4-207F-46DA-9C58-5A49A260A585}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD5D8D4-207F-46DA-9C58-5A49A260A585}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D279C11A-CA4B-4921-81A9-7183FF0FE8F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D279C11A-CA4B-4921-81A9-7183FF0FE8F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D279C11A-CA4B-4921-81A9-7183FF0FE8F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D279C11A-CA4B-4921-81A9-7183FF0FE8F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
