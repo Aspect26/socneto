@@ -37,13 +37,6 @@ namespace Api
         private static async Task InitializeApplication(IWebHost app)
         {
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            //logger.LogInformation("Starting to wait");
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    await Task.Delay(TimeSpan.FromSeconds(10));
-            //    logger.LogInformation($"Waiting { TimeSpan.FromSeconds(10) * i }");
-            //}
-
 
             await RegisterComponent(app, logger);
 
@@ -72,19 +65,21 @@ namespace Api
                 UpdateChannelName = componentOptions.Value.UpdateChannelName
             };
 
-            try
+            while (true)
             {
-                logger.LogInformation("Sending registration request");
-                await registration.Register(registrationRequest);
-                logger.LogInformation("Registration request sent");
+                try
+                {
+                    logger.LogInformation("Sending registration request");
+                    await registration.Register(registrationRequest);
+                    logger.LogInformation("Service {serviceName} register request sent", "DataAcquisitionService");
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("Registration failed. Error: {error}", e.Message);
+                    logger.LogInformation("trying again in 30 seconds");
+                    await Task.Delay(TimeSpan.FromMinutes(.5));
+                }
             }
-            catch (Exception e)
-            {
-                logger.LogError(e.Message);
-                throw;
-            }
-
-            logger.LogInformation("Service {serviceName} register request sent", "DataAcquisitionService");
         }
 
         public static void Main(string[] args)
