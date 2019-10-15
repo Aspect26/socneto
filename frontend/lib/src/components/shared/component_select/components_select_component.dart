@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
-import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/component_select/component_select_component.dart';
+import 'package:sw_project/src/components/shared/component_select/component_select_component.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 
 
