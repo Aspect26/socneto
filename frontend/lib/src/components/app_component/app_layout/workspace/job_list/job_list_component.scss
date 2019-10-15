@@ -1,14 +1,14 @@
 @import "package:sw_project/src/style/style.scss";
 
 
-@mixin jobs-list-component($theme) {
+@mixin job-list-component($theme) {
 
   $primary: map-get($theme, primary);
   $background: map-get($theme, background);
 
-  jobs-list {
+  job-list {
 
-    .jobs-list-card {
+    .job-list-card {
 
       h2 {
         text-align: center;

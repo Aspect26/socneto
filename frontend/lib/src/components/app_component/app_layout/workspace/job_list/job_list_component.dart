@@ -6,6 +6,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -16,7 +17,7 @@ import 'package:sw_project/src/utils.dart';
 
 
 @Component(
-  selector: 'jobs-list',
+  selector: 'job-list',
   directives: [
     routerDirectives,
     FocusItemDirective,
@@ -26,19 +27,21 @@ import 'package:sw_project/src/utils.dart';
     MaterialListItemComponent,
     MaterialSelectItemComponent,
     PaginatorComponent,
+    CreateJobModal,
     NgFor,
     NgIf
   ],
-  templateUrl: 'jobs_list_component.html',
+  templateUrl: 'job_list_component.html',
   styleUrls: [
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
-    'jobs_list_component.css'
+    'job_list_component.css'
   ],
   encapsulation: ViewEncapsulation.None,
   exports: [RoutePaths, Routes],
 )
-class JobsListComponent implements AfterChanges {
+class JobListComponent implements AfterChanges {
 
+  @ViewChild(CreateJobModal) CreateJobModal createJobModal;
   @Input() String username;
 
   static final int PAGE_SIZE = 10;
@@ -50,7 +53,7 @@ class JobsListComponent implements AfterChanges {
   List<Job> displayedJobs = [];
   Job selectedJob;
 
-  JobsListComponent(this._socnetoService, this._router);
+  JobListComponent(this._socnetoService, this._router);
 
   @override
   void ngAfterChanges() async {
@@ -63,8 +66,8 @@ class JobsListComponent implements AfterChanges {
     });
   }
 
-  void selectJob(Job job) {
-    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, job.id)));
+  void selectJob(String jobId) {
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
   }
 
   String getProcessingTime(Job job) {
@@ -83,12 +86,18 @@ class JobsListComponent implements AfterChanges {
   }
 
   void onCreateNewJob(_) {
-    this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(this.username)));
+    this.createJobModal.show();
   }
 
   void onPageChange(int page) {
     this.paginator.currentPage = page;
     this._updateDisplayedJobs();
+  }
+
+  void onCreateJobSubmit(String newJobId) async {
+    this.createJobModal.close();
+    await this._loadData();
+    this.selectJob(newJobId);
   }
 
   void _loadData() async {
