@@ -1,9 +1,8 @@
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/routes.dart';
-import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.dart';
-import 'package:sw_project/src/components/app_component/app_layout/workspace/jobs_list/jobs_list_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/job_list_component.dart';
 
 
 @Component(
@@ -13,9 +12,8 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
   directives: [
     routerDirectives,
 
-    JobsListComponent,
-    JobDetailComponent,
-    CreateJobComponent,
+    JobListComponent,
+    JobDetailComponent
   ],
   exports: [RoutePaths, Routes],
 )

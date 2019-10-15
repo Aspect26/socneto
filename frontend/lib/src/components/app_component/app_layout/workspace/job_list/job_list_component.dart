@@ -6,7 +6,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_modal.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -17,7 +17,7 @@ import 'package:sw_project/src/utils.dart';
 
 
 @Component(
-  selector: 'jobs-list',
+  selector: 'job-list',
   directives: [
     routerDirectives,
     FocusItemDirective,
@@ -31,15 +31,15 @@ import 'package:sw_project/src/utils.dart';
     NgFor,
     NgIf
   ],
-  templateUrl: 'jobs_list_component.html',
+  templateUrl: 'job_list_component.html',
   styleUrls: [
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
-    'jobs_list_component.css'
+    'job_list_component.css'
   ],
   encapsulation: ViewEncapsulation.None,
   exports: [RoutePaths, Routes],
 )
-class JobsListComponent implements AfterChanges {
+class JobListComponent implements AfterChanges {
 
   @ViewChild(CreateJobModal) CreateJobModal createJobModal;
   @Input() String username;
@@ -53,7 +53,7 @@ class JobsListComponent implements AfterChanges {
   List<Job> displayedJobs = [];
   Job selectedJob;
 
-  JobsListComponent(this._socnetoService, this._router);
+  JobListComponent(this._socnetoService, this._router);
 
   @override
   void ngAfterChanges() async {

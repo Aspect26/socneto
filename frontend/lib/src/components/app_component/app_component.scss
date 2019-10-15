@@ -1,9 +1,8 @@
 @import "package:sw_project/src/style/theming/themes.scss";
 @import "package:sw_project/src/components/app_component/app_layout/app_layout_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/login/login_component.scss";
-@import "package:sw_project/src/components/app_component/app_layout/workspace/jobs_list/jobs_list_component.scss";
-@import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_component.scss";
-@import "package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_modal.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/job_list_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job_modal.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.scss";
@@ -20,10 +19,9 @@
 @mixin apply-theme($theme) {
   @include material-theme($theme);
   @include app-layout-component($theme);
-  @include jobs-list-component($theme);
+  @include job-list-component($theme);
   @include job-detail-component($theme);
   @include posts-list-component($theme);
-  @include create-job-component($theme);
   @include create-job-modal($theme);
   @include login-component($theme);
   @include components-select-component($theme);
