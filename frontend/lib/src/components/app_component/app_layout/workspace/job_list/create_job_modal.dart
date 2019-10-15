@@ -95,6 +95,8 @@ class CreateJobModal {
     this.selectedSocialNetworks.clear();
     this.selectedDataAnalyzers.clear();
     this.errorMessage = null;
+    this.useCustomTwitterCredentials = false;
+    this.twitterCredentials = TwitterCredentials();
 
     this._loadSocialNetworks();
     this._loadDataAnalyzers();
@@ -112,7 +114,8 @@ class CreateJobModal {
     if (this.isJobDefinitionCorrect()) {
       try {
         this.submitting = true;
-        final newJobId = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers);
+        final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
+        final newJobId = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
         this.reset();
         this._submitController.add(newJobId);
       } on HttpException {
