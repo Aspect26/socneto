@@ -1,6 +1,27 @@
 .line {
-  fill: none;
-  stroke-width: 1px;
+    fill: none;
+    stroke-width: 2px;
+
+    transform-origin: 50% 50%;
+    transition: stroke-width 0.1s ease-in;
+}
+
+.line:hover {
+    stroke-width: 4px;
+    transition: stroke-width 0.1s ease-out;
+}
+
+.line.selected {
+    stroke-width: 4px;
+    transition: stroke-width 0.1s ease-out;
+}
+
+.legend-entry {
+    cursor: pointer;
+}
+
+.legend-entry.selected {
+    font-weight: bold;
 }
 
 .overlay {
@@ -16,4 +37,29 @@
 .focus circle {
     fill: none;
     stroke: steelblue;
+}
+
+.tooltip {
+    position: absolute;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    background: white;
+}
+
+.vertical-marker {
+    width: 0;
+    height: 100%;
+    position: absolute;
+
+    border-style: dashed;
+    border-width: 0 1px 0 0;
+    border-color: black;
+
+    pointer-events: none;
+}
+
+text {
+    font-family: "MPlus1";
 }

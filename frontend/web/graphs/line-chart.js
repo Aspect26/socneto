@@ -1,78 +1,227 @@
-_LINE_COLORS = [
-    "#396AB1",
-    "#DA7C30",
-    "#3E9651",
-    "#CC2529",
-    "#535154",
-    "#6B4C9A",
-    "#922428",
-    "#948B3D"
-];
+class LineChart {
 
-function createLineChart(selector, datasets, datalabels) {
+    _LINE_COLORS = [
+        "#396AB1",
+        "#DA7C30",
+        "#3E9651",
+        "#CC2529",
+        "#535154",
+        "#6B4C9A",
+        "#922428",
+        "#948B3D"
+    ];
 
-    d3.select(selector).select("svg").remove();
+    _LEGEND_WIDTH = 150;
+    _ELEMENT_HEIGHT = 450;
+    _CHART_PADDING_BOTTOM = 20;
+    _CHART_PADDING_RIGHT = 10;
 
-    var margin = {top: 50, right: 50, bottom: 50, left: 50};
-    var legendWidth = 200;
+    create(selector, dataSets, dataLabels) {
+        this._removeOld(selector);
 
-    w = 500;
-    w = document.getElementsByClassName("tab-content")[0].clientWidth;
-    h = 450;
+        let elementWidth = document.getElementsByClassName("tab-content")[0].clientWidth;
+        let chartWidth = elementWidth - this._LEGEND_WIDTH - this._CHART_PADDING_RIGHT;
+        let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_BOTTOM;
 
-    var chartWidth = w - margin.left - margin.right - legendWidth;
-    var chartHeight = h - margin.top - margin.bottom;
+        let xScale = this._createXScale(dataSets, chartWidth);
+        let yScale = this._createYScale(dataSets, chartHeight);
+        let curve = this._createChartCurve(xScale, yScale);
 
+        let svg = this._createSvg(selector, elementWidth);
+        let background = this._createBackground(svg, elementWidth);
+        this._createXAxis(svg, xScale, chartHeight);
+        this._createYAxis(svg, yScale);
 
-    var xScale = d3.scaleTime()
-        .domain(d3.extent(datasets.flat(), function(d) { return new Date(d.date); }))
-        .range([0, chartWidth]);
+        for (let index = 0; index < dataSets.length; ++index) {
+            let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
+            this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve, index);
+        }
 
-    var yScale = d3.scaleLinear()
-        .domain([-1, 1])
-        .range([chartHeight, 0]);
-
-    var line = d3.line()
-        .x(function (d, i) {
-            return xScale(new Date(d.date));
-        })
-        .y(function (d) {
-            return yScale(d.y);
-        })
-        .curve(d3.curveMonotoneX);
-
-    console.log(`JS ${selector}`);
-    console.log(d3.select(selector));
-    var svg = d3.select(selector)
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .append("g")
-        .attr("transform", "translate(" + margin.left  + "," + margin.top + ")");
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(" + legendWidth + "," + chartHeight + ")")
-        .call(d3.axisBottom(xScale));
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .attr("transform", "translate(" + legendWidth + ", 0)")
-        .call(d3.axisLeft(yScale));
-
-    for (var i = 0; i < datasets.length; ++i) {
-        var currentColor = _LINE_COLORS[i % _LINE_COLORS.length];
-        var currentTitle = datalabels[i];
-
-        svg.append("path")
-            .datum(datasets[i])
-            .attr("class", "line")
-            .style('stroke', currentColor)
-            .attr("transform", "translate(" + legendWidth + ", 0)")
-            .attr("d", line);
-
-        svg.append("circle").attr("cx", 0).attr("cy", i * 20).attr("r", 6).style("fill", currentColor);
-        svg.append("text").attr("x", 20).attr("y", i * 20).text(currentTitle).style("font-size", "15px").attr("alignment-baseline","middle")
+        this._createMouseHoverDivs(background, selector, xScale, dataSets, dataLabels);
     }
 
+    _removeOld(selector) {
+        d3.select(selector).select("svg").remove();
+    }
+
+    _createXScale(dataSets, width) {
+        return d3.scaleTime()
+            .domain(d3.extent(dataSets.flat(), function(datum) { return new Date(datum.date); }))
+            .range([0, width]);
+    }
+
+    _createYScale(dataSets, height) {
+        return d3.scaleLinear()
+            .domain(d3.extent(dataSets.flat(), function(datum) { return datum.value; }))
+            .range([height, 0]);
+    }
+
+    _createChartCurve(xScale, yScale) {
+        return d3.line()
+            .x(function (datum, _) {
+                return xScale(new Date(datum.date));
+            })
+            .y(function (datum) {
+                return yScale(datum.value);
+            });
+    }
+
+    _createSvg(selector, width) {
+        return d3.select(selector)
+            .append("svg")
+            .attr("width", width)
+            .attr("height", this._ELEMENT_HEIGHT)
+            .append("g")
+    }
+
+    _createBackground(svg, width) {
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", this._ELEMENT_HEIGHT);
+    }
+
+    _createXAxis(svg, xScale, chartHeight) {
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(" + this._LEGEND_WIDTH + "," + chartHeight + ")")
+            .call(d3.axisBottom(xScale));
+    }
+
+    _createYAxis(svg, yScale) {
+        svg.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + this._LEGEND_WIDTH + ", 0)")
+            .call(d3.axisLeft(yScale));
+    }
+
+    _createChartLine(svg, dataSet, dataLabel, color, curve, index) {
+        let path = svg.append("path")
+            .datum(dataSet)
+            .attr("class", "line")
+            .style('stroke', color)
+            .attr("transform", "translate(" + this._LEGEND_WIDTH + ", 0)")
+            .attr("d", curve);
+
+        let legend = svg.append("g").attr("transform", "translate(0, " + 30 + ")").attr("class", "legend-entry");
+        legend.append("circle").attr("cx", 10).attr("cy", index * 20).attr("r", 6).style("fill", color);
+        legend.append("text").attr("x", 20).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");
+
+        legend
+            .on("mouseover", function(d, i) {
+                path.node().classList.add("selected");
+                legend.node().classList.add("selected");
+            })
+            .on("mouseout", function(d, i) {
+                path.node().classList.remove("selected");
+                legend.node().classList.remove("selected");
+            });
+    }
+
+    _createMouseHoverDivs(svg, containerSelector, xScale, dataSets, dataLabels) {
+        let mouseHoverDiv = d3.select(containerSelector).append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+
+        let verticalMarker = d3.select(containerSelector).append("div")
+            .attr("class", "vertical-marker")
+            .style("opacity", 0);
+
+        // let verticalMarkerSvg = svg.append("g")
+
+        let self = this;
+        d3.select(containerSelector)
+            .on('mouseover', function (d, i) {
+                mouseHoverDiv
+                    .transition()
+                    .duration(100)
+                    .style("opacity", 1);
+
+                verticalMarker
+                    .transition()
+                    .duration(100)
+                    .style("opacity", 0)
+            })
+            .on('mouseout', function (d, i) {
+                mouseHoverDiv.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+
+                verticalMarker.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+            })
+            .on('mousemove', function (d, _) {
+                mouseHoverDiv
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+
+                verticalMarker
+                    .style("left", (d3.event.pageX) + "px");
+
+                let mouseChartPosition = d3.mouse(this)[0] - self._LEGEND_WIDTH;
+                let tooltipHtml = self._createMouseHoverTooltipHtml(mouseChartPosition, xScale, dataSets, dataLabels);
+                mouseHoverDiv.html(tooltipHtml);
+            });
+    }
+
+    _createMouseHoverTooltipHtml(position, xScale, dataSets, dataLabels) {
+        let currentValues = this._getValuesAtPosition(position, xScale, dataSets, dataLabels);
+        currentValues.sort(function (a, b) { return b["value"] - a["value"] });
+        let tooltipHtml = "";
+        for (let index = 0; index < currentValues.length; index++) {
+            let label = currentValues[index]["label"];
+            let currentValue = currentValues[index]["value"];
+            tooltipHtml = tooltipHtml.concat(`<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
+        }
+
+        return tooltipHtml;
+    }
+
+    _getValuesAtPosition(position, xScale, dataSets, dataLabels) {
+        let x = xScale.invert(position);
+        let currentValues = [];
+
+        for (let i = 0; i < dataSets.length; i++) {
+            let dataSet = dataSets[i];
+            let previousDatum = null;
+            for (let j = 0; j < dataSet.length; j++) {
+                let datum = dataSet[j];
+                if (new Date(datum.date) > x) {
+                    let currentValue = datum.value;
+                    if (previousDatum != null) {
+                        currentValue = this._interpolateValue(x, previousDatum, datum);
+                    }
+                    currentValues.push({
+                        "label": dataLabels[i],
+                        "value": currentValue,
+                        "color": this._LINE_COLORS[i]
+                    });
+                    break;
+                }
+                previousDatum = datum;
+            }
+        }
+
+        return currentValues;
+    }
+
+    _interpolateValue(currentX, previousDatum, nextDatum) {
+        let xTimeMillis = currentX.getTime();
+        let previousTimeMillis = new Date(previousDatum.date).getTime();
+        let nextTimeMillis = new Date(nextDatum.date).getTime();
+        let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
+
+        let valuesDiff = nextDatum.value - previousDatum.value;
+        let valueInterpolation = positionBetween * valuesDiff;
+
+        return previousDatum.value + valueInterpolation;
+    }
+
+}
+
+function createLineChart(selector, datasets, datalabels) {
+    let lineChart = new LineChart();
+    lineChart.create(selector, datasets, datalabels);
 }
