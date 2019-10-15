@@ -1,0 +1,123 @@
+<modal [(visible)]="displayed">
+    <material-dialog headered
+                     class="dialog"
+                     [error]="errorMessage">
+
+        <div header>
+            <h1>Create new job</h1>
+            <material-button icon autoFocus (trigger)="onCloseDialog()">
+                <material-icon icon="close"></material-icon>
+            </material-button>
+        </div>
+
+        <material-stepper #jobStepper
+                          legalJumps="all"
+                          orientation="horizontal">
+
+            <template step name="Job Definition"
+                      [optional] = "false"
+                      [hideButtons]="true">
+
+                <div>
+                    Title:
+                    <material-input
+                            label="Name of the job"
+                            floatingLabel
+                            [(ngModel)]="jobName"
+                            class="labeled-input">
+                    </material-input>
+
+                    <div>
+                        Topic:
+                        <material-input
+                                label="The topic to be queried"
+                                floatingLabel
+                                [(ngModel)]="topic"
+                                class="labeled-input">
+                        </material-input>
+                    </div>
+
+                    Social Networks:
+                    <components-select
+                            [components]="availableSocialNetworks"
+                            [loading]="loadingSocialNetworks"
+                            (change)="onSocialNetworksSelectionChange($event)"
+                            (refresh)="onSocialNetworksRefresh()">
+                    </components-select>
+
+                    Data analyzers:
+                    <components-select
+                            [components]="availableDataAnalyzers"
+                            [loading]="loadingDataAnalyzers"
+                            (change)="onDataAnalyzersSelectionChange($event)"
+                            (refresh)="onDataAnalyzersRefresh()">
+                    </components-select>
+                </div>
+
+            </template>
+
+            <template step name="Credentials"
+                      [optional]="true"
+                      [hideButtons]="true">
+
+                <div>
+                    <material-tab-panel [activeTabIndex]="0">
+
+                        <material-tab class="tab" label="Twitter" style="">
+
+                            <div>
+                                <material-toggle [(ngModel)]="useCustomTwitterCredentials" label="Use custom"></material-toggle>
+                            </div>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Api Key"
+                                    [disabled]="!useCustomTwitterCredentials"
+                                    [(ngModel)]="twitterCredentials.apiKey"
+                                    class="labeled-input">
+                            </material-input>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Api Secret Key"
+                                    [disabled]="!useCustomTwitterCredentials"
+                                    [(ngModel)]="twitterCredentials.apiSecretKey"
+                                    class="labeled-input">
+                            </material-input>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Access Token"
+                                    [disabled]="!useCustomTwitterCredentials"
+                                    [(ngModel)]="twitterCredentials.accessToken"
+                                    class="labeled-input">
+                            </material-input>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Access Token Secret"
+                                    [disabled]="!useCustomTwitterCredentials"
+                                    [(ngModel)]="twitterCredentials.accessTokenSecret"
+                                    class="labeled-input">
+                            </material-input>
+
+                        </material-tab>
+
+                    </material-tab-panel>
+                </div>
+
+            </template>
+
+        </material-stepper>
+
+
+
+        <div footer>
+            <material-button (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)">Next</material-button>
+
+            <material-button *ngIf="isJobDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="!isJobDefinitionCorrect()" disabled class="close-button">Submit</material-button>
+        </div>
+
+    </material-dialog>
+</modal>
