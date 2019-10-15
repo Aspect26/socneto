@@ -1,0 +1,56 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
+
+@mixin create-job-modal($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  material-dialog {
+
+    // TODO: duplicate
+    font-family: $font-family;
+    background-color: get-color($background, 100);
+
+    header {
+      background-color: get-color($primary, 400) !important;
+
+      div {
+        display: flex;
+        justify-content: space-between;
+
+        material-icon {
+          color: get-color($background, 100);
+        }
+      }
+    }
+
+    .labeled-input {
+      margin-left: 15px;
+      width: 350px;
+    }
+
+    .info-box {
+      text-align: center;
+
+      span {
+        font-size: 20px;
+        font-weight: bold;
+        color: get-color($primary, A700);
+      }
+    }
+
+    // TODO: duplicate
+    footer {
+      material-button {
+        background-color: get-color($primary, 500);
+        color: get-color-contrast($primary, 500);
+      }
+    }
+  }
+
+}

@@ -6,6 +6,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/create_job/create_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -26,6 +27,7 @@ import 'package:sw_project/src/utils.dart';
     MaterialListItemComponent,
     MaterialSelectItemComponent,
     PaginatorComponent,
+    CreateJobModal,
     NgFor,
     NgIf
   ],
@@ -39,6 +41,7 @@ import 'package:sw_project/src/utils.dart';
 )
 class JobsListComponent implements AfterChanges {
 
+  @ViewChild(CreateJobModal) CreateJobModal createJobModal;
   @Input() String username;
 
   static final int PAGE_SIZE = 10;
@@ -83,12 +86,16 @@ class JobsListComponent implements AfterChanges {
   }
 
   void onCreateNewJob(_) {
-    this._router.navigate(RoutePaths.createJob.toUrl(parameters: RouteParams.workspaceParams(this.username)));
+    this.createJobModal.show();
   }
 
   void onPageChange(int page) {
     this.paginator.currentPage = page;
     this._updateDisplayedJobs();
+  }
+
+  void onCreateJobSubmit(Job job) {
+    print("SUBBmitting JOB");
   }
 
   void _loadData() async {
