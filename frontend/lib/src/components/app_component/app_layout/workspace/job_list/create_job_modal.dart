@@ -10,7 +10,6 @@ import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
@@ -50,8 +49,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class CreateJobModal {
 
-  final _submitController = StreamController<Job>();
-  @Output() Stream<Job> get submit => _submitController.stream;
+  final _submitController = StreamController<String>();
+  @Output() Stream<String> get submit => _submitController.stream;
 
   final SocnetoService _socnetoService;
 
@@ -104,17 +103,15 @@ class CreateJobModal {
     if (this.isJobDefinitionCorrect()) {
       try {
         this.submitting = true;
-        // TODO: create the job and pass that and the pass it to the submit controller
-        await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers);
+        final newJobId = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers);
         this.reset();
-        this._submitController.add(null);
+        this._submitController.add(newJobId);
       } on HttpException {
         Toastr.error( "New Job", "Could not create the new job :(");
       } finally {
         this.submitting = false;
       }
     }
-    this._submitController.add(null);
   }
 
   onSocialNetworksSelectionChange(List<SocnetoComponent> networks) {

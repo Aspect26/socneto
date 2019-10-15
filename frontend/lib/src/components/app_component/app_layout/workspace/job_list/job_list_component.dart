@@ -66,8 +66,8 @@ class JobListComponent implements AfterChanges {
     });
   }
 
-  void selectJob(Job job) {
-    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, job.id)));
+  void selectJob(String jobId) {
+    this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
   }
 
   String getProcessingTime(Job job) {
@@ -94,8 +94,10 @@ class JobListComponent implements AfterChanges {
     this._updateDisplayedJobs();
   }
 
-  void onCreateJobSubmit(Job job) {
-    print("SUBBmitting JOB");
+  void onCreateJobSubmit(String newJobId) async {
+    this.createJobModal.close();
+    await this._loadData();
+    this.selectJob(newJobId);
   }
 
   void _loadData() async {
