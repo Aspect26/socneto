@@ -1,4 +1,5 @@
 @import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
 
 
 @mixin job-list-component($theme) {
@@ -45,23 +46,7 @@
 
         overflow-y: auto;
 
-        &::-webkit-scrollbar {
-          width: 3px;
-          background-color: get-color($background, 500);
-
-          &:hover {
-            background-color: get-color($background, 700);
-          }
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: get-color($primary);
-          border-radius: 3px;
-        }
-
-        &:hover::-webkit-scrollbar {
-          width: 5px;
-        }
+        @include scrollbar-themed($theme);
 
         material-select-item {
           line-height: 17px;

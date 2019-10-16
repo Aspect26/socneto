@@ -48,10 +48,6 @@
     background-color: get-color($primary);
   }
 
-  material-content {
-    background-color: get-color($background, 700);
-  }
-
   material-progress {
     .progress-container.indeterminate {
       background-color: get-color($primary, 100);
@@ -77,7 +73,7 @@
 
   material-content {
     min-height: 100vh;
-    background-color: get-color($background, 700);
+    background-color: get-color($background, 400);
   }
 
   material-list {
