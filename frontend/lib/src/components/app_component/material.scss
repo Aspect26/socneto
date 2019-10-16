@@ -41,7 +41,7 @@
 
   material-button {
     background-color: get-color($primary, 500);
-    color: get-color-contrast($primary, 500)
+    color: get-color-font($primary, 500)
   }
 
   material-header {
@@ -71,6 +71,7 @@
   }
 
   header.material-header {
+    position: fixed;
     background-color: get-color($primary);
   }
 
@@ -81,29 +82,65 @@
 
   material-list {
     background-color: get-color($background, 200);
-  }
 
-  material-select-item:hover {
-    background: get-color($background, 300);
-  }
+    material-select-item {
+      color: get-color-font($background, 200);
+    }
 
-  material-select-item:focus {
-    background: get-color($background, 200);
-  }
+    material-select-item:hover {
+      background: get-color($background, 300);
+    }
 
-  material-select-item.special {
-    color: get-color($primary, 400);
+    material-select-item:focus {
+      background: get-color($background, 200);
+    }
 
-    i {
+    material-select-item.special {
       color: get-color($primary, 400);
+
+      i {
+        color: get-color($primary, 400);
+      }
+    }
+
+    material-select-item.selected {
+      background: get-color($background, 400);
+
+      .selected-accent {
+        background: get-color($background, 600);
+      }
     }
   }
 
-  material-select-item.selected {
-    background: get-color($background, 400);
+  material-list.dark {
+    background-color: get-color($background, 500);
 
-    .selected-accent {
-      background: get-color($background, 600);
+    material-select-item {
+      color: get-color-font($background, 500);
+    }
+
+    material-select-item:hover {
+      background-color: get-color($background, 600);
+    }
+
+    material-select-item:focus {
+      background-color: get-color($background, 500);
+    }
+
+    material-select-item.special {
+      background-color: get-color($background, 700);
+
+      i {
+        color: get-color($primary, 700);
+      }
+    }
+
+    material-select-item.selected {
+      background-color: get-color($background, 700);
+
+      .selected-accent {
+        background: get-color($background, 900);
+      }
     }
   }
 

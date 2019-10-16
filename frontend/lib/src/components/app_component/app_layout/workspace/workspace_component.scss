@@ -1,6 +1,16 @@
 @import "package:sw_project/src/style/theming/theming.scss";
 @import "package:sw_project/src/style/style.scss";
 
-.app-content {
-  padding: 20px 80px;
+
+workspace {
+
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .app-content {
+  }
+
 }
