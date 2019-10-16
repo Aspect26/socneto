@@ -8,13 +8,19 @@
 
   job-list {
 
+    position: fixed;
+    height: 100%;
+    left: 0;
+
     .job-list-card {
+      height: 100%;
+
+      background-color: get-color($background, 500);
+      border-right: get-color($primary) solid 2px;
 
       h2 {
+        margin: 0;
         text-align: center;
-
-        margin-block-start: 1.0em;
-        margin-block-end: 0.4em;
       }
 
       material-list {
