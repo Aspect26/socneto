@@ -49,3 +49,7 @@
 .theme-blue-violet {
   @include apply-theme($theme-blue-violet);
 }
+
+.theme-green-amber {
+  @include apply-theme($theme-green-amber)
+}
