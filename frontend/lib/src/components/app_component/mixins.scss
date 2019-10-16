@@ -1,0 +1,24 @@
+@mixin scrollbar-themed($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  &::-webkit-scrollbar {
+    width: 3px;
+    background-color: get-color($background, 500);
+
+    &:hover {
+      background-color: get-color($background, 700);
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: get-color($primary);
+    border-radius: 3px;
+  }
+
+  &:hover::-webkit-scrollbar {
+    width: 5px;
+  }
+
+}

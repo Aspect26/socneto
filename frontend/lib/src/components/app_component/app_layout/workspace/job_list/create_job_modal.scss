@@ -1,5 +1,6 @@
 @import "package:sw_project/src/style/style.scss";
 @import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
 
 @import 'package:angular_components/css/material/material';
 @import 'package:angular_components/material_dialog/mixins';
@@ -31,6 +32,10 @@
       }
     }
 
+    main {
+      @include scrollbar-themed($theme);
+    }
+
     .labeled-input {
       margin-left: 15px;
       width: 350px;
@@ -60,7 +65,7 @@
     footer {
       material-button {
         background-color: get-color($primary, 500);
-        color: get-color-contrast($primary, 500);
+        color: get-color-font($primary, 500);
       }
     }
   }

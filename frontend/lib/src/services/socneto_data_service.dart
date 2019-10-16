@@ -25,7 +25,49 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
   Future<List<Job>> getUserJobs(String username) async =>
-    await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
+    // await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
+      Future.value([
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asde", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asdef", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
+      ]);
 
   Future<List<Post>> getJobPosts(String jobId) async =>
     await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));

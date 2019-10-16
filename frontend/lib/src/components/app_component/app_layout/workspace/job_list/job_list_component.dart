@@ -1,4 +1,5 @@
 import 'package:angular/angular.dart';
+import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus_item.dart';
 import 'package:angular_components/focus/focus_list.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
@@ -26,6 +27,7 @@ import 'package:sw_project/src/utils.dart';
     MaterialListComponent,
     MaterialListItemComponent,
     MaterialSelectItemComponent,
+    MaterialButtonComponent,
     PaginatorComponent,
     CreateJobModal,
     NgFor,

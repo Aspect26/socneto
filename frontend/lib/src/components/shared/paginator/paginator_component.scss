@@ -21,7 +21,7 @@
       margin-right: $page-links-margin;
 
       background-color: get-color($background, 300);
-      color: get-color-contrast($background, 300);
+      color: get-color-font($background, 300);
 
       border: 2px solid get-color($background);
       border-radius: 4px;
@@ -32,13 +32,13 @@
 
       &:hover {
         background-color: get-color($background, 700);
-        color: get-color-contrast($background, 700);
+        color: get-color-font($background, 700);
       }
 
       &.current {
         border-color: get-color($primary);
         background-color: get-color($primary, A700);
-        color: get-color-contrast($primary, A700);
+        color: get-color-font($primary, A700);
         cursor: default;
       }
 
@@ -54,7 +54,7 @@
     .divider {
       margin-right: $page-links-margin;
       text-decoration: none;
-      color: get-color-contrast($background);
+      color: get-color-font($background);
       cursor: default;
     }
   }
