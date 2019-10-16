@@ -9,22 +9,59 @@
   job-list {
 
     position: fixed;
-    height: 100%;
+    height: calc(100% - 48px);
     left: 0;
 
     .job-list-card {
+      display: flex;
+      flex-direction: column;
+
       height: 100%;
 
       background-color: get-color($background, 500);
       border-right: get-color($primary) solid 2px;
 
-      h2 {
-        margin: 0;
-        text-align: center;
+      .header {
+        background-color: get-color($background, 600);
+        color: get-color-font($background, 600);
+
+        .status {
+          font-size: 12px;
+          font-style: italic;
+          text-align: center;
+          padding: 10px 0;
+        }
+
+        h2 {
+          color: get-color-font($background, 600);
+          margin: 10px 0 0;
+          text-align: center;
+        }
       }
 
       material-list {
+        flex: 1 1 100%;
         padding: 0;
+
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+          width: 3px;
+          background-color: get-color($background, 500);
+
+          &:hover {
+            background-color: get-color($background, 700);
+          }
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: red;
+          border-radius: 3px;
+        }
+
+        &:hover::-webkit-scrollbar {
+          width: 5px;
+        }
 
         material-select-item {
           line-height: 17px;
@@ -38,8 +75,22 @@
         }
       }
 
-      .paginator {
-        margin: 0 10px;
+      .footer {
+
+        background-color: get-color($background, 600);
+
+        .paginator {
+          margin: 0 10px;
+        }
+
+        .create-job-button-wrapper {
+          margin: 0 10px 10px;
+
+          material-button {
+            width: 100%;
+            margin: 0;
+          }
+        }
       }
     }
   }
