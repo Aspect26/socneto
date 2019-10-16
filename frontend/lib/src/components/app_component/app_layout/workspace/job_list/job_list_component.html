@@ -1,10 +1,15 @@
-<div class="mdc-card job-list-card">
-    <h2>Your jobs</h2>
-    <material-list focusList>
-        <material-select-item (trigger)="onCreateNewJob($event)" class="special">
-            <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
-            Create Job
-        </material-select-item>
+<div class="job-list-card">
+
+    <div class="header">
+        <h2>Jobs</h2>
+
+        <div class="status">
+            User: admin<br>
+            Jobs running: 8/9
+        </div>
+    </div>
+
+    <material-list focusList class="dark">
 
         <material-select-item *ngFor="let job of displayedJobs" (trigger)="selectJob(job.id)" focusItem [selected]="job == selectedJob">
             <material-icon *ngIf="job.finished" icon="check" class="material-list-item-primary" aria-hidden="true"></material-icon>
@@ -21,8 +26,17 @@
         </material-select-item>
     </material-list>
 
-    <div class="paginator">
-        <paginator *ngIf="jobs.length > PAGE_SIZE" [pages]="1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+    <div class="footer">
+        <div class="paginator">
+            <paginator *ngIf="jobs.length > PAGE_SIZE" [pages]="1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+        </div>
+
+        <div class="create-job-button-wrapper">
+            <material-button (trigger)="onCreateNewJob($event)">
+                <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
+                Create Job
+            </material-button>
+        </div>
     </div>
 </div>
 

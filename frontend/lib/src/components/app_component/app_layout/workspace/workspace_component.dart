@@ -11,11 +11,11 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
   styleUrls: ['workspace_component.css'],
   directives: [
     routerDirectives,
-
     JobListComponent,
     JobDetailComponent
   ],
   exports: [RoutePaths, Routes],
+  encapsulation: ViewEncapsulation.None
 )
 class WorkspaceComponent implements OnActivate {
 

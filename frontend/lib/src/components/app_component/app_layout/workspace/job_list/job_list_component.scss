@@ -1,4 +1,5 @@
 @import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
 
 
 @mixin job-list-component($theme) {
@@ -8,17 +9,44 @@
 
   job-list {
 
+    position: fixed;
+    height: calc(100% - 48px);
+    left: 0;
+
     .job-list-card {
+      display: flex;
+      flex-direction: column;
 
-      h2 {
-        text-align: center;
+      height: 100%;
 
-        margin-block-start: 1.0em;
-        margin-block-end: 0.4em;
+      background-color: get-color($background, 500);
+      border-right: get-color($primary) solid 2px;
+
+      .header {
+        background-color: get-color($background, 600);
+        color: get-color-font($background, 600);
+
+        .status {
+          font-size: 12px;
+          font-style: italic;
+          text-align: center;
+          padding: 10px 0;
+        }
+
+        h2 {
+          color: get-color-font($background, 600);
+          margin: 10px 0 0;
+          text-align: center;
+        }
       }
 
       material-list {
+        flex: 1 1 100%;
         padding: 0;
+
+        overflow-y: auto;
+
+        @include scrollbar-themed($theme);
 
         material-select-item {
           line-height: 17px;
@@ -32,8 +60,22 @@
         }
       }
 
-      .paginator {
-        margin: 0 10px;
+      .footer {
+
+        background-color: get-color($background, 600);
+
+        .paginator {
+          margin: 0 10px;
+        }
+
+        .create-job-button-wrapper {
+          margin: 0 10px 10px;
+
+          material-button {
+            width: 100%;
+            margin: 0;
+          }
+        }
       }
     }
   }

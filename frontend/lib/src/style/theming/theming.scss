@@ -9,6 +9,18 @@
   @return map-get(map-get($color-palette, contrast), $type);
 }
 
+@function get-color-font($color-palette, $type: 500) {
+  $color: get-color-contrast($color-palette, $type);
+
+  @if $color == #000000 {
+    @return #000000;
+  } @else if $color == #FFFFFF {
+    @return rgba(#FFFFFF, 0.77);
+  } @else {
+    @return #5A1F6B
+  }
+}
+
 @function light-theme($primary-color-palette) {
   @return (
           primary: $primary-color-palette,
