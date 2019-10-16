@@ -2,15 +2,18 @@
 @import "package:sw_project/src/style/style.scss";
 
 
-workspace {
+@mixin workspace-component($theme) {
 
-  position: absolute;
-  top: 48px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  workspace {
 
-  .app-content {
+    position: absolute;
+    top: 48px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .app-content {
+    }
+
   }
-
 }

@@ -1,5 +1,6 @@
 @import "package:sw_project/src/style/style.scss";
 @import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
 
 @import 'package:angular_components/css/material/material';
 @import 'package:angular_components/material_dialog/mixins';
@@ -29,6 +30,10 @@
           color: get-color($background, 100);
         }
       }
+    }
+
+    main {
+      @include scrollbar-themed($theme);
     }
 
     .labeled-input {
