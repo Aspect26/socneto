@@ -1,7 +1,9 @@
 ﻿using Domain.Abstract;
 using Domain.ComponentManagement;
+using Domain.Models;
 using Domain.Registration;
 using Domain.SubmittedJobConfiguration;
+using Infrastructure;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,7 +52,7 @@ namespace Api
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
 #endif
-            services.AddSingleton<IComponentRegistry, ComponentRegistry>();
+            services.AddSingleton<IComponentRegistry, ComponentStorageProxy>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
 
             services.Configure<RegistrationRequestOptions>(
@@ -59,6 +61,14 @@ namespace Api
             services.Configure<KafkaOptions>(
                 Configuration.GetSection("JobManagementService:KafkaOptions")
             );
+
+            services.AddOptions<ComponentIdentifiers>()
+                .Bind(Configuration.GetSection("JobManagementService:ComponentIdentifiers"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<ComponentStorageOptions>()
+                .Bind(Configuration.GetSection("JobManagementService:ComponentStorageOptions"))
+                .ValidateDataAnnotations();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
