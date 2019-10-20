@@ -37,9 +37,8 @@ namespace Domain.Registration
             }
 
             if (string.IsNullOrWhiteSpace(request.ComponentType)
-            || !_availableComponentsTypes.Contains(request.ComponentType))
+                || !_availableComponentsTypes.Contains(request.ComponentType))
             {
-
                 throw new ArgumentException("Argument must be valid component type name"
                     , nameof(request.ComponentType));
             }
@@ -63,10 +62,12 @@ namespace Domain.Registration
                 request.ComponentId,
                 request.UpdateChannelName,
                 request.InputChannelName,
-                request.ComponentType);
+                request.ComponentType,
+                request.Attributes);
             try
             {
-                _subscribedComponentManager.SubscribeComponent(componentRegisterModel);
+                var subscribeComponentModel = await _subscribedComponentManager
+                    .SubscribeComponentAsync(componentRegisterModel);
                 
             }
             catch (InvalidOperationException)

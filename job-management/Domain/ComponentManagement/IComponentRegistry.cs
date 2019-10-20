@@ -1,17 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Domain.Models;
 
 namespace Domain.ComponentManagement
 {
     public interface IComponentRegistry
     {
-        bool AddOrUpdate(ComponentRegistrationModel componentRegistrationModel);
-
-        bool TryGetAnalyserComponent(string componentId, out SubscribedComponent component);
-        bool TryGetNetworkComponent(string componentId, out SubscribedComponent component);
-
-        SubscribedComponent GetRegisteredStorage();
-
-        IList<SubscribedComponent> GetRegisteredComponents();
+        Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel);
+        Task<SubscribedComponent> GetComponentById(string componentId);
     }
 }

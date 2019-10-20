@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
@@ -7,11 +8,14 @@ namespace Domain.ComponentManagement
 {
     public interface ISubscribedComponentManager
     {
-        void SubscribeComponent(ComponentRegistrationModel componentRegistrationModel);
+        Task<SubscribedComponentResultModel> SubscribeComponentAsync(ComponentRegistrationModel componentRegistrationModel);
 
         Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification);
-        IList<SubscribedComponent> GetAvaliableNetworks();
-
-        IList<SubscribedComponent> GetAvaliableAnalysers();
     }
+
+    public enum SubscribedComponentResult
+    {
+        AlreadyExists, Successful, Failed
+    }
+
 }
