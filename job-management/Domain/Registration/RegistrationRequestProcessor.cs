@@ -5,42 +5,53 @@ using Domain.Abstract;
 using Domain.ComponentManagement;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 namespace Domain.Registration
 {
     public class RegistrationRequestProcessor : IRegistrationRequestProcessor
     {
+        private readonly ComponentIdentifiers _componentIdentifiers;
         private readonly ISubscribedComponentManager _subscribedComponentManager;
         private readonly IMessageBrokerApi _messageBrokerApi;
+        private readonly RegistrationRequestValidationOptions _registrationRequestValidation;
         private readonly ILogger<RegistrationRequestProcessor> _logger;
-
-
-        private readonly string[] _availableComponentsTypes = new[] { "Network", "Analyser"};
 
         public RegistrationRequestProcessor(
                 ISubscribedComponentManager subscribedComponentManager,
                 IMessageBrokerApi messageBrokerApi,
+                IOptions<ComponentIdentifiers> componentIdentifierOptions,
+                IOptions<RegistrationRequestValidationOptions> registrationRequestValidationOptions,
                 ILogger<RegistrationRequestProcessor> logger)
         {
+            _componentIdentifiers = componentIdentifierOptions.Value;
             _subscribedComponentManager = subscribedComponentManager;
             _messageBrokerApi = messageBrokerApi;
+            _registrationRequestValidation = registrationRequestValidationOptions.Value;
             _logger = logger;
         }
 
         public async Task ProcessRequestAsync(RegistrationRequestMessage request)
         {
-
             if (string.IsNullOrWhiteSpace(request.ComponentId))
             {
-                throw new ArgumentException("Argument must be valid component name"
+                throw new ArgumentException(
+                    "Argument must be valid component name"
                     , nameof(request.ComponentId));
             }
 
-            if (string.IsNullOrWhiteSpace(request.ComponentType)
-                || !_availableComponentsTypes.Contains(request.ComponentType))
+            if (string.IsNullOrWhiteSpace(request.ComponentType))
             {
-                throw new ArgumentException("Argument must be valid component type name"
+                throw new ArgumentException("Component type must not be empty"
                     , nameof(request.ComponentType));
+            }
+            else if (request.ComponentType != _componentIdentifiers.AnalyserComponentTypeName
+                && request.ComponentType != _componentIdentifiers.DataAcquirerComponentTypeName)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(request.ComponentType),
+                    "Component type must be valid component identifier");
             }
             // TODO check if it is not already registered
 
@@ -57,7 +68,9 @@ namespace Domain.Registration
             }
 
             var channelModel = MessageBrokerChannelModel.FromRequest(request);
-            
+
+            ValidateAttributes(request.ComponentType, request.Attributes);
+
             var componentRegisterModel = new ComponentRegistrationModel(
                 request.ComponentId,
                 request.UpdateChannelName,
@@ -68,7 +81,7 @@ namespace Domain.Registration
             {
                 var subscribeComponentModel = await _subscribedComponentManager
                     .SubscribeComponentAsync(componentRegisterModel);
-                
+
             }
             catch (InvalidOperationException)
             {
@@ -76,11 +89,47 @@ namespace Domain.Registration
             }
             catch (Exception e)
             {
-                _logger.LogError("Unexpected error while processing request: {errorMessage}",e.Message);
+                _logger.LogError("Unexpected error while processing request: {errorMessage}", e.Message);
             }
 
             await _messageBrokerApi.CreateChannel(channelModel);
 
+        }
+
+        private void ValidateAttributes(
+            string componentType,
+            Dictionary<string, string> attributes)
+        {
+
+            if (componentType == _componentIdentifiers.DataAcquirerComponentTypeName)
+            {
+                ValidateDataAnalyser(attributes);
+            }
+            else if (componentType == _componentIdentifiers.AnalyserComponentTypeName)
+            {
+                ValidateDataAcquirer(attributes);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(componentType),
+                    $"Unknown component type {componentType}");
+            }
+        }
+
+        private void ValidateDataAcquirer(Dictionary<string, string> attributes)
+        {
+            var formatElement = _registrationRequestValidation.AnalyserOutputFormatElementName;
+            if (!attributes.ContainsKey(formatElement))
+            {
+                var formatError = $"Data analyser registration request must contain: '{formatElement}' element";
+                throw new FormatException(formatError);
+            }
+        }
+
+        private void ValidateDataAnalyser(Dictionary<string, string> attributes)
+        {
+            // nothing to validate yet
         }
     }
 }

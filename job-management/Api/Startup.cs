@@ -55,19 +55,24 @@ namespace Api
             services.AddSingleton<IComponentRegistry, ComponentStorageProxy>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
 
+            var optionRootName = "JobManagementService";
             services.Configure<RegistrationRequestOptions>(
-                Configuration.GetSection("JobManagementService:RegistrationRequestOptions")
+                Configuration.GetSection($"{optionRootName}:RegistrationRequestOptions")
                 );
             services.Configure<KafkaOptions>(
-                Configuration.GetSection("JobManagementService:KafkaOptions")
+                Configuration.GetSection($"{optionRootName}:KafkaOptions")
             );
 
             services.AddOptions<ComponentIdentifiers>()
-                .Bind(Configuration.GetSection("JobManagementService:ComponentIdentifiers"))
+                .Bind(Configuration.GetSection($"{optionRootName}:ComponentIdentifiers"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<ComponentStorageOptions>()
-                .Bind(Configuration.GetSection("JobManagementService:ComponentStorageOptions"))
+                .Bind(Configuration.GetSection($"{optionRootName}:ComponentStorageOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RegistrationRequestValidationOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestValidationOptions"))
                 .ValidateDataAnnotations();
         }
 
