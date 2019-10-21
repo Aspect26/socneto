@@ -55,11 +55,11 @@ class SocnetoService {
       await this._dataService.getJobChartDefinitions(jobId);
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async =>
       await this._dataService.createJobChartDefinition(jobId, chartDefinition);
-
   Future<List<SocnetoComponent>> getAvailableNetworks() async =>
-      await this._job_management_service.getAvailableNetworks();
+      await this._dataService.getAvailableNetworks();
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
-      await this._job_management_service.getAvailableAnalyzers();
+      await this._dataService.getAvailableAnalyzers();
+
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async =>
       await this._job_management_service.submitNewJob(query, networks, analyzers, twitterCredentials);
 

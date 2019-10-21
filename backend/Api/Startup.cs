@@ -8,6 +8,7 @@ using Socneto.Api.Authentication;
 using Socneto.Domain;
 using Socneto.Domain.Services;
 using Socneto.Domain.Services.Mock;
+using Socneto.Infrastructure;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -61,7 +62,8 @@ namespace Socneto.Api
                 .AddTransient<IUserService, UserService>()
                 .AddTransient<IStorageService, StorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
-                .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"));
+                .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"))
+                .Configure<StorageOptions>(Configuration.GetSection("Socneto:StorageOptions"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
