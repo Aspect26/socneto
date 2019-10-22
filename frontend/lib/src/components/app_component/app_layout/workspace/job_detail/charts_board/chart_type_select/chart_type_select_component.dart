@@ -34,7 +34,7 @@ import 'package:sw_project/src/models/ChartDefinition.dart';
 class ChartTypeSelectComponent implements OnInit {
 
   final String _iconsLocation = "packages/sw_project/static/images/charts";
-  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Pie];
+  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Pie, ChartType.Scatter, ChartType.Bar];
 
   final _changeController = StreamController<ChartType>();
   @Output() Stream<ChartType> get change => _changeController.stream;
@@ -55,6 +55,8 @@ class ChartTypeSelectComponent implements OnInit {
     switch (chartType) {
       case ChartType.Line: return "Line";
       case ChartType.Pie: return "Pie";
+      case ChartType.Scatter: return "Scatter";
+      case ChartType.Bar: return "Bar";
       default: return "Chart";
     }
   }
@@ -64,6 +66,8 @@ class ChartTypeSelectComponent implements OnInit {
     switch (chartType) {
       case ChartType.Line: iconName = "line.png"; break;
       case ChartType.Pie: iconName = "pie.png"; break;
+      case ChartType.Scatter: iconName = "scatter.png"; break;
+      case ChartType.Bar: iconName = "bar.png"; break;
     }
 
     return "${this._iconsLocation}/$iconName";

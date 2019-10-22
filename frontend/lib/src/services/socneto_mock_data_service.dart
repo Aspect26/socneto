@@ -10,12 +10,12 @@ import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
-class SocnetoDataService extends HttpServiceBasicAuthBase {
+class SocnetoMockDataService extends HttpServiceBasicAuthBase {
 
   static const String API_URL = "http://localhost:6010";
   static const String API_PREFIX = "api";
 
-  SocnetoDataService() : super(API_URL, API_PREFIX);
+  SocnetoMockDataService() : super(API_URL, API_PREFIX);
 
   Future<User> login(String username, String password) async {
     var data = { "username": username, "password": password };
@@ -23,10 +23,10 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   }
 
   Future<Job> getJob(String jobId) async =>
-    await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
+    Future.value(Job("asd", "meno", DateTime.now(), false, null));
 
   Future<List<Job>> getUserJobs(String username) async =>
-    await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
+    Future.value([Job("asd", "meno", DateTime.now(), false, null)]);
 
   Future<List<Post>> getJobPosts(String jobId) async =>
     await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
