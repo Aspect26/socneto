@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
-import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/Post.dart';
+import 'package:sw_project/src/models/SocnetoAnalyser.dart';
+import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
@@ -25,55 +27,19 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
   Future<List<Job>> getUserJobs(String username) async =>
-    // await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
-      Future.value([
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asde", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asdef", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-        Job("asd", "Slavia Praha", DateTime.now(), false, DateTime.now()),
-      ]);
+    await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
 
   Future<List<Post>> getJobPosts(String jobId) async =>
     await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
     await this.getList<AnalyzedPost>("job/$jobId/analysis", (result) => AnalyzedPost.fromMap(result));
+
+  Future<List<SocnetoComponent>> getAvailableNetworks() async =>
+      (await this.getList<SocnetoComponent> ("components/acquirers", (result) => SocnetoComponent.fromMap(result)));
+
+  Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
+      (await this.getList<SocnetoAnalyser>("components/analysers", (result) => SocnetoAnalyser.fromMap(result)));
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
     await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));

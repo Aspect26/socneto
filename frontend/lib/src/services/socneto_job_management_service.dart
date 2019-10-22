@@ -14,12 +14,6 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
 
   SocnetoJobManagementService() : super(API_URL, API_PREFIX);
 
-  Future<List<SocnetoComponent>> getAvailableNetworks() async =>
-      (await this.get<SocnetoComponentsResponse> ("components/networks", (result) => SocnetoComponentsResponse.fromMap(result))).components;
-
-  Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
-    (await this.get<SocnetoAnalysersResponse>("components/analysers", (result) => SocnetoAnalysersResponse.fromMap(result))).components;
-
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async {
     var data = {
       "TopicQuery": query,
