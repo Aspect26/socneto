@@ -16,12 +16,12 @@ namespace Socneto.Domain.Services
             _storageService = storageService;
         }
 
-        public async Task<JobStatus> GetJobStatus(Guid jobId)
+        public async Task<Job> GetJobDetail(Guid jobId)
         {
             return await _storageService.GetJob(jobId);
         }
 
-        public async Task<IList<JobStatus>> GetJobStatuses(string username)
+        public async Task<IList<Job>> GetJobsDetails(string username)
         {
             return await _storageService.GetUserJobs(username);
         }

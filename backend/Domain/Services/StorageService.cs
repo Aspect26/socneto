@@ -29,20 +29,20 @@ namespace Socneto.Domain.Services
             return await response.Content.ReadAsAsync<User>();
         }
 
-        public async Task<IList<JobStatus>> GetUserJobs(string username)
+        public async Task<IList<Job>> GetUserJobs(string username)
         {
             var response = await Get($"jobs?userId={username}");
             response.EnsureSuccessStatusCode();
             
-            return await response.Content.ReadAsAsync<List<JobStatus>>();
+            return await response.Content.ReadAsAsync<List<Job>>();
         }
 
-        public async Task<JobStatus> GetJob(Guid jobId)
+        public async Task<Job> GetJob(Guid jobId)
         {
             var response = await Get($"jobs/{jobId}");
             response.EnsureSuccessStatusCode();
             
-            return await response.Content.ReadAsAsync<JobStatus>();
+            return await response.Content.ReadAsAsync<Job>();
         }
 
         public async Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId)
