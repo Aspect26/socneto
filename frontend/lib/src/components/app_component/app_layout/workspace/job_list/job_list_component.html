@@ -4,21 +4,23 @@
         <h2>Jobs</h2>
 
         <div class="status">
-            User: admin<br>
-            Jobs running: 8/9
+            User: {{ username }}<br>
+            Jobs running: {{ runningJobs }}/{{ jobs.length }}
         </div>
     </div>
 
     <material-list focusList class="dark">
 
         <material-select-item *ngFor="let job of displayedJobs" (trigger)="selectJob(job.id)" focusItem [selected]="job == selectedJob">
-            <material-icon *ngIf="job.finished" icon="check" class="material-list-item-primary" aria-hidden="true"></material-icon>
-            <material-icon *ngIf="!job.finished" icon="loop" class="material-list-item-primary" aria-hidden="true"></material-icon>
+            <material-icon *ngIf="job.isRunning" icon="pause" class="material-list-item-primary" aria-hidden="true"></material-icon>
+            <material-icon *ngIf="!job.isRunning" icon="play_arrow" class="material-list-item-primary" aria-hidden="true"></material-icon>
 
             <div>
                 <b>{{job.name}}</b> <br>
                 Created at: {{ getHumanReadableDate(job.startedAt) }} <br>
-                <span *ngIf="!job.finished" class="secondary">
+                <ng-container *ngIf="!job.isRunning">Paused at: {{ getHumanReadableDate(job.pausedAt) }}</ng-container>
+
+                <span *ngIf="job.isRunning" class="secondary">
                     In progress for {{ getProcessingTime(job) }}
                 </span>
             </div>
