@@ -21,7 +21,7 @@ class SocnetoComponent {
   const SocnetoComponent(this.identifier, this.type, this.specialization);
 
   SocnetoComponent.fromMap(Map data) :
-        identifier = data["componentId"] ?? "",
+        identifier = data["identifier"] ?? "",
         type = getEnumByString(ComponentType.values, data["componentType"], ComponentType.unknown),
         specialization = getEnumByString(ComponentSpecialization.values, data["specialization"], ComponentSpecialization.other);
 }

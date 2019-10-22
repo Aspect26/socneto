@@ -14,6 +14,10 @@ namespace Socneto.Domain.Services
         Task<JobStatus> GetJob(Guid jobId);
 
         Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId);
-        
+
+        Task<IList<SocnetoComponent>> GetAnalysers();
+
+        Task<IList<SocnetoComponent>> GetAcquirers();
+
     }
 }
