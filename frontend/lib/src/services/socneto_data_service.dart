@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
-import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
-import 'package:sw_project/src/models/SocnetoComponentsResponse.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
