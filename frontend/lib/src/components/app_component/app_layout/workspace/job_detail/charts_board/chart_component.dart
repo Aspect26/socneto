@@ -84,6 +84,8 @@ class ChartComponent implements AfterChanges {
         var date = DateTime.parse(datetimeString.substring(0, 26));
         this.chartData.last.add({'date': date.toIso8601String(), 'value': dataPointValue[1]});
       }
+
+      this.chartData.last.sort((a, b) => (a['date'] as String).compareTo(b['date']));
     }
   }
 
