@@ -74,6 +74,16 @@ class JobListComponent implements AfterChanges {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
   }
 
+  void pauseJob(Job job) {
+    // TODO: do this on backend/jms ofc
+    job.isRunning = false;
+  }
+
+  void startJob(Job job) {
+    // TODO: do this on backend/jms ofc
+    job.isRunning = true;
+  }
+
   String getProcessingTime(Job job) {
     var fromTime = job.startedAt;
     var toTime = DateTime.now();

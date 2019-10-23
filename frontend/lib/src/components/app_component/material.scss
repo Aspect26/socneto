@@ -40,8 +40,11 @@
   }
 
   material-button {
-    background-color: get-color($primary, 500);
-    color: get-color-font($primary, 500)
+    color: get-color-font($primary, 500);
+
+    &:not([icon]) {
+      background-color: get-color($primary, 500);
+    }
   }
 
   material-header {
