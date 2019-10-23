@@ -19,14 +19,20 @@ class HttpServiceBase {
     return this._extractJson<T>(response, mapJson);
   }
 
-  Future<T> post<T>(String path, Map data, Function(Map) mapJson) async {
-    var response = await this.httpPost(path, data);
+  Future<T> post<T>(String path, Map body, Function(Map) mapJson) async {
+    var response = await this.httpPost(path, body);
     this._checkResponseStatusCode(response);
     return this._extractJson<T>(response, mapJson);
   }
 
-  Future<List<T>> getList<T>(String path, Function(Map) mapJson) async {
+  Future<List<T>> getList<T>(String path, Function mapJson) async {
     var response = await this.httpGet(path);
+    this._checkResponseStatusCode(response);
+    return this._extractJsonList<T>(response, mapJson);
+  }
+
+  Future<List<T>> postList<T>(String path, Map body, Function mapJson) async {
+    var response = await this.httpPost(path, body);
     this._checkResponseStatusCode(response);
     return this._extractJsonList<T>(response, mapJson);
   }
@@ -63,7 +69,7 @@ class HttpServiceBase {
     }
   }
 
-  List<T> _extractJsonList<T>(Response response, Function(Map) mapJson) {
+  List<T> _extractJsonList<T>(Response response, Function mapJson) {
     var data = (jsonDecode(response.body) as List);
     List<T> result = [];
 

@@ -42,7 +42,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity"], ChartType.Line)
+    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line)
   ];
 
   Future<User> login(String username, String password) async =>
@@ -55,10 +55,14 @@ class SocnetoMockDataService extends SocnetoDataService {
     Future.value(mockJobs);
 
   Future<List<Post>> getJobPosts(String jobId) async =>
-    await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
+    Future.value([]);
 
-  Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
-    Future.value(mockAnalyzedPosts);
+  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
+    return Future.value([
+      [["2019-10-23T10:01:46.2458271+00:00", 1],    ["2019-10-23T10:00:46.2458271+00:00", 0],    ["2019-10-23T09:59:46.2458271+00:00", 0],    ["2019-10-23T09:58:46.2458271+00:00", 1],    ["2019-10-23T09:57:46.2458271+00:00", 0]],
+      [["2019-10-23T10:01:46.2458271+00:00", 0.98], ["2019-10-23T10:00:46.2458271+00:00", 0.95], ["2019-10-23T09:59:46.2458271+00:00", 0.99], ["2019-10-23T09:58:46.2458271+00:00", 0.93], ["2019-10-23T09:57:46.2458271+00:00", 0.9]]
+    ]);
+  }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
     Future.value(mockAcquirers);

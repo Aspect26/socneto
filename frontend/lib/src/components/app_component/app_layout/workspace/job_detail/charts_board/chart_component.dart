@@ -5,9 +5,9 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
-import 'package:tuple/tuple.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 
 
 @Component(
@@ -37,74 +37,63 @@ import 'package:tuple/tuple.dart';
 )
 class ChartComponent implements AfterChanges {
 
+  final SocnetoService _socnetoService;
+
   @Input() ChartDefinition chartDefinition;
-  @Input() List<AnalyzedPost> analyzedPosts;
+  @Input() String jobId;
   @Input() String chartId;
 
-  Map<String, List<dynamic>> graphData = {};
+  List<List<dynamic>> chartData = [];
+
+  ChartComponent(this._socnetoService);
 
   @override
-  void ngAfterChanges() {
-    if (this.chartDefinition != null && this.analyzedPosts != null && this.chartId != null) {
-      // The charts needs to be created after this element was already created
-      Timer(Duration(milliseconds: 500), this._showChart);
-    }
+  void ngAfterChanges() async {
+    this._refreshChart();
   }
 
-  void _showChart() {
-    if (this.analyzedPosts.isEmpty) {
+  void _refreshChart() async {
+    var chartDataPoints;
+
+    try {
+      chartDataPoints = await this._socnetoService.getChartData(this.jobId, this.chartDefinition);
+    } on HttpException catch(e){
+      Toastr.error("Analysis", "Could not fetch analyses for chart");
+      print(e);
       return;
     }
 
-    this._transformPostsIntoData();
-    this._refreshGraph();
+    this._transformDataPointsIntoChartData(chartDataPoints);
+    // TODO: The charts needs to be created after this element was already created
+    Timer(Duration(milliseconds: 500), this._refreshGraph);
   }
 
-  void _transformPostsIntoData() {
-    this.graphData = Map<String, List<dynamic>>();
-    this.analyzedPosts.sort((a, b) {
-      if (a.post.postedAt == null) Toastr.error("Post data", "Post '${a.post.text}' is missing date");
-      if (b.post.postedAt == null) Toastr.error("Post data", "Post '${b.post.text}' is missing date");
-      return a.post.postedAt.compareTo(b.post.postedAt);
-    });
+  void _transformDataPointsIntoChartData(List<List<List<dynamic>>> chartDataPoints) {
+    this.chartData = [];
+    if (this.chartDefinition.chartType == ChartType.Line) {
+      this._transformDataPointsIntoLineChartData(chartDataPoints);
+    }
+  }
 
-    for (var post in this.analyzedPosts) {
-      for (var analysisPath in this.chartDefinition.jsonDataPaths) {
-        var keyValue = this._getAnalysisValue(post.analyses, analysisPath);
-        if (keyValue == null) {
-          continue;
-        }
-
-        this.graphData.putIfAbsent(keyValue.item1, () => List<dynamic>());
-        var value = keyValue.item2;
-        this.graphData[keyValue.item1].add({'value': value, 'date': post.post.postedAt.toIso8601String()});
+  void _transformDataPointsIntoLineChartData(List<List<List<dynamic>>> chartDataPoints) {
+    for (var currentLineData in chartDataPoints) {
+      this.chartData.add([]);
+      for (var dataPointValue in currentLineData) {
+        // TODO: what if 'x' axis is not date?
+        var datetimeString = dataPointValue[0] as String;
+        var date = DateTime.parse(datetimeString.substring(0, 26));
+        this.chartData.last.add({'date': date.toIso8601String(), 'value': dataPointValue[1]});
       }
     }
   }
 
   void _refreshGraph() {
-    var dataSets = this.graphData.values.toList();
-    var dataLabels = this.chartDefinition.jsonDataPaths.map((jsonDataPath) => jsonDataPath.split(".")[1]);
+    var dataSets = this.chartData;
+    var dataLabels = this.chartDefinition.jsonDataPaths.map((jsonDataPath) => jsonDataPath.split("/").last);
 
     // TODO: make custom JS library from the graph-line-chart and interop it at least
     var domSelector = "#${this.chartId}";
     context.callMethod('createLineChart', [domSelector, JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
-  }
-
-  Tuple2<String, dynamic> _getAnalysisValue(List<dynamic> analyses, String analysisPath) {
-    var pathParts = analysisPath.split(".");
-    if (pathParts.length != 2) {
-      Toastr.error("Error", "Wrong data path: ${analysisPath}");
-      return null;
-    }
-
-    for (dynamic analysis in analyses) {
-      if (analysis[pathParts[0]] != null && analysis[pathParts[0]][pathParts[1]] != null) {
-        return Tuple2(pathParts[1], analysis[pathParts[0]][pathParts[1]]["value"]);
-      }
-    }
-
-    return null;
   }
 
 }
