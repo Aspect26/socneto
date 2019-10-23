@@ -9,7 +9,7 @@ namespace Socneto.Domain.Services
 {
     public class StorageService : IStorageService
     {
-        private const string Host = "http://storage_service:8888";
+        private const string Host = "http://storageservice:8888";
         private readonly HttpClient _client = new HttpClient();
         private readonly ILogger<StorageService> _logger;
 

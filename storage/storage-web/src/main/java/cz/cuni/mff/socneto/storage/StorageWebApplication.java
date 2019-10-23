@@ -1,7 +1,7 @@
 package cz.cuni.mff.socneto.storage;
 
 import cz.cuni.mff.socneto.storage.messaging.consumer.KafkaConsumerConfig;
-import cz.cuni.mff.socneto.storage.analysis.AnalysisStorageConfiguration;
+import cz.cuni.mff.socneto.storage.analysis.results.AnalysisStorageConfiguration;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
