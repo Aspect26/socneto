@@ -15,5 +15,4 @@ enum ChartType {
   Line,
   Pie,
   Scatter,
-  Bar
 }
