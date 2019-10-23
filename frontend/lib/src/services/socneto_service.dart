@@ -51,8 +51,8 @@ class SocnetoService {
       await this._dataService.getUserJobs(username);
   Future<List<Post>> getJobPosts(String jobId) async =>
       await this._dataService.getJobPosts(jobId);
-  Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
-      await this._dataService.getJobAnalysis(jobId);
+  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chart) async =>
+      await this._dataService.getChartData(jobId, chart);
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
       await this._dataService.getJobChartDefinitions(jobId);
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async =>
