@@ -68,13 +68,15 @@ class JobListComponent implements AfterChanges {
     });
   }
 
+  int get runningJobs => jobs.where((job) => job.isRunning).length;
+
   void selectJob(String jobId) {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
   }
 
   String getProcessingTime(Job job) {
     var fromTime = job.startedAt;
-    var toTime = job.finishedAt ?? DateTime.now();
+    var toTime = DateTime.now();
     var timeDiff = toTime.difference(fromTime);
 
     return getDurationString(timeDiff);
@@ -113,7 +115,7 @@ class JobListComponent implements AfterChanges {
     }
 
     this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
-    this.jobs.sort((a, b) => a.finished? b.finished? 0 : 1 : b.finished? -1 : 0);
+    this.jobs.sort((a, b) => a.isRunning? b.isRunning? 1 : 0 : b.isRunning? 0 : -1);
     this._updateDisplayedJobs();
   }
 

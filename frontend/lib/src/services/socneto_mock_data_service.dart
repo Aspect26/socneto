@@ -14,6 +14,11 @@ class SocnetoMockDataService extends HttpServiceBasicAuthBase {
 
   static const String API_URL = "http://localhost:6010";
   static const String API_PREFIX = "api";
+  
+  static final List<Job> mockJobs = [
+    Job("1", "Running job", DateTime.now(), true, null),
+    Job("2", "Paused job", DateTime.now(), false, DateTime.fromMicrosecondsSinceEpoch(1550000000000000))
+  ];
 
   SocnetoMockDataService() : super(API_URL, API_PREFIX);
 
@@ -23,10 +28,10 @@ class SocnetoMockDataService extends HttpServiceBasicAuthBase {
   }
 
   Future<Job> getJob(String jobId) async =>
-    Future.value(Job("asd", "meno", DateTime.now(), false, null));
+    Future.value(mockJobs.firstWhere((job) => job.id == jobId));
 
   Future<List<Job>> getUserJobs(String username) async =>
-    Future.value([Job("asd", "meno", DateTime.now(), false, null)]);
+    Future.value(mockJobs);
 
   Future<List<Post>> getJobPosts(String jobId) async =>
     await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
