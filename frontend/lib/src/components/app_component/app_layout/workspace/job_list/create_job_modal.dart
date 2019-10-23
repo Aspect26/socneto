@@ -118,6 +118,7 @@ class CreateJobModal {
         final newJobId = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
         this.reset();
         this._submitController.add(newJobId);
+        Toastr.success("New Job", "Job successfully submited");
       } on HttpException {
         Toastr.error( "New Job", "Could not create the new job :(");
       } finally {
@@ -151,7 +152,7 @@ class CreateJobModal {
     this.availableSocialNetworks = [];
 
     try {
-      this.availableSocialNetworks = await this._socnetoService.getAvailableNetworks();
+      this.availableSocialNetworks = await this._socnetoService.getAvailableAcquirers();
     } catch (_) {
     } finally {
       this.loadingSocialNetworks = false;

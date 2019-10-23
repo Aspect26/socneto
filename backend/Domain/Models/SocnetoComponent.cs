@@ -4,8 +4,8 @@ namespace Socneto.Domain.Models
 {
     public enum SocnetoComponentType
     {
-        DATA_ANALYSER,
-        DATA_ACQUIRER
+        DataAnalyser,
+        DataAcquirer
     }
     
     public class SocnetoComponent
@@ -13,7 +13,7 @@ namespace Socneto.Domain.Models
         
         public string Id { get; set; }
         
-        public string SocnetoComponentType { get; set; }
+        public SocnetoComponentType SocnetoComponentType { get; set; }
         
         public string InputChannelName { get; set; }
         
