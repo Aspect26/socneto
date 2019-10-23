@@ -23,25 +23,25 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   }
 
   Future<Job> getJob(String jobId) async =>
-    await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
+      await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
   Future<List<Job>> getUserJobs(String username) async =>
-    await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
+      await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
 
   Future<List<Post>> getJobPosts(String jobId) async =>
-    await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
+      await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<AnalyzedPost>> getJobAnalysis(String jobId) async =>
-    await this.getList<AnalyzedPost>("job/$jobId/analysis", (result) => AnalyzedPost.fromMap(result));
+      await this.getList<AnalyzedPost>("job/$jobId/analysis", (result) => AnalyzedPost.fromMap(result));
 
-  Future<List<SocnetoComponent>> getAvailableNetworks() async =>
+  Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
       (await this.getList<SocnetoComponent> ("components/acquirers", (result) => SocnetoComponent.fromMap(result)));
 
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       (await this.getList<SocnetoAnalyser>("components/analysers", (result) => SocnetoAnalyser.fromMap(result)));
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
-    await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
+      await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var data = {
