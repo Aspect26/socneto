@@ -125,40 +125,30 @@ class LineChart {
 
 
         let verticalMarker = d3.select(containerSelector).append("div")
-            .attr("class", "vertical-marker")
+            .attr("class", "position-marker vertical")
             .style("opacity", 0);
 
-        // let verticalMarkerSvg = svg.append("g")
+        let horizontalMarker = d3.select(containerSelector).append("div")
+            .attr("class", "position-marker horizontal")
+            .style("opacity", 0);
 
         let self = this;
         d3.select(containerSelector)
             .on('mouseover', function (d, i) {
-                mouseHoverDiv
-                    .transition()
-                    .duration(100)
-                    .style("opacity", 1);
-
-                verticalMarker
-                    .transition()
-                    .duration(100)
-                    .style("opacity", 0)
+                mouseHoverDiv.transition().duration(100).style("opacity", 1);
+                verticalMarker.transition().duration(100).style("opacity", 1);
+                horizontalMarker.transition().duration(100).style("opacity", 1);
             })
             .on('mouseout', function (d, i) {
-                mouseHoverDiv.transition()
-                    .duration(100)
-                    .style("opacity", 0);
-
-                verticalMarker.transition()
-                    .duration(100)
-                    .style("opacity", 0);
+                mouseHoverDiv.transition().duration(100).style("opacity", 0);
+                verticalMarker.transition().duration(100).style("opacity", 0);
+                horizontalMarker.transition().duration(100).style("opacity", 0);
             })
             .on('mousemove', function (d, _) {
-                mouseHoverDiv
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
+                mouseHoverDiv.style("left", (d3.event.layerX) + "px").style("top", (d3.event.layerY) + "px");
+                verticalMarker.style("left", (d3.event.layerX) + "px");
 
-                verticalMarker
-                    .style("left", (d3.event.pageX) + "px");
+                horizontalMarker.style("top", (d3.event.layerY) + "px");
 
                 let mouseChartPosition = d3.mouse(this)[0] - self._LEGEND_WIDTH;
                 let tooltipHtml = self._createMouseHoverTooltipHtml(mouseChartPosition, xScale, dataSets, dataLabels);

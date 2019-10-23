@@ -91,7 +91,10 @@ class ChartComponent implements AfterChanges {
 
   void _refreshGraph() {
     var dataSets = this.chartData;
-    var dataLabels = this.chartDefinition.jsonDataPaths.map((jsonDataPath) => jsonDataPath.split("/").last);
+    
+    var jsonDataPathsExceptFirst = List.from(this.chartDefinition.jsonDataPaths);
+    jsonDataPathsExceptFirst.removeAt(0);
+    var dataLabels = jsonDataPathsExceptFirst.map((jsonDataPath) => jsonDataPath.split("/").last);
 
     // TODO: make custom JS library from the graph-line-chart and interop it at least
     var domSelector = "#${this.chartId}";
