@@ -6,24 +6,24 @@ namespace Socneto.Domain.Services.Mock
 {
     public class RandomDataGenerator
     {
-        public static JobStatus GetRandomJobStatusResponse(Guid jobId)
+        public static Job GetRandomJobStatusResponse(Guid jobId)
         {
             var hc = Math.Abs(jobId.GetHashCode());
 
             var startedAt = GetRandomDate(hc);
 
-            DateTime? finishedAt = null;
+            DateTime? pausedAt = null;
             if (hc % 5 == 0)
             {
-                finishedAt = startedAt + new TimeSpan(hc % 100, hc % 24, hc % 60);
+                pausedAt = startedAt + new TimeSpan(hc % 100, hc % 24, hc % 60);
             }
 
-            var jobStatusResponse = new JobStatus()
+            var jobStatusResponse = new Job()
             {
                 JobId = jobId,
                 StartedAt = startedAt,
-                FinishedAt = finishedAt,
-                HasFinished = finishedAt.HasValue,
+                PausedAt = pausedAt,
+                IsRunning = !pausedAt.HasValue,
                 JobName = RandomString(10),
                 Username = "admin"
 

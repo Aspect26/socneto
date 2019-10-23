@@ -25,14 +25,14 @@ namespace Socneto.Api.Controllers
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/status")]
-        public async Task<ActionResult<JobStatusResponse>> GetJobStatus([FromRoute]Guid jobId)
+        public async Task<ActionResult<JobDto>> GetJobDetail([FromRoute]Guid jobId)
         {
             if (! await IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
             
-            var jobStatus = await _jobService.GetJobStatus(jobId);
+            var jobDetail = await _jobService.GetJobDetail(jobId);
 
-            var jobStatusResponse = JobStatusResponse.FromModel(jobStatus);
+            var jobStatusResponse = JobDto.FromModel(jobDetail);
             return Ok(jobStatusResponse);
         }
 
