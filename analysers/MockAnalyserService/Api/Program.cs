@@ -31,13 +31,6 @@ namespace Api
         private static async Task InitializeApplication(IWebHost app)
         {
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            //logger.LogInformation("Starting to wait");
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    await Task.Delay(TimeSpan.FromSeconds(10));
-            //    logger.LogInformation($"Waiting { TimeSpan.FromSeconds(10) * i }");
-            //}
-
 
             await RegisterComponent(app, logger);
 
