@@ -1,9 +1,9 @@
 import 'package:sw_project/src/utils.dart';
 
 enum ComponentType {
-  DataAcquirer,
-  DataAnalyser,
-  Unknown
+  DATA_ACQUIRER,
+  DATA_ANALYSER,
+  UNKNOWN
 }
 
 
@@ -15,5 +15,5 @@ class SocnetoComponent {
 
   SocnetoComponent.fromMap(Map data) :
         identifier = data["identifier"] ?? "",
-        type = getEnumByString(ComponentType.values, data["componentType"], ComponentType.Unknown);
+        type = getEnumByString(ComponentType.values, data["componentType"], ComponentType.UNKNOWN);
 }

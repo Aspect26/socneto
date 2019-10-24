@@ -1,11 +1,13 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Socneto.Domain.Models
 {
     public enum SocnetoComponentType
     {
-        DataAnalyser,
-        DataAcquirer
+        DATA_ANALYSER,
+        DATA_ACQUIRER
     }
     
     public class SocnetoComponent
@@ -13,7 +15,7 @@ namespace Socneto.Domain.Models
         
         public string Id { get; set; }
         
-        public SocnetoComponentType SocnetoComponentType { get; set; }
+        public SocnetoComponentType Type { get; set; }
         
         public string InputChannelName { get; set; }
         

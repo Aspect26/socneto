@@ -16,7 +16,7 @@ namespace Socneto.Api.Models
             return new AcquirerDto
             {
                 Identifier = model.Id,
-                ComponentType = model.SocnetoComponentType,
+                ComponentType = model.Type,
             };
         }
         
