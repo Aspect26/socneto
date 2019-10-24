@@ -29,8 +29,6 @@ namespace Socneto.Api.Controllers
         public async Task<ActionResult<List<AnalyserDto>>> GetAnalysers()
         {
             var analysers = await _storageService.GetAnalysers();
-            _logger.LogInformation("Retrieved analysers: " + analysers.Count);
-            _logger.LogInformation("Retrieved analysers: " + analysers[0]);
             var analysersDto = analysers.Select(AnalyserDto.FromModel).ToList();
             
             return Ok(analysersDto);
