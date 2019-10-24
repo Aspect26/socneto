@@ -1,7 +1,9 @@
 ﻿using Domain.Abstract;
 using Domain.ComponentManagement;
+using Domain.Models;
 using Domain.Registration;
 using Domain.SubmittedJobConfiguration;
+using Infrastructure;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +21,7 @@ namespace Api
         }
 
         public IConfiguration Configuration { get; }
-        
+
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -35,7 +37,7 @@ namespace Api
                             .AllowAnyMethod();
                     });
             });
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddHostedService<RegistrationRequestListenerHostedService>();
@@ -46,19 +48,33 @@ namespace Api
 #if DEBUG
             services.AddSingleton<IMessageBrokerConsumer, MockKafka>();
             services.AddTransient<IMessageBrokerProducer, MockKafka>();
+            services.AddHttpClient<IComponentRegistry, ComponentStorageProxyMock>();
 #else
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+            services.AddHttpClient<IComponentRegistry, ComponentStorageProxy>();
 #endif
-            services.AddSingleton<IComponentRegistry, ComponentRegistry>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
 
-            services.Configure<RegistrationRequestOptions>(
-                Configuration.GetSection("JobManagementService:RegistrationRequestOptions")
-                );
-            services.Configure<KafkaOptions>(
-                Configuration.GetSection("JobManagementService:KafkaOptions")
-            );
+            var optionRootName = "JobManagementService";
+            services.AddOptions<RegistrationRequestOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestOptions"))
+                .ValidateDataAnnotations();
+            services.AddOptions<KafkaOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:KafkaOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<ComponentIdentifiers>()
+                .Bind(Configuration.GetSection($"{optionRootName}:ComponentIdentifiers"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<ComponentStorageOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:ComponentStorageOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RegistrationRequestValidationOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestValidationOptions"))
+                .ValidateDataAnnotations();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,7 +84,7 @@ namespace Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseCors(MyAllowSpecificOrigins);
             app.UseMvc();
         }

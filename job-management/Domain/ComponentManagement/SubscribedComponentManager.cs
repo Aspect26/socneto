@@ -28,19 +28,33 @@ namespace Domain.ComponentManagement
             _logger = logger;
         }
 
-        public void SubscribeComponent(ComponentRegistrationModel componentRegistrationModel)
+        public async Task<SubscribedComponentResultModel> SubscribeComponentAsync(
+            ComponentRegistrationModel componentRegistrationModel)
         {
-            var registered = _componentRegistry.AddOrUpdate(componentRegistrationModel);
-            if (!registered)
+            try
             {
-                throw new InvalidOperationException(
-                    $"Device {componentRegistrationModel.ComponentId} already exists");
+                var registered = await _componentRegistry
+                    .AddOrUpdateAsync(componentRegistrationModel);
+
+                if (!registered)
+                {
+                    return SubscribedComponentResultModel.AlreadyExists();
+                }
+
+                return SubscribedComponentResultModel.Successful();
+            }
+            catch (Exception e)
+            {
+                const string error = "Subscription failed due to: {error}";
+                _logger.LogError(error, e.Message);
+                return SubscribedComponentResultModel.Failed(string.Format(error, e.Message));
             }
         }
 
-        public async Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification)
+        public async Task PushJobConfigUpdateAsync(
+            JobConfigUpdateNotification jobConfigUpdateNotification)
         {
-            
+
             //var storage = _componentRegistry.GetRegisteredStorage();
             //if (storage == null)
             //{
@@ -53,18 +67,26 @@ namespace Domain.ComponentManagement
             //await PushStorageJobConfig(
             //    storage,
             //    jobConfigUpdateNotification);
+#warning hardcoded channel names
 
-            var aStorageChannelName = "job_management.component_data_analyzed_input.storage_db";
+            var storeAnalysedDataChannelName = "job_management.component_data_analyzed_input.storage_db";
             var analysers = await PushAnalyserJobConfig(
-                aStorageChannelName,
+                storeAnalysedDataChannelName,
                 jobConfigUpdateNotification);
 
             var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
-            var dStorageChannelName = "job_management.component_data_input.storage_db";
+            var storeRawDataChannelName = "job_management.component_data_input.storage_db";
             await PushNetworkDataAcquisitionJobConfig(
-                dStorageChannelName,
+                storeRawDataChannelName,
                 analysersInputs,
                 jobConfigUpdateNotification);
+
+            // TODO store the config in db
+            var storeConfigChannelName = "job_management.job_definition.storage_db";
+
+
+
+
         }
 
         private async Task PushStorageJobConfig(
@@ -86,27 +108,15 @@ namespace Domain.ComponentManagement
             _logger.LogInformation("Config pushed to: {componentName}", storageComponent.ComponentId);
         }
 
-        public IList<SubscribedComponent> GetAvaliableNetworks()
-        {
-            return _componentRegistry.GetRegisteredComponents()
-                .Where(r => r.ComponentType == "Network")
-                .ToList();
-        }
-
-        public IList<SubscribedComponent> GetAvaliableAnalysers()
-        {
-            return _componentRegistry.GetRegisteredComponents()
-                .Where(r => r.ComponentType == "Analyser")
-                .ToList();
-        }
-
         private async Task PushNetworkDataAcquisitionJobConfig(
             string storageChannelName,
             IEnumerable<string> selectedAnalysersChannels,
             JobConfigUpdateNotification jobConfigUpdateNotification)
         {
 
-            var outputChannels = selectedAnalysersChannels.Concat(new[] { storageChannelName, }).ToArray();
+            var outputChannels = selectedAnalysersChannels
+                .Concat(new[] { storageChannelName, })
+                .ToArray();
 
             var notification = new DataAcquisitionConfigUpdateNotification
             {
@@ -120,20 +130,22 @@ namespace Domain.ComponentManagement
 
             foreach (var network in jobConfigUpdateNotification.Networks)
             {
-                if (_componentRegistry.TryGetNetworkComponent(network, out var networkCmp))
+                var dataSource = await _componentRegistry.GetComponentById(network);
+
+                if (dataSource == null)
+                {
+                    const string errorMessage =
+                        "Data acquisition component '{componentName}' was not registered";
+                    _logger.LogError(errorMessage, network);
+                }
+                else
                 {
                     _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
                         network,
                         JsonConvert.SerializeObject(notification));
                     await _componentConfigUpdateNotifier.NotifyComponentAsync(
-                        networkCmp.UpdateChannelName,
+                        dataSource.UpdateChannelName,
                         notification);
-                }
-                else
-                {
-                    const string errorMessage =
-                        "Network data acquisition component {analyserName} was not registered";
-                    _logger.LogWarning(errorMessage, network);
                 }
             }
         }
@@ -146,13 +158,17 @@ namespace Domain.ComponentManagement
             var analysers = new List<SubscribedComponent>();
             foreach (var analyser in jobConfigUpdateNotification.Analysers)
             {
-                if (_componentRegistry.TryGetAnalyserComponent(analyser, out var analyserCmp))
+                var analyserComponent = await _componentRegistry
+                    .GetComponentById(analyser);
+
+                if (analyserComponent == null)
                 {
-                    analysers.Add(analyserCmp);
+                    _logger.LogWarning("Analyser {analyserName} was not registered", analyser);
+
                 }
                 else
                 {
-                    _logger.LogWarning("Analyser {analyserName} was not registered", analyser);
+                    analysers.Add(analyserComponent);
                 }
             }
 
@@ -163,6 +179,7 @@ namespace Domain.ComponentManagement
                 Attributes = new Dictionary<string, string>(),
                 OutputMessageBrokerChannels = new[] { storageChannelName },
             };
+
             var configUpdateTasks = analysers.Select(analyserCmp =>
             {
                 _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
@@ -172,10 +189,9 @@ namespace Domain.ComponentManagement
                     analyserCmp.UpdateChannelName,
                     notification);
 
-
                 return analyserTask;
-
             });
+
             await Task.WhenAll(configUpdateTasks);
             return analysers;
         }
