@@ -59,7 +59,6 @@ class ChartComponent implements AfterChanges {
       chartDataPoints = await this._socnetoService.getChartData(this.jobId, this.chartDefinition);
     } on HttpException catch(e){
       Toastr.error("Analysis", "Could not fetch analyses for chart");
-      print(e);
       return;
     }
 
