@@ -4,8 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Services;
+
+using DataPoint = System.Collections.Generic.IList<dynamic>;
+
 
 namespace Socneto.Api.Controllers
 {
@@ -15,12 +19,14 @@ namespace Socneto.Api.Controllers
     {
         private readonly IJobService _jobService;
         private readonly IStorageService _storageService;
+        private readonly ILogger<JobController> _logger;
 
 
-        public JobController(IJobService jobService, IStorageService storageService)
+        public JobController(IJobService jobService, IStorageService storageService, ILogger<JobController> logger)
         {
             _jobService = jobService;
             _storageService = storageService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -49,17 +55,15 @@ namespace Socneto.Api.Controllers
             return Ok(mappedPosts);
         }
         
-        [HttpGet]
+        [HttpPost]
         [Route("api/job/{jobId:guid}/analysis")]
-        public async Task<ActionResult<List<AnalyzedPostDto>>> GetJobAnalysis([FromRoute]Guid jobId)
+        public async Task<ActionResult<Task<IList<IList<DataPoint>>>>> GetJobAnalysis([FromRoute]Guid jobId, [FromBody] CreateChartDefinitionRequest chartDefinition)
         {
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
-            
-            var analyzedPosts = await _jobService.GetJobAnalysis(jobId);
 
-            var mappedAnalyzedPosts = analyzedPosts.Select(AnalyzedPostDto.FromModel).ToList();
-            return Ok(mappedAnalyzedPosts);
+            var data = await _storageService.GetAnalyses();
+            return Ok(data);
         }
 
         private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)

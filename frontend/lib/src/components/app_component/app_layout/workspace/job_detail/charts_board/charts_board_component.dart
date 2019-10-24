@@ -9,7 +9,6 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -44,7 +43,6 @@ class ChartsBoardComponent implements AfterChanges {
   @Input() Job job;
 
   List<ChartDefinition> chartDefinitions = [];
-  List<AnalyzedPost> analyzedPosts = [];
 
   SocnetoService _socnetoService;
 
@@ -53,17 +51,10 @@ class ChartsBoardComponent implements AfterChanges {
   @override
   void ngAfterChanges() async {
     try {
-      this.analyzedPosts = await this._socnetoService.getJobAnalysis(this.job.id);
-    } on HttpException catch (e) {
-      Toastr.error("Posts", "Could not fetch analyzed posts for this job: ${e.toString()}");
-    }
-
-    try {
       this.chartDefinitions = await this._socnetoService.getJobChartDefinitions(this.job.id);
     } on HttpException catch(e) {
-      Toastr.error("Charts", "Could not fetch charts for this job: ${e.toString()}");
+      Toastr.error("Charts", "Could not fetch charts for this job");
     }
-
   }
 
 }

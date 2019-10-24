@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:sw_project/src/models/CreateJobResponse.dart';
 import 'package:sw_project/src/models/Credentials.dart';
-import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
-import 'package:sw_project/src/models/SocnetoComponentsResponse.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
 class SocnetoJobManagementService extends HttpServiceBasicAuthBase {

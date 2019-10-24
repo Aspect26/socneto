@@ -55,19 +55,10 @@ class ComponentSelectComponent implements AfterChanges {
 
   void _setIcon() {
     String iconName = "component_default.png";
-    switch (this.component.specialization) {
-      case ComponentSpecialization.facebook: iconName = "facebook.png"; break;
-      case ComponentSpecialization.twitter: iconName = "twitter.png"; break;
-      case ComponentSpecialization.reddit: iconName = "reddit.png"; break;
-      case ComponentSpecialization.other:
-        if (this.component.type == ComponentType.dataAcquirer) {
-          iconName = "data_acquirer_default.png";
-        } else if (this.component.type == ComponentType.dataAnalyzer) {
-          iconName = "data_analyzer_default.png";
-        } else {
-          iconName = "component_default.png";
-        }
-        break;
+    switch (this.component.type) {
+      case ComponentType.DataAcquirer: iconName = "data_acquirer_default.png"; break;
+      case ComponentType.DataAnalyser: iconName = "data_analyzer_default.png"; break;
+      default: iconName = "component_default.png"; break;
     }
 
     this.iconPath = "${this._iconsLocation}/${iconName}";
