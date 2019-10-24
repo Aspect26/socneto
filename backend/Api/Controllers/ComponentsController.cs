@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Services;
 
@@ -15,10 +16,12 @@ namespace Socneto.Api.Controllers
     {
         
         private IStorageService _storageService;
+        private ILogger<ComponentsController> _logger;
 
-        public ComponentsController(IStorageService storageService)
+        public ComponentsController(IStorageService storageService, ILogger<ComponentsController> logger)
         {
-            this._storageService = storageService;
+            _storageService = storageService;
+            _logger = logger;
         }
         
         [HttpGet]
@@ -26,6 +29,8 @@ namespace Socneto.Api.Controllers
         public async Task<ActionResult<List<AnalyserDto>>> GetAnalysers()
         {
             var analysers = await _storageService.GetAnalysers();
+            _logger.LogInformation("Retrieved analysers: " + analysers.Count);
+            _logger.LogInformation("Retrieved analysers: " + analysers[0]);
             var analysersDto = analysers.Select(AnalyserDto.FromModel).ToList();
             
             return Ok(analysersDto);
