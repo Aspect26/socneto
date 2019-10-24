@@ -21,7 +21,7 @@ namespace Api
         }
 
         public IConfiguration Configuration { get; }
-        
+
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -37,7 +37,7 @@ namespace Api
                             .AllowAnyMethod();
                     });
             });
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddHostedService<RegistrationRequestListenerHostedService>();
@@ -48,20 +48,21 @@ namespace Api
 #if DEBUG
             services.AddSingleton<IMessageBrokerConsumer, MockKafka>();
             services.AddTransient<IMessageBrokerProducer, MockKafka>();
+            services.AddHttpClient<IComponentRegistry, ComponentStorageProxyMock>();
 #else
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+            services.AddHttpClient<IComponentRegistry, ComponentStorageProxy>();
 #endif
-            services.AddSingleton<IComponentRegistry, ComponentStorageProxy>();
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
 
             var optionRootName = "JobManagementService";
-            services.Configure<RegistrationRequestOptions>(
-                Configuration.GetSection($"{optionRootName}:RegistrationRequestOptions")
-                );
-            services.Configure<KafkaOptions>(
-                Configuration.GetSection($"{optionRootName}:KafkaOptions")
-            );
+            services.AddOptions<RegistrationRequestOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestOptions"))
+                .ValidateDataAnnotations();
+            services.AddOptions<KafkaOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:KafkaOptions"))
+                .ValidateDataAnnotations();
 
             services.AddOptions<ComponentIdentifiers>()
                 .Bind(Configuration.GetSection($"{optionRootName}:ComponentIdentifiers"))
@@ -83,7 +84,7 @@ namespace Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseCors(MyAllowSpecificOrigins);
             app.UseMvc();
         }

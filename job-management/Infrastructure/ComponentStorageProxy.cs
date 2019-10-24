@@ -10,10 +10,46 @@ using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Infrastructure
 {
-    
+    public class ComponentStorageProxyMock : IComponentRegistry, IDisposable
+    {
+        private readonly HttpClient _client;
+        private readonly ILogger<ComponentStorageProxyMock> _logger;
+
+        public ComponentStorageProxyMock(
+            HttpClient client,
+            ILogger<ComponentStorageProxyMock> logger )
+        {
+            _client = client;
+            _logger = logger;
+        }
+        public Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel)
+        {
+            _logger.LogWarning($"Mock {nameof(AddOrUpdateAsync)} method was called");
+            return Task.FromResult(true);
+        }
+
+        public Task<SubscribedComponent> GetComponentById(string componentId)
+        {
+            _logger.LogWarning($"Mock {nameof(GetComponentById)} method was called");
+            var component =  new SubscribedComponent(
+                "mock_cmp",
+                "mock_type",
+                "inputChannel",
+                "updateChannel",
+                new Dictionary<string, JObject>());
+            return Task.FromResult(component);
+        }
+
+        public void Dispose()
+        {
+            _client?.Dispose();
+        }
+    }
+
     public class ComponentStorageProxy : IComponentRegistry, IDisposable
     {
         public class SubscribedComponentPayloadObject
@@ -31,7 +67,7 @@ namespace Infrastructure
             public string UpdateChannelName { get; set; }
 
             [JsonProperty("attributes")]
-            public Dictionary<string, string> Attributes { get; set; }
+            public Dictionary<string, JObject> Attributes { get; set; }
         }
 
 
@@ -103,7 +139,7 @@ namespace Infrastructure
                 }
                 catch (Exception e)
                 {
-                    var error = "Could not parse object '{json}' due to erro  '{error}'";
+                    var error = "Could not parse object '{json}' due to error  '{error}'";
                     _logger.LogError(error,
                         content,
                         e.Message);

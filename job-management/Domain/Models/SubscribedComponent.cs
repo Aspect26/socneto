@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
@@ -9,14 +10,14 @@ namespace Domain.Models
         public string InputChannelName { get; }
         public string UpdateChannelName { get; }
 
-        public IReadOnlyDictionary<string, string> Attributes { get; }
+        public IReadOnlyDictionary<string, JObject> Attributes { get; }
         
         public SubscribedComponent(
             string componentId,
             string componentType,
             string inputChannelName,
             string updateChannelName,
-            IReadOnlyDictionary<string,string> attributes)
+            IReadOnlyDictionary<string,JObject> attributes)
         {
             ComponentId = componentId;
             ComponentType = componentType;

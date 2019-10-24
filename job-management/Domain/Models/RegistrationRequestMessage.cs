@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
@@ -18,7 +19,7 @@ namespace Domain.Models
         public string UpdateChannelName { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string,string> Attributes { get; set; }
+        public Dictionary<string,JObject> Attributes { get; set; }
 
     }
 }
