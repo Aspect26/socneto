@@ -2,9 +2,9 @@ package cz.cuni.mff.socneto.storage.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.cuni.mff.socneto.storage.analysis.data.dto.AnalyzedObjectDto;
-import cz.cuni.mff.socneto.storage.analysis.data.dto.PostDto;
-import cz.cuni.mff.socneto.storage.analysis.service.AnalyzedPostService;
+import cz.cuni.mff.socneto.storage.analysis.results.api.dto.AnalyzedObjectDto;
+import cz.cuni.mff.socneto.storage.analysis.results.api.dto.PostDto;
+import cz.cuni.mff.socneto.storage.analysis.results.api.service.AnalyzedPostDtoService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -24,13 +24,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final AnalyzedPostService analyzedPostService;
+    private final AnalyzedPostDtoService analyzedPostDtoService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/analyzedPosts")
     public ResponseEntity<List<AnalyzedPostDto>> getPostsByJobId(@RequestParam UUID jobId) {
-        return ResponseEntity.ok(analyzedPostService.findAllByJobId(jobId).stream().map(this::map).collect(Collectors.toList()));
+        return ResponseEntity.ok(analyzedPostDtoService.findAllByJobId(jobId).stream().map(this::map).collect(Collectors.toList()));
+    }
+
+    public void create(AnalyzedObjectDto<PostDto, String> analyzedPostDto) {
+        analyzedPostDtoService.create(analyzedPostDto);
     }
 
     private AnalyzedPostDto map(AnalyzedObjectDto<PostDto, String> post) {

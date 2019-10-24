@@ -1,6 +1,8 @@
 package cz.cuni.mff.socneto.storage.messaging.producer;
 
-//@Configuration
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class SenderConfig {
 
 //    @Value("${spring.messaging.bootstrap-servers}")

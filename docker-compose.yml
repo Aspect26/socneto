@@ -25,13 +25,26 @@ services:
     ports: 
       - '6010:6010'
     container_name: backend
+  db:
+    image: "postgres"
+    container_name: storagedb
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=storagedb
+    ports:
+      - "5432:5432"
+    networks:
+      - kafka-network
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
   storage:
-    build: './storage/storage'
+    build: './storage'
     networks:
       - kafka-network
     ports:
       - '8888:8888'
-    container_name: storage_service
+    container_name: storageservice
   job-management-service:
     build: './job-management'
     ports:

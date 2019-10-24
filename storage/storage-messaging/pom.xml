@@ -24,11 +24,15 @@
             <artifactId>analysis-storage</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>cz.cuni.mff.socneto.storage</groupId>
+            <artifactId>internal-storage</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>${spring-kafka.version}</version>
         </dependency>
 
         <dependency>
