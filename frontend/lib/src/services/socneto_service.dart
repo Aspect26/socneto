@@ -1,4 +1,3 @@
-import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/Job.dart';

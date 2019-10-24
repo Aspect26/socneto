@@ -25,14 +25,14 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<SocnetoComponent> mockAcquirers = [
-    SocnetoComponent("Twitter acq", ComponentType.DataAcquirer),
-    SocnetoComponent("Reddit acq", ComponentType.DataAcquirer),
+    SocnetoComponent("Twitter acq", ComponentType.DATA_ACQUIRER),
+    SocnetoComponent("Reddit acq", ComponentType.DATA_ACQUIRER),
   ];
 
   static final List<SocnetoAnalyser> mockAnalysers = [
-    SocnetoAnalyser("sentiment", ComponentType.DataAnalyser, []),
-    SocnetoAnalyser("keywords", ComponentType.DataAnalyser, []),
-    SocnetoAnalyser("magic", ComponentType.DataAnalyser, []),
+    SocnetoAnalyser("sentiment", ComponentType.DATA_ANALYSER, []),
+    SocnetoAnalyser("keywords", ComponentType.DATA_ANALYSER, []),
+    SocnetoAnalyser("magic", ComponentType.DATA_ANALYSER, []),
   ];
 
   static final List<AnalyzedPost> mockAnalyzedPosts = [
