@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Socneto.Domain.Models;
-
 
 namespace Socneto.Api.Models
 {
@@ -13,6 +14,7 @@ namespace Socneto.Api.Models
     {
         public string Name { get; set; }
         
+        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisPropertyType Type { get; set; }
     }
     
@@ -21,12 +23,16 @@ namespace Socneto.Api.Models
         public string Identifier { get; set; }
         
         public IList<AnalysisProperty> AnalysisProperties { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        public  SocnetoComponentType ComponentType { get; set; }
 
         public static AnalyserDto FromModel(SocnetoComponent model)
         {
             return new AnalyserDto
             {
                 Identifier = model.Id,
+                ComponentType = model.SocnetoComponentType,
                 AnalysisProperties = model.Attributes["analysis_properties"].ToObject<List<AnalysisProperty>>()
             };
         }

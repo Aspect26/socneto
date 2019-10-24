@@ -7,6 +7,9 @@ using Microsoft.Extensions.Options;
 using Socneto.Domain.Models;
 using Socneto.Infrastructure;
 
+using DataPoint = System.Collections.Generic.IList<dynamic>;
+
+
 namespace Socneto.Domain.Services
 {
     public class StorageService : IStorageService
@@ -69,9 +72,19 @@ namespace Socneto.Domain.Services
             return await response.Content.ReadAsAsync<List<SocnetoComponent>>();
         }
 
+        public Task<IList<IList<DataPoint>>> GetAnalyses()
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<HttpResponseMessage> Get(string path)
         {
             return await _client.GetAsync($"{_host}/{path}");
+        }
+        
+        private async Task<HttpResponseMessage> Post(string path, HttpContent body)
+        {
+            return await _client.PostAsync($"{_host}/{path}", body);
         }
     }
 }

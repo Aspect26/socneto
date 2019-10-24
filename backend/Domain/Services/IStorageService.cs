@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
 
+using DataPoint = System.Collections.Generic.IList<dynamic>;
+
+
 namespace Socneto.Domain.Services
 {
     public interface IStorageService
@@ -18,6 +21,8 @@ namespace Socneto.Domain.Services
         Task<IList<SocnetoComponent>> GetAnalysers();
 
         Task<IList<SocnetoComponent>> GetAcquirers();
+
+        Task<IList<IList<DataPoint>>> GetAnalyses();
 
     }
 }

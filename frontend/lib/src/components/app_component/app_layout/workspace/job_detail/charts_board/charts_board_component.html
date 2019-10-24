@@ -1,7 +1,8 @@
-<chart
-        *ngFor="let chartDefinition of chartDefinitions; let i = index"
-        id="i{{ i }}"
-        [chartDefinition]="chartDefinition"
-        [analyzedPosts]="analyzedPosts"
-        chartId="i{{ i }}"></chart>
+<chart *ngFor="let chartDefinition of chartDefinitions; let i = index"
+       id="i{{ i }}"
+       [chartDefinition]="chartDefinition"
+       [jobId]="job.id"
+       chartId="i{{ i }}">
+</chart>
+
 <create-chart-button [job]="job"></create-chart-button>

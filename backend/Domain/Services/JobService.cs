@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Socneto.Domain.Models;
 using System.Linq;
 
+using DataPoint = System.Collections.Generic.IList<dynamic>;
+
+
 namespace Socneto.Domain.Services
 {
     public class JobService : IJobService
