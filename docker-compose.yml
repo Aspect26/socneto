@@ -59,7 +59,9 @@ services:
     networks:
       - 'kafka-network'
   data-acquisition-service:
-    build: './acquisition/MockAcquirer'
+    build: 
+        context: './acquisition/DataAcquirer'
+        dockerfile: 'Dockerfile.mock'
     networks:
       - kafka-network
   mock-analyser-service:
