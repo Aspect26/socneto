@@ -153,7 +153,9 @@ class CreateJobModal {
 
     try {
       this.availableSocialNetworks = await this._socnetoService.getAvailableAcquirers();
-    } catch (_) {
+    } catch (e) {
+      Toastr.error("Acquirers", "Error fetching acquirers");
+      print(e);
     } finally {
       this.loadingSocialNetworks = false;
     }
@@ -165,7 +167,9 @@ class CreateJobModal {
 
     try {
       this.availableDataAnalyzers = await this._socnetoService.getAvailableAnalyzers();
-    } catch (_) {
+    } catch (e) {
+      Toastr.error("Acquirers", "Error fetching analysers");
+      print(e);
     } finally {
       this.loadingDataAnalyzers = false;
     }

@@ -56,8 +56,8 @@ class ComponentSelectComponent implements AfterChanges {
   void _setIcon() {
     String iconName = "component_default.png";
     switch (this.component.type) {
-      case ComponentType.DataAcquirer: iconName = "data_acquirer_default.png"; break;
-      case ComponentType.DataAnalyser: iconName = "data_analyzer_default.png"; break;
+      case ComponentType.DATA_ACQUIRER: iconName = "data_acquirer_default.png"; break;
+      case ComponentType.DATA_ANALYSER: iconName = "data_analyzer_default.png"; break;
       default: iconName = "component_default.png"; break;
     }
 

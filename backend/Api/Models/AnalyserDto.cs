@@ -25,15 +25,18 @@ namespace Socneto.Api.Models
         public IList<AnalysisProperty> AnalysisProperties { get; set; }
         
         [JsonConverter(typeof(StringEnumConverter))]
-        public  SocnetoComponentType ComponentType { get; set; }
+        public SocnetoComponentType ComponentType { get; set; }
 
         public static AnalyserDto FromModel(SocnetoComponent model)
         {
+            var analysisProperties = model.Attributes?["analysis_properties"];
+            var typedAnalysisProperties = analysisProperties?.ToObject<List<AnalysisProperty>>();
+            
             return new AnalyserDto
             {
                 Identifier = model.Id,
-                ComponentType = model.SocnetoComponentType,
-                AnalysisProperties = model.Attributes["analysis_properties"].ToObject<List<AnalysisProperty>>()
+                ComponentType = model.Type,
+                AnalysisProperties = typedAnalysisProperties
             };
         }
         
