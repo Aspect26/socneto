@@ -47,7 +47,16 @@ namespace Domain.Registration
             _logger.LogInformation("Registration request accepted: {registrationRequestJson}",
                 registrationRequest);
 
-            var registrationRequestMessage = JsonConvert.DeserializeObject<RegistrationRequestMessage>(registrationRequest);
+            RegistrationRequestMessage registrationRequestMessage = null;
+            try
+            {
+                registrationRequestMessage = JsonConvert.DeserializeObject<RegistrationRequestMessage>(registrationRequest);
+            }
+            catch (JsonReaderException jre)
+            {
+                _logger.LogError("Error while parsing registration request: {error}", jre.Message);
+                return;
+            }
             try
             {
 

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
@@ -15,6 +17,9 @@ namespace Domain.Models
 
         [JsonProperty("updateChannelName")]
         public string UpdateChannelName { get; set; }
+
+        [JsonProperty("attributes")]
+        public Dictionary<string,JObject> Attributes { get; set; }
 
     }
 }
