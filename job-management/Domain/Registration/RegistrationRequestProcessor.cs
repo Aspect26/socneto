@@ -7,6 +7,7 @@ using Domain.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Registration
 {
@@ -98,7 +99,7 @@ namespace Domain.Registration
 
         private void ValidateAttributes(
             string componentType,
-            Dictionary<string, string> attributes)
+            Dictionary<string, JObject> attributes)
         {
 
             if (componentType == _componentIdentifiers.DataAcquirerComponentTypeName)
@@ -117,7 +118,7 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAcquirer(Dictionary<string, string> attributes)
+        private void ValidateDataAcquirer(Dictionary<string, JObject> attributes)
         {
             var formatElement = _registrationRequestValidation.AnalyserOutputFormatElementName;
             if (!attributes.ContainsKey(formatElement))
@@ -127,7 +128,7 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAnalyser(Dictionary<string, string> attributes)
+        private void ValidateDataAnalyser(Dictionary<string, JObject> attributes)
         {
             // nothing to validate yet
         }

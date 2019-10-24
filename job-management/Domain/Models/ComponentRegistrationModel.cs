@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
@@ -9,14 +10,14 @@ namespace Domain.Models
         public string ComponentType { get; }
         public string InputChannelId { get; }
 
-        public IReadOnlyDictionary<string,string> Attributes { get; }
+        public IReadOnlyDictionary<string,JObject> Attributes { get; }
         
         public ComponentRegistrationModel(
             string componentId, 
             string updateChannelId, 
             string inputChannelId,
             string requestComponentType,
-            Dictionary<string,string> attributes)
+            Dictionary<string,JObject> attributes)
         {
             ComponentId = componentId;
             UpdateChannelId = updateChannelId;
