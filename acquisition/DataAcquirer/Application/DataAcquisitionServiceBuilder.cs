@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Domain.JobManagement.Abstract;
 
 namespace Application
 {
@@ -111,14 +112,17 @@ namespace Application
         {
             var rootName = "DataAcquisitionService";
 
-            services.Configure<ComponentOptions>(
-                configuration.GetSection($"{rootName}:ComponentOptions"));
+            services.AddOptions<ComponentOptions>()
+                .Bind(configuration.GetSection($"{rootName}:ComponentOptions"))
+                .ValidateDataAnnotations();
 
-            services.Configure<RegistrationRequestOptions>(
-                configuration.GetSection($"{rootName}:RegistrationRequestOptions"));
+            services.AddOptions<RegistrationRequestOptions>()
+                .Bind(configuration.GetSection($"{rootName}:RegistrationRequestOptions"))
+                .ValidateDataAnnotations();
 
-            services.Configure<KafkaOptions>(
-                configuration.GetSection($"{rootName}:KafkaOptions"));
+            services.AddOptions<KafkaOptions>()
+                .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
+                .ValidateDataAnnotations();
 
 
 

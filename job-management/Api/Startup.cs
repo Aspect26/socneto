@@ -4,6 +4,7 @@ using Domain.Models;
 using Domain.Registration;
 using Domain.SubmittedJobConfiguration;
 using Infrastructure;
+using Infrastructure.ComponentManagement;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +23,7 @@ namespace Api
 
         public IConfiguration Configuration { get; }
 
-        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        private const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -42,6 +43,8 @@ namespace Api
 
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
+
+            services.AddHttpClient<IJobConfigStorage, JobConfigStorageProxy>();
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
@@ -68,12 +71,20 @@ namespace Api
                 .Bind(Configuration.GetSection($"{optionRootName}:ComponentIdentifiers"))
                 .ValidateDataAnnotations();
 
+            services.AddOptions<StorageChannelNames>()
+                .Bind(Configuration.GetSection($"{optionRootName}:StorageChannelNames"))
+                .ValidateDataAnnotations();
+
             services.AddOptions<ComponentStorageOptions>()
                 .Bind(Configuration.GetSection($"{optionRootName}:ComponentStorageOptions"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<RegistrationRequestValidationOptions>()
                 .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestValidationOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<JobConfigStorageOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:JobConfigStorageOptions"))
                 .ValidateDataAnnotations();
         }
 

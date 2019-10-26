@@ -10,12 +10,8 @@ namespace Domain.ComponentManagement
     {
         Task<SubscribedComponentResultModel> SubscribeComponentAsync(ComponentRegistrationModel componentRegistrationModel);
 
-        Task PushJobConfigUpdateAsync(JobConfigUpdateNotification jobConfigUpdateNotification);
-    }
+        Task<JobConfigUpdateResult> StartJobAsync(JobConfigUpdateCommand jobConfigUpdateCommand);
 
-    public enum SubscribedComponentResult
-    {
-        AlreadyExists, Successful, Failed
+        Task<JobConfigUpdateResult> StopJob(Guid jobId);
     }
-
 }
