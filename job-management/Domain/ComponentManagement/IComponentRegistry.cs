@@ -8,5 +8,6 @@ namespace Domain.ComponentManagement
     {
         Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel);
         Task<SubscribedComponent> GetComponentById(string componentId);
+        StorageComponent GetRegisteredStorage();
     }
 }

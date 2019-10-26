@@ -74,7 +74,7 @@ namespace Tests
         //public async Task RequestIntegrationTest()
         //{
         //    // Arrange
-        //    var componentRegistry = new ComponentRegistry();
+        //    var componentRegistry = new ComponentInMemoryRegistry();
         //    var subscribedCompnentLogger = new Mock<ILogger<SubscribedComponentManager>>();
         //    var componentConfigNotifierMock = new Mock<IComponentConfigUpdateNotifier>();
             

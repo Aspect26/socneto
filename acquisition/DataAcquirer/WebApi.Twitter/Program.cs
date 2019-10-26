@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Application;
 using Domain;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
@@ -40,7 +41,8 @@ namespace Api
 
         private static void StartListeningToJobConfigs(IWebHost app)
         {
-            var jobConfigurationUpdateListener = app.Services.GetRequiredService<JobConfigurationUpdateListener>();
+            var jobConfigurationUpdateListener = app.Services
+                .GetRequiredService<JobConfigurationUpdateListener>();
             jobConfigurationUpdateListener.OnConnectionEstablished();
         }
 

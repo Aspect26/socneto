@@ -18,12 +18,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.JobManagement.Abstract;
 
 namespace ConsoleApi.Twitter
 {
-    class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        public static void Main(string[] args)
+        {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+        public static async Task MainAsync(string[] args)
         {
             var builtProvider = new DataAcquisitionConsoleAppBuilder()
                 .AddTransientService<IDataAcquirer, TwitterDataAcqirer>()
@@ -49,7 +54,7 @@ namespace ConsoleApi.Twitter
             };
             try
             {
-                await jobManager.StartDownloadingAsync(jobConfig);
+                await jobManager.StartNewJobAsync(jobConfig);
             }
             catch
             {

@@ -42,6 +42,8 @@ namespace Domain.Registration
                     , nameof(request.ComponentId));
             }
 
+            
+
             if (string.IsNullOrWhiteSpace(request.ComponentType))
             {
                 throw new ArgumentException("Component type must not be empty"
@@ -54,7 +56,7 @@ namespace Domain.Registration
                     nameof(request.ComponentType),
                     "Component type must be valid component identifier");
             }
-            // TODO check if it is not already registered
+            
 
             if (string.IsNullOrWhiteSpace(request.UpdateChannelName))
             {
