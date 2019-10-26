@@ -22,26 +22,59 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("/api/job/submit")]
-        public async Task<ActionResult<JobSubmitResponse>> SubmitJob(
+        public async Task<ActionResult<JobResponse>> SubmitJob(
             [FromBody]JobSubmitRequest jobSubmitRequest)
         {
+
+            if (jobSubmitRequest == null)
+            {
+                return BadRequest("Body not found");
+            }
+            if (jobSubmitRequest?.SelectedDataAnalysers?.Any() == false)
+            {
+                return BadRequest("No analysers were selected");
+            }
+            if (jobSubmitRequest?.SelectedDataAcquirers?.Any() == false)
+            {
+                return BadRequest("No analysers were selected");
+            }
+
             var jobId = Guid.NewGuid();
-            var jobConfigUpdateNotification = new JobConfigUpdateNotification(
+            var jobConfigUpdateNotification = JobConfigUpdateCommand.NewJob(
                 jobId,
-                jobSubmitRequest.SelectedAnalysers,
-                jobSubmitRequest.SelectedNetworks,
+                jobSubmitRequest.SelectedDataAnalysers,
+                jobSubmitRequest.SelectedDataAcquirers,
                 jobSubmitRequest.TopicQuery);
 
-            try
+            var configUpdateResult = await _subscribedComponentManager
+                .StartJobAsync(jobConfigUpdateNotification);
+
+            if (configUpdateResult.HasError)
             {
-                await _subscribedComponentManager.PushJobConfigUpdateAsync(jobConfigUpdateNotification);
+                return BadRequest($"Job submit failed, error: {configUpdateResult.Error}");
             }
-            catch (Exception e)
+            
+            var jobSubmitResponse = new JobResponse(
+                configUpdateResult.JobId, 
+                configUpdateResult.Status);
+            return Ok(jobSubmitResponse);
+        }
+
+        [HttpPost]
+        [Route("/api/job/stop/{jobId}")]
+        public async Task<ActionResult<JobResponse>> StopJob(
+            [FromRoute]Guid jobId)
+        {
+            var result=   await _subscribedComponentManager.StopJob(jobId);
+
+            if (result.HasError)
             {
-                return BadRequest(e.Message);
+                return BadRequest($"Job submit failed, error: {result.Error}");
             }
 
-            var jobSubmitResponse = new JobSubmitResponse();
+            var jobSubmitResponse = new JobResponse(
+                result.JobId,
+                result.Status);
             return Ok(jobSubmitResponse);
         }
     }
