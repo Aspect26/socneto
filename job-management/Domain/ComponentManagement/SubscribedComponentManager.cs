@@ -14,16 +14,19 @@ namespace Domain.ComponentManagement
     {
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
+        private readonly IJobConfigStorage _jobConfigStorage;
         private readonly ILogger<SubscribedComponentManager> _logger;
 
         public SubscribedComponentManager(
             IComponentRegistry componentRegistry,
             IComponentConfigUpdateNotifier componentConfigUpdateNotifier,
+            IJobConfigStorage jobConfigStorage,
             ILogger<SubscribedComponentManager> logger
         )
         {
             _componentRegistry = componentRegistry;
             _componentConfigUpdateNotifier = componentConfigUpdateNotifier;
+            _jobConfigStorage = jobConfigStorage;
 
             _logger = logger;
         }
@@ -51,67 +54,71 @@ namespace Domain.ComponentManagement
             }
         }
 
-        public async Task PushJobConfigUpdateAsync(
-            JobConfigUpdateNotification jobConfigUpdateNotification)
+        public async Task<JobConfigUpdateResult> StartJobAsync(
+            JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
-            //var storage = _componentRegistry.GetRegisteredStorage();
-            //if (storage == null)
-            //{
-            //    _logger.LogWarning("No storage component was registered");
-            //    //throw new InvalidOperationException("No storage is present. Job can't be done");
-            //}
+            var storage = _componentRegistry.GetRegisteredStorage();
+            if (storage == null)
+            {
+                _logger.LogError("No storage component was registered");
+                return JobConfigUpdateResult.Failed("No storage is present. Job can't be done");
+            }
 
-            //var storageChannelName = storage.InputChannelName;
-
-            //await PushStorageJobConfig(
-            //    storage,
-            //    jobConfigUpdateNotification);
-#warning hardcoded channel names
-
-            var storeAnalysedDataChannelName = "job_management.component_data_analyzed_input.storage_db";
             var analysers = await PushAnalyserJobConfig(
-                storeAnalysedDataChannelName,
-                jobConfigUpdateNotification);
+                storage.AnalysedDataInputChannel,
+                jobConfigUpdateCommand);
 
             var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
-            var storeRawDataChannelName = "job_management.component_data_input.storage_db";
             await PushNetworkDataAcquisitionJobConfig(
-                storeRawDataChannelName,
+                storage.AcquiredDataInputChannel,
                 analysersInputs,
-                jobConfigUpdateNotification);
+                jobConfigUpdateCommand);
 
-            // TODO store the config in db
-            var storeConfigChannelName = "job_management.job_definition.storage_db";
-
-
-
-
-        }
-
-        private async Task PushStorageJobConfig(
-            SubscribedComponent storageComponent,
-            JobConfigUpdateNotification jobConfigUpdateNotification)
-        {
-            var notification = new StorageConfigUpdateNotification
+            var jobConfig = new JobConfig
             {
-                JobId = jobConfigUpdateNotification.JobId,
-                Attributes = new Dictionary<string, string>()
-                {
-
-                }
+                JobStatus = JobStatus.Running,
+                JobId = jobConfigUpdateCommand.JobId,
+                TopicQuery = jobConfigUpdateCommand.TopicQuery,
+                DataAnalysers = jobConfigUpdateCommand.DataAnalysers.ToList(),
+                DataAcquirers = jobConfigUpdateCommand.DataAcquirers.ToList()
             };
 
-            await _componentConfigUpdateNotifier.NotifyComponentAsync(
-                storageComponent.UpdateChannelName,
-                notification);
-            _logger.LogInformation("Config pushed to: {componentName}", storageComponent.ComponentId);
+            await _jobConfigStorage.InsertNewJobConfigAsync(jobConfig);
+
+            return JobConfigUpdateResult.Successfull(
+                jobConfigUpdateCommand.JobId,
+                JobStatus.Running);
         }
 
+        public async Task<JobConfigUpdateResult> StopJob(Guid jobId)
+        {
+            try
+            {
+                // TODO stop data acquirer
+
+                var jobConfig = await _jobConfigStorage.GetJobConfigAsync(jobId);
+
+                jobConfig.JobStatus = JobStatus.Stopped;
+
+                await _jobConfigStorage.UpdateJobConfig(jobConfig);
+
+                return JobConfigUpdateResult.Successfull(jobId, jobConfig.JobStatus);
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Could not stop the job {jobId}, due to error {error}", 
+                    jobId,
+                    e.Message);
+                throw  new InvalidOperationException($"Could not stop the job {jobId}, due to error {e.Message}");
+            }
+        }
+        
         private async Task PushNetworkDataAcquisitionJobConfig(
             string storageChannelName,
             IEnumerable<string> selectedAnalysersChannels,
-            JobConfigUpdateNotification jobConfigUpdateNotification)
+            JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
             var outputChannels = selectedAnalysersChannels
@@ -120,15 +127,15 @@ namespace Domain.ComponentManagement
 
             var notification = new DataAcquisitionConfigUpdateNotification
             {
-                JobId = jobConfigUpdateNotification.JobId,
+                JobId = jobConfigUpdateCommand.JobId,
                 Attributes = new Dictionary<string, string>()
                 {
-                    {"TopicQuery", jobConfigUpdateNotification.TopicQuery }
+                    {"TopicQuery", jobConfigUpdateCommand.TopicQuery }
                 },
                 OutputMessageBrokerChannels = outputChannels,
             };
 
-            foreach (var network in jobConfigUpdateNotification.Networks)
+            foreach (var network in jobConfigUpdateCommand.DataAcquirers)
             {
                 var dataSource = await _componentRegistry.GetComponentById(network);
 
@@ -152,11 +159,11 @@ namespace Domain.ComponentManagement
 
         private async Task<List<SubscribedComponent>> PushAnalyserJobConfig(
             string storageChannelName,
-            JobConfigUpdateNotification jobConfigUpdateNotification)
+            JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
             var analysers = new List<SubscribedComponent>();
-            foreach (var analyser in jobConfigUpdateNotification.Analysers)
+            foreach (var analyser in jobConfigUpdateCommand.DataAnalysers)
             {
                 var analyserComponent = await _componentRegistry
                     .GetComponentById(analyser);
@@ -175,7 +182,7 @@ namespace Domain.ComponentManagement
 
             var notification = new AnalyserConfigUpdateNotification()
             {
-                JobId = jobConfigUpdateNotification.JobId,
+                JobId = jobConfigUpdateCommand.JobId,
                 Attributes = new Dictionary<string, string>(),
                 OutputMessageBrokerChannels = new[] { storageChannelName },
             };

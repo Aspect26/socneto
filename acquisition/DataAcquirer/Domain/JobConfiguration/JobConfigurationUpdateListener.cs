@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
 using Domain.JobManagement;
+using Domain.JobManagement.Abstract;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -12,6 +14,7 @@ namespace Domain.JobConfiguration
     {
         private readonly IMessageBrokerConsumer _messageBrokerConsumer;
         private readonly IJobManager _jobManager;
+        private readonly ILogger<JobConfigurationUpdateListener> _logger;
         private readonly string _updateChannelName;
         public bool ConnectionEstablished { get; private set; } = false;
 
@@ -19,16 +22,13 @@ namespace Domain.JobConfiguration
         public JobConfigurationUpdateListener(
             IMessageBrokerConsumer messageBrokerConsumer,
             IJobManager jobManager,
-            IOptions<ComponentOptions> componentOptionsAccessor)
+            IOptions<ComponentOptions> componentOptionsAccessor,
+            ILogger<JobConfigurationUpdateListener> logger)
         {
-            if (string.IsNullOrEmpty(componentOptionsAccessor.Value.UpdateChannelName))
-            {
-                throw new ArgumentException("Argument must be valid channel name",
-                    nameof(componentOptionsAccessor.Value.UpdateChannelName));
-            }
 
             _messageBrokerConsumer = messageBrokerConsumer;
             _jobManager = jobManager;
+            _logger = logger;
 
             _updateChannelName = componentOptionsAccessor.Value.UpdateChannelName;
         }
@@ -47,8 +47,36 @@ namespace Domain.JobConfiguration
 
         private async Task ProcessJobConfigAsync(string configJson)
         {
-            var jobConfig = JsonConvert.DeserializeObject<DataAcquirerJobConfig>(configJson);
-            await _jobManager.StartDownloadingAsync(jobConfig);
+            DataAcquirerJobConfig jobConfig;
+            try
+            {
+                jobConfig = JsonConvert.DeserializeObject<DataAcquirerJobConfig>(configJson);
+            }
+            catch (JsonReaderException jre)
+            {
+                _logger.LogError("Could not parse job config: Error: {error}, config {jobConfigJson}",
+                    jre.Message,
+                    configJson);
+                throw new InvalidOperationException($"Could not parse job config {jre.Message}");
+            }
+
+            // TODO separate constants
+            var stopIdentifier = "stop";
+            var startIdentifier = "start";
+            var command = jobConfig.Command.ToLower();
+            if (command == stopIdentifier)
+            {
+                await _jobManager.StopJobAsync(jobConfig.JobId);
+            }
+            else if (command == startIdentifier)
+            {
+                await _jobManager.StartNewJobAsync(jobConfig);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"Invalid command identifier {jobConfig.Command}");
+            }
         }
     }
 }

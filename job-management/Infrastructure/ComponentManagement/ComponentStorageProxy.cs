@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -10,84 +8,34 @@ using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace Infrastructure
+namespace Infrastructure.ComponentManagement
 {
-    public class ComponentStorageProxyMock : IComponentRegistry, IDisposable
-    {
-        private readonly HttpClient _client;
-        private readonly ILogger<ComponentStorageProxyMock> _logger;
-
-        public ComponentStorageProxyMock(
-            HttpClient client,
-            ILogger<ComponentStorageProxyMock> logger )
-        {
-            _client = client;
-            _logger = logger;
-        }
-        public Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel)
-        {
-            _logger.LogWarning($"Mock {nameof(AddOrUpdateAsync)} method was called");
-            return Task.FromResult(true);
-        }
-
-        public Task<SubscribedComponent> GetComponentById(string componentId)
-        {
-            _logger.LogWarning($"Mock {nameof(GetComponentById)} method was called");
-            var component =  new SubscribedComponent(
-                "mock_cmp",
-                "mock_type",
-                "inputChannel",
-                "updateChannel",
-                new Dictionary<string, JObject>());
-            return Task.FromResult(component);
-        }
-
-        public void Dispose()
-        {
-            _client?.Dispose();
-        }
-    }
 
     public class ComponentStorageProxy : IComponentRegistry, IDisposable
     {
-        public class SubscribedComponentPayloadObject
-        {
-            [JsonProperty("id")]
-            public string ComponentId { get; set; }
-
-            [JsonProperty("type")]
-            public string ComponentType { get; set; }
-
-            [JsonProperty("inputChannelName")]
-            public string InputChannelName { get; set; }
-
-            [JsonProperty("updateChannelName")]
-            public string UpdateChannelName { get; set; }
-
-            [JsonProperty("attributes")]
-            public Dictionary<string, JObject> Attributes { get; set; }
-        }
-
+       
 
         private readonly HttpClient _httpClient;
         private readonly ILogger<ComponentStorageProxy> _logger;
+        private readonly StorageChannelNames _storageChannelNames;
         private readonly Uri _addComponentUri;
         private readonly Uri _getComponentUri;
-        private ComponentIdentifiers _componentIdentifier;
+        private readonly ComponentIdentifiers _componentIdentifier;
 
         public ComponentStorageProxy(HttpClient httpClient,
             IOptions<ComponentStorageOptions> componentStorageOptionsAccessor,
+            IOptions<StorageChannelNames> storageChannelNamesAccessor,
             IOptions<ComponentIdentifiers> componentIdentifiers,
+            
             ILogger<ComponentStorageProxy> logger)
         {
             _componentIdentifier = componentIdentifiers.Value;
             _httpClient = httpClient;
             _logger = logger;
+            _storageChannelNames = storageChannelNamesAccessor.Value;
             var baseUri = new Uri(componentStorageOptionsAccessor.Value.BaseUri);
             _addComponentUri = new Uri(baseUri, componentStorageOptionsAccessor.Value.AddOrUpdateComponentRoute);
-
             _getComponentUri = new Uri(baseUri, componentStorageOptionsAccessor.Value.GetComponentRoute);
         }
 
@@ -111,7 +59,7 @@ namespace Infrastructure
 
             if (response.IsSuccessStatusCode)
             {
-                // TODO validate response
+                // TODO validate response, hould be the same as the added entity
                 return true;
             }
             else
@@ -151,6 +99,15 @@ namespace Infrastructure
                 var error = await response.Content.ReadAsStringAsync();
                 throw new InvalidOperationException($"Adding data to storage failed: {error}");
             }
+        }
+
+        public StorageComponent GetRegisteredStorage()
+        {
+            return new StorageComponent
+            {
+                AnalysedDataInputChannel = _storageChannelNames.StoreAnalysedDataChannelName,
+                AcquiredDataInputChannel = _storageChannelNames.StoreRawDataChannelName
+            };
         }
 
         private static SubscribedComponent ParseComponent(string content)

@@ -24,8 +24,11 @@ namespace ConsoleApi.Reddit
 
     class Program
     {
-
-        static async Task Main(string[] args)
+        public static void Main(string[] args)
+        {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+        static async Task MainAsync(string[] args)
         {
 
             // 1) Invoke-WebRequest  "https://www.reddit.com/api/v1/authorize?client_id=Mx2Rp1J2roDMdg&response_type=code&state=wtfisthis&redirect_uri=http://localhost:8080&duration=permanent&scope=read"
@@ -128,7 +131,7 @@ namespace ConsoleApi.Reddit
             //};
             //try
             //{
-            //    await jobManager.StartDownloadingAsync(jobConfig);
+            //    await jobManager.StartNewJobAsync(jobConfig);
             //}
             //catch
             //{

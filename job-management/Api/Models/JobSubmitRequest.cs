@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Api.Models
 {
     public class JobSubmitRequest
     {
-        public List<string> SelectedAnalysers { get; set; }
-        public List<string> SelectedNetworks { get; set; }
+        [JsonProperty("selectedDataAnalysers")]
+        public List<string> SelectedDataAnalysers { get; set; }
+
+        [JsonProperty("selectedDataAcquirers")]
+        public List<string> SelectedDataAcquirers { get; set; }
+
+        [JsonProperty("topicQuery")]
         public string TopicQuery { get; set; }
     }
 }

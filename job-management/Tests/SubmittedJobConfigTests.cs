@@ -24,7 +24,7 @@ namespace Tests
         //public async Task SubmittedJobConfigIntegrationTest()
         //{
         //    // Arrange
-        //    var componentRegistry = new ComponentRegistry();
+        //    var componentRegistry = new ComponentInMemoryRegistry();
             
         //    Assert.IsTrue(componentRegistry.AddOrUpdate(
         //        new ComponentRegistrationModel(
@@ -78,14 +78,14 @@ namespace Tests
         //        componentConfigNotifier,
         //        subscribedCompnentLogger.Object);
         //    var jobId = Guid.NewGuid();
-        //    var notification = new JobConfigUpdateNotification(
+        //    var notification = new JobConfigUpdateCommand(
         //        jobId,
         //        new List<string>() { "analyser_1", "analyser_2" },
         //        new List<string>() { "network_1", "network_2" },
         //        "Topic1 and Topic2");
 
         //    // Act
-        //    await subscribedComponentManager.PushJobConfigUpdateAsync(notification);
+        //    await subscribedComponentManager.StartJobAsync(notification);
             
         //    messageBrokerProducerMock.Verify(
         //        mbp => mbp.ProduceAsync(It.Is<string>(cn => cn == "j.c.a_1"),
