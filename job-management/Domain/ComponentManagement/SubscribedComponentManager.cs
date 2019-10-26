@@ -95,10 +95,22 @@ namespace Domain.ComponentManagement
         {
             try
             {
-                // TODO stop data acquirer
-
                 var jobConfig = await _jobConfigStorage.GetJobConfigAsync(jobId);
+                var notification = new DataAcquisitionConfigUpdateNotification
+                {
+                    JobId = jobId,
+                    Command = JobCommand.Stop.ToString()
+                };
 
+                foreach (var dataAcquirer in jobConfig.DataAcquirers)
+                {
+                    await NotifyComponent(dataAcquirer, notification);
+                }
+                foreach (var dataAnalyser in jobConfig.DataAnalysers)
+                {
+                    await NotifyComponent(dataAnalyser, notification);
+                }
+                
                 jobConfig.JobStatus = JobStatus.Stopped;
 
                 await _jobConfigStorage.UpdateJobConfig(jobConfig);
@@ -135,25 +147,30 @@ namespace Domain.ComponentManagement
                 OutputMessageBrokerChannels = outputChannels,
             };
 
-            foreach (var network in jobConfigUpdateCommand.DataAcquirers)
+            foreach (var dataAcquirer in jobConfigUpdateCommand.DataAcquirers)
             {
-                var dataSource = await _componentRegistry.GetComponentById(network);
+                await NotifyComponent(dataAcquirer, notification);
+            }
+        }
 
-                if (dataSource == null)
-                {
-                    const string errorMessage =
-                        "Data acquisition component '{componentName}' was not registered";
-                    _logger.LogError(errorMessage, network);
-                }
-                else
-                {
-                    _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
-                        network,
-                        JsonConvert.SerializeObject(notification));
-                    await _componentConfigUpdateNotifier.NotifyComponentAsync(
-                        dataSource.UpdateChannelName,
-                        notification);
-                }
+        private async Task NotifyComponent(string component, object notification)
+        {
+            var dataSource = await _componentRegistry.GetComponentById(component);
+
+            if (dataSource == null)
+            {
+                const string errorMessage =
+                    "Data acquisition component '{componentName}' was not registered";
+                _logger.LogError(errorMessage, component);
+            }
+            else
+            {
+                _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
+                    component,
+                    JsonConvert.SerializeObject(notification));
+                await _componentConfigUpdateNotifier.NotifyComponentAsync(
+                    dataSource.UpdateChannelName,
+                    notification);
             }
         }
 

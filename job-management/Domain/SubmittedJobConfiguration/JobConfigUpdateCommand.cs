@@ -5,7 +5,7 @@ namespace Domain.SubmittedJobConfiguration
 {
     public enum JobCommand
     {
-        New,Stop
+        Start,Stop
     }
 
     public enum JobStatus

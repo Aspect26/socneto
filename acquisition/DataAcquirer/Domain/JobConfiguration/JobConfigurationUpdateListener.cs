@@ -60,6 +60,11 @@ namespace Domain.JobConfiguration
                 throw new InvalidOperationException($"Could not parse job config {jre.Message}");
             }
 
+            if (jobConfig.Command == null)
+            {
+                throw new InvalidOperationException("Job notification was not processed. Empty command");
+            }
+
             // TODO separate constants
             var stopIdentifier = "stop";
             var startIdentifier = "start";
