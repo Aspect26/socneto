@@ -10,6 +10,7 @@ using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
+using Infrastructure.StaticData;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -32,8 +33,9 @@ namespace Api
             
             var app = new DataAcquisitionServiceWebApiBuilder(args)
                 .ConfigureSpecificOptions<RandomGeneratorOptions>("DataAcquisitionService:RandomGeneratorOptions")
-                .ConfigureSpecificOptions<StaticGeneratorOptions>("DataAcquisitionService:RandomGeneratorOptions")
-                .AddSingletonService<IDataAcquirer,StaticDataGeneratorAcquirer>()
+                .ConfigureSpecificOptions<StaticGeneratorOptions>("DataAcquisitionService:StaticGeneratorOptions")
+                .AddSingletonService<IStaticDataProvider, MovieDataProvider>()
+                .AddSingletonService<IDataAcquirer,StaticDataEnumerator>()
                 .BuildWebHost();
 
             await InitializeApplication(app);
