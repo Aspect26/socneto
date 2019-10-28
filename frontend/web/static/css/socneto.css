@@ -71,3 +71,11 @@
 text {
     font-family: "MPlus1";
 }
+.pie-chart .labels .label {
+    font-size: 1.0em;
+    font-weight: bold;
+}
+
+.pie-chart .labels .value {
+    font-size: 0.7em;
+}
