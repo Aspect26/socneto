@@ -58,20 +58,25 @@ class ChartComponent implements AfterChanges {
 
     try {
       chartDataPoints = await this._socnetoService.getChartData(this.jobId, this.chartDefinition);
-    } on HttpException catch(e){
+    } on HttpException {
       Toastr.error("Analysis", "Could not fetch analyses for chart");
       return;
     }
 
     this._transformDataPointsIntoChartData(chartDataPoints);
     // TODO: The charts needs to be created after this element was already created
-    Timer(Duration(milliseconds: 500), this._refreshGraph);
+    Timer(Duration(milliseconds: 500), this._redrawChart);
   }
 
   void _transformDataPointsIntoChartData(List<List<List<dynamic>>> chartDataPoints) {
     this.chartData = [];
-    if (this.chartDefinition.chartType == ChartType.Line) {
-      this._transformDataPointsIntoLineChartData(chartDataPoints);
+    switch (this.chartDefinition.chartType) {
+      case ChartType.Line:
+        this._transformDataPointsIntoLineChartData(chartDataPoints); break;
+      case ChartType.Pie:
+        this._transformDataPointsIntoLineChartData(chartDataPoints); break;
+      case ChartType.Scatter:
+        throw Exception("Scatter chart is not yet supported"); break;
     }
   }
 
@@ -97,7 +102,7 @@ class ChartComponent implements AfterChanges {
     }
   }
 
-  void _refreshGraph() {
+  void _redrawChart() {
     var dataSets = this.chartData;
     
     var jsonDataPathsExceptFirst = List.from(this.chartDefinition.jsonDataPaths);
@@ -106,7 +111,15 @@ class ChartComponent implements AfterChanges {
 
     var domSelector = "#${this.chartId}";
 
-    SocnetoCharts.createLineChart(domSelector, dataSets, dataLabels);
+    switch (this.chartDefinition.chartType) {
+      case ChartType.Line:
+        SocnetoCharts.createLineChart(domSelector, dataSets, dataLabels); break;
+      case ChartType.Pie:
+        SocnetoCharts.createPieChart(domSelector, dataSets, dataLabels); break;
+      case ChartType.Scatter:
+        throw Exception("Scatter chart is not yet supported");
+    }
+
   }
 
   Object _mapToJsObject(Map<dynamic,dynamic> a){

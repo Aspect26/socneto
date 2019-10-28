@@ -42,7 +42,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line)
+    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line),
+    ChartDefinition(["analyses/sentiment/polarity"], ChartType.Pie)
   ];
 
   Future<User> login(String username, String password) async =>
