@@ -44,7 +44,8 @@ class ChartComponent implements AfterChanges {
   @Input() String jobId;
   @Input() String chartId;
 
-  List<List<dynamic>> chartData = [];
+  List<List<dynamic>> lineChartData = [];
+  Map<String, num> pieChartData = {};
 
   ChartComponent(this._socnetoService);
 
@@ -69,53 +70,56 @@ class ChartComponent implements AfterChanges {
   }
 
   void _transformDataPointsIntoChartData(List<List<List<dynamic>>> chartDataPoints) {
-    this.chartData = [];
     switch (this.chartDefinition.chartType) {
       case ChartType.Line:
         this._transformDataPointsIntoLineChartData(chartDataPoints); break;
       case ChartType.Pie:
-        this._transformDataPointsIntoLineChartData(chartDataPoints); break;
+        this._transformDataPointsIntoPieChartData(chartDataPoints); break;
       case ChartType.Scatter:
         throw Exception("Scatter chart is not yet supported"); break;
     }
   }
 
   void _transformDataPointsIntoLineChartData(List<List<List<dynamic>>> chartDataPoints) {
+    this.lineChartData = [];
+
     for (var currentLineData in chartDataPoints) {
-      this.chartData.add([]);
+      this.lineChartData.add([]);
       for (var dataPointValue in currentLineData) {
         // TODO: what if 'x' axis is not date?
         var datetimeString = dataPointValue[0] as String;
         var date = DateTime.parse(datetimeString.substring(0, 26));
-        this.chartData.last.add({'x': date.toIso8601String(), 'y': dataPointValue[1]});
+        this.lineChartData.last.add({'x': date.toIso8601String(), 'y': dataPointValue[1]});
       }
 
-      this.chartData.last.sort((a, b) => (a['x'] as String).compareTo(b['x']));
+      this.lineChartData.last.sort((a, b) => (a['x'] as String).compareTo(b['x']));
     }
-
-    this._transformChartDataToJsObjects();
   }
 
-  void _transformChartDataToJsObjects() {
-    for (var index = 0; index < this.chartData.length; index++) {
-      this.chartData[index] = this.chartData[index].map((d) => _mapToJsObject(d)).toList();
+  void _transformDataPointsIntoPieChartData(List<List<List<dynamic>>> chartDataPoints) {
+    this.pieChartData = {};
+
+    var currentPieData = chartDataPoints[0];
+    for (var dataPointValue in currentPieData) {
+      var x = dataPointValue[0];
+      var y = dataPointValue[1];
+
+      this.pieChartData[x.toString()] = y;
     }
   }
 
   void _redrawChart() {
-    var dataSets = this.chartData;
-    
-    var jsonDataPathsExceptFirst = List.from(this.chartDefinition.jsonDataPaths);
-    jsonDataPathsExceptFirst.removeAt(0);
-    var dataLabels = jsonDataPathsExceptFirst.map((jsonDataPath) => jsonDataPath.split("/").last).toList();
-
     var domSelector = "#${this.chartId}";
 
     switch (this.chartDefinition.chartType) {
       case ChartType.Line:
-        SocnetoCharts.createLineChart(domSelector, dataSets, dataLabels); break;
+        var jsonDataPathsExceptFirst = List.from(this.chartDefinition.jsonDataPaths);
+        jsonDataPathsExceptFirst.removeAt(0);
+        List<String> labels = jsonDataPathsExceptFirst.map<String>((jsonDataPath) => jsonDataPath.split("/").last).toList();
+        
+        SocnetoCharts.createLineChart(domSelector, this.lineChartData, labels); break;
       case ChartType.Pie:
-        SocnetoCharts.createPieChart(domSelector, dataSets, dataLabels); break;
+        SocnetoCharts.createPieChart(domSelector, this.pieChartData); break;
       case ChartType.Scatter:
         throw Exception("Scatter chart is not yet supported");
     }
