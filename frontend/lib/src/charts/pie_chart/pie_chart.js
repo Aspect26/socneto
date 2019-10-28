@@ -11,7 +11,6 @@ class PieChart {
         "#948B3D"
     ];
 
-    _LEGEND_WIDTH = 150;
     _ELEMENT_HEIGHT = 450;
     _CHART_PADDING_VERTICAL = 20;
     _CHART_PADDING_HORIZONTAL = 10;
@@ -20,7 +19,7 @@ class PieChart {
         this._removeOld(selector);
 
         let elementWidth = document.getElementsByClassName("tab-content")[0].clientWidth;
-        let chartWidth = elementWidth - this._LEGEND_WIDTH - this._CHART_PADDING_HORIZONTAL;
+        let chartWidth = elementWidth - this._CHART_PADDING_HORIZONTAL;
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_VERTICAL;
 
         let radius = Math.min(chartWidth, chartHeight) / 2;
