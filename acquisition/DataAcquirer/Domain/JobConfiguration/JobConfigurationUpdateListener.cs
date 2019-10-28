@@ -16,7 +16,6 @@ namespace Domain.JobConfiguration
         private readonly IJobManager _jobManager;
         private readonly ILogger<JobConfigurationUpdateListener> _logger;
         private readonly string _updateChannelName;
-        public bool ConnectionEstablished { get; private set; } = false;
 
 
         public JobConfigurationUpdateListener(
@@ -33,16 +32,17 @@ namespace Domain.JobConfiguration
             _updateChannelName = componentOptionsAccessor.Value.UpdateChannelName;
         }
 
-        public void OnConnectionEstablished()
-        {
-            ConnectionEstablished = true;
-        }
         public Task ListenAsync(CancellationToken token)
         {
-            return _messageBrokerConsumer.ConsumeAsync(
-                _updateChannelName,
-                ProcessJobConfigAsync,
-                token);
+            while (true)
+
+            {
+                return _messageBrokerConsumer.ConsumeAsync(
+                    _updateChannelName,
+                    ProcessJobConfigAsync,
+                    token);
+
+            }
         }
 
         private async Task ProcessJobConfigAsync(string configJson)
