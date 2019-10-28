@@ -16,6 +16,7 @@ namespace ConsoleApi.Twitter
 {
     public class JobManipulationUseCase
     {
+        private readonly TwitterCredentialsOptions _twitterCredentials;
         private readonly IRegistrationService _registrationService;
         private readonly JobConfigurationUpdateListenerHostedService _jobConfigurationUpdateListenerHostedService;
         private readonly InteractiveConsumer _interactiveConsumer;
@@ -25,14 +26,15 @@ namespace ConsoleApi.Twitter
         public JobManipulationUseCase(
             IRegistrationService registrationService,
             IMessageBrokerConsumer interactiveConsumer,
+            IOptions<TwitterCredentialsOptions> twitterCredentialsOptionsAccessor,
             JobConfigurationUpdateListenerHostedService jobConfigurationUpdateListenerHostedService,
             IOptions<ComponentOptions> componentOptionsAccessor,
             ILogger<JobManipulationUseCase> logger)
         {
+            _twitterCredentials = twitterCredentialsOptionsAccessor.Value;
             _registrationService = registrationService;
             _jobConfigurationUpdateListenerHostedService = jobConfigurationUpdateListenerHostedService;
             _interactiveConsumer = interactiveConsumer as InteractiveConsumer;
-            
             _logger = logger;
             _componentOptions = componentOptionsAccessor.Value;
         }
@@ -40,15 +42,14 @@ namespace ConsoleApi.Twitter
 
         public async Task SimpleStartStop()
         {
-
             await _jobConfigurationUpdateListenerHostedService.StartAsync(CancellationToken.None);
 
-            await Register();            
+            await Register();
 
             var jobId = Guid.NewGuid();
 
             await StartJob(jobId);
-            await Task.Delay( TimeSpan.FromMinutes(1));
+            await Task.Delay(TimeSpan.FromMinutes(1));
             await StopJob(jobId);
             await _jobConfigurationUpdateListenerHostedService.StopAsync(CancellationToken.None);
 
@@ -56,11 +57,17 @@ namespace ConsoleApi.Twitter
 
         private async Task StartJob(Guid jobId)
         {
+            var attributes = new Dictionary<string, string>() {
+                {"TopicQuery","matfyz" },
+                { "ApiKey" , _twitterCredentials.ApiKey},
+                {"ApiSecretKey" , _twitterCredentials.ApiSecretKey},
+                {"AccessToken" ,_twitterCredentials.AccessToken},
+                {"AccessTokenSecret" , _twitterCredentials.AccessTokenSecret}
+            };
+            
             var dataAcquirerJobConfig = new DataAcquirerJobConfig()
             {
-                Attributes = new Dictionary<string, string>() {
-                    {"TopicQuery","matfyz" }
-                },
+                Attributes = attributes,
                 Command = "start",
                 OutputMessageBrokerChannels = new[] { "c1" },
                 JobId = jobId,
@@ -101,7 +108,7 @@ namespace ConsoleApi.Twitter
                     _logger.LogInformation("Sending registration request");
                     await _registrationService.Register(registrationRequest);
                     _logger.LogInformation(
-                        "Service {serviceName} register request sent", 
+                        "Service {serviceName} register request sent",
                         "DataAcquisitionService");
                     break;
                 }
