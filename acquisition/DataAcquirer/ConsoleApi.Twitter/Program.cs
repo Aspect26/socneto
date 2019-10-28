@@ -19,6 +19,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.JobManagement.Abstract;
+using Infrastructure.DataGenerator;
+using Infrastructure.StaticData;
 
 namespace ConsoleApi.Twitter
 {
@@ -28,40 +30,117 @@ namespace ConsoleApi.Twitter
         {
             MainAsync(args).GetAwaiter().GetResult();
         }
+
+
+        public static IServiceProvider Build()
+        {
+            var builder = new ConfigurationBuilder()
+                           .SetBasePath(Directory.GetCurrentDirectory())
+                           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (aspNetCoreEnv == "Development")
+            {
+                builder.AddJsonFile($"appsettings.Development.json", true, true);
+            }
+            var configuration = builder.Build();
+
+
+            var services = new ServiceCollection();
+            services.AddLogging(
+                logging => logging
+                .AddConsole()
+                .SetMinimumLevel(LogLevel.Information));
+
+            // add the framework services
+            services.AddSingleton<JobConfigurationUpdateListener>();
+            services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
+
+            services.AddTransient<IJobManager, JobManager>();
+
+            services.AddTransient<IRegistrationService, RegistrationService>();
+
+            // TODO change back to twitter
+            services.AddTransient<IStaticDataProvider, MovieDataProvider>();
+            services.AddTransient<IDataAcquirer, StaticDataEnumerator>();
+
+
+            services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
+
+            services.AddTransient<IMessageBrokerProducer, MockProducer>();
+            
+            services.AddSingleton<IMessageBrokerConsumer, InteractiveConsumer>();
+            services.AddSingleton<JobManipulationUseCase>();
+
+
+            ConfigureCommonOptions(configuration, services);
+
+
+            return services.BuildServiceProvider();
+        }
+
+
+
+        private static void ConfigureCommonOptions(IConfigurationRoot configuration, IServiceCollection services)
+        {
+            var rootName = "DataAcquisitionService";
+
+            services.AddOptions<ComponentOptions>()
+                .Bind(configuration.GetSection($"{rootName}:ComponentOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RegistrationRequestOptions>()
+                .Bind(configuration.GetSection($"{rootName}:RegistrationRequestOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<KafkaOptions>()
+                .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<TwitterCredentialsOptions>()
+                .Bind(configuration.GetSection($"Twitter:Credentials"))
+                .ValidateDataAnnotations();
+
+            // TODO Remove
+            services.AddOptions<StaticGeneratorOptions>()
+                .Bind(configuration.GetSection("DataAcquisitionService:StaticGeneratorOptions"))
+                .ValidateDataAnnotations();
+        }
+
         public static async Task MainAsync(string[] args)
         {
-            var builtProvider = new DataAcquisitionConsoleAppBuilder()
-                .AddTransientService<IDataAcquirer, TwitterDataAcqirer>()
-                .ConfigureSpecificOptions<TwitterCredentialsOptions>($"Twitter:Credentials")
-                .Build();
+            var builtProvider = Build();
 
-            var jobManager = builtProvider.GetRequiredService<IJobManager>();
+            var uc = builtProvider.GetRequiredService<JobManipulationUseCase>();
 
-            var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
+            await uc.SimpleStartStop();
 
-            var jobConfig = new DataAcquirerJobConfig()
-            {
-                Attributes = new Dictionary<string, string>
-                {
-                    {"TopicQuery", "capi hnizdo" },
-                    {"AccessToken", twitterCredentialsOptions.Value.AccessToken},
-                    {"AccessTokenSecret" , twitterCredentialsOptions.Value.AccessTokenSecret},
-                    {"ApiKey",  twitterCredentialsOptions.Value.ApiKey},
-                    {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
-                },
-                JobId = Guid.NewGuid(),
-                OutputMessageBrokerChannels = new string[] { "MOCK-Post-output" }
-            };
-            try
-            {
-                await jobManager.StartNewJobAsync(jobConfig);
-            }
-            catch
-            {
+            //var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
-            }
+            //var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
+
+            //var jobConfig = new DataAcquirerJobConfig()
+            //{
+            //    Attributes = new Dictionary<string, string>
+            //    {
+            //        {"TopicQuery", "capi hnizdo" },
+            //        {"AccessToken", twitterCredentialsOptions.Value.AccessToken},
+            //        {"AccessTokenSecret" , twitterCredentialsOptions.Value.AccessTokenSecret},
+            //        {"ApiKey",  twitterCredentialsOptions.Value.ApiKey},
+            //        {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
+            //    },
+            //    JobId = Guid.NewGuid(),
+            //    OutputMessageBrokerChannels = new string[] { "MOCK-Post-output" }
+            //};
+            //try
+            //{
+            //    await jobManager.StartNewJobAsync(jobConfig);
+            //}
+            //catch
+            //{
+
+            //}
 
             await Task.Delay(TimeSpan.FromHours(1));
-        }        
+        }
     }
 }

@@ -35,16 +35,8 @@ namespace Api
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
             await RegisterComponent(app, logger);
-
-            StartListeningToJobConfigs(app);
         }
-
-        private static void StartListeningToJobConfigs(IWebHost app)
-        {
-            var jobConfigurationUpdateListener = app.Services
-                .GetRequiredService<JobConfigurationUpdateListener>();
-            jobConfigurationUpdateListener.OnConnectionEstablished();
-        }
+        
 
         private static async Task RegisterComponent(IWebHost app, ILogger<Program> logger)
         {

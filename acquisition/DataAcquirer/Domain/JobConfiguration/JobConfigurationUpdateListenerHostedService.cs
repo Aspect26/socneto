@@ -22,22 +22,14 @@ namespace Domain.JobConfiguration
             _jobConfigurationUpdateListener = jobConfigurationUpdateListener;
             _logger = logger;
         }
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Service {serviceName} started",
                 nameof(JobConfigurationUpdateListenerHostedService));
-
-            // wait until this module gets registered
-            while (!_jobConfigurationUpdateListener.ConnectionEstablished)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            }
-
+            
             _listenTask = _jobConfigurationUpdateListener.ListenAsync(_cancellationTokenSource.Token);
+
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
