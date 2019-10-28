@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.StaticData
 {
-    public class StaticGeneratorOptions
+    public class StaticDataOptions
     {
         [Required]
         public TimeSpan DownloadDelay { get; set; }
@@ -11,5 +11,6 @@ namespace Infrastructure.StaticData
         [Required]
 
         public string StaticDataPath { get; set; }
+        
     }
 }

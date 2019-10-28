@@ -50,19 +50,15 @@ namespace ConsoleApi.Twitter
                 logging => logging
                 .AddConsole()
                 .SetMinimumLevel(LogLevel.Information));
-
-            // add the framework services
+            
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
 
             services.AddTransient<IJobManager, JobManager>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
-
-            // TODO change back to twitter
-            services.AddTransient<IStaticDataProvider, MovieDataProvider>();
-            services.AddTransient<IDataAcquirer, StaticDataEnumerator>();
-
+            
+            services.AddTransient<IDataAcquirer, TwitterDataAcqirer>();
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
@@ -98,11 +94,6 @@ namespace ConsoleApi.Twitter
 
             services.AddOptions<TwitterCredentialsOptions>()
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
-                .ValidateDataAnnotations();
-
-            // TODO Remove
-            services.AddOptions<StaticGeneratorOptions>()
-                .Bind(configuration.GetSection("DataAcquisitionService:StaticGeneratorOptions"))
                 .ValidateDataAnnotations();
         }
 

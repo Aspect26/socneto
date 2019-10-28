@@ -20,7 +20,7 @@ namespace Infrastructure.DataGenerator
 
         public StaticDataEnumerator(
             IStaticDataProvider dataProvider,
-            IOptions<StaticGeneratorOptions> randomGenratorOptionsAccessor)
+            IOptions<StaticDataOptions> randomGenratorOptionsAccessor)
         {
             _dataProvider = dataProvider;
             _downloadSimulatedDelay = randomGenratorOptionsAccessor.Value.DownloadDelay;

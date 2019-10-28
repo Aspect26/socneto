@@ -28,7 +28,7 @@ namespace Api
             
             var app = new DataAcquisitionServiceWebApiBuilder(args)
                 .ConfigureSpecificOptions<RandomGeneratorOptions>("DataAcquisitionService:RandomGeneratorOptions")
-                .ConfigureSpecificOptions<StaticGeneratorOptions>("DataAcquisitionService:StaticGeneratorOptions")
+                .ConfigureSpecificOptions<StaticDataOptions>("DataAcquisitionService:StaticGeneratorOptions")
                 .AddSingletonService<IStaticDataProvider, MovieDataProvider>()
                 .AddSingletonService<IDataAcquirer,StaticDataEnumerator>()
                 .BuildWebHost();

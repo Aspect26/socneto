@@ -8,9 +8,8 @@ namespace Domain.Model
 
         public string Query { get; set; }
         public Guid JobId { get; set; }
-
-
-        public ulong? FromId { get; set; }
+        
+        public ulong FromId { get; set; }
         public int NumberOfPostToRetrieve { get; set; }
     }
 }

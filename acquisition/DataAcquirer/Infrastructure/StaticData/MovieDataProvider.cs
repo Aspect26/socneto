@@ -15,7 +15,7 @@ namespace Infrastructure.DataGenerator
         private CsvReader _csvReader;
 
         public MovieDataProvider(
-            IOptions<StaticGeneratorOptions> staticGeneratorOptionsAccessor)
+            IOptions<StaticDataOptions> staticGeneratorOptionsAccessor)
         {
             _staticDataPath = staticGeneratorOptionsAccessor.Value.StaticDataPath;
         }

@@ -108,6 +108,10 @@ namespace Domain.JobManagement
                         cancellationToken);
                     fromIdPagingParameter = data.MaxId;
 
+                    if( !data.Posts.Any())
+                    {
+                        _logger.LogWarning("No posts were returned");
+                    }
                     foreach (var dataPost in data.Posts)
                     {
                         var jsonData = JsonConvert.SerializeObject(dataPost);
