@@ -5,7 +5,9 @@ import 'package:js/js.dart';
 
 typedef ChartsFn = Function(String selector, List dataSets, List dataLabels);
 
+@JS()
 class ChartsInterface {
+  @JS()
   external ChartsFn get createLineChart;
 }
 
