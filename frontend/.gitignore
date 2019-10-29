@@ -28,3 +28,7 @@ doc/api/
 
 # CUSTOM
 dev_scripts/
+
+# Built files
+/web/static/css/
+/web/static/js/
