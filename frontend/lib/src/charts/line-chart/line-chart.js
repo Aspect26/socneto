@@ -46,23 +46,23 @@ class LineChart {
 
     _createXScale(dataSets, width) {
         return d3.scaleTime()
-            .domain(d3.extent(dataSets.flat(), function(datum) { return new Date(datum.date); }))
+            .domain(d3.extent(dataSets.flat(), function(datum) { return new Date(datum.x); }))
             .range([0, width]);
     }
 
     _createYScale(dataSets, height) {
         return d3.scaleLinear()
-            .domain(d3.extent(dataSets.flat(), function(datum) { return datum.value; }))
+            .domain(d3.extent(dataSets.flat(), function(datum) { return datum.y; }))
             .range([height, 0]);
     }
 
     _createChartCurve(xScale, yScale) {
         return d3.line()
             .x(function (datum, _) {
-                return xScale(new Date(datum.date));
+                return xScale(new Date(datum.x));
             })
             .y(function (datum) {
-                return yScale(datum.value);
+                return yScale(datum.y);
             });
     }
 
@@ -178,7 +178,7 @@ class LineChart {
             let previousDatum = null;
             for (let j = 0; j < dataSet.length; j++) {
                 let datum = dataSet[j];
-                if (new Date(datum.date) > x) {
+                if (new Date(datum.x) > x) {
                     let currentValue = datum.value;
                     if (previousDatum != null) {
                         currentValue = this._interpolateValue(x, previousDatum, datum);
@@ -199,19 +199,14 @@ class LineChart {
 
     _interpolateValue(currentX, previousDatum, nextDatum) {
         let xTimeMillis = currentX.getTime();
-        let previousTimeMillis = new Date(previousDatum.date).getTime();
-        let nextTimeMillis = new Date(nextDatum.date).getTime();
+        let previousTimeMillis = new Date(previousDatum.x).getTime();
+        let nextTimeMillis = new Date(nextDatum.x).getTime();
         let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
 
-        let valuesDiff = nextDatum.value - previousDatum.value;
+        let valuesDiff = nextDatum.y - previousDatum.y;
         let valueInterpolation = positionBetween * valuesDiff;
 
-        return previousDatum.value + valueInterpolation;
+        return previousDatum.y + valueInterpolation;
     }
 
-}
-
-function createLineChart(selector, datasets, datalabels) {
-    let lineChart = new LineChart();
-    lineChart.create(selector, datasets, datalabels);
 }

@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:js';
+import 'package:js/js_util.dart' as js;
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
+import 'package:sw_project/src/interop/socneto_charts.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -81,10 +82,18 @@ class ChartComponent implements AfterChanges {
         // TODO: what if 'x' axis is not date?
         var datetimeString = dataPointValue[0] as String;
         var date = DateTime.parse(datetimeString.substring(0, 26));
-        this.chartData.last.add({'date': date.toIso8601String(), 'value': dataPointValue[1]});
+        this.chartData.last.add({'x': date.toIso8601String(), 'y': dataPointValue[1]});
       }
 
-      this.chartData.last.sort((a, b) => (a['date'] as String).compareTo(b['date']));
+      this.chartData.last.sort((a, b) => (a['x'] as String).compareTo(b['x']));
+    }
+
+    this._transformChartDataToJsObjects();
+  }
+
+  void _transformChartDataToJsObjects() {
+    for (var index = 0; index < this.chartData.length; index++) {
+      this.chartData[index] = this.chartData[index].map((d) => _mapToJsObject(d)).toList();
     }
   }
 
@@ -93,11 +102,21 @@ class ChartComponent implements AfterChanges {
     
     var jsonDataPathsExceptFirst = List.from(this.chartDefinition.jsonDataPaths);
     jsonDataPathsExceptFirst.removeAt(0);
-    var dataLabels = jsonDataPathsExceptFirst.map((jsonDataPath) => jsonDataPath.split("/").last);
+    var dataLabels = jsonDataPathsExceptFirst.map((jsonDataPath) => jsonDataPath.split("/").last).toList();
 
-    // TODO: make custom JS library from the graph-line-chart and interop it at least
     var domSelector = "#${this.chartId}";
-    context.callMethod('createLineChart', [domSelector, JsObject.jsify(dataSets), JsObject.jsify(dataLabels)]);
+
+    SocnetoCharts.createLineChart(domSelector, dataSets, dataLabels);
+  }
+
+  Object _mapToJsObject(Map<dynamic,dynamic> a){
+    var object = js.newObject();
+    a.forEach((k, v) {
+      var key = k;
+      var value = v;
+      js.setProperty(object, key, value);
+    });
+    return object;
   }
 
 }
