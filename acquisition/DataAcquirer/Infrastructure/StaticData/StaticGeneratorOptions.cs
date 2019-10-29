@@ -1,16 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.DataGenerator
+namespace Infrastructure.StaticData
 {
-    public class StaticGeneratorOptions
+    public class StaticDataOptions
     {
         [Required]
         public TimeSpan DownloadDelay { get; set; }
-        [Required]
-        public int Seed { get; set; }
+        
         [Required]
 
         public string StaticDataPath { get; set; }
+        
     }
 }
