@@ -9,25 +9,15 @@ using System.Threading.Tasks;
 using Domain.Abstract;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
+using Domain.JobManagement.Abstract;
 using Domain.Model;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Domain.JobManagement
 {
-    public interface IJobManager
+    public class JobManager : IJobManager, IDisposable
     {
-        Task StartDownloadingAsync(DataAcquirerJobConfig jobConfig);
-    }
-    public class JobManager : IJobManager
-    {
-        private class JobManagerJobRecord
-        {
-            public Guid JobId { get; set; }
-            public Task JobTask { get; set; }
-            public CancellationTokenSource CancellationTokenSource { get; set; }
-        }
-
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
         private readonly ILogger<JobManager> _logger;
@@ -49,11 +39,16 @@ namespace Domain.JobManagement
             _logger = logger;
         }
 
-
-        public Task StartDownloadingAsync(DataAcquirerJobConfig jobConfig)
+        public Task StartNewJobAsync(DataAcquirerJobConfig jobConfig)
         {
             lock (_dictionaryLock)
             {
+                //if (_runningJobsRecords.ContainsKey(jobConfig.JobId))
+                //{
+
+                //}
+
+
                 var jobId = jobConfig.JobId;
                 if (_isStopping)
                 {
@@ -65,7 +60,7 @@ namespace Domain.JobManagement
                 _logger.LogInformation("Config recieved {config}", json);
 
                 var cancellationTokenSource = new CancellationTokenSource();
-                var downloadingTask = StartJobAsync(jobConfig, cancellationTokenSource.Token).
+                var downloadingTask = RunJobAsync(jobConfig, cancellationTokenSource.Token).
                     ContinueWith(async r =>
                         {
                             try
@@ -91,7 +86,7 @@ namespace Domain.JobManagement
             }
         }
 
-        private async Task StartJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken)
+        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken)
         {
             try
             {
@@ -112,7 +107,11 @@ namespace Domain.JobManagement
                         dataAcquirerInputModel,
                         cancellationToken);
                     fromIdPagingParameter = data.MaxId;
-                    
+
+                    if( !data.Posts.Any())
+                    {
+                        _logger.LogWarning("No posts were returned");
+                    }
                     foreach (var dataPost in data.Posts)
                     {
                         var jsonData = JsonConvert.SerializeObject(dataPost);
@@ -138,7 +137,29 @@ namespace Domain.JobManagement
             }
         }
 
-        public async Task StopDownloadingTasks()
+        public async Task StopJobAsync(Guid jobId)
+        {
+            if (!_runningJobsRecords.TryGetValue(jobId, out var jobRecord))
+            {
+                var error = "Could not stop non existing job: {jobId}";
+                _logger.LogError(error,jobId);
+                throw new InvalidOperationException(string.Format(error,jobId));
+            }
+
+            jobRecord.CancellationTokenSource.Cancel();
+            try
+            {
+                await jobRecord.JobTask;
+            }
+            catch (TaskCanceledException)
+            {
+                // intentionally emptyy
+            }
+
+            _runningJobsRecords.Remove(jobId);
+        }
+
+        public async Task StopAllJobsAsync()
         {
             // TODO handle concurency
             lock (_dictionaryLock)
@@ -163,6 +184,10 @@ namespace Domain.JobManagement
         }
 
 
+        public void Dispose()
+        {
+            // TODO dispose the jobs
+        }
     }
 
 

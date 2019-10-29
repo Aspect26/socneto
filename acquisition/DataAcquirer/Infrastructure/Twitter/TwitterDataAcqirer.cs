@@ -42,10 +42,14 @@ namespace Infrastructure.Twitter
                     .Select(r => FromStatus(acquirerInputModel, r))
                     .ToList();
 
+                var maxId = search.Statuses.Any() 
+                    ? search.Statuses.Min(status => status.StatusID) - 1
+                    : acquirerInputModel.FromId;
+
                 return new DataAcquirerOutputModel()
                 {
                     Posts = searchResponse,
-                    MaxId = search.Statuses.Min(status => status.StatusID) - 1
+                    MaxId = maxId
                 };
             }
             catch (Exception)
@@ -57,18 +61,17 @@ namespace Infrastructure.Twitter
         private async Task<Search> GetStatusBatch(DataAcquirerInputModel acquirerInputModel)
         {
             string searchTerm = acquirerInputModel.Query;
-
-            var sinceId = acquirerInputModel.FromId.HasValue ? acquirerInputModel.FromId : 1;
-
+            
             var combinedSearchResults = new List<Status>();
 
-
+            ulong sinceId = 1;
             return await _twitterContext.Search
                 .Where(search => search.Type == SearchType.Search &&
                        search.Query == searchTerm &&
                        search.Count == acquirerInputModel.NumberOfPostToRetrieve &&
+                       search.MaxID == acquirerInputModel.FromId &&
                        search.SinceID == sinceId &&
-                       search.TweetMode == TweetMode.Extended)
+                       search.TweetMode == TweetMode.Compat)
                 .SingleOrDefaultAsync();
         }
 
