@@ -4,8 +4,7 @@ library toastr_interop;
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
-typedef ToastrNotificationFn = Function(String message,
-      [String title, dynamic options]);
+typedef ToastrNotificationFn = Function(String message, [String title, dynamic options]);
 
 @JS()
 class ToastrInterface {
