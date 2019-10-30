@@ -72,6 +72,7 @@ class LineChart {
             .append("svg")
             .attr("width", width)
             .attr("height", this._ELEMENT_HEIGHT)
+            .attr("class", "line-chart")
             .append("g")
     }
 
