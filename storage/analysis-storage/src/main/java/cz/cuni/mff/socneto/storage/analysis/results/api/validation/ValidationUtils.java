@@ -1,4 +1,4 @@
-package cz.cuni.mff.socneto.storage.analysis.results.data.validation;
+package cz.cuni.mff.socneto.storage.analysis.results.api.validation;
 
 import lombok.experimental.UtilityClass;
 

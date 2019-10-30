@@ -8,6 +8,9 @@ namespace Domain.Models
     {
         [JsonProperty("jobId")]
         public Guid  JobId { get; set; }
+        
+        [JsonProperty("command")]
+        public string Command { get; set; }
 
         [JsonProperty("attributes")]
         public Dictionary<string, string> Attributes { get; set; }

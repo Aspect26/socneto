@@ -5,6 +5,7 @@ using Domain;
 using Domain.Abstract;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
+using Domain.JobManagement.Abstract;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
@@ -20,7 +21,7 @@ namespace Application
     public class DataAcquisitionServiceWebApiBuilder
     {
 
-        private List<Action<IServiceCollection, IConfiguration>> _configurationActions
+        private readonly List<Action<IServiceCollection, IConfiguration>> _configurationActions
             = new List<Action<IServiceCollection, IConfiguration>>();
         private readonly List<Action<IServiceCollection>> _transientServices =
             new List<Action<IServiceCollection>>();
@@ -35,16 +36,16 @@ namespace Application
 
         public DataAcquisitionServiceWebApiBuilder ConfigureSpecificOptions<T>(string sectionName) where T : class
         {
-            void configurationAction(IServiceCollection sc, IConfiguration c)
+            void ConfigurationAction(IServiceCollection serviceCollectino, IConfiguration c)
             {
                 var sec = c.GetSection(sectionName);
                 
-                OptionsServiceCollectionExtensions.AddOptions<T>(sc)
+                serviceCollectino.AddOptions<T>()
                     .Bind(sec)
                     .ValidateDataAnnotations();
             }
 
-            _configurationActions.Add(configurationAction);
+            _configurationActions.Add(ConfigurationAction);
 
             return this;
         }
@@ -66,12 +67,12 @@ namespace Application
             where TAbstract : class
             where TConcrete : class, TAbstract
         {
-            void addTransientServiceAction(IServiceCollection sp)
+            void AddTransientServiceAction(IServiceCollection sp)
             {
                 sp.AddTransient<TAbstract, TConcrete>();
             }
 
-            _transientServices.Add(addTransientServiceAction);
+            _transientServices.Add(AddTransientServiceAction);
             return this;
         }
 

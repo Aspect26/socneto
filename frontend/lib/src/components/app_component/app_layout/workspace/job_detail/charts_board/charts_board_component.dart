@@ -6,7 +6,7 @@ import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
-import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart/chart_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';

@@ -36,7 +36,6 @@ namespace Infrastructure.DataGenerator
 
             if (consumeTopic == _consumedTopic)
             {
-
                 var attributes = _customAttributes.ToDictionary(r => r.Key,r=>r.Value);
                 attributes.Add("TopicQuery", _topicQuery);
 
@@ -44,9 +43,11 @@ namespace Infrastructure.DataGenerator
                 {
                     JobId = Guid.NewGuid(),
                     Attributes =attributes,
+                    Command ="start",
                     OutputMessageBrokerChannels = new string[] { "s1" }
                 };
 
+                
                 var json = JsonConvert.SerializeObject(config);
                 await onRecieveAction(json);
                 await Task.Delay(TimeSpan.FromSeconds(10));
