@@ -59,7 +59,7 @@ namespace ConsoleApi.Twitter
         {
             var attributes = new Dictionary<string, string>() {
                 {"TopicQuery","matfyz" },
-                { "ApiKey" , _twitterCredentials.ApiKey},
+                {"ApiKey" , _twitterCredentials.ApiKey},
                 {"ApiSecretKey" , _twitterCredentials.ApiSecretKey},
                 {"AccessToken" ,_twitterCredentials.AccessToken},
                 {"AccessTokenSecret" , _twitterCredentials.AccessTokenSecret}
