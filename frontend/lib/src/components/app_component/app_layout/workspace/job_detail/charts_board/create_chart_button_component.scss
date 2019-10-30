@@ -12,6 +12,20 @@
 
   create-chart-button {
 
+    display: block;
+
+    &.highlight {
+      background-color: get-color($primary, A200);
+
+      .create-chart-button-wrapper:hover {
+        background-color:  get-color($primary, 100);
+      }
+
+      .create-chart-button-wrapper:active {
+        background-color: get-color($primary, 200);
+      }
+    }
+
     .create-chart-button-wrapper {
       display: flex;
       height: 200px;

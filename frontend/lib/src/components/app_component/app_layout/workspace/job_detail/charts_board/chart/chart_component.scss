@@ -9,10 +9,13 @@
 
   chart {
 
+    display: block;
     position: relative;
 
-    .wrapper {
+    &.highlight {
+      background-color: get-color($primary, A200);
     }
+
   }
 
 }

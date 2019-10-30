@@ -2,7 +2,8 @@
        id="i{{ i }}"
        [chartDefinition]="chartDefinition"
        [jobId]="job.id"
+       [ngClass]="{ 'highlight': i % 2 == 0 }"
        chartId="i{{ i }}">
 </chart>
 
-<create-chart-button [job]="job"></create-chart-button>
+<create-chart-button [ngClass]="{ 'highlight': chartDefinitions.length % 2 == 0 }" [job]="job"></create-chart-button>

@@ -54,16 +54,16 @@ import 'package:sw_project/src/models/Post.dart';
 )
 class PostsListComponent implements OnChanges {
 
-    static const int _PAGE_SIZE = 20;
+    static const int PAGE_SIZE = 20;
 
     @Input() List<Post> posts = [];
     List<Post> displayedPosts = [];
 
-    Paginator paginator = Paginator(0, 0, _PAGE_SIZE);
+    Paginator paginator = Paginator(0, 0, PAGE_SIZE);
 
     @override
     void ngOnChanges(Map<String, SimpleChange> changes) {
-        this.paginator = Paginator(this.posts.length, this.paginator.currentPage, _PAGE_SIZE);
+        this.paginator = Paginator(this.posts.length, this.paginator.currentPage, PAGE_SIZE);
         this._updateDisplayedPosts();
     }
 
