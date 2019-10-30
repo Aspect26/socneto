@@ -35,6 +35,7 @@ class LineChart {
         for (let index = 0; index < dataSets.length; ++index) {
             let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
             this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve, index);
+            this._createChartLegend(svg, dataSets[index], dataLabels[index], color, curve, index);
         }
 
         this._createMouseHoverDivs(background, selector, xScale, dataSets, dataLabels);
@@ -71,6 +72,7 @@ class LineChart {
             .append("svg")
             .attr("width", width)
             .attr("height", this._ELEMENT_HEIGHT)
+            .attr("class", "line-chart")
             .append("g")
     }
 
@@ -102,7 +104,9 @@ class LineChart {
             .style('stroke', color)
             .attr("transform", "translate(" + this._LEGEND_WIDTH + ", 0)")
             .attr("d", curve);
+    }
 
+    _createChartLegend(svg, dataSet, dataLabel, color, curve, index) {
         let legend = svg.append("g").attr("transform", "translate(0, " + 30 + ")").attr("class", "legend-entry");
         legend.append("circle").attr("cx", 10).attr("cy", index * 20).attr("r", 6).style("fill", color);
         legend.append("text").attr("x", 20).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");

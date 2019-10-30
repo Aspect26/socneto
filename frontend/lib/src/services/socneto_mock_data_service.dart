@@ -42,7 +42,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line)
+    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line),
+    ChartDefinition(["analyses/sentiment/polarity/aggregate"], ChartType.Pie)
   ];
 
   Future<User> login(String username, String password) async =>
@@ -58,10 +59,34 @@ class SocnetoMockDataService extends SocnetoDataService {
     Future.value([]);
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    return Future.value([
-      [["2019-10-23T10:01:46.2458271+00:00", 1],    ["2019-10-23T10:00:46.2458271+00:00", 0],    ["2019-10-23T09:59:46.2458271+00:00", 0],    ["2019-10-23T09:58:46.2458271+00:00", 1],    ["2019-10-23T09:57:46.2458271+00:00", 0]],
-      [["2019-10-23T10:01:46.2458271+00:00", 0.98], ["2019-10-23T10:00:46.2458271+00:00", 0.95], ["2019-10-23T09:59:46.2458271+00:00", 0.99], ["2019-10-23T09:58:46.2458271+00:00", 0.93], ["2019-10-23T09:57:46.2458271+00:00", 0.9]]
-    ]);
+    if (chartDefinition.chartType == ChartType.Line) {
+      return Future.value([
+        [
+          ["2019-10-23T10:01:46.2458271+00:00", 1],
+          ["2019-10-23T10:00:46.2458271+00:00", 0],
+          ["2019-10-23T09:59:46.2458271+00:00", 0],
+          ["2019-10-23T09:58:46.2458271+00:00", 1],
+          ["2019-10-23T09:57:46.2458271+00:00", 0]
+        ],
+        [
+          ["2019-10-23T10:01:46.2458271+00:00", 0.98],
+          ["2019-10-23T10:00:46.2458271+00:00", 0.95],
+          ["2019-10-23T09:59:46.2458271+00:00", 0.99],
+          ["2019-10-23T09:58:46.2458271+00:00", 0.93],
+          ["2019-10-23T09:57:46.2458271+00:00", 0.9]
+        ]
+      ]);
+    } else if (chartDefinition.chartType == ChartType.Pie) {
+      return Future.value([
+        [
+          [1, 53],
+          [-1, 23],
+          [0, 42]
+        ]
+      ]);
+    } else {
+      return null;
+    }
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
