@@ -33,6 +33,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
 
     NgFor,
     NgIf,
+    NgClass,
   ],
   templateUrl: 'charts_board_component.html',
   styleUrls: ['charts_board_component.css'],

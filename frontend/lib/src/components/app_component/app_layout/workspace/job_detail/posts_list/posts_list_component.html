@@ -1,4 +1,4 @@
-<paginator [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+<paginator *ngIf="posts.length > PAGE_SIZE" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
 <material-expansionpanel *ngFor="let post of displayedPosts"
                          expandIcon="comment"
@@ -12,4 +12,4 @@
 
 </material-expansionpanel>
 
-<paginator [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+<paginator *ngIf="posts.length > PAGE_SIZE" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
