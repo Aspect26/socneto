@@ -113,10 +113,7 @@ class ChartComponent implements AfterChanges {
 
     switch (this.chartDefinition.chartType) {
       case ChartType.Line:
-        var jsonDataPathsExceptFirst = List.from(this.chartDefinition.jsonDataPaths);
-        jsonDataPathsExceptFirst.removeAt(0);
-        List<String> labels = jsonDataPathsExceptFirst.map<String>((jsonDataPath) => jsonDataPath.split("/").last).toList();
-        
+        List<String> labels = this.getLineChartLabels();
         SocnetoCharts.createLineChart(domSelector, this.lineChartData, labels); break;
       case ChartType.Pie:
         SocnetoCharts.createPieChart(domSelector, this.pieChartData); break;
@@ -126,14 +123,9 @@ class ChartComponent implements AfterChanges {
 
   }
 
-  Object _mapToJsObject(Map<dynamic,dynamic> a){
-    var object = js.newObject();
-    a.forEach((k, v) {
-      var key = k;
-      var value = v;
-      js.setProperty(object, key, value);
-    });
-    return object;
+  List<String> getLineChartLabels() {
+    var jsonDataPathsExceptFirst = this.chartDefinition.jsonDataPaths.sublist(1);
+    return jsonDataPathsExceptFirst.map<String>((jsonDataPath) => jsonDataPath.split("/").last).toList();
   }
 
 }
