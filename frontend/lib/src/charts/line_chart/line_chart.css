@@ -1,4 +1,4 @@
-.line {
+.line-chart .line {
     fill: none;
     stroke-width: 2px;
 
@@ -6,35 +6,35 @@
     transition: stroke-width 0.1s ease-in;
 }
 
-.line:hover {
+.line-chart .line:hover {
     stroke-width: 4px;
     transition: stroke-width 0.1s ease-out;
 }
 
-.line.selected {
+.line-chart .line.selected {
     stroke-width: 4px;
     transition: stroke-width 0.1s ease-out;
 }
 
-.legend-entry {
+.line-chart .legend-entry {
     cursor: pointer;
 }
 
-.legend-entry.selected {
+.line-chart .legend-entry.selected {
     font-weight: bold;
 }
 
-.overlay {
+.line-chart .overlay {
     fill: none;
     pointer-events: all;
 }
 
-.dot {
+.line-chart .dot {
     fill: #ffab00;
     stroke: #fff;
 }
 
-.focus circle {
+.line-chart .focus circle {
     fill: none;
     stroke: steelblue;
 }
