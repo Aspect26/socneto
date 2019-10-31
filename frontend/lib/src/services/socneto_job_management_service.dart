@@ -14,9 +14,9 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
 
   Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async {
     var data = {
-      "TopicQuery": query,
-      "SelectedAnalysers": analyzers.map((analyzer) => analyzer.identifier).toList(),
-      "SelectedNetworks": networks.map((network) => network.identifier).toList(),
+      "topicQuery": query,
+      "selectedDataAnalysers": analyzers.map((analyzer) => analyzer.identifier).toList(),
+      "selectedDataAcquirers": networks.map((network) => network.identifier).toList(),
     };
 
     if (twitterCredentials != null) {
