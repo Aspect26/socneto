@@ -1,5 +1,6 @@
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Credentials.dart';
+import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
@@ -61,7 +62,13 @@ class SocnetoService {
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       await this._dataService.getAvailableAnalyzers();
 
-  Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async =>
+  Future<JobStatus> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async =>
       await this._job_management_service.submitNewJob(query, networks, analyzers, twitterCredentials);
+  Future<JobStatus> stopJob(String jobId) async =>
+      await this._job_management_service.stopJob(jobId);
+  Future<JobStatus> pauseJob(String jobId) async =>
+      await this._job_management_service.pauseJob(jobId);
+  Future<JobStatus> resumeJob(String jobId) async =>
+      await this._job_management_service.resumeJob(jobId);
 
 }

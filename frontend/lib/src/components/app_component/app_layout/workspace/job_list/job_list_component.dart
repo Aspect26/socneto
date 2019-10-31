@@ -10,6 +10,8 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
+import 'package:sw_project/src/interop/toastr.dart';
+import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -74,14 +76,34 @@ class JobListComponent implements AfterChanges {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
   }
 
-  void pauseJob(Job job) {
-    // TODO: do this on backend/jms ofc
-    job.isRunning = false;
+  void pauseJob(Job job) async {
+    try {
+      final jobStatus = await this._socnetoService.pauseJob(job.id);
+      this._setJobStatus(job, jobStatus);
+    } on HttpException catch (e){
+      Toastr.error("Job pause", "Unable to pause job");
+      print(e);
+    }
   }
 
-  void startJob(Job job) {
-    // TODO: do this on backend/jms ofc
-    job.isRunning = true;
+  void resumeJob(Job job) async {
+    try {
+      final jobStatus = await this._socnetoService.resumeJob(job.id);
+      this._setJobStatus(job, jobStatus);
+    } on HttpException catch (e){
+      Toastr.error("Job resume", "Unable to resume job");
+      print(e);
+    }
+  }
+
+  void stopJob(Job job) async {
+    try {
+      final jobStatus = await this._socnetoService.stopJob(job.id);
+      this._setJobStatus(job, jobStatus);
+    } on HttpException catch (e){
+      Toastr.error("Job stop", "Unable to stop job");
+      print(e);
+    }
   }
 
   String getProcessingTime(Job job) {
@@ -108,10 +130,10 @@ class JobListComponent implements AfterChanges {
     this._updateDisplayedJobs();
   }
 
-  void onCreateJobSubmit(String newJobId) async {
+  void onCreateJobSubmit(JobStatus jobStatus) async {
     this.createJobModal.close();
     await this._loadData();
-    this.selectJob(newJobId);
+    this.selectJob(jobStatus.jobId);
   }
 
   void _loadData() async {
@@ -140,6 +162,10 @@ class JobListComponent implements AfterChanges {
     } catch (error) {
       this.selectedJob = null;
     }
+  }
+
+  void _setJobStatus(Job job, JobStatus jobStatus) {
+    job.isRunning = jobStatus.status == JobStatusCode.Running;
   }
 
   void _updateDisplayedJobs() {
