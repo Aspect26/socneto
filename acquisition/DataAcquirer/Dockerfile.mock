@@ -17,6 +17,8 @@ RUN dotnet build "WebApi.StaticData.csproj" -c Release -o /app
 FROM build AS publish
 RUN dotnet publish "WebApi.StaticData.csproj" -c Release -o /app
 
+COPY ["WebApi.StaticData/movie_tweets_emo.csv", "/app"]
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .

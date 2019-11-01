@@ -39,8 +39,8 @@ namespace Infrastructure.DataGenerator
 
         public void Dispose()
         {
-            _csvReader.Dispose();
-            _streamReader.Dispose();
+            _csvReader?.Dispose();
+            _streamReader?.Dispose();
         }
     }
 
