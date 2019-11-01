@@ -4,13 +4,13 @@ EXPOSE 80
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY ["WebApi.Mock/WebApi.StaticData.csproj", "Api/"]
+COPY ["WebApi.StaticData/WebApi.StaticData.csproj", "Api/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
 COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
 
 RUN dotnet restore "Api/WebApi.StaticData.csproj"
 COPY . .
-COPY ["WebApi.Mock/*", "Api/"]
+COPY ["WebApi.StaticData/*", "Api/"]
 WORKDIR "/src/Api"
 RUN dotnet build "WebApi.StaticData.csproj" -c Release -o /app
 
