@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Domain.Registration
 {
@@ -15,5 +16,8 @@ namespace Domain.Registration
 
         [JsonProperty("updateChannelName")]
         public string UpdateChannelName { get; set; }
+        
+        [JsonProperty("attributes")]
+        public Dictionary<string, Dictionary<string, string>> Attributes { get; set; }
     }
 }
