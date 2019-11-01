@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:sw_project/src/models/CreateJobResponse.dart';
 import 'package:sw_project/src/models/Credentials.dart';
+import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 
@@ -12,11 +12,11 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
 
   SocnetoJobManagementService() : super(API_URL, API_PREFIX);
 
-  Future<String> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async {
+  Future<JobStatus> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async {
     var data = {
-      "TopicQuery": query,
-      "SelectedAnalysers": analyzers.map((analyzer) => analyzer.identifier).toList(),
-      "SelectedNetworks": networks.map((network) => network.identifier).toList(),
+      "topicQuery": query,
+      "selectedDataAnalysers": analyzers.map((analyzer) => analyzer.identifier).toList(),
+      "selectedDataAcquirers": networks.map((network) => network.identifier).toList(),
     };
 
     if (twitterCredentials != null) {
@@ -30,9 +30,18 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
       });
     }
 
-    return (await this.post<CreateJobResponse>(
+    return (await this.post<JobStatus>(
         "job/submit", data, (result) =>
-        CreateJobResponse.fromMap(result))).jobId;
+        JobStatus.fromMap(result)));
   }
+
+  Future<JobStatus> stopJob(String jobId) async =>
+      await this.get<JobStatus>("job/stop/$jobId", (result) => JobStatus.fromMap(result));
+
+  Future<JobStatus> pauseJob(String jobId) async =>
+      await this.get<JobStatus>("job/pause/$jobId", (result) => JobStatus.fromMap(result));
+
+  Future<JobStatus> resumeJob(String jobId) async =>
+      await this.get<JobStatus>("job/resume/$jobId", (result) => JobStatus.fromMap(result));
 
 }

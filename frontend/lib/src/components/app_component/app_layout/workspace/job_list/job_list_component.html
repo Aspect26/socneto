@@ -12,13 +12,21 @@
     <material-list focusList class="dark">
 
         <material-select-item *ngFor="let job of displayedJobs" (trigger)="selectJob(job.id)" focusItem [selected]="job == selectedJob">
+
+            <material-button icon *ngIf="job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="stopJob(job); $event.stopPropagation()">
+                <material-icon icon="stop" ></material-icon>
+            </material-button>
+            <!--
             <material-button icon *ngIf="job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="pauseJob(job); $event.stopPropagation()">
                 <material-icon icon="pause" ></material-icon>
             </material-button>
+            -->
 
-            <material-button icon *ngIf="!job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="startJob(job); $event.stopPropagation()">
+            <!--
+            <material-button icon *ngIf="!job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="resumeJob(job); $event.stopPropagation()">
                 <material-icon icon="play_arrow" ></material-icon>
             </material-button>
+            -->
 
             <div>
                 <b>{{job.name}}</b> <br>
