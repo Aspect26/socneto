@@ -104,11 +104,11 @@ namespace Domain.Registration
             Dictionary<string, JObject> attributes)
         {
 
-            if (componentType == _componentIdentifiers.DataAcquirerComponentTypeName)
+            if (componentType == _componentIdentifiers.AnalyserComponentTypeName)
             {
                 ValidateDataAnalyser(attributes);
             }
-            else if (componentType == _componentIdentifiers.AnalyserComponentTypeName)
+            else if (componentType == _componentIdentifiers.DataAcquirerComponentTypeName)
             {
                 ValidateDataAcquirer(attributes);
             }
@@ -120,17 +120,17 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAcquirer(Dictionary<string, JObject> attributes)
+        private void ValidateDataAnalyser(Dictionary<string, JObject> attributes)
         {
             var formatElement = _registrationRequestValidation.AnalyserOutputFormatElementName;
-            if (!attributes.ContainsKey(formatElement))
+            if (attributes == null || !attributes.ContainsKey(formatElement))
             {
                 var formatError = $"Data analyser registration request must contain: '{formatElement}' element";
                 throw new FormatException(formatError);
             }
         }
 
-        private void ValidateDataAnalyser(Dictionary<string, JObject> attributes)
+        private void ValidateDataAcquirer(Dictionary<string, JObject> attributes)
         {
             // nothing to validate yet
         }

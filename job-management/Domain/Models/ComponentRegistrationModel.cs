@@ -23,7 +23,7 @@ namespace Domain.Models
             UpdateChannelId = updateChannelId;
             InputChannelId = inputChannelId;
             ComponentType = requestComponentType;
-            Attributes = attributes;
+            Attributes = attributes ?? new Dictionary<string, JObject>();
         }
 
     }
