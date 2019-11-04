@@ -12,6 +12,7 @@ import 'package:angular_components/utils/angular/scroll_host/angular_2.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/Credentials.dart';
+import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
@@ -56,8 +57,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class CreateJobModal {
 
-  final _submitController = StreamController<String>();
-  @Output() Stream<String> get submit => _submitController.stream;
+  final _submitController = StreamController<JobStatus>();
+  @Output() Stream<JobStatus> get submit => _submitController.stream;
 
   final SocnetoService _socnetoService;
 
@@ -115,9 +116,9 @@ class CreateJobModal {
       try {
         this.submitting = true;
         final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
-        final newJobId = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
+        final jobStatus = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
         this.reset();
-        this._submitController.add(newJobId);
+        this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
       } on HttpException {
         Toastr.error( "New Job", "Could not create the new job :(");
