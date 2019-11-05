@@ -13,5 +13,8 @@ namespace Api.Models
 
         [JsonProperty("topicQuery")]
         public string TopicQuery { get; set; }
+        
+        [JsonProperty("jobName")]
+        public string JobName { get; set; }
     }
 }

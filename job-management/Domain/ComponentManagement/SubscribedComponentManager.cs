@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Job;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
@@ -15,18 +16,21 @@ namespace Domain.ComponentManagement
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
         private readonly IJobConfigStorage _jobConfigStorage;
+        private readonly IJobStorage _jobStorage;
         private readonly ILogger<SubscribedComponentManager> _logger;
 
         public SubscribedComponentManager(
             IComponentRegistry componentRegistry,
             IComponentConfigUpdateNotifier componentConfigUpdateNotifier,
             IJobConfigStorage jobConfigStorage,
+            IJobStorage jobStorage,
             ILogger<SubscribedComponentManager> logger
         )
         {
             _componentRegistry = componentRegistry;
             _componentConfigUpdateNotifier = componentConfigUpdateNotifier;
             _jobConfigStorage = jobConfigStorage;
+            _jobStorage = jobStorage;
 
             _logger = logger;
         }
@@ -57,7 +61,6 @@ namespace Domain.ComponentManagement
         public async Task<JobConfigUpdateResult> StartJobAsync(
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
-
             var storage = _componentRegistry.GetRegisteredStorage();
             if (storage == null)
             {
@@ -84,6 +87,17 @@ namespace Domain.ComponentManagement
                 DataAcquirers = jobConfigUpdateCommand.DataAcquirers.ToList()
             };
 
+            // TODO: get the owner somehow
+            var job = new Models.Job
+            {
+                JobId = jobConfigUpdateCommand.JobId,
+                JobName = jobConfigUpdateCommand.JobName,
+                Owner = "admin",
+                HasFinished = false,
+                StartedAt = DateTime.Now
+            };
+
+            await _jobStorage.InsertNewJobAsync(job);
             await _jobConfigStorage.InsertNewJobConfigAsync(jobConfig);
 
             return JobConfigUpdateResult.Successfull(
