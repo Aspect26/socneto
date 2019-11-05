@@ -42,6 +42,7 @@ namespace Api.Controllers
             var jobId = Guid.NewGuid();
             var jobConfigUpdateNotification = JobConfigUpdateCommand.NewJob(
                 jobId,
+                jobSubmitRequest.JobName,
                 jobSubmitRequest.SelectedDataAnalysers,
                 jobSubmitRequest.SelectedDataAcquirers,
                 jobSubmitRequest.TopicQuery);
