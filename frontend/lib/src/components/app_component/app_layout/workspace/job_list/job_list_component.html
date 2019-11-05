@@ -14,24 +14,24 @@
         <material-select-item *ngFor="let job of displayedJobs" (trigger)="selectJob(job.id)" focusItem [selected]="job == selectedJob">
 
             <material-button icon *ngIf="job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="stopJob(job); $event.stopPropagation()">
-                <material-icon icon="stop" ></material-icon>
+                <material-icon icon="stop"></material-icon>
             </material-button>
             <!--
             <material-button icon *ngIf="job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="pauseJob(job); $event.stopPropagation()">
-                <material-icon icon="pause" ></material-icon>
+                <material-icon icon="pause"></material-icon>
             </material-button>
             -->
 
             <!--
             <material-button icon *ngIf="!job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="resumeJob(job); $event.stopPropagation()">
-                <material-icon icon="play_arrow" ></material-icon>
+                <material-icon icon="play_arrow"></material-icon>
             </material-button>
             -->
 
             <div>
-                <b>{{job.name}}</b> <br>
-                Created at: {{ getHumanReadableDate(job.startedAt) }} <br>
-                <ng-container *ngIf="!job.isRunning">Paused at: {{ getHumanReadableDate(job.pausedAt) }}</ng-container>
+                <b>{{ job.name }}</b> <br>
+                <ng-container *ngIf="job.startedAt != null">Created at: {{ getHumanReadableDate(job.startedAt) }}<br></ng-container>
+                <ng-container *ngIf="!job.isRunning && job.pausedAt != null">Paused at: {{ getHumanReadableDate(job.pausedAt) }}</ng-container>
 
                 <span *ngIf="job.isRunning" class="secondary">
                     In progress for {{ getProcessingTime(job) }}
