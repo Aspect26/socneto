@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
@@ -34,6 +34,7 @@ namespace Domain.JobConfiguration
 
         public Task ListenAsync(CancellationToken token)
         {
+            _logger.LogInformation("Starting listening at {topic}", _updateChannelName);
             while (true)
 
             {
@@ -62,7 +63,9 @@ namespace Domain.JobConfiguration
 
             if (jobConfig.Command == null)
             {
-                throw new InvalidOperationException("Job notification was not processed. Empty command");
+                const string error = "Job notification was not processed. Empty command";
+                _logger.LogError(error);
+                throw new InvalidOperationException(error);
             }
 
             // TODO separate constants

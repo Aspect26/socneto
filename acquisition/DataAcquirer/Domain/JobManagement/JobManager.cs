@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,7 @@ namespace Domain.JobManagement
 {
     public class JobManager : IJobManager, IDisposable
     {
+        private readonly IJobMetadataStorage _jobMetadataStorage;
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
         private readonly ILogger<JobManager> _logger;
@@ -30,10 +31,12 @@ namespace Domain.JobManagement
 
 
         public JobManager(
+            IJobMetadataStorage jobMetadataStorage,
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
             ILogger<JobManager> logger)
         {
+            _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
             _producer = producer;
             _logger = logger;
@@ -43,12 +46,6 @@ namespace Domain.JobManagement
         {
             lock (_dictionaryLock)
             {
-                //if (_runningJobsRecords.ContainsKey(jobConfig.JobId))
-                //{
-
-                //}
-
-
                 var jobId = jobConfig.JobId;
                 if (_isStopping)
                 {
@@ -90,44 +87,90 @@ namespace Domain.JobManagement
         {
             try
             {
+                // TODO validate job config
+                if (!jobConfig.Attributes.ContainsKey("TopicQuery"))
+                {
+                    _logger.LogError("TopicQuery attribute is not present");
+                }
 
-                ulong fromIdPagingParameter = 0;
+                // TODO load stored metadata
+
+                var earliestIdPagingParameter = ulong.MaxValue;
+                ulong latestIdPagingParameter = 0;
+                var queryLanguage = "en";
+                var batchSize = 100;
+
+                long numberOfPosts = 0;
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var dataAcquirerInputModel = new DataAcquirerInputModel
-                    {
-                        Query = jobConfig.Attributes["TopicQuery"],
-                        JobId = jobConfig.JobId,
-                        NumberOfPostToRetrieve = 100,
-                        FromId = fromIdPagingParameter,
-                        Attributes = new DataAcquirerAttributes(jobConfig.Attributes)
-                    };
+                    var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
+                        jobConfig.JobId,
+                        jobConfig.Attributes["TopicQuery"],
+                        queryLanguage,
+                        new DataAcquirerAttributes(jobConfig.Attributes),
+                        latestIdPagingParameter,
+                        earliestIdPagingParameter,
+                        batchSize
+                    );
 
-                    var data = await _acquirer.AcquireBatchAsync(
+                    var BatchData = await _acquirer.AcquireBatchAsync(
                         dataAcquirerInputModel,
                         cancellationToken);
-                    fromIdPagingParameter = data.MaxId;
 
-                    if( !data.Posts.Any())
+                    // update job metadata
+                    
+                    // earliestIdPagingParameter = BatchData.EarliestRecordId;
+                    latestIdPagingParameter = BatchData.LatestRecordId;
+                    numberOfPosts += BatchData.Posts.Count;
+
+                    var jobMetadata = new
                     {
-                        _logger.LogWarning("No posts were returned");
+                        RecordCount = numberOfPosts,
+                        MaxId = earliestIdPagingParameter,
+                        MinId = BatchData.LatestRecordId
+                    };
+
+                    if (!BatchData.Posts.Any())
+                    {
+                        // all old data was already downloaded
+                        // reset parameters so the new ones can be downloaded too
+
+                        // latest = earliest
+                        // earliest = ulong.MaxValue;
                     }
-                    foreach (var dataPost in data.Posts)
+
+
+                    if (!BatchData.Posts.Any())
+                    {
+                        _logger.LogWarning("No posts were returned, waiting.");
+                        await Task.Delay(TimeSpan.FromMinutes(15));
+                    }
+                    else
+                    {
+                        _logger.LogInformation("So far downloaded {number} of posts", numberOfPosts);
+                    }
+
+
+                    foreach (var dataPost in BatchData.Posts)
                     {
                         var jsonData = JsonConvert.SerializeObject(dataPost);
                         var messageBrokerMessage = new MessageBrokerMessage(
                             "acquired-data-post",
                             jsonData);
 
-                        await SendToOutputs(jobConfig.OutputMessageBrokerChannels,
+                        await SendRecordToOutputs(jobConfig.OutputMessageBrokerChannels,
                             messageBrokerMessage);
                     }
                 }
             }
             catch (TaskCanceledException) { }
+            catch (Exception e)
+            {
+                _logger.LogError("Acquirer failed due to '{error}'", e.Message);
+            }
         }
 
-        private async Task SendToOutputs(string[] outputChannels,
+        private async Task SendRecordToOutputs(string[] outputChannels,
             MessageBrokerMessage messageBrokerMessage)
         {
             foreach (var outputChannel in outputChannels)
@@ -142,8 +185,8 @@ namespace Domain.JobManagement
             if (!_runningJobsRecords.TryGetValue(jobId, out var jobRecord))
             {
                 var error = "Could not stop non existing job: {jobId}";
-                _logger.LogError(error,jobId);
-                throw new InvalidOperationException(string.Format(error,jobId));
+                _logger.LogError(error, jobId);
+                throw new InvalidOperationException(string.Format(error, jobId));
             }
 
             jobRecord.CancellationTokenSource.Cancel();
@@ -189,6 +232,16 @@ namespace Domain.JobManagement
             // TODO dispose the jobs
         }
     }
+
+    public interface IJobMetadataStorage
+    {
+    }
+
+    public class JobMetadataStorage : IJobMetadataStorage
+    {
+
+    }
+
 
 
 }

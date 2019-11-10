@@ -30,7 +30,7 @@ namespace Infrastructure.DataGenerator
         public async Task<DataAcquirerOutputModel> AcquireBatchAsync(
             DataAcquirerInputModel acquirerInputModel, CancellationToken cancellationToken)
         {
-            var count = acquirerInputModel.NumberOfPostToRetrieve;
+            var count = acquirerInputModel.BatchSize;
 
             ulong id = 0;
             var posts = new List<UniPost>();
