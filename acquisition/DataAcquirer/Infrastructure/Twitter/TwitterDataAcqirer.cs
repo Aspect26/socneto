@@ -1,4 +1,4 @@
-﻿using Domain.Acquisition;
+using Domain.Acquisition;
 using Domain.Model;
 using LinqToTwitter;
 using Microsoft.Extensions.Logging;
@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Twitter
 {
-
-
     public class TwitterDataAcqirer : IDataAcquirer
     {
         private TwitterContext _twitterContext;
@@ -30,47 +28,62 @@ namespace Infrastructure.Twitter
             // TODO refactor using some session establisher. this is fucked up
             if (_twitterContext == null)
             {
+                // TODO support multiuser
                 CreateContext(acquirerInputModel);
             }
 
             try
             {
-                var search = await GetStatusBatch(acquirerInputModel);
+                _logger.LogInformation("Downloading posts. Earliest id: {id}", acquirerInputModel.EarliestRecordId);
+
+                var search = await GetStatusBatchAsync(acquirerInputModel);
 
                 var searchResponse = search
                     .Statuses
                     .Select(r => FromStatus(acquirerInputModel, r))
                     .ToList();
 
-                var maxId = search.Statuses.Any() 
-                    ? search.Statuses.Min(status => status.StatusID) - 1
-                    : acquirerInputModel.FromId;
+                _logger.LogInformation("Found {count} posts. Time {time}",
+                    searchResponse.Count,
+                    search.Statuses.FirstOrDefault()?.CreatedAt.ToString("s"));
 
-                return new DataAcquirerOutputModel()
-                {
-                    Posts = searchResponse,
-                    MaxId = maxId
-                };
+                var earliest = search.Statuses.Any()
+                    ? Math.Min(search.Statuses.Min(status => status.StatusID) - 1, acquirerInputModel.EarliestRecordId)
+                    : acquirerInputModel.EarliestRecordId;
+
+                var latest = search.Statuses.Any()
+                    ? Math.Max(search.Statuses.Max(status => status.StatusID) - 1, acquirerInputModel.LatestRecordId)
+                    : acquirerInputModel.LatestRecordId;
+
+                return new DataAcquirerOutputModel(
+                    searchResponse,
+                    latest,
+                    earliest);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                _logger.LogError("Error while getting data: {error}, type {type}", e.Message, e.GetType().Name);
             }
+            return new DataAcquirerOutputModel(
+                new List<UniPost>(),
+                acquirerInputModel.LatestRecordId,
+                acquirerInputModel.EarliestRecordId);
+
         }
 
-        private async Task<Search> GetStatusBatch(DataAcquirerInputModel acquirerInputModel)
+        private async Task<Search> GetStatusBatchAsync(DataAcquirerInputModel acquirerInputModel)
         {
-            string searchTerm = acquirerInputModel.Query;
-            
-            var combinedSearchResults = new List<Status>();
+            var searchTerm = acquirerInputModel.Query;
 
-            ulong sinceId = 1;
+            var combinedSearchResults = new List<Status>();
+            
             return await _twitterContext.Search
                 .Where(search => search.Type == SearchType.Search &&
                        search.Query == searchTerm &&
-                       search.Count == acquirerInputModel.NumberOfPostToRetrieve &&
-                       search.MaxID == acquirerInputModel.FromId &&
-                       search.SinceID == sinceId &&
+                       search.SearchLanguage == acquirerInputModel.QueryLanguage &&
+                       search.Count == acquirerInputModel.BatchSize &&
+                       search.MaxID == acquirerInputModel.EarliestRecordId &&
+                       search.SinceID == acquirerInputModel.LatestRecordId &&
                        search.TweetMode == TweetMode.Compat)
                 .SingleOrDefaultAsync();
         }

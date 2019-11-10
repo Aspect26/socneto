@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Domain;
@@ -87,6 +87,7 @@ namespace Application
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var isDevelopment = aspNetCoreEnv == "Development";
+            isDevelopment = false;
             if (isDevelopment)
             {
                 builder.AddJsonFile($"appsettings.Development.json", true, true);

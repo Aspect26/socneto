@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Application;
@@ -34,11 +34,11 @@ namespace Api
         {
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-            await RegisterComponent(app, logger);
+            await RegisterComponentAsync(app, logger);
         }
         
 
-        private static async Task RegisterComponent(IWebHost app, ILogger<Program> logger)
+        private static async Task RegisterComponentAsync(IWebHost app, ILogger<Program> logger)
         {
             var registration = app.Services.GetRequiredService<IRegistrationService>();
 
