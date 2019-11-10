@@ -1,9 +1,11 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Acquisition;
+using Domain.JobManagement;
 using Domain.Model;
 using Microsoft.Extensions.Options;
 
@@ -23,23 +25,19 @@ namespace Infrastructure.DataGenerator
             _random = new Random(randomGenratorOptionsAccessor.Value.Seed);
         }
 
-        public async  Task<DataAcquirerOutputModel> AcquireBatchAsync(
-            DataAcquirerInputModel acquirerInputModel, 
-            CancellationToken cancellationToken)
+        public async IAsyncEnumerable<UniPost> GetPostsAsync(DataAcquirerInputModel jobConfig)
         {
             await Task.Delay(_downloadDelay);
 
             var uniPosts = Enumerable
                 .Range(0, 100)
                 .Select(r => _random.Next())
-                .Select(GetRandomPost)
-                .ToList();
+                .Select(GetRandomPost);
 
-            return new DataAcquirerOutputModel
+            foreach (var post in uniPosts)
             {
-                Posts = uniPosts
-            };
-
+                yield return post;
+            }
         }
 
         private UniPost GetRandomPost(int seed)
@@ -77,5 +75,7 @@ namespace Infrastructure.DataGenerator
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        
     }
 }

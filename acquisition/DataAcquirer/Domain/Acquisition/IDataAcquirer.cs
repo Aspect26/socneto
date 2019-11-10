@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -7,12 +7,15 @@ using Domain.Model;
 
 namespace Domain.Acquisition
 {
-    
-
     public interface IDataAcquirer
     {
-        Task<DataAcquirerOutputModel> AcquireBatchAsync(DataAcquirerInputModel acquirerInputModel, 
-            CancellationToken cancellationToken);
+        IAsyncEnumerable<UniPost> GetPostsAsync(
+            DataAcquirerInputModel jobConfig);
+    }
+    public interface IDataAcquirerLegacy
+    {
+        //Task<DataAcquirerOutputModel> AcquireBatchAsync(DataAcquirerInputModel acquirerInputModel, 
+        //    CancellationToken cancellationToken);
         
     }
 

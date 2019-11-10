@@ -12,9 +12,11 @@ using Infrastructure.Kafka;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Application
 {
@@ -80,22 +82,20 @@ namespace Application
 
         public IWebHost BuildWebHost()
         {
-            IHostingEnvironment environment = null;
+            IWebHostEnvironment environment = null;
 
             var builder = new ConfigurationBuilder()
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var isDevelopment = aspNetCoreEnv == "Development";
-            isDevelopment = false;
+            
             if (isDevelopment)
             {
                 builder.AddJsonFile($"appsettings.Development.json", true, true);
             }
 
             var configuration = builder.Build();
-
-
             var webHost = WebHost
                 .CreateDefaultBuilder(_args)
                 .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
@@ -111,10 +111,16 @@ namespace Application
                     {
                         app.UseDeveloperExceptionPage();
                     }
-                    app.UseMvc();
-                    //app.UseAuthentication();
-                    //app.UseMiddleware<ExceptionLoggingMiddleware>();
 
+                    app.UseRouting();
+
+                    app.UseEndpoints(endpoints =>
+                    {
+                        //endpoints.MapGet("/", async context =>
+                        //{
+                        //    await context.Response.WriteAsync("Hello World!");
+                        //});
+                    });
                 })
                 .Build();
             return webHost;
