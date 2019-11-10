@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Acquisition;
+using Domain.JobManagement;
 using Domain.Model;
 using Infrastructure.StaticData;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,8 @@ namespace Infrastructure.DataGenerator
             _postsEnumerator = dataProvider.GetEnumerator();
         }
 
-        public async Task<DataAcquirerOutputModel> AcquireBatchAsync(
-            DataAcquirerInputModel acquirerInputModel, CancellationToken cancellationToken)
+        public async IAsyncEnumerable<UniPost> GetPostsAsync(
+            DataAcquirerInputModel acquirerInputModel)
         {
             var count = acquirerInputModel.BatchSize;
 
@@ -54,18 +55,18 @@ namespace Infrastructure.DataGenerator
                 posts.Add(uniPost);
             }
 
-            id += (ulong)count;
+            id += (ulong) count;
             try
             {
-                await Task.Delay(_downloadSimulatedDelay, cancellationToken);
+                await Task.Delay(_downloadSimulatedDelay, CancellationToken.None);
             }
             catch (TaskCanceledException)
             {
             }
-            return new DataAcquirerOutputModel
+
+            foreach (var post in posts)
             {
-                MaxId = id,
-                Posts = posts
+                yield return post;
             };
         }
     }

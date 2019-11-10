@@ -16,9 +16,10 @@ using Newtonsoft.Json;
 
 namespace Domain.JobManagement
 {
+    
     public class JobManager : IJobManager, IDisposable
     {
-        private readonly IJobMetadataStorage _jobMetadataStorage;
+        //private readonly IJobMetadataStorage _jobMetadataStorage;
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
         private readonly ILogger<JobManager> _logger;
@@ -31,12 +32,12 @@ namespace Domain.JobManagement
 
 
         public JobManager(
-            IJobMetadataStorage jobMetadataStorage,
+            //IJobMetadataStorage jobMetadataStorage,
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
             ILogger<JobManager> logger)
         {
-            _jobMetadataStorage = jobMetadataStorage;
+         //   _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
             _producer = producer;
             _logger = logger;
@@ -87,81 +88,41 @@ namespace Domain.JobManagement
         {
             try
             {
+
                 // TODO validate job config
                 if (!jobConfig.Attributes.ContainsKey("TopicQuery"))
                 {
                     _logger.LogError("TopicQuery attribute is not present");
                 }
 
-                // TODO load stored metadata
-
                 var earliestIdPagingParameter = ulong.MaxValue;
                 ulong latestIdPagingParameter = 0;
                 var queryLanguage = "en";
                 var batchSize = 100;
 
-                long numberOfPosts = 0;
-                while (!cancellationToken.IsCancellationRequested)
+                var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
+                   jobConfig.JobId,
+                   jobConfig.Attributes["TopicQuery"],
+                   queryLanguage,
+                   new DataAcquirerAttributes(jobConfig.Attributes),
+                   latestIdPagingParameter,
+                   earliestIdPagingParameter,
+                   batchSize
+               );
+
+                var batch = _acquirer.GetPostsAsync(dataAcquirerInputModel);
+
+                await foreach (var dataPost in batch)
                 {
-                    var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
-                        jobConfig.JobId,
-                        jobConfig.Attributes["TopicQuery"],
-                        queryLanguage,
-                        new DataAcquirerAttributes(jobConfig.Attributes),
-                        latestIdPagingParameter,
-                        earliestIdPagingParameter,
-                        batchSize
-                    );
+                    var jsonData = JsonConvert.SerializeObject(dataPost);
+                    var messageBrokerMessage = new MessageBrokerMessage(
+                        "acquired-data-post",
+                        jsonData);
 
-                    var BatchData = await _acquirer.AcquireBatchAsync(
-                        dataAcquirerInputModel,
-                        cancellationToken);
-
-                    // update job metadata
-                    
-                    // earliestIdPagingParameter = BatchData.EarliestRecordId;
-                    latestIdPagingParameter = BatchData.LatestRecordId;
-                    numberOfPosts += BatchData.Posts.Count;
-
-                    var jobMetadata = new
-                    {
-                        RecordCount = numberOfPosts,
-                        MaxId = earliestIdPagingParameter,
-                        MinId = BatchData.LatestRecordId
-                    };
-
-                    if (!BatchData.Posts.Any())
-                    {
-                        // all old data was already downloaded
-                        // reset parameters so the new ones can be downloaded too
-
-                        // latest = earliest
-                        // earliest = ulong.MaxValue;
-                    }
-
-
-                    if (!BatchData.Posts.Any())
-                    {
-                        _logger.LogWarning("No posts were returned, waiting.");
-                        await Task.Delay(TimeSpan.FromMinutes(15));
-                    }
-                    else
-                    {
-                        _logger.LogInformation("So far downloaded {number} of posts", numberOfPosts);
-                    }
-
-
-                    foreach (var dataPost in BatchData.Posts)
-                    {
-                        var jsonData = JsonConvert.SerializeObject(dataPost);
-                        var messageBrokerMessage = new MessageBrokerMessage(
-                            "acquired-data-post",
-                            jsonData);
-
-                        await SendRecordToOutputs(jobConfig.OutputMessageBrokerChannels,
-                            messageBrokerMessage);
-                    }
+                    await SendRecordToOutputs(jobConfig.OutputMessageBrokerChannels,
+                        messageBrokerMessage);
                 }
+
             }
             catch (TaskCanceledException) { }
             catch (Exception e)

@@ -21,8 +21,7 @@ namespace Api
 
 
             var builder = new DataAcquisitionServiceWebApiBuilder(args)
-                .AddSingletonService<IDataAcquirer, TwitterDataAcqirer>();
-
+                .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>();
 
             var app = builder.BuildWebHost();
             await InitializeApplication(app);

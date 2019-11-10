@@ -1,4 +1,4 @@
-﻿using Application;
+using Application;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
@@ -76,12 +76,14 @@ namespace ConsoleApi.Reddit
             cts.CancelAfter(TimeSpan.FromMinutes(6));
             do
             {   
-                foreach (Post post in worldnews.Posts.GetNew())
+                foreach (var post in worldnews.Posts.GetNew())
                 {
                     if (post.Created >= today)
                     {
                         if(post is SelfPost sp)
+                        {
                             posts.Add(sp);
+                        }
                     }
                     else
                     {
@@ -142,14 +144,14 @@ namespace ConsoleApi.Reddit
         }
     }
 
-    public class RedditDataAcquirer : IDataAcquirer
-    {
+    //public class RedditDataAcquirer : IDataAcquirerLegacy
+    //{
 
-        public async Task<DataAcquirerOutputModel> AcquireBatchAsync(
-            DataAcquirerInputModel acquirerInputModel,
-            CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public async Task<DataAcquirerOutputModel> AcquireBatchAsync(
+    //        DataAcquirerInputModel acquirerInputModel,
+    //        CancellationToken cancellationToken)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }
