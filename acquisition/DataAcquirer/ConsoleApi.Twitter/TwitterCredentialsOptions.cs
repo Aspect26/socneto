@@ -1,7 +1,8 @@
-﻿namespace ConsoleApi.Twitter
+namespace ConsoleApi.Twitter
 {
     public class TwitterCredentialsOptions
     {
+
         public string ApiKey { get; set; }
 
         public string ApiSecretKey { get; set; }
