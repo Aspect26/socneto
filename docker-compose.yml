@@ -1,74 +1,21 @@
 version: '3'
 services:
   zookeeper:
-    image: 'bitnami/zookeeper:latest'
+    image: 'bitnami/zookeeper'
     ports:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - kafka-network
   kafka:
-    image: 'bitnami/kafka:latest'
+    image: 'bitnami/kafka'
     ports:
-      - '9092:9092'
+      - 9094:9094
+    depends_on:
+      - zookeeper
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes # TODO remove
-    networks:
-      - kafka-network
-    container_name: kafka_server
-  backend:
-    build: './backend'
-    networks:
-      - kafka-network
-    ports: 
-      - '6010:6010'
-    container_name: backend
-  db:
-    image: "postgres"
-    container_name: storagedb
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=password123
-      - POSTGRES_DB=storagedb
-    ports:
-      - "5432:5432"
-    networks:
-      - kafka-network
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-  storage:
-    build: './storage'
-    networks:
-      - kafka-network
-    ports:
-      - '8888:8888'
-    container_name: storageservice
-  job-management-service:
-    build: './job-management'
-    ports:
-      - '6009:6009'
-    networks:
-      - kafka-network
-    container_name: job_management_service
-  frontend:
-    build: './frontend'
-    ports: 
-      - '8080:8080'
-    networks:
-      - 'kafka-network'
-  data-acquisition-service:
-    build: 
-        context: './acquisition/DataAcquirer'
-        dockerfile: 'Dockerfile.mock'
-    networks:
-      - kafka-network
-  mock-analyser-service:
-    build: './analysers/MockAnalyserService'
-    networks:
-      - kafka-network
-networks:
-  kafka-network:
-    external:
-     name: kafka-network
+      - KAFKA_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://kafka:9094
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
