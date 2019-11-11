@@ -53,7 +53,6 @@ namespace Domain.JobManagement
                     _logger.LogWarning("Could not start downloading data of a job id {jobId}, because the component is stopping", jobId);
                     return Task.CompletedTask;
                 }
-
                 var json = JsonConvert.SerializeObject(jobConfig);
                 _logger.LogInformation("Config recieved {config}", json);
 
@@ -198,10 +197,6 @@ namespace Domain.JobManagement
     {
     }
 
-    public class JobMetadataStorage : IJobMetadataStorage
-    {
-
-    }
 
 
 
