@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
@@ -16,12 +17,13 @@ namespace Infrastructure.DataGenerator
             public string PostId { get; set; }
         }
         private readonly ILogger<MockProducer> _logger;
+        private object _ioLock = new object();
 
         private readonly HashSet<string> _encounteredIds = new HashSet<string>();
         public MockProducer(ILogger<MockProducer> logger)
         {
             _logger = logger;
-            
+
         }
         public Task ProduceAsync(string topic, MessageBrokerMessage message)
         {
@@ -29,10 +31,12 @@ namespace Infrastructure.DataGenerator
                 topic,
                 message.JsonPayloadPayload);
 
+
             var checkForDuplicates = true;
-            if(checkForDuplicates && topic =="c1")
+            if (checkForDuplicates && topic == "s1")
             {
                 var uniPost = JsonConvert.DeserializeObject<Post>(message.JsonPayloadPayload);
+
                 if (_encounteredIds.Contains(uniPost.PostId))
                 {
                     _logger.LogWarning("Post with id {id} has already been processed", uniPost.PostId);
@@ -40,6 +44,18 @@ namespace Infrastructure.DataGenerator
                 else
                 {
                     _encounteredIds.Add(uniPost.PostId);
+                }
+                lock (_ioLock)
+                {
+                    //using (var writer = new StreamWriter("outIds.txt"))
+                    //{
+                    //    var ids = new
+                    //    {
+                    //        Ids = _encounteredIds
+                    //    };
+                    //    var idsJson = JsonConvert.SerializeObject(ids);
+                    //    writer.WriteLineAsync(idsJson);
+                    //}
                 }
             }
 
