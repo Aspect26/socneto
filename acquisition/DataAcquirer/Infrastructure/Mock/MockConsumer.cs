@@ -34,25 +34,25 @@ namespace Infrastructure.DataGenerator
         {
             _logger.LogInformation("Topic {}", consumeTopic);
 
-            //if (consumeTopic == _consumedTopic)
-            //{
-            //    var attributes = _customAttributes.ToDictionary(r => r.Key,r=>r.Value);
-            //    attributes.Add("TopicQuery", _topicQuery);
+            if (consumeTopic == _consumedTopic)
+            {
+                var attributes = _customAttributes.ToDictionary(r => r.Key, r => r.Value);
+                attributes.Add("TopicQuery", _topicQuery);
 
-            //    var fixedGuid = Guid.Parse("01c3ee17-c9f4-492f-ac9c-e9f6ecd1fa7e");
-            //    var config = new DataAcquirerJobConfig()
-            //    {
-            //        JobId = fixedGuid,
-            //        Attributes =attributes,
-            //        Command ="start",
-            //        OutputMessageBrokerChannels = new string[] { "s1" }
-            //    };
+                var fixedGuid = Guid.Parse("01c3ee17-c9f4-492f-ac9c-e9f6ecd1fa7e");
+                var config = new DataAcquirerJobConfig()
+                {
+                    JobId = fixedGuid,
+                    Attributes = attributes,
+                    Command = "start",
+                    OutputMessageBrokerChannels = new string[] { "s1" }
+                };
 
-                
-            //    var json = JsonConvert.SerializeObject(config);
-            //    await onRecieveAction(json);
-            //    await Task.Delay(TimeSpan.FromSeconds(10));
-            //}
+
+                var json = JsonConvert.SerializeObject(config);
+                await onRecieveAction(json);
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
 
             await Task.Delay(TimeSpan.MaxValue);
         }
