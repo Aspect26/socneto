@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
 
 namespace Application
 {
@@ -115,6 +117,11 @@ namespace Application
             var configuration = builder.Build();
             var webHost = WebHost
                 .CreateDefaultBuilder(_args)
+                .ConfigureLogging(logging=>
+                {
+                    logging.AddFile("Logs/ts-{Date}.txt");
+                    logging.AddConfiguration(configuration.GetSection("Logging"));
+                })
                 .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
                 {
                     //rootConfiguration = configurationBuilder.Build();
@@ -128,7 +135,7 @@ namespace Application
                     {
                         app.UseDeveloperExceptionPage();
                     }
-
+                    
                     app.UseRouting();
 
                     app.UseEndpoints(endpoints =>
