@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using Domain.Acquisition;
 using Newtonsoft.Json;
 
 namespace Domain.JobConfiguration
@@ -13,9 +14,10 @@ namespace Domain.JobConfiguration
         public string Command { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string,string> Attributes{ get; set; }
+        public Dictionary<string, string> Attributes { get; set; }
 
         [JsonProperty("outputMessageBrokerChannels")]
         public string[] OutputMessageBrokerChannels { get; set; }
     }
+
 }
