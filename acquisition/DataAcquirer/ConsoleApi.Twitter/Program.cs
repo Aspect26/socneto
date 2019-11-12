@@ -1,4 +1,4 @@
-﻿using Application;
+using Application;
 using Domain;
 using Domain.Abstract;
 using Domain.Acquisition;
@@ -58,7 +58,7 @@ namespace ConsoleApi.Twitter
 
             services.AddTransient<IRegistrationService, RegistrationService>();
             
-            services.AddTransient<IDataAcquirer, TwitterDataAcqirer>();
+            services.AddTransient<IDataAcquirer, TwitterDataAcquirer>();
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 

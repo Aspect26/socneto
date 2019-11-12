@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Acquisition;
+using Domain.JobManagement;
 using Domain.Model;
 using Infrastructure.StaticData;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,7 @@ namespace Infrastructure.DataGenerator
     {
         private readonly TimeSpan _downloadSimulatedDelay;
         private readonly IEnumerator<UniPostStaticData> _postsEnumerator;
-        private IStaticDataProvider _dataProvider;
+        private readonly IStaticDataProvider _dataProvider;
 
         public StaticDataEnumerator(
             IStaticDataProvider dataProvider,
@@ -27,13 +28,14 @@ namespace Infrastructure.DataGenerator
             _postsEnumerator = dataProvider.GetEnumerator();
         }
 
-        public async Task<DataAcquirerOutputModel> AcquireBatchAsync(
-            DataAcquirerInputModel acquirerInputModel, CancellationToken cancellationToken)
+        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
+            IDataAcquirerMetadataContext context,
+            DataAcquirerInputModel acquirerInputModel)
         {
             var count = acquirerInputModel.BatchSize;
 
             ulong id = 0;
-            var posts = new List<UniPost>();
+            var posts = new List<DataAcquirerPost>();
             for (int i = 0; i < count; i++)
             {
                 if (!_postsEnumerator.MoveNext())
@@ -43,29 +45,28 @@ namespace Infrastructure.DataGenerator
                 }
 
                 var post = _postsEnumerator.Current;
-                var uniPost = UniPost.FromValues(
+                var daPost = DataAcquirerPost.FromValues(
                     post.PostId,
                     post.Text,
                     post.Source,
                     post.UserId,
-                    post.PostDateTime,
-                    acquirerInputModel.JobId);
+                    post.PostDateTime);
 
-                posts.Add(uniPost);
+                posts.Add(daPost);
             }
 
-            id += (ulong)count;
+            id += (ulong) count;
             try
             {
-                await Task.Delay(_downloadSimulatedDelay, cancellationToken);
+                await Task.Delay(_downloadSimulatedDelay, CancellationToken.None);
             }
             catch (TaskCanceledException)
             {
             }
-            return new DataAcquirerOutputModel
+
+            foreach (var post in posts)
             {
-                MaxId = id,
-                Posts = posts
+                yield return post;
             };
         }
     }

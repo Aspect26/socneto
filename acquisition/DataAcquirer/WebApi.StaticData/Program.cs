@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Application;
 using Domain;
@@ -12,9 +13,7 @@ using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.StaticData;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,12 +24,22 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
+            var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
+            var directory = new FileInfo(assemblyPath).Directory.FullName;
             
+            var jobMetaDir = Path.Combine(directory, "metajob");
+            Directory.CreateDirectory(jobMetaDir);
+
             var app = new DataAcquisitionServiceWebApiBuilder(args)
                 .ConfigureSpecificOptions<RandomGeneratorOptions>("DataAcquisitionService:RandomGeneratorOptions")
                 .ConfigureSpecificOptions<StaticDataOptions>("DataAcquisitionService:StaticGeneratorOptions")
                 .AddSingletonService<IStaticDataProvider, MovieDataProvider>()
                 .AddSingletonService<IDataAcquirer,StaticDataEnumerator>()
+                .AddSingletonService<IDataAcquirerMetadataContextProvider, NullContextProvider>()
+                .AddSingletonService<IDataAcquirerMetadataStorage, NullMetadataStorage>()
+                .AddSingletonService<IDataAcquirerMetadataContext, NullContext>()
+                .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
+                    .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir)
                 .BuildWebHost();
 
             await InitializeApplication(app);
