@@ -19,6 +19,7 @@ namespace Domain.JobManagement
 
     public class JobManager : IJobManager, IDisposable
     {
+        private readonly IDataAcquirerJobStorage _dataAcquirerJobStorage;
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
         private readonly IDataAcquirerMetadataContextProvider _dataAcquirerMetadataContextProvider;
@@ -32,12 +33,13 @@ namespace Domain.JobManagement
 
 
         public JobManager(
-
+            IDataAcquirerJobStorage dataAcquirerJobStorage,
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
             IDataAcquirerMetadataContextProvider dataAcquirerMetadataContextProvider,
             ILogger<JobManager> logger)
         {
+            _dataAcquirerJobStorage = dataAcquirerJobStorage;
             //   _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
             _producer = producer;
@@ -95,6 +97,8 @@ namespace Domain.JobManagement
                 {
                     _logger.LogError("TopicQuery attribute is not present");
                 }
+
+                await _dataAcquirerJobStorage.SaveAsync(jobConfig.JobId, jobConfig);
 
                 var earliestIdPagingParameter = ulong.MaxValue;
                 ulong latestIdPagingParameter = 0;
@@ -171,6 +175,7 @@ namespace Domain.JobManagement
             }
 
             _runningJobsRecords.Remove(jobId);
+            await _dataAcquirerJobStorage.RemoveJobAsync(jobId);
         }
 
         public async Task StopAllJobsAsync()
