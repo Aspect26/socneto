@@ -17,7 +17,7 @@ namespace Infrastructure.DataGenerator
     {
         private readonly TimeSpan _downloadSimulatedDelay;
         private readonly IEnumerator<UniPostStaticData> _postsEnumerator;
-        private IStaticDataProvider _dataProvider;
+        private readonly IStaticDataProvider _dataProvider;
 
         public StaticDataEnumerator(
             IStaticDataProvider dataProvider,
@@ -28,13 +28,14 @@ namespace Infrastructure.DataGenerator
             _postsEnumerator = dataProvider.GetEnumerator();
         }
 
-        public async IAsyncEnumerable<UniPost> GetPostsAsync(
+        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
+            IDataAcquirerMetadataContext context,
             DataAcquirerInputModel acquirerInputModel)
         {
             var count = acquirerInputModel.BatchSize;
 
             ulong id = 0;
-            var posts = new List<UniPost>();
+            var posts = new List<DataAcquirerPost>();
             for (int i = 0; i < count; i++)
             {
                 if (!_postsEnumerator.MoveNext())
@@ -44,15 +45,14 @@ namespace Infrastructure.DataGenerator
                 }
 
                 var post = _postsEnumerator.Current;
-                var uniPost = UniPost.FromValues(
+                var daPost = DataAcquirerPost.FromValues(
                     post.PostId,
                     post.Text,
                     post.Source,
                     post.UserId,
-                    post.PostDateTime,
-                    acquirerInputModel.JobId);
+                    post.PostDateTime);
 
-                posts.Add(uniPost);
+                posts.Add(daPost);
             }
 
             id += (ulong) count;

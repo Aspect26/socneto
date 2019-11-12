@@ -5,6 +5,7 @@ using Application;
 using Domain;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
+using Domain.JobManagement;
 using Domain.Registration;
 using Infrastructure.Twitter;
 using Microsoft.AspNetCore.Hosting;
@@ -18,10 +19,12 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
-
-
             var builder = new DataAcquisitionServiceWebApiBuilder(args)
-                .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>();
+                .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>()
+                .AddSingletonService<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
+                .AddSingletonService<IDataAcquirerMetadataStorage, TwitterJsonFileStorage>()
+                .AddSingletonService<IDataAcquirerMetadataContext, TwitterMetadataContext>()             
+                .ConfigureSpecificOptions<TwitterJsonStorageOptions>("DataAcquisitionService:TwitterJsonStorageOptions");
 
             var app = builder.BuildWebHost();
             await InitializeApplication(app);

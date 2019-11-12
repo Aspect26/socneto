@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -39,9 +39,10 @@ namespace Infrastructure.DataGenerator
                 var attributes = _customAttributes.ToDictionary(r => r.Key,r=>r.Value);
                 attributes.Add("TopicQuery", _topicQuery);
 
+                var fixedGuid = Guid.Parse("01c3ee17-c9f4-492f-ac9c-e9f6ecd1fa7e");
                 var config = new DataAcquirerJobConfig()
                 {
-                    JobId = Guid.NewGuid(),
+                    JobId = fixedGuid,
                     Attributes =attributes,
                     Command ="start",
                     OutputMessageBrokerChannels = new string[] { "s1" }

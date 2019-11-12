@@ -16,12 +16,12 @@ using Newtonsoft.Json;
 
 namespace Domain.JobManagement
 {
-    
+
     public class JobManager : IJobManager, IDisposable
     {
-        //private readonly IJobMetadataStorage _jobMetadataStorage;
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
+        private readonly IDataAcquirerMetadataContextProvider _dataAcquirerMetadataContextProvider;
         private readonly ILogger<JobManager> _logger;
 
         // concurent dictionary does not suffice
@@ -32,14 +32,16 @@ namespace Domain.JobManagement
 
 
         public JobManager(
-            //IJobMetadataStorage jobMetadataStorage,
+
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
+            IDataAcquirerMetadataContextProvider dataAcquirerMetadataContextProvider,
             ILogger<JobManager> logger)
         {
-         //   _jobMetadataStorage = jobMetadataStorage;
+            //   _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
             _producer = producer;
+            _dataAcquirerMetadataContextProvider = dataAcquirerMetadataContextProvider;
             _logger = logger;
         }
 
@@ -109,10 +111,19 @@ namespace Domain.JobManagement
                    batchSize
                );
 
-                var batch = _acquirer.GetPostsAsync(dataAcquirerInputModel);
+                var context = _dataAcquirerMetadataContextProvider.Get(jobConfig.JobId);
+                var batch = _acquirer.GetPostsAsync(context, dataAcquirerInputModel);
 
                 await foreach (var dataPost in batch)
                 {
+                    var uniPost = UniPostModel.FromValues(
+                        dataPost.PostId,
+                        dataPost.Text,
+                        dataPost.Source,
+                        dataPost.UserId,
+                        dataPost.PostDateTime,
+                        dataAcquirerInputModel.JobId);
+
                     var jsonData = JsonConvert.SerializeObject(dataPost);
                     var messageBrokerMessage = new MessageBrokerMessage(
                         "acquired-data-post",
@@ -193,8 +204,10 @@ namespace Domain.JobManagement
         }
     }
 
-    public interface IJobMetadataStorage
+    public interface IDataAcquirerMetadataStorage
     {
+        Task<IDataAcquirerMetadata> GetAsync(Guid jobId);
+        Task SaveAsync(Guid jobId, IDataAcquirerMetadata defaultMetadata);
     }
 
 

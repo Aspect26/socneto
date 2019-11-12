@@ -7,10 +7,29 @@ using Domain.Model;
 
 namespace Domain.Acquisition
 {
+
+
+    public interface IDataAcquirerMetadata
+    {
+
+    }
+
+    public interface IDataAcquirerMetadataContextProvider
+    {
+        IDataAcquirerMetadataContext Get(Guid jobId);
+    }
+    public interface IDataAcquirerMetadataContext
+    {
+        Task<T> GetOrCreateAsync<T>(T defaultIfNew) where T :IDataAcquirerMetadata;
+        Task UpdateAsync(IDataAcquirerMetadata metadata);
+    }
+
+
     public interface IDataAcquirer
     {
-        IAsyncEnumerable<UniPost> GetPostsAsync(
-            DataAcquirerInputModel jobConfig);
+        IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
+           IDataAcquirerMetadataContext context,
+           DataAcquirerInputModel acquirerInputModel);
     }
     public interface IDataAcquirerLegacy
     {

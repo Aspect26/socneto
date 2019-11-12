@@ -25,7 +25,9 @@ namespace Infrastructure.DataGenerator
             _random = new Random(randomGenratorOptionsAccessor.Value.Seed);
         }
 
-        public async IAsyncEnumerable<UniPost> GetPostsAsync(DataAcquirerInputModel jobConfig)
+        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
+            IDataAcquirerMetadataContext context,
+            DataAcquirerInputModel jobConfig)
         {
             await Task.Delay(_downloadDelay);
 
@@ -40,20 +42,19 @@ namespace Infrastructure.DataGenerator
             }
         }
 
-        private UniPost GetRandomPost(int seed)
+        private DataAcquirerPost GetRandomPost(int seed)
         {
             var postText = GetRandomString(seed, 100);
             var postSource = "random-data";
             var postUser = GetRandomString(seed,12);
             var dateTimeString = DateTime.Now.ToString("s");
 
-            return UniPost.FromValues(
+            return DataAcquirerPost.FromValues(
                 Guid.NewGuid().ToString(),
                 postText,
                 postSource,
                 postUser,
-                dateTimeString,
-                Guid.NewGuid());
+                dateTimeString);
         }
 
         private static DateTime GetRandomDate(int seed)
