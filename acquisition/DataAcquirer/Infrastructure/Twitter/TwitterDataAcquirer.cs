@@ -1,5 +1,4 @@
 using Domain.Acquisition;
-using Domain.JobManagement;
 using Domain.Model;
 using LinqToTwitter;
 using Microsoft.Extensions.Logging;
@@ -10,37 +9,6 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Twitter
 {
-    public class TwitterDataAcquirerInputModel
-    {
-        public TwitterDataAcquirerInputModel(
-            string searchTerm,
-            ulong maxId,
-            ulong sinceId,
-            int batchSize)
-        {
-            SinceId = sinceId;
-            BatchSize = batchSize;
-            SearchTerm = searchTerm;
-            MaxId = maxId;
-        }
-
-        public string SearchTerm { get; }
-        public ulong MaxId { get; }
-        public ulong SinceId { get; }
-        public int BatchSize { get; }
-    }
-
-    //public class TwitterMetadata
-    //{
-
-    //}
-
-
-    //public interface IDataAcquirerContext
-    //{
-    //    Task<T> LoadAsync<T>();
-    //    Task UpdateAsync<T>(T metadata);
-    //}
 
     public class TwitterDataAcquirer : IDataAcquirer
     {
@@ -53,35 +21,49 @@ namespace Infrastructure.Twitter
             _logger = logger;
         }
 
-        public async IAsyncEnumerable<UniPost> GetPostsAsync(
+        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
+            IDataAcquirerMetadataContext context,
             DataAcquirerInputModel acquirerInputModel)
         {
-            // TODO load stored metadata
-            
+            var credentials = new TwitterCredentials
+            {
+                ConsumerKey = acquirerInputModel.Attributes["ApiKey"],
+                ConsumerSecret = acquirerInputModel.Attributes["ApiSecretKey"],
+                AccessToken = acquirerInputModel.Attributes["AccessToken"],
+                AccessTokenSecret = acquirerInputModel.Attributes["AccessTokenSecret"]
+            };
+
+            var defaultMetadata = new TwitterMetadata
+            {
+                Credentials = credentials,
+                MaxId = ulong.MaxValue,
+                SinceId = 0,
+                Query = acquirerInputModel.Query,
+                BatchSize = acquirerInputModel.BatchSize
+            };
+
+            var metadata = await context.GetOrCreateAsync(defaultMetadata);
+
             if (_twitterContext == null)
             {
                 // TODO support multiuser
                 // TODO use singleton object handling this
-                CreateContext(acquirerInputModel);
+                CreateContext(credentials);
             }
-
-            var maxId = ulong.MaxValue;
-
-            ulong sinceId = 0;
 
             while (true)
             {
-                var twitterInputModel = new TwitterDataAcquirerInputModel(
-                    acquirerInputModel.Query,
-                    maxId,
-                    sinceId,
-                    acquirerInputModel.BatchSize);
+                var twitterInputModel = new TwitterQueryInput(
+                    metadata.Query,
+                    metadata.MaxId,
+                    metadata.SinceId,
+                    metadata.BatchSize);
 
                 var batches = QueryPastPost(twitterInputModel);
 
                 await foreach (var batch in batches)
                 {
-                    if(!batch.Any())
+                    if (!batch.Any())
                     {
                         _logger.LogWarning("Querying yielded empty batch");
 
@@ -89,25 +71,24 @@ namespace Infrastructure.Twitter
                     }
                     foreach (var post in batch)
                     {
-                        maxId = Math.Min(post.StatusID - 1, maxId);
-                        sinceId = Math.Max(post.StatusID, sinceId);
-                        if(maxId <= sinceId)
-                        {
-                            break;
-                        }
+                        metadata.MaxId = Math.Min(post.StatusID - 1, metadata.MaxId);
+                        metadata.SinceId = Math.Max(post.StatusID, metadata.SinceId);
 
-                        yield return FromStatus(acquirerInputModel, post);
+                        yield return FromStatus(post);
                     }
+
+                    await context.UpdateAsync(metadata);
                 }
 
                 // todo update sinceId, maxId and do it again
-                
-                maxId = ulong.MaxValue;
+
+                metadata.MaxId = ulong.MaxValue;
+                await context.UpdateAsync(metadata);
                 await Task.Delay(TimeSpan.FromMinutes(15));
             }
         }
 
-        private async IAsyncEnumerable<IList<Status>> QueryPastPost(TwitterDataAcquirerInputModel acquirerInputModel)
+        private async IAsyncEnumerable<IList<Status>> QueryPastPost(TwitterQueryInput acquirerInputModel)
         {
             var searchTerm = acquirerInputModel.SearchTerm;
             var maxId = acquirerInputModel.MaxId;
@@ -140,7 +121,7 @@ namespace Infrastructure.Twitter
                     _logger.LogError("Error while getting data: {error}, type {type}", e.Message, e.GetType().Name);
                 }
 
-                if(batch.Count == 0)
+                if (batch.Count == 0)
                 {
                     yield break;
                 }
@@ -171,18 +152,19 @@ namespace Infrastructure.Twitter
                 .SingleOrDefaultAsync();
         }
 
-        private void CreateContext(DataAcquirerInputModel acquirerInputModel)
+        private void CreateContext(TwitterCredentials credentials)
         {
             try
             {
+
                 var auth = new SingleUserAuthorizer
                 {
                     CredentialStore = new SingleUserInMemoryCredentialStore
                     {
-                        ConsumerKey = acquirerInputModel.Attributes["ApiKey"],
-                        ConsumerSecret = acquirerInputModel.Attributes["ApiSecretKey"],
-                        AccessToken = acquirerInputModel.Attributes["AccessToken"],
-                        AccessTokenSecret = acquirerInputModel.Attributes["AccessTokenSecret"]
+                        ConsumerKey = credentials.ConsumerKey,
+                        ConsumerSecret = credentials.ConsumerSecret,
+                        AccessToken = credentials.AccessToken,
+                        AccessTokenSecret = credentials.AccessTokenSecret
                     }
                 };
                 _twitterContext = new TwitterContext(auth);
@@ -194,16 +176,14 @@ namespace Infrastructure.Twitter
             }
         }
 
-        private static UniPost FromStatus(DataAcquirerInputModel acquirerInputModel, Status item)
+        private static DataAcquirerPost FromStatus(Status item)
         {
-            return UniPost.FromValues(
-
+            return DataAcquirerPost.FromValues(
                                 item.StatusID.ToString(),
                                 item.Text ?? item.FullText,
                                 "Twitter",
                                 item.User.UserID.ToString(),
-                                item.CreatedAt.ToString("s"),
-                                acquirerInputModel.JobId);
+                                item.CreatedAt.ToString("s"));
         }
     }
 }
