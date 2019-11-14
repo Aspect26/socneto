@@ -6,42 +6,19 @@ class ScatterChart {
     _CHART_PADDING_VERTICAL = 20;
     _CHART_PADDING_HORIZONTAL = 50;
 
-    create(selector) {
+    create(selector, dataSet) {
         this._removeOld(selector);
-
-        let data = [
-            { x: 2009, y: 7.25 },
-            { x: 2008, y: 6.55 },
-            { x: 2007, y: 5.85 },
-            { x: 2007, y: 5.8 },
-            { x: 2006, y: 5.8 },
-            { x: 2005, y: 5.6 },
-            { x: 2004, y: 5.7 },
-            { x: 2003, y: 5.2 },
-            { x: 2002, y: 5.0 },
-            { x: 2001, y: 5.5 },
-            { x: 2000, y: 5.6 },
-            { x: 1999, y: 5.32 },
-            { x: 1998, y: 5.22 },
-            { x: 1997, y: 5.15 },
-            { x: 1996, y: 4.75 },
-            { x: 1991, y: 4.25 },
-            { x: 1981, y: 3.35 },
-            { x: 1980, y: 3.10 },
-            { x: 1979, y: 2.90 },
-            { x: 1978, y: 2.65 }
-        ];
 
         let elementWidth = document.getElementsByClassName("tab-content")[0].clientWidth;
         let chartWidth = elementWidth - this._CHART_PADDING_HORIZONTAL;
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_VERTICAL;
 
-        let xScale = this._createXScale(chartWidth, data);
-        let yScale = this._createYScale(chartHeight, data);
+        let xScale = this._createXScale(chartWidth, dataSet);
+        let yScale = this._createYScale(chartHeight, dataSet);
 
         let svg = this._createSvg(selector, chartWidth, this._ELEMENT_HEIGHT, this._CHART_PADDING_HORIZONTAL);
         this._appendAxis(svg, xScale, yScale, chartHeight);
-        this._appendScatterDots(svg, xScale, yScale, data)
+        this._appendScatterDots(svg, xScale, yScale, dataSet)
     }
 
     _removeOld(selector) {
