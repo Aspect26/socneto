@@ -68,3 +68,17 @@ class PieChartStrategy implements ChartStrategy {
   }
 
 }
+
+class ScatterChartStrategy implements ChartStrategy {
+  @override
+  setData(ChartDefinition chartDefinition, List<List<List>> dataSet) {
+    // TODO: implement setData
+    return null;
+  }
+
+  @override
+  redrawChart(String domSelector) {
+    SocnetoCharts.createScatterChart(domSelector);
+  }
+
+}
