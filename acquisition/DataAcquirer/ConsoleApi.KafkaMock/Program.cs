@@ -52,7 +52,9 @@ namespace ConsoleApi.KafkaMock
             services.AddLogging(
                 logging => logging
                 .AddConsole()
-                .SetMinimumLevel(LogLevel.Warning));
+                .AddConfiguration(configuration.GetSection("Logging"))                
+                //.SetMinimumLevel(LogLevel.Information)
+                );
 
 
             services.AddSingleton<IMessageBrokerProducer, KafkaProducer>();
