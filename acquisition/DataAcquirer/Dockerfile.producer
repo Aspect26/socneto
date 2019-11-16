@@ -1,5 +1,7 @@
-FROM mcr.microsoft.com/dotnet/core/runtime:2.2
+FROM mcr.microsoft.com/dotnet/core/runtime:3.0
 
-COPY app/bin/Release/netcoreapp2.2/publish/ app/
+RUN dotnet publish -o out -c Release ConsoleApi.KafkaMock/ConsoleApi.KafkaMock.csproj
+
+COPY out/ app/
 
 ENTRYPOINT ["dotnet", "ConsoleApi.KafkaMock.dll" "commands.json", "job_management.job_configuration.DataAcquirer_Twitter"]
