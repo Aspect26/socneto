@@ -29,11 +29,11 @@ namespace Infrastructure.Kafka
 
             _serverAddress = kafkaOptions.Value.ServerAddress;
         }
-        public async Task ConsumeAsync(string consumeTopic,
+        public async Task ConsumeAsync(string topic,
             Func<string, Task> onRecieveAction,
             CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Consuming topic: '{consumeTopic}'");
+            _logger.LogInformation($"Consuming topic: '{topic}'");
 
             var config = new ConsumerConfig
             {
@@ -69,7 +69,7 @@ namespace Infrastructure.Kafka
                 })
                 .Build())
             {
-                consumer.Subscribe(consumeTopic);
+                consumer.Subscribe(topic);
 
                 try
                 {
@@ -113,10 +113,17 @@ namespace Infrastructure.Kafka
                         }
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TaskCanceledException)
                 {
                     _logger.LogInformation("Closing consumer.");
                     consumer.Close();
+                }
+                catch(Exception e)
+                {
+                    _logger.LogInformation("Failed to consume: {error}. \nTopic {topic}, \nAddress {address}",
+                        e.Message,
+                        topic,
+                        _serverAddress);
                 }
             }
         }
