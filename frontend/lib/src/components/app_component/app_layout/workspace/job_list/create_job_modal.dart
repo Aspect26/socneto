@@ -116,7 +116,7 @@ class CreateJobModal {
       try {
         this.submitting = true;
         final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
-        final jobStatus = await this._socnetoService.submitNewJob(this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
+        final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
