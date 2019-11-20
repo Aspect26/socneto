@@ -46,6 +46,7 @@ class LineChart {
     }
 
     _createXScale(dataSets, width) {
+        // TODO: what if this is not time?
         return d3.scaleTime()
             .domain(d3.extent(dataSets.flat(), function(datum) { return new Date(datum.x); }))
             .range([0, width]);
