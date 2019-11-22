@@ -43,7 +43,8 @@ class SocnetoMockDataService extends SocnetoDataService {
 
   static final List<ChartDefinition> mockCharts = [
     ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line),
-    ChartDefinition(["analyses/sentiment/polarity/aggregate"], ChartType.Pie)
+    ChartDefinition(["analyses/sentiment/polarity/aggregate"], ChartType.Pie),
+    ChartDefinition(["analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Scatter)
   ];
 
   Future<User> login(String username, String password) async =>
@@ -82,6 +83,31 @@ class SocnetoMockDataService extends SocnetoDataService {
           [1, 53],
           [-1, 23],
           [0, 42]
+        ]
+      ]);
+    } else if (chartDefinition.chartType == ChartType.Scatter) {
+      return Future.value([
+        [
+          [ 2009, 7.25 ],
+          [ 2008, 6.55 ],
+          [ 2007, 5.85 ],
+          [ 2007, 5.8 ],
+          [ 2006, 5.8 ],
+          [ 2005, 5.6 ],
+          [ 2004, 5.7 ],
+          [ 2003, 5.2 ],
+          [ 2002, 5.0 ],
+          [ 2001, 5.5 ],
+          [ 2000, 5.6 ],
+          [ 1999, 5.32 ],
+          [ 1998, 5.22 ],
+          [ 1997, 5.15 ],
+          [ 1996, 4.75 ],
+          [ 1991, 4.25 ],
+          [ 1981, 3.35 ],
+          [ 1980, 3.10 ],
+          [ 1979, 2.90 ],
+          [ 1978, 2.65 ]
         ]
       ]);
     } else {

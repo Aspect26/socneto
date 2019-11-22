@@ -1,4 +1,4 @@
-FROM google/dart
+FROM google/dart:2.5.2
 
 RUN mkdir /app
 ADD ./ /app

@@ -15,8 +15,8 @@ import 'package:sw_project/src/services/socneto_mock_data_service.dart';
 
 class SocnetoService {
 
-  // final _dataService = SocnetoMockDataService();
-  final _dataService = SocnetoDataService();
+  final _dataService = SocnetoMockDataService();
+  // final _dataService = SocnetoDataService();
   final _job_management_service = SocnetoJobManagementService();
   final _local_storage_service = LocalStorageService();
 
@@ -62,8 +62,8 @@ class SocnetoService {
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       await this._dataService.getAvailableAnalyzers();
 
-  Future<JobStatus> submitNewJob(String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async =>
-      await this._job_management_service.submitNewJob(query, networks, analyzers, twitterCredentials);
+  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials) async =>
+      await this._job_management_service.submitNewJob(jobName, query, networks, analyzers, twitterCredentials);
   Future<JobStatus> stopJob(String jobId) async =>
       await this._job_management_service.stopJob(jobId);
   Future<JobStatus> pauseJob(String jobId) async =>
