@@ -60,7 +60,7 @@ class ChartComponent implements AfterChanges {
       case ChartType.Pie:
         this._chartStrategy = PieChartStrategy(); break;
       case ChartType.Scatter:
-        throw Exception("Scatter chart is not yet supported"); break;
+        this._chartStrategy = ScatterChartStrategy(); break;
     }
   }
 
