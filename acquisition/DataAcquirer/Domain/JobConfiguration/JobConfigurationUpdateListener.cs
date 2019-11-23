@@ -53,7 +53,7 @@ namespace Domain.JobConfiguration
             {
                 jobConfig = JsonConvert.DeserializeObject<DataAcquirerJobConfig>(configJson);
             }
-            catch (JsonReaderException jre)
+            catch (JsonException jre)
             {
                 _logger.LogError("Could not parse job config: Error: {error}, config {jobConfigJson}",
                     jre.Message,
