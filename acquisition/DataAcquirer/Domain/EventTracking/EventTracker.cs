@@ -4,15 +4,10 @@ using Newtonsoft.Json;
 
 namespace Domain
 {
-    public class LogLevelOptions
-    {
-        public LogLevel? Default { get; set; }
-    }
     public class EventTracker<T> : IEventTracker<T>
     {
         private readonly ILogger<T> _logger;
         private readonly string _componentOptionsJson;
-
 
         public EventTracker(ILogger<T> logger,
             IOptions<ComponentOptions> componentOptionsAccessor,
