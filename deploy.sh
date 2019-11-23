@@ -9,7 +9,8 @@ sleep 10s
 
 sudo docker run --network host --restart always --detach twitteracquirer
 mkdir output_data
-sudo docker run --network host --restart always --detach  --mount source=output_data,target=/app/output_data kf_test output_data
+sudo docker run --network host --restart always --detach  --mount type=bind,source=$(realpath output_data),target=/app/output_data kf_test output_data
+
 
 
 
