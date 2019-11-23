@@ -23,14 +23,25 @@ namespace ConsoleApi.KafkaMock
             args = new[]
             {
                 "commands.json",
-                "job_management.job_configuration.DataAcquirer_Twitter"
+                "job_management.job_configuration.DataAcquirer_Twitter",
+                Path.Combine(Directory.GetCurrentDirectory(),"output_data")
             };
 #endif
+
             var services = Configure();
             var app = services.GetRequiredService<App>();
             var commandFilePath = args[0];
             var configTopic = args[1];
-            await app.DoAsync(commandFilePath, configTopic);
+            var outputDirectory = new DirectoryInfo(args[2]);
+            try
+            {
+                //outputDirectory.Create();
+            }
+            catch (IOException)
+            {
+                // intentionally empty
+            }
+            await app.DoAsync(commandFilePath, configTopic, outputDirectory);
         }
 
         public static IServiceProvider Configure()
@@ -44,7 +55,6 @@ namespace ConsoleApi.KafkaMock
                 builder.AddJsonFile($"appsettings.Development.json", true, true);
             }
             var configuration = builder.Build();
-
 
             var services = new ServiceCollection();
 
