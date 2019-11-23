@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,8 +26,10 @@ namespace ConsoleApi.KafkaMock
             _logger = logger;
         }
 
-        public async Task DoAsync(string commandFilePath,
-            string configTopic)
+        public async Task DoAsync(
+            string commandFilePath,
+            string configTopic,
+            DirectoryInfo outputDirectory)
         {
             _logger.LogInformation("Reading commands from {file}", commandFilePath);
             var commands = await _commandFileReader.ReadCommandsAsync(commandFilePath);
@@ -34,7 +37,10 @@ namespace ConsoleApi.KafkaMock
             _logger.LogInformation("Started listening to '{configTopic}'", configTopic);
             var listenTasks = commands.Select(r =>
 
-                Task.Run(()=>_postSaver.ListenAndSaveAsync(r.OutputMessageBrokerChannels[0], CancellationToken.None))
+                Task.Run(()=>_postSaver.ListenAndSaveAsync(
+                    r.OutputMessageBrokerChannels[0], 
+                    outputDirectory,
+                    CancellationToken.None))
 
             ).ToList();
 
