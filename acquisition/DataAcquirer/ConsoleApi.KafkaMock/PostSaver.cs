@@ -26,11 +26,12 @@ namespace ConsoleApi.KafkaMock
         }
 
 
-        public async Task ListenAndSaveAsync(string topic, CancellationToken cancellationToken)
+        public async Task ListenAndSaveAsync(string topic, DirectoryInfo directory, CancellationToken cancellationToken)
         {
             _logger.LogInformation("started listening for '{topic}'", topic);
             var ts = DateTime.Now.ToString("s").Replace(":", "").Replace("-", "");
-            var filePath = new FileInfo($"{topic}-{ts}.txt");
+            var filepathText = Path.Combine(directory.FullName, $"{topic}-{ts}.txt");
+            var filePath = new FileInfo(filepathText);
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
