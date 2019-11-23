@@ -39,7 +39,6 @@ namespace Domain.Model
         {
             return new DataAcquirerPost(postId, text, source, userId, dateTimeString);
         }
-
     }
 
 
@@ -87,6 +86,7 @@ namespace Domain.Model
             string dateTimeString,
             Guid jobId)
         {
+
             return new UniPostModel(postId, text, source, userId, dateTimeString, jobId);
         }
 

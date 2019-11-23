@@ -1,7 +1,7 @@
+using Domain;
 using Domain.Acquisition;
 using Domain.Model;
 using LinqToTwitter;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +13,10 @@ namespace Infrastructure.Twitter
     public class TwitterDataAcquirer : IDataAcquirer
     {
         private TwitterContext _twitterContext;
-        private readonly ILogger<TwitterDataAcquirer> _logger;
+        private readonly IEventTracker<TwitterDataAcquirer> _logger;
 
         public TwitterDataAcquirer(
-            ILogger<TwitterDataAcquirer> logger)
+            IEventTracker<TwitterDataAcquirer> logger)
         {
             _logger = logger;
         }
@@ -52,6 +52,8 @@ namespace Infrastructure.Twitter
                 CreateContext(credentials);
             }
 
+            long foundPosts = 0;
+            var mostRecentPost = DateTime.MinValue;
             while (true)
             {
                 var twitterInputModel = new TwitterQueryInput(
@@ -61,28 +63,49 @@ namespace Infrastructure.Twitter
                     metadata.SinceId,
                     metadata.BatchSize);
 
-                var batches = QueryPastPost(twitterInputModel);
+                var batches = QueryPastPostAsync(acquirerInputModel.JobId, twitterInputModel);
 
                 await foreach (var batch in batches)
                 {
                     if (!batch.Any())
                     {
-                        _logger.LogWarning("Querying yielded empty batch");
-
+                        _logger.TrackWarning(
+                            "QueryData",
+                            "Querying yielded empty batch",
+                            new
+                            {
+                                query = metadata.Query,
+                                jobId = acquirerInputModel.JobId
+                            });
                         break;
                     }
+
+
                     foreach (var post in batch)
                     {
                         metadata.MaxId = Math.Min(post.StatusID - 1, metadata.MaxId);
                         metadata.SinceId = Math.Max(post.StatusID, metadata.SinceId);
 
+                        if (post.CreatedAt > mostRecentPost)
+                        {
+                            mostRecentPost = post.CreatedAt;
+                        }
                         yield return FromStatus(post);
                     }
+                    foundPosts += batch.Count;
+
+                    _logger.TrackStatistics("QueryDataStatistics",
+                        new
+                        {
+                            foundPosts,
+                            mostRecentPost,
+                            query = acquirerInputModel.Query,
+                            language = acquirerInputModel.QueryLanguage,
+                            jobId = acquirerInputModel.JobId
+                        });
 
                     await context.UpdateAsync(metadata);
                 }
-
-                // todo update sinceId, maxId and do it again
 
                 metadata.MaxId = ulong.MaxValue;
                 await context.UpdateAsync(metadata);
@@ -90,7 +113,9 @@ namespace Infrastructure.Twitter
             }
         }
 
-        private async IAsyncEnumerable<IList<Status>> QueryPastPost(TwitterQueryInput acquirerInputModel)
+        private async IAsyncEnumerable<IList<Status>> QueryPastPostAsync(
+            Guid jobId,
+            TwitterQueryInput acquirerInputModel)
         {
             var searchTerm = acquirerInputModel.SearchTerm;
             var language = acquirerInputModel.Language;
@@ -103,17 +128,16 @@ namespace Infrastructure.Twitter
                 var batch = new List<Status>();
                 try
                 {
-                    _logger.LogInformation("Downloading nest posts. Earliest id: {id}", acquirerInputModel.MaxId);
 
-                    var search = await GetStatusBatchAsync(searchTerm, batchSize,language, maxId: maxId, sinceId: sinceId);
+                    _logger.TrackInfo(
+                       "QueryData",
+                       "Downloading data");
+
+                    var search = await GetStatusBatchAsync(searchTerm, batchSize, language, maxId: maxId, sinceId: sinceId);
 
                     batch = search
                         .Statuses
                         .ToList();
-
-                    _logger.LogInformation("Found {count} posts. Time {time}",
-                        batch.Count,
-                        search.Statuses.FirstOrDefault()?.CreatedAt.ToString("s"));
 
                     maxId = search.Statuses.Any()
                         ? Math.Min(search.Statuses.Min(status => status.StatusID) - 1, acquirerInputModel.MaxId)
@@ -121,7 +145,14 @@ namespace Infrastructure.Twitter
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Error while getting data: {error}, type {type}", e.Message, e.GetType().Name);
+                    _logger.TrackError(
+                        "QueryData",
+                        "Unexpected error",
+                        new
+                        {
+                            exception = e,
+                            jobId = jobId
+                        });
                 }
 
                 if (batch.Count == 0)
@@ -138,7 +169,7 @@ namespace Infrastructure.Twitter
         private async Task<Search> GetStatusBatchAsync(
             string searchTerm,
             int batchSize,
-            string language ,
+            string language,
             ulong maxId = ulong.MaxValue,
             ulong sinceId = 1)
         {
@@ -174,7 +205,13 @@ namespace Infrastructure.Twitter
             }
             catch (Exception e)
             {
-                _logger.LogError("Error during context initialization", e.Message);
+                _logger.TrackError(
+                    "QueryData",
+                    "Twitter context failed to initialize",
+                    new
+                    {
+                        exception = e
+                    });
                 throw;
             }
         }
