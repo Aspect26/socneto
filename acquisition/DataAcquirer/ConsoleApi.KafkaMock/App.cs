@@ -33,16 +33,16 @@ namespace ConsoleApi.KafkaMock
         {
             _logger.LogInformation("Reading commands from {file}", commandFilePath);
             var commands = await _commandFileReader.ReadCommandsAsync(commandFilePath);
-            
+
             _logger.LogInformation("Started listening to '{configTopic}'", configTopic);
+            _logger.LogInformation("Output saved to '{output}'", outputDirectory.FullName);
             var listenTasks = commands.Select(r =>
 
-                Task.Run(()=>_postSaver.ListenAndSaveAsync(
-                    r.OutputMessageBrokerChannels[0], 
+                Task.Run(() => _postSaver.ListenAndSaveAsync(
+                    r.OutputMessageBrokerChannels[0],
                     outputDirectory,
-                    CancellationToken.None))
-
-            ).ToList();
+                    CancellationToken.None)))
+                .ToList();
 
             var delay = TimeSpan.FromSeconds(10);
             var commandList = commands.ToList();

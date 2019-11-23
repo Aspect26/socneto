@@ -60,7 +60,7 @@ namespace Domain.JobManagement
 
                 if(_runningJobsRecords.ContainsKey(jobId))
                 {
-                    _logger.LogWarning("Job {jobId}, is already running");
+                    _logger.LogWarning("Job {jobId}, is already running",jobId);
                     return Task.CompletedTask;
                 }
                 var json = JsonConvert.SerializeObject(jobConfig);
@@ -156,6 +156,7 @@ namespace Domain.JobManagement
         {
             foreach (var outputChannel in outputChannels)
             {
+                _logger.LogInformation("Sending data to {channel}", outputChannel);
                 await _producer.ProduceAsync(outputChannel,
                     messageBrokerMessage);
             }
@@ -186,7 +187,6 @@ namespace Domain.JobManagement
 
         public async Task StopAllJobsAsync()
         {
-            // TODO handle concurency
             lock (_dictionaryLock)
             {
                 _isStopping = true;
