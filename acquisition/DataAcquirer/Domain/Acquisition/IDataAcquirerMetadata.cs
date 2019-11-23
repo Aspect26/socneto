@@ -1,4 +1,4 @@
-﻿namespace Domain.Acquisition
+namespace Domain.Acquisition
 {
     public interface IDataAcquirerMetadata
     {
