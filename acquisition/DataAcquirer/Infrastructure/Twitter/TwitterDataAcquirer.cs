@@ -27,10 +27,10 @@ namespace Infrastructure.Twitter
         {
             var credentials = new TwitterCredentials
             {
-                ConsumerKey = acquirerInputModel.Attributes["ApiKey"],
-                ConsumerSecret = acquirerInputModel.Attributes["ApiSecretKey"],
-                AccessToken = acquirerInputModel.Attributes["AccessToken"],
-                AccessTokenSecret = acquirerInputModel.Attributes["AccessTokenSecret"]
+                ConsumerKey = acquirerInputModel.Attributes.GetValue("ApiKey"),
+                ConsumerSecret = acquirerInputModel.Attributes.GetValue("ApiSecretKey"),
+                AccessToken = acquirerInputModel.Attributes.GetValue("AccessToken"),
+                AccessTokenSecret = acquirerInputModel.Attributes.GetValue("AccessTokenSecret")
             };
 
             var defaultMetadata = new TwitterMetadata
@@ -38,6 +38,7 @@ namespace Infrastructure.Twitter
                 Credentials = credentials,
                 MaxId = ulong.MaxValue,
                 SinceId = 0,
+                Language = acquirerInputModel.Attributes.GetValue("Language", "en"),
                 Query = acquirerInputModel.Query,
                 BatchSize = acquirerInputModel.BatchSize
             };
@@ -55,6 +56,7 @@ namespace Infrastructure.Twitter
             {
                 var twitterInputModel = new TwitterQueryInput(
                     metadata.Query,
+                    metadata.Language,
                     metadata.MaxId,
                     metadata.SinceId,
                     metadata.BatchSize);
@@ -91,6 +93,7 @@ namespace Infrastructure.Twitter
         private async IAsyncEnumerable<IList<Status>> QueryPastPost(TwitterQueryInput acquirerInputModel)
         {
             var searchTerm = acquirerInputModel.SearchTerm;
+            var language = acquirerInputModel.Language;
             var maxId = acquirerInputModel.MaxId;
             var sinceId = acquirerInputModel.SinceId;
             var batchSize = acquirerInputModel.BatchSize;
@@ -102,7 +105,7 @@ namespace Infrastructure.Twitter
                 {
                     _logger.LogInformation("Downloading nest posts. Earliest id: {id}", acquirerInputModel.MaxId);
 
-                    var search = await GetStatusBatchAsync(searchTerm, batchSize, maxId: maxId, sinceId: sinceId);
+                    var search = await GetStatusBatchAsync(searchTerm, batchSize,language, maxId: maxId, sinceId: sinceId);
 
                     batch = search
                         .Statuses
@@ -135,7 +138,7 @@ namespace Infrastructure.Twitter
         private async Task<Search> GetStatusBatchAsync(
             string searchTerm,
             int batchSize,
-            string language = "cs",
+            string language ,
             ulong maxId = ulong.MaxValue,
             ulong sinceId = 1)
         {
