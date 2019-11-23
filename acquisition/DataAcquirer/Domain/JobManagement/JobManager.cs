@@ -23,7 +23,7 @@ namespace Domain.JobManagement
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
         private readonly IDataAcquirerMetadataContextProvider _dataAcquirerMetadataContextProvider;
-        private readonly ILogger<JobManager> _logger;
+        private readonly IEventTracker<JobManager> _logger;
 
         // concurent dictionary does not suffice
         private bool _isStopping = false;
@@ -37,7 +37,7 @@ namespace Domain.JobManagement
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
             IDataAcquirerMetadataContextProvider dataAcquirerMetadataContextProvider,
-            ILogger<JobManager> logger)
+            IEventTracker<JobManager> logger)
         {
             _dataAcquirerJobStorage = dataAcquirerJobStorage;
             //   _jobMetadataStorage = jobMetadataStorage;
@@ -54,17 +54,27 @@ namespace Domain.JobManagement
                 var jobId = jobConfig.JobId;
                 if (_isStopping)
                 {
-                    _logger.LogWarning("Could not start downloading data of a job id {jobId}, because the component is stopping", jobId);
+                    _logger.TrackWarning(
+                        "StartNewJob",
+                        "Could not start job, because the component is stopping",
+                        new { jobId = jobId });
+
                     return Task.CompletedTask;
                 }
 
-                if(_runningJobsRecords.ContainsKey(jobId))
+                if (_runningJobsRecords.ContainsKey(jobId))
                 {
-                    _logger.LogWarning("Job {jobId}, is already running",jobId);
+                    _logger.TrackWarning(
+                        "StartNewJob",
+                        "Job is with this id already running",
+                        new { jobId = jobId });
                     return Task.CompletedTask;
                 }
-                var json = JsonConvert.SerializeObject(jobConfig);
-                _logger.LogInformation("Config recieved {config}", json);
+
+                _logger.TrackInfo(
+                    "StartNewJob",
+                    "Config recieved",
+                    new { config = jobConfig });
 
                 var cancellationTokenSource = new CancellationTokenSource();
                 var downloadingTask = RunJobAsync(jobConfig, cancellationTokenSource.Token).
@@ -77,8 +87,10 @@ namespace Domain.JobManagement
                             catch (TaskCanceledException) { }
 
                             _runningJobsRecords.Remove(jobId, out _);
-                            _logger.LogInformation("Job {jobId} removed", jobId);
-
+                            _logger.TrackInfo(
+                                "StartNewJob",
+                                "Job removed",
+                                new { config = jobId });
                         });
 
                 var jobManagerJobRecord = new JobManagerJobRecord
@@ -97,18 +109,41 @@ namespace Domain.JobManagement
         {
             try
             {
-
                 // TODO validate job config
                 if (!jobConfig.Attributes.ContainsKey("TopicQuery"))
                 {
-                    _logger.LogError("TopicQuery attribute is not present");
+                    _logger.TrackError(
+                        "StartNewJob",
+                        "TopicQuery attribute is not present. Job did not start",
+                        new { jobId = jobConfig.JobId });
+                    return;
+                }
+                var queryLanguage = "en";
+                var supported = new[] { "en", "cs" };
+                if (jobConfig.Attributes.TryGetValue("Language", out var desiredLanguage))
+                {
+                    if (supported.Contains(desiredLanguage))
+                    {
+                        queryLanguage = desiredLanguage;
+                    }
+                    else
+                    {
+                        _logger.TrackError(
+                            "StartNewJob",
+                            "Unrecognized language",
+                            new
+                            {
+                                language = desiredLanguage,
+                                jobId = jobConfig.JobId
+                            });
+                    }
                 }
 
                 await _dataAcquirerJobStorage.SaveAsync(jobConfig.JobId, jobConfig);
 
                 var earliestIdPagingParameter = ulong.MaxValue;
                 ulong latestIdPagingParameter = 0;
-                var queryLanguage = "en";
+
                 var batchSize = 100;
 
                 var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
@@ -147,16 +182,28 @@ namespace Domain.JobManagement
             catch (TaskCanceledException) { }
             catch (Exception e)
             {
-                _logger.LogError("Acquirer failed due to '{error}'", e.Message);
+                _runningJobsRecords.Remove(jobConfig.JobId);
+                _logger.TrackError(
+                    "RunJob",
+                    "Job encountered an error and stopped.", 
+                    new
+                    {
+                        jobId=jobConfig.JobId,
+                        exception =e
+                    });
             }
         }
 
         private async Task SendRecordToOutputs(string[] outputChannels,
             MessageBrokerMessage messageBrokerMessage)
         {
+                _logger.TrackStatistics(
+                    "SendingData",
+                    new { channels = outputChannels });
+
             foreach (var outputChannel in outputChannels)
             {
-                _logger.LogInformation("Sending data to {channel}", outputChannel);
+
                 await _producer.ProduceAsync(outputChannel,
                     messageBrokerMessage);
             }
@@ -166,8 +213,8 @@ namespace Domain.JobManagement
         {
             if (!_runningJobsRecords.TryGetValue(jobId, out var jobRecord))
             {
+                _logger.TrackError("StopJob", "Job does not exist", new { jobId });
                 var error = "Could not stop non existing job: {jobId}";
-                _logger.LogError(error, jobId);
                 throw new InvalidOperationException(string.Format(error, jobId));
             }
 

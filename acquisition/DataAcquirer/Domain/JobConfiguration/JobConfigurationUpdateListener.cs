@@ -14,7 +14,7 @@ namespace Domain.JobConfiguration
     {
         private readonly IMessageBrokerConsumer _messageBrokerConsumer;
         private readonly IJobManager _jobManager;
-        private readonly ILogger<JobConfigurationUpdateListener> _logger;
+        private readonly IEventTracker<JobConfigurationUpdateListener> _logger;
         private readonly string _updateChannelName;
 
 
@@ -22,7 +22,7 @@ namespace Domain.JobConfiguration
             IMessageBrokerConsumer messageBrokerConsumer,
             IJobManager jobManager,
             IOptions<ComponentOptions> componentOptionsAccessor,
-            ILogger<JobConfigurationUpdateListener> logger)
+            IEventTracker<JobConfigurationUpdateListener> logger)
         {
 
             _messageBrokerConsumer = messageBrokerConsumer;
@@ -34,7 +34,8 @@ namespace Domain.JobConfiguration
 
         public Task ListenAsync(CancellationToken token)
         {
-            _logger.LogInformation("Starting listening at {topic}", _updateChannelName);
+            _logger.TrackInfo("StartNewJob", "Starting listening",
+                new { channelName = _updateChannelName });
             while (true)
 
             {
@@ -55,16 +56,27 @@ namespace Domain.JobConfiguration
             }
             catch (JsonException jre)
             {
-                _logger.LogError("Could not parse job config: Error: {error}, config {jobConfigJson}",
-                    jre.Message,
-                    configJson);
+                _logger.TrackError(
+                       "StartNewJob",
+                       "Could not parse job config",
+                       new
+                       {
+                           config=configJson,
+                           exception = jre
+                       });
                 throw new InvalidOperationException($"Could not parse job config {jre.Message}");
             }
 
             if (jobConfig.Command == null)
             {
                 const string error = "Job notification was not processed. Empty command";
-                _logger.LogError(error);
+                _logger.TrackError(
+                        "StartNewJob",
+                        error,
+                        new
+                        {
+                            jobId = jobConfig.JobId,
+                        });
                 throw new InvalidOperationException(error);
             }
 
@@ -78,7 +90,20 @@ namespace Domain.JobConfiguration
             }
             else if (command == startIdentifier)
             {
-                await _jobManager.StartNewJobAsync(jobConfig);
+                try
+                {
+                    await _jobManager.StartNewJobAsync(jobConfig);
+                }
+                catch (JobException e)
+                {
+                    _logger.TrackError(
+                        "StartNewJob", 
+                        "Job failed to start", 
+                        new { 
+                            jobId = jobConfig.JobId ,
+                            exception=e
+                        });
+                }
             }
             else
             {
