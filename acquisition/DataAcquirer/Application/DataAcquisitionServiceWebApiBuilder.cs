@@ -178,6 +178,8 @@ namespace Application
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
 
             services.AddSingleton<IJobManager, JobManager>();
+
+            services.AddSingleton(typeof(IEventTracker<>),typeof( EventTracker<>));
             services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
@@ -229,6 +231,9 @@ namespace Application
             services.AddOptions<MockConsumerOptions>()
                 .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
                 .ValidateDataAnnotations();
+
+            services.AddOptions<LogLevelOptions>()
+                .Bind(configuration.GetSection("Logging:LogLevel"));
 
         }
 
