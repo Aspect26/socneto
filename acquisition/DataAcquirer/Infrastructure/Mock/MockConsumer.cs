@@ -15,8 +15,9 @@ namespace Infrastructure.DataGenerator
     {
         private readonly ILogger<MockConsumer> _logger;
         private readonly string _consumedTopic;
-        private readonly string _topicQuery;
         private readonly IReadOnlyDictionary<string,string> _customAttributes;
+        private readonly Queue<DataAcquirerJobConfig> _configs;
+        private readonly List<string> _topics;
 
         public MockConsumer(
             IOptions<MockConsumerOptions> mockConsumerOptionsAccessor,
@@ -24,31 +25,62 @@ namespace Infrastructure.DataGenerator
         {
             _logger = logger;
             _consumedTopic = mockConsumerOptionsAccessor.Value.ConsumedTopic;
-            _topicQuery = mockConsumerOptionsAccessor.Value.TopicQuery;
             _customAttributes = mockConsumerOptionsAccessor.Value.CustomAttributes?? new Dictionary<string, string>();
+            
+            _configs = PrepareConfigQueue(mockConsumerOptionsAccessor.Value.Topics);
+        }
+
+        public Queue<DataAcquirerJobConfig> GetFixed()
+        {
+            var attributes = _customAttributes.ToDictionary(r => r.Key, r => r.Value);
+            attributes.Add("TopicQuery", _topics.First());
+
+            var fixedGuid = Guid.Parse("01c3ee17-c9f4-492f-ac9c-e9f6ecd1fa7e");
+            var config= new DataAcquirerJobConfig()
+            {
+                JobId = fixedGuid,
+                Attributes = attributes,
+                Command = "start",
+                OutputMessageBrokerChannels = new string[] { "s1" }
+            };
+            var queue = new Queue<DataAcquirerJobConfig>();
+            queue.Enqueue(config);
+            return queue;
+        }
+
+        public Queue<DataAcquirerJobConfig> PrepareConfigQueue(IEnumerable<string> topics)
+        {
+            var configs = new Queue<DataAcquirerJobConfig>();
+
+            foreach(var topic in topics)
+            {
+                var attributes = _customAttributes.ToDictionary(r => r.Key, r => r.Value);
+                attributes.Add("TopicQuery",topic );
+
+                var config = new DataAcquirerJobConfig()
+                {
+                    JobId = Guid.NewGuid(),
+                    Attributes = attributes,
+                    Command = "start",
+                    OutputMessageBrokerChannels = new string[] { "o_1" }
+                };
+
+                configs.Enqueue(config);
+
+            }
+
+            return configs;
         }
 
         public async Task ConsumeAsync(string consumeTopic,
             Func<string, Task> onRecieveAction,
             CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Topic {}", consumeTopic);
+            _logger.LogInformation("Consuming topic {}", consumeTopic);
 
             if (consumeTopic == _consumedTopic)
             {
-                var attributes = _customAttributes.ToDictionary(r => r.Key, r => r.Value);
-                attributes.Add("TopicQuery", _topicQuery);
-
-                var fixedGuid = Guid.Parse("01c3ee17-c9f4-492f-ac9c-e9f6ecd1fa7e");
-                var config = new DataAcquirerJobConfig()
-                {
-                    JobId = fixedGuid,
-                    Attributes = attributes,
-                    Command = "start",
-                    OutputMessageBrokerChannels = new string[] { "s1" }
-                };
-
-
+                var config = _configs.Dequeue();
                 var json = JsonConvert.SerializeObject(config);
                 await onRecieveAction(json);
                 await Task.Delay(TimeSpan.FromSeconds(10));

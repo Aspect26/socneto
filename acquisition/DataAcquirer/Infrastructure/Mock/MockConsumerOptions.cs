@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Infrastructure.DataGenerator
 {
@@ -6,7 +6,7 @@ namespace Infrastructure.DataGenerator
     {
         public string ConsumedTopic { get; set; }
 
-        public string TopicQuery { get; set; }
+        public List<string> Topics { get; set; }
         public Dictionary<string, string> CustomAttributes { get;set; }
     }
 }
