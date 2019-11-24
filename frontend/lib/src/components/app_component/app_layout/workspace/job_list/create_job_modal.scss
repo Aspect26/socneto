@@ -41,6 +41,11 @@
       width: 350px;
     }
 
+    .language-select {
+      margin-left: 15px;
+      margin-bottom: 20px;
+    }
+
     .info-box {
       text-align: center;
 
@@ -61,12 +66,9 @@
       }
     }
 
-    // TODO: duplicate
     footer {
-      material-button {
-        background-color: get-color($primary, 500);
-        color: get-color-font($primary, 500);
-      }
+      background-color: get-color($background, 300);
+      padding: 8px;
     }
   }
 
