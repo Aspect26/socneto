@@ -67,6 +67,7 @@ class CreateJobModal {
 
   List<SocnetoComponent> availableSocialNetworks = [];
   List<SocnetoComponent> availableDataAnalyzers = [];
+  static final ItemRenderer languagesItemRenderer = newCachingItemRenderer<dynamic>((language) => language == "cs"? "Český" : language == "en"? "English" : "UNKNOWN");
 
   bool loadingSocialNetworks = true;
   bool loadingDataAnalyzers = true;
@@ -74,6 +75,7 @@ class CreateJobModal {
 
   String jobName = "";
   String topic = "";
+  SingleSelectionModel languageSelection = SingleSelectionModel();
   List<SocnetoComponent> selectedSocialNetworks = [];
   List<SocnetoComponent> selectedDataAnalyzers = [];
   bool useCustomTwitterCredentials = false;
@@ -93,6 +95,9 @@ class CreateJobModal {
   void reset() {
     this.jobName = "";
     this.topic = "";
+    this.languageSelection = SingleSelectionModel();
+    // this.languageSelection.deselectOnActivate = false;
+    this.languageSelection.select("en");
     this.selectedSocialNetworks.clear();
     this.selectedDataAnalyzers.clear();
     this.errorMessage = null;
@@ -116,7 +121,7 @@ class CreateJobModal {
       try {
         this.submitting = true;
         final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
-        final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials);
+        final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials, this.languageSelection.selectedValue);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
