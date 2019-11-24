@@ -10,15 +10,16 @@ class SocnetoAnalyser extends SocnetoComponent {
         super(identifier, type);
 
   SocnetoAnalyser.fromMap(Map data) :
-        properties = (data["analysisProperties"] as List<dynamic>)?.map((propertyData) => AnalysisProperty.fromMap(propertyData))?.toList(),
+        properties = (data["analysisProperties"] as List<dynamic>)?.map((propertyData) => AnalysisProperty.fromMap(propertyData))?.toList() ?? [],
         super.fromMap(data);
-
 }
 
 
 class AnalysisProperty {
   final String name;
   final AnalysisPropertyType type;
+
+  AnalysisProperty(this.name, this.type);
 
   AnalysisProperty.fromMap(Map data) :
       name = data["name"],
