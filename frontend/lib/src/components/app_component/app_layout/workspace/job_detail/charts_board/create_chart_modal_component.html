@@ -24,13 +24,14 @@
                                               buttonText="{{ dataPath.analyser.identifier }}"
                                               [(selection)]="dataPath.analyser"
                                               [options]="analysers"
-                                              [itemRenderer]="itemRenderer">
+                                              [itemRenderer]="analyserItemRenderer">
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
                                               buttonText="{{ dataPath.property }}"
                                               [(selection)]="dataPath.property"
-                                              [options]="dataPath.analyser.properties">
+                                              [options]="dataPath.analyser.properties"
+                                              [itemRenderer]="propertyItemRenderer">
                     </material-dropdown-select>
                 </div>
 

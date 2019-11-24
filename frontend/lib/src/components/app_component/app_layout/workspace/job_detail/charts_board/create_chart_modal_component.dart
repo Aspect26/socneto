@@ -66,8 +66,11 @@ class CreateChartModalComponent {
     this.loadAnalyzers();
   }
 
-  static final ItemRenderer itemRenderer = newCachingItemRenderer<dynamic>(
+  static final ItemRenderer analyserItemRenderer = newCachingItemRenderer<dynamic>(
           (analyser) => "${analyser.identifier}");
+
+  static final ItemRenderer propertyItemRenderer = newCachingItemRenderer<dynamic>(
+          (property) => "${property.name}");
 
   void loadAnalyzers() async {
     // TODO: this should ask for analyzers of the selected job
@@ -108,7 +111,7 @@ class CreateChartModalComponent {
     }
 
     final analyser = this.analysers[0];
-    this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties.isNotEmpty? analyser.properties[0] : ""));
+    this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties.isNotEmpty? analyser.properties[0].name : ""));
   }
 
   void onSubmit() async {
