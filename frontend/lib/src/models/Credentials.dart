@@ -6,3 +6,12 @@ class TwitterCredentials {
   String accessTokenSecret;
 
 }
+
+
+class RedditCredentials {
+
+  String appId;
+  String appSecret;
+  String refreshToken;
+
+}
