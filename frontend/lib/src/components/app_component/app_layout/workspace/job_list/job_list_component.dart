@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus_item.dart';
@@ -42,6 +44,7 @@ import 'package:sw_project/src/utils.dart';
   ],
   encapsulation: ViewEncapsulation.None,
   exports: [RoutePaths, Routes],
+  changeDetection: ChangeDetectionStrategy.OnPush
 )
 class JobListComponent implements AfterChanges {
 
@@ -62,15 +65,11 @@ class JobListComponent implements AfterChanges {
   @override
   void ngAfterChanges() async {
     await this._loadData();
-
-    // TODO: this is not really a nice solution...
     this._setSelectedJob(this._router.current);
-    this._router.onRouteActivated.listen((RouterState event) {
-      this._setSelectedJob(event);
-    });
   }
 
   int get runningJobs => jobs.where((job) => job.isRunning).length;
+  String jobUrl(String jobId) => RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId));
 
   void selectJob(String jobId) {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
