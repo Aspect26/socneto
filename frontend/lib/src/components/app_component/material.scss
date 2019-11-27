@@ -45,6 +45,11 @@
     &:not([icon]) {
       background-color: get-color($primary, 500);
     }
+
+    &[transparent] {
+      background-color: transparent;
+      color: get-color($primary, 500);
+    }
   }
 
   material-header {
