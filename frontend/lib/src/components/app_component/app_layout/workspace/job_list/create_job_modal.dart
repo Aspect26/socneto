@@ -80,6 +80,8 @@ class CreateJobModal {
   List<SocnetoComponent> selectedDataAnalyzers = [];
   bool useCustomTwitterCredentials = false;
   TwitterCredentials twitterCredentials = TwitterCredentials();
+  bool useCustomRedditCredentials = false;
+  RedditCredentials redditCredentials = RedditCredentials();
 
   CreateJobModal(this._socnetoService);
 
@@ -102,6 +104,8 @@ class CreateJobModal {
     this.errorMessage = null;
     this.useCustomTwitterCredentials = false;
     this.twitterCredentials = TwitterCredentials();
+    this.useCustomRedditCredentials = false;
+    this.redditCredentials = RedditCredentials();
 
     this._loadSocialNetworks();
     this._loadDataAnalyzers();
@@ -120,7 +124,9 @@ class CreateJobModal {
       try {
         this.submitting = true;
         final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
-        final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks, this.selectedDataAnalyzers, twitterCredentials, this.languageSelection.selectedValue);
+        final redditCredentials = this.useCustomRedditCredentials? this.redditCredentials : null;
+        final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks,
+            this.selectedDataAnalyzers, this.languageSelection.selectedValue, twitterCredentials, redditCredentials);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
