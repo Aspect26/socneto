@@ -18,7 +18,7 @@
             <div *ngFor="let dataPath of dataPaths; let i = index" class="data-path-row">
                 <div class="data-path">
                     <span class="label">
-                        Line {{ i + 1 }}:
+                        {{ getDataPathLabel(i) }}:
                     </span>
                     <material-dropdown-select class="analyser-select"
                                               buttonText="{{ dataPath.analyser.identifier }}"
@@ -36,12 +36,12 @@
                 </div>
 
                 <material-button icon (trigger)="onRemoveDataPath(dataPath)">
-                    <material-icon icon="remove"></material-icon>
+                    <material-icon *ngIf="dataPaths.length > requiredNumberOfDataPaths" icon="remove"></material-icon>
                 </material-button>
             </div>
 
             <div>
-                <material-button icon (trigger)="onAddDataPath()">
+                <material-button *ngIf="chartType != scatterChartType" icon (trigger)="onAddDataPath()">
                     <material-icon icon="add"></material-icon>
                 </material-button>
             </div>

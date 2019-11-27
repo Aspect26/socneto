@@ -88,8 +88,10 @@ class CreateChartModalComponent {
   }
 
   void reset() {
-    this.dataPaths = [];
-    this.onAddDataPath();
+    this.dataPaths.clear();
+
+    var requiredNumberOfDataPaths = this.requiredNumberOfDataPaths;
+    this._addDefaultDataPaths(requiredNumberOfDataPaths);
 
     this.errorMessage = null;
   }
@@ -102,17 +104,50 @@ class CreateChartModalComponent {
     this.displayed = false;
   }
 
+  int get requiredNumberOfDataPaths {
+    switch (this.chartType) {
+      case ChartType.Line:
+        return 2;
+      case ChartType.Pie:
+        return 1;
+      case ChartType.Scatter:
+        return 2;
+    }
+  }
+
+  ChartType get scatterChartType => ChartType.Scatter;
+
+  String getDataPathLabel(int index) {
+    switch (this.chartType) {
+      case ChartType.Line:
+        return (index == 0)? "X - Axis" : "Line ${index}";
+      case ChartType.Pie:
+        return "Partition ${index + 1}";
+      case ChartType.Scatter:
+        return index == 0? "X - Axis" : "Y Axis";
+      default:
+        return "";
+    }
+  }
+
   void onRemoveDataPath(AnalysisDataPath dataPath) {
     this.dataPaths.remove(dataPath);
   }
 
+  void onChartTypeSelected(ChartType chartType) {
+    this.chartType = chartType;
+    this.dataPaths.clear();
+
+    var requiredNumberOfDataPaths = this.requiredNumberOfDataPaths;
+    this._addDefaultDataPaths(requiredNumberOfDataPaths);
+  }
+
   void onAddDataPath() {
-    if (this.analysers.isEmpty) {
+    if (this.analysers.isEmpty || this.chartType == ChartType.Scatter) {
       return;
     }
 
-    final analyser = this.analysers[0];
-    this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties[0]));
+    this._addDefaultDataPaths(1);
   }
 
   void onDataPathAnalyserChanged(AnalysisDataPath dataPath, SocnetoAnalyser analyser) {
@@ -129,12 +164,15 @@ class CreateChartModalComponent {
     this._submitController.add(ChartDefinition(this.dataPaths.map((dataPath) => dataPath.toJsonPath()).toList(), this.chartType));
   }
 
-  void onChartTypeSelected(ChartType chartType) {
-    this.chartType = chartType;
+  bool isDefinitionCorrect() {
+    return this.chartType != null && (this.dataPaths.length >= this.requiredNumberOfDataPaths);
   }
 
-  bool isDefinitionCorrect() {
-    return this.chartType != null && this.dataPaths.isNotEmpty;
+  void _addDefaultDataPaths(int count) {
+    for (var i = 0; i < count; i++) {
+      final analyser = this.analysers[0];
+      this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties[0]));
+    }
   }
 
 }
