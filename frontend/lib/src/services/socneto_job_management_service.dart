@@ -12,12 +12,13 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
 
   SocnetoJobManagementService() : super(API_URL, API_PREFIX);
 
-  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials, RedditCredentials redditCredentials) async {
+  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, String language, TwitterCredentials twitterCredentials, RedditCredentials redditCredentials) async {
     var data = {
       "jobName": jobName,
       "topicQuery": query,
       "selectedDataAnalysers": analyzers.map((analyzer) => analyzer.identifier).toList(),
       "selectedDataAcquirers": networks.map((network) => network.identifier).toList(),
+      "language": language
     };
 
     if (twitterCredentials != null) {
