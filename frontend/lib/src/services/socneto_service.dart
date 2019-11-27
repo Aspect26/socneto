@@ -62,8 +62,9 @@ class SocnetoService {
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       await this._dataService.getAvailableAnalyzers();
 
-  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials, String language) async =>
-      await this._job_management_service.submitNewJob(jobName, query, networks, analyzers, twitterCredentials, language);
+  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers,
+      String language, TwitterCredentials twitterCredentials, RedditCredentials redditCredentials) async =>
+      await this._job_management_service.submitNewJob(jobName, query, networks, analyzers, language, twitterCredentials, redditCredentials);
   Future<JobStatus> stopJob(String jobId) async =>
       await this._job_management_service.stopJob(jobId);
   Future<JobStatus> pauseJob(String jobId) async =>

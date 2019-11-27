@@ -12,8 +12,7 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
 
   SocnetoJobManagementService() : super(API_URL, API_PREFIX);
 
-  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks,
-      List<SocnetoComponent> analyzers, TwitterCredentials twitterCredentials, String language) async {
+  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers, String language, TwitterCredentials twitterCredentials, RedditCredentials redditCredentials) async {
     var data = {
       "jobName": jobName,
       "topicQuery": query,
@@ -29,6 +28,16 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
           "ApiKeySecret": twitterCredentials.apiSecretKey,
           "AccessToken": twitterCredentials.accessToken,
           "AccessTokenSecret": twitterCredentials.accessTokenSecret
+        }
+      });
+    }
+
+    if (redditCredentials != null) {
+      data.addAll({
+        "RedditCredentials": {
+          "appId": redditCredentials.appId,
+          "appSecret": redditCredentials.appSecret,
+          "refreshToken": redditCredentials.refreshToken
         }
       });
     }
