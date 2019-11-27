@@ -74,7 +74,8 @@ class CreateChartModalComponent {
 
   void loadAnalyzers() async {
     // TODO: this should ask for analyzers of the selected job
-    this.analysers = await this._socnetoService.getAvailableAnalyzers();
+    var allAnalysers = await this._socnetoService.getAvailableAnalyzers();
+    this.analysers = allAnalysers.where((analyser) => analyser.properties.isNotEmpty).toList();
   }
 
   void show() {
@@ -111,7 +112,12 @@ class CreateChartModalComponent {
     }
 
     final analyser = this.analysers[0];
-    this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties.isNotEmpty? analyser.properties[0].name : ""));
+    this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties[0]));
+  }
+
+  void onDataPathAnalyserChanged(AnalysisDataPath dataPath, SocnetoAnalyser analyser) {
+    dataPath.analyser = analyser;
+    dataPath.property = analyser.properties[0];
   }
 
   void onSubmit() async {
