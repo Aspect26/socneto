@@ -96,7 +96,6 @@ class CreateJobModal {
     this.jobName = "";
     this.topic = "";
     this.languageSelection = SingleSelectionModel();
-    // this.languageSelection.deselectOnActivate = false;
     this.languageSelection.select("en");
     this.selectedSocialNetworks.clear();
     this.selectedDataAnalyzers.clear();
