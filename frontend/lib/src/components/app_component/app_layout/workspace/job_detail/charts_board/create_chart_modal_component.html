@@ -35,9 +35,10 @@
                     </material-dropdown-select>
                 </div>
 
-                <material-button icon (trigger)="onRemoveDataPath(dataPath)">
-                    <material-icon *ngIf="dataPaths.length > requiredNumberOfDataPaths" icon="remove"></material-icon>
+                <material-button *ngIf="dataPaths.length > requiredNumberOfDataPaths" icon (trigger)="onRemoveDataPath(dataPath)">
+                    <material-icon icon="remove"></material-icon>
                 </material-button>
+                <div *ngIf="dataPaths.length <= requiredNumberOfDataPaths" class="datapath-spacer"></div>
             </div>
 
             <div>
