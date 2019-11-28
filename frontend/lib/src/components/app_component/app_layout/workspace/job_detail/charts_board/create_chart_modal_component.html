@@ -24,7 +24,8 @@
                                               buttonText="{{ dataPath.analyser.identifier }}"
                                               [options]="analysers"
                                               [itemRenderer]="analyserItemRenderer"
-                                              (selectionChange)="onDataPathAnalyserChanged(dataPath, $event)" >
+                                              [selection]="dataPath.analyser"
+                                              (selectionChange)="onDataPathAnalyserChanged(dataPath, $event)">
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
