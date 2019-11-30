@@ -1,0 +1,76 @@
+[
+  {
+    "name": "agg_map_init",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "state.map = [:]"
+      }
+    }
+  },
+  {
+    "name": "agg_map_map",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "for (t in params['_source']['results'][params.resultName][params.valueName].entrySet()) { state.map[t.key] = t.value }"
+      }
+    }
+  },
+  {
+    "name": "agg_map_combine",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "return state.map"
+      }
+    }
+  },
+  {
+    "name": "agg_map_reduce_sum",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "def reduce = [:]; for (map in states){ for (entry in map.entrySet()) { if (reduce.containsKey(entry.getKey())) reduce[entry.getKey()] += entry.getValue(); else reduce[entry.getKey()] = entry.getValue(); }} return reduce;"
+      }
+    }
+  },
+
+
+  {
+    "name": "agg_list_map_init",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "state.list = []"
+      }
+    }
+  },
+  {
+    "name": "agg_list_map_map",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "state.list.addAll(params['_source']['results'][params.resultName][params.valueName])"
+      }
+    }
+  },
+  {
+    "name": "agg_list_map_combine",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "return state.list;"
+      }
+    }
+  },
+  {
+    "name": "agg_list_map_reduce_sum",
+    "value": {
+      "script": {
+        "lang": "painless",
+        "source": "def reduce = [:]; for (array in states) { for (val in array) { if (reduce.containsKey(val)) reduce[val] += 1; else reduce[val] = 1; }} return reduce;"
+      }
+    }
+  }
+]

@@ -6,6 +6,7 @@ import cz.cuni.mff.socneto.storage.internal.data.mapper.JobMapper;
 import cz.cuni.mff.socneto.storage.internal.data.model.Job;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

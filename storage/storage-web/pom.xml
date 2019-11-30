@@ -53,6 +53,11 @@
         <!-- socneto -->
         <dependency>
             <groupId>cz.cuni.mff.socneto.storage</groupId>
+            <artifactId>analysis-results</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cz.cuni.mff.socneto.storage</groupId>
             <artifactId>analysis-storage</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

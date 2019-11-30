@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
+        <module>analysis-results</module>
         <module>analysis-storage</module>
         <module>internal-storage</module>
         <module>storage-messaging</module>
@@ -20,7 +21,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.9.RELEASE</version>
+        <version>2.2.1.RELEASE</version>
     </parent>
 
     <properties>
@@ -60,6 +61,7 @@
             </dependency>
 
 
+
             <dependency>
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
@@ -72,6 +74,13 @@
                 <scope>test</scope>
             </dependency>
 
+
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-elasticsearch</artifactId>
+                <version>3.2.1.RELEASE</version>
+            </dependency>
 
 
 
@@ -110,17 +119,17 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.9.4</version>
+                <version>2.10.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.9.4</version>
+                <version>2.10.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.9.4</version>
+                <version>2.10.0</version>
             </dependency>
 
             <!-- mapper -->
@@ -179,16 +188,16 @@
                     <source>11</source> <!-- depending on your project -->
                     <target>11</target> <!-- depending on your project -->
                     <annotationProcessorPaths>
-                        <path>
+                        <aggregationPath>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${org.mapstruct.version}</version>
-                        </path>
-                        <path>
+                        </aggregationPath>
+                        <aggregationPath>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${org.projectlombok.version}</version>
-                        </path>
+                        </aggregationPath>
                         <!-- other annotation processors -->
                     </annotationProcessorPaths>
                 </configuration>
