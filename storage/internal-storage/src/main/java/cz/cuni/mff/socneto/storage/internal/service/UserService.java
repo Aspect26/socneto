@@ -5,6 +5,7 @@ import cz.cuni.mff.socneto.storage.internal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 
 @Service
@@ -28,6 +29,16 @@ public class UserService {
 
     public void delete(String username) {
         repository.deleteById(username);
+    }
+
+    // TODO: remove
+
+    @PostConstruct
+    public void initDb() {
+        var user = new User();
+        user.setUsername("admin");
+        user.setPassword("admin");
+        repository.save(user);
     }
 
 }
