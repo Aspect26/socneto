@@ -18,5 +18,4 @@ RUN dotnet publish "Api.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-EXPOSE 6010
 ENTRYPOINT ["dotnet", "Socneto.Api.dll", "--urls", "http://*:6010"]
