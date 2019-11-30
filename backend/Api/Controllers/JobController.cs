@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
+using Socneto.Domain.Models;
 using Socneto.Domain.Services;
 
 using DataPoint = System.Collections.Generic.IList<dynamic>;
@@ -56,14 +57,35 @@ namespace Socneto.Api.Controllers
         }
         
         [HttpPost]
-        [Route("api/job/{jobId:guid}/analysis")]
-        public async Task<ActionResult<Task<IList<IList<DataPoint>>>>> GetJobAnalysis([FromRoute]Guid jobId, [FromBody] CreateChartDefinitionRequest chartDefinition)
+        [Route("api/job/{jobId:guid}/aggregation_analysis")]
+        // TODO: change request model here (analysis type is not required here)
+        public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisStorageRequest analysisRequest)
         {
+            /* TODO: uncomment this
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
+            */
 
-            var data = await _storageService.GetAnalyses();
-            return Ok(data);
+            var analysisResult = await _storageService.GetAnalysisAggregation(analysisRequest);
+            var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
+            
+            return Ok(analysisResponse);
+        }
+        
+        [HttpPost]
+        [Route("api/job/{jobId:guid}/array_analysis")]
+        // TODO: change request model here (analysis type is not required here)
+        public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisStorageRequest analysisRequest)
+        {
+            /* TODO: uncomment this
+            if (! await  IsAuthorizedToSeeJob(jobId))
+                return Unauthorized();
+            */
+
+            var analysisResult = await _storageService.GetAnalysisArray(analysisRequest);
+            var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
+            
+            return Ok(analysisResponse);
         }
 
         private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)
