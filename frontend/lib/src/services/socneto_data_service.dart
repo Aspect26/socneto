@@ -34,15 +34,17 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
+    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
+    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
     if (chartDefinition.chartType == ChartType.Pie) {
-      return await this._getAggregatedChartData(jobId, chartDefinition);
+      return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
     } else {
-      return await this._getArrayChartData(jobId, chartDefinition);
+      return await this._getArrayChartData(jobId, analyserId, propertyNames);
     }
   }
 
-  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, ChartDefinition chartDefinition) async {
-    AggregateAnalysisRequest request = AggregateAnalysisRequest("componentId", "wordCount");  // TODO: acquire these from chart definition
+  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
+    AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
     Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
 
     List<List<dynamic>> values = [];
@@ -55,8 +57,8 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     return returnValue;
   }
 
-  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, ChartDefinition chartDefinition) async {
-    ArrayAnalysisRequest request = ArrayAnalysisRequest("componentId", ["keywords"]);  // TODO: acquire these from chart definition
+  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames) async {
+    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames);
     Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
 
     List<List<dynamic>> values = [];
