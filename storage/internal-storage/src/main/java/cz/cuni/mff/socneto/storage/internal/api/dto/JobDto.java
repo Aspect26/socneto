@@ -16,14 +16,15 @@ import java.util.UUID;
 @NoArgsConstructor
 public class JobDto {
     private UUID jobId;
-    @NotBlank(message = "Username can't be null.")
-    private String username;
     @NotBlank(message = "Job name can't be null.")
     private String jobName;
-    private Date startedAt;
-    private Date finishedAt;
-    private List<String> dataAcquirers;
-    private List<String> dataAnalysers;
+    @NotBlank(message = "User can't be null.")
+    private String user;
     private String topicQuery;
     private String status;
+    private String language;
+    private Date startedAt;
+    private Date finishedAt;
+
+    private List<ComponentDto> componentConfigs; //TODO rename component
 }

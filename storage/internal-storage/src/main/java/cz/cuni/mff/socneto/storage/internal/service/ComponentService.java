@@ -20,6 +20,13 @@ public class ComponentService {
                 .orElseThrow(() -> new EntityNotFoundException("Component with id: " + id + " not found"));
     }
 
+    public Component find(String componentId, UUID jobId) {
+        // TODO validate
+        return repository.findByComponentIdAndJobId(componentId, jobId)
+                .orElseThrow(() -> new EntityNotFoundException("Component with id: " + componentId + "and job id: " + jobId + " not found"));
+    }
+
+
     public Iterable<Component> getAllByType(ComponentType type) {
         return repository.getAllByType(type);
     }
