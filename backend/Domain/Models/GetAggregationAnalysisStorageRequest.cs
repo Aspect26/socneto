@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Socneto.Api.Models
+namespace Socneto.Domain.Models
 {
 
     // TODO: to lowercase somehow

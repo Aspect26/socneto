@@ -9,8 +9,6 @@ using Socneto.Api.Models;
 using Socneto.Domain.Models;
 using Socneto.Domain.Services;
 
-using DataPoint = System.Collections.Generic.IList<dynamic>;
-
 
 namespace Socneto.Api.Controllers
 {
@@ -58,15 +56,23 @@ namespace Socneto.Api.Controllers
         
         [HttpPost]
         [Route("api/job/{jobId:guid}/aggregation_analysis")]
-        // TODO: change request model here (analysis type is not required here)
-        public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisStorageRequest analysisRequest)
+        public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisRequest analysisRequest)
         {
-            /* TODO: uncomment this
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
-            */
 
-            var analysisResult = await _storageService.GetAnalysisAggregation(analysisRequest);
+            // TODO: this should be done in separate service
+            var aggregationAnalysisStorageRequest = new GetAggregationAnalysisStorageRequest
+            {
+                Type = AnalysisType.AGGREGATION,
+                ResultRequestType = AnalysisResultType.MAP_SUM,           // TODO: this should be computed from the analyser's data format
+                ComponentId = analysisRequest.AnalyserId,
+                AnalysisProperty = analysisRequest.AnalysisProperty,
+                AnalysisResultValue = AnalysisResultValue.numberMapValue  // TODO: this should be computed from the analyser's data format
+            };
+            
+            
+            var analysisResult = await _storageService.GetAnalysisAggregation(aggregationAnalysisStorageRequest);
             var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
@@ -74,15 +80,25 @@ namespace Socneto.Api.Controllers
         
         [HttpPost]
         [Route("api/job/{jobId:guid}/array_analysis")]
-        // TODO: change request model here (analysis type is not required here)
-        public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisStorageRequest analysisRequest)
+        public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisRequest analysisRequest)
         {
-            /* TODO: uncomment this
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
-            */
 
-            var analysisResult = await _storageService.GetAnalysisArray(analysisRequest);
+            // TODO: this should be done in separate service
+            var arrayAnalysisStorageRequest = new GetArrayAnalysisStorageRequest
+            {
+                Type = AnalysisType.LIST,
+                ResultRequestType = AnalysisResultType.LIST_WITH_TIME,     // TODO: this should be computed from the analyser's data format
+                ComponentId = analysisRequest.AnalyserId,
+                AnalysisProperties = analysisRequest.AnalysisProperties.Select(analysisProperty => new ArrayAnalysisRequestProperty
+                {
+                    AnalysisProperty = analysisProperty,
+                    AnalysisResultValue = AnalysisResultValue.numberValue  // TODO: this should be computed from the analyser's data format
+                }).ToList()
+            };
+            
+            var analysisResult = await _storageService.GetAnalysisArray(arrayAnalysisStorageRequest);
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
@@ -90,8 +106,11 @@ namespace Socneto.Api.Controllers
 
         private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)
         {
+            /*  TODO: uncomment this
             var job = await _storageService.GetJob(jobId);
             return job.Username == User.Identity.Name;
+            */
+            return await Task.FromResult(true);
         }
     }
 }

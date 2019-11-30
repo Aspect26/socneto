@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Socneto.Api.Models;
 using Socneto.Domain.Models;
 
 using DataPoint = System.Collections.Generic.IList<dynamic>;
