@@ -178,6 +178,9 @@ namespace Application
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
 
+            services.AddHostedService<EventSendingHostedService>();
+            services.AddSingleton<EventQueue>();
+
             services.AddSingleton<IJobManager, JobManager>();
 
             services.AddSingleton(typeof(IEventTracker<>),typeof( EventTracker<>));
@@ -234,9 +237,15 @@ namespace Application
                 .ValidateDataAnnotations();
 
             services.AddOptions<LogLevelOptions>()
-                .Bind(configuration.GetSection("Logging:LogLevel"));
+                .Bind(configuration.GetSection("Logging:LogLevel"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<SystemMetricsOptions>()
+                    .Bind(configuration.GetSection("DataAcquisitionService:SystemMetricsOptions"))
+                    .ValidateDataAnnotations();
 
         }
+
 
 
     }

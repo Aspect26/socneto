@@ -46,9 +46,7 @@ namespace ConsoleApi.KafkaMock
                     _logger.LogError("Error encountered while receiving posts: {error}", e.Message);
                     await Task.Delay(TimeSpan.FromSeconds(30));
                 }
-
             }
-
         }
 
         private async Task SaveAsync(string json, FileInfo filePath)
