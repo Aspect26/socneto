@@ -19,7 +19,7 @@ class HttpServiceBase {
     return this._extractJson<T>(response, mapJson);
   }
 
-  Future<T> post<T>(String path, Map body, Function(Map) mapJson) async {
+  Future<T> post<T>(String path, Map<String, dynamic> body, Function(Map) mapJson) async {
     var response = await this.httpPost(path, body);
     this._checkResponseStatusCode(response);
     return this._extractJson<T>(response, mapJson);
@@ -31,7 +31,7 @@ class HttpServiceBase {
     return this._extractJsonList<T>(response, mapJson);
   }
 
-  Future<List<T>> postList<T>(String path, Map body, Function mapJson) async {
+  Future<List<T>> postList<T>(String path, Map<String, dynamic> body, Function mapJson) async {
     var response = await this.httpPost(path, body);
     this._checkResponseStatusCode(response);
     return this._extractJsonList<T>(response, mapJson);
@@ -42,7 +42,7 @@ class HttpServiceBase {
       await http.get(this._getFullApiCallPath(path), headers: headers);
 
   @protected
-  Future<Response> httpPost(String path, Map data, {Map<String, String> headers}) async =>
+  Future<Response> httpPost(String path, Map<String, dynamic> data, {Map<String, String> headers}) async =>
     await http.post(
         this._getFullApiCallPath(path), body: utf8.encode(json.encode(data)),
         headers: this.appendHeader(headers, "Content-Type", "application/json"));
