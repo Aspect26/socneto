@@ -19,7 +19,11 @@ class LineChart {
     create(selector, dataSets, dataLabels) {
         this._removeOld(selector);
 
-        let elementWidth = document.getElementsByClassName("tab-content")[0].clientWidth;
+        let element = document.getElementsByClassName("tab-content")[0];
+        if (element == null)
+            return;
+
+        let elementWidth = element.clientWidth;
         let chartWidth = elementWidth - this._LEGEND_WIDTH - this._CHART_PADDING_RIGHT;
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_BOTTOM;
 
@@ -34,7 +38,7 @@ class LineChart {
 
         for (let index = 0; index < dataSets.length; ++index) {
             let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
-            this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve, index);
+            this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve);
             this._createChartLegend(svg, dataSets[index], dataLabels[index], color, curve, index);
         }
 
@@ -98,8 +102,8 @@ class LineChart {
             .call(d3.axisLeft(yScale));
     }
 
-    _createChartLine(svg, dataSet, dataLabel, color, curve, index) {
-        let path = svg.append("path")
+    _createChartLine(svg, dataSet, dataLabel, color, curve) {
+        svg.append("path")
             .datum(dataSet)
             .attr("class", "line")
             .style('stroke', color)
@@ -114,11 +118,11 @@ class LineChart {
 
         legend
             .on("mouseover", function(d, i) {
-                path.node().classList.add("selected");
+                // path.node().classList.add("selected");
                 legend.node().classList.add("selected");
             })
             .on("mouseout", function(d, i) {
-                path.node().classList.remove("selected");
+                // path.node().classList.remove("selected");
                 legend.node().classList.remove("selected");
             });
     }
@@ -168,7 +172,8 @@ class LineChart {
         for (let index = 0; index < currentValues.length; index++) {
             let label = currentValues[index]["label"];
             let currentValue = currentValues[index]["value"];
-            tooltipHtml = tooltipHtml.concat(`<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>`);
+            let currentValueHTML = currentValue? `<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>` : "";
+            tooltipHtml = tooltipHtml.concat(currentValueHTML);
         }
 
         return tooltipHtml;

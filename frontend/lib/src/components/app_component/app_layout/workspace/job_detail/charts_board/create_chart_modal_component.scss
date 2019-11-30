@@ -41,18 +41,28 @@
           align-content: center;
 
           .label {
+            flex-shrink: 0;
             margin-right: 10px;
+            width: 90px;
           }
 
           .analyser-select {
             flex-grow: 1;
+            flex-basis: 50%;
             margin-right: 10px;
           }
 
           .property-select {
             flex-grow: 1;
+            flex-basis: 50%;
           }
         }
+
+        .datapath-spacer {
+          height: 40px;
+          width: 40px;
+        }
+
       }
 
       material-button {
