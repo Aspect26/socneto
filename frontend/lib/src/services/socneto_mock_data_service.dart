@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:sw_project/src/models/AnalysisDataPath.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -42,9 +43,9 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition(["post/postedAt", "analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Line),
-    ChartDefinition(["analyses/sentiment/polarity/aggregate"], ChartType.Pie),
-    ChartDefinition(["analyses/sentiment/polarity", "analyses/sentiment/accuracy"], ChartType.Scatter)
+    ChartDefinition([AnalysisDataPath(null, AnalysisProperty("adsasd", AnalysisPropertyType.Number))], ChartType.Line),
+    ChartDefinition([AnalysisDataPath(null, AnalysisProperty("asdasd", AnalysisPropertyType.Number))], ChartType.Pie),
+    ChartDefinition([AnalysisDataPath(null, AnalysisProperty("asdasd", AnalysisPropertyType.Number))], ChartType.Scatter)
   ];
 
   Future<User> login(String username, String password) async =>
@@ -59,6 +60,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<List<Post>> getJobPosts(String jobId) async =>
     Future.value([]);
 
+  /*
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     if (chartDefinition.chartType == ChartType.Line) {
       return Future.value([
@@ -95,6 +97,47 @@ class SocnetoMockDataService extends SocnetoDataService {
       return null;
     }
   }
+   */
+
+  // TODO: the return type can be changed  now
+  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
+    // TODO: type definition should be a parameter
+    if (chartDefinition.chartType == ChartType.Pie) {
+      var body = {
+        "analyserId": "comp_2",      // chartDefinition.analysisDataPaths[0].analyser.identifier,
+        "analysisProperty": "wordCount"     // chartDefinition.analysisDataPaths[0].property,
+      };
+
+      jobId = "480cd21c-deb9-4e3b-8aca-083154aac90a";
+      Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", body, (result) => result);
+
+      List<List<dynamic>> values = [];
+      var aggregations = result["aggregations"];
+      aggregations.forEach((key, value) => {
+        values.add([key, value])
+      });
+
+      var returnValue = [values];
+      return returnValue;
+    } else {
+      var body = {
+        "analyserId": "comp_4",      // chartDefinition.analysisDataPaths[0].analyser.identifier,
+        "analysisProperties": ["keywords"] //  chartDefinition.analysisDataPaths[0].property.name,
+      };
+
+      jobId = "480cd21c-deb9-4e3b-8aca-083154aac90a";
+      Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", body, (result) => result);
+
+      List<List<dynamic>> values = [];
+      var dataPoints = result["data"];
+      dataPoints.forEach((datum) => {
+        values.add(datum)
+      });
+
+      var returnValue = [values];
+      return returnValue;
+    }
+  }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
     Future.value(mockAcquirers);
@@ -108,7 +151,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var data = {
       "ChartType": chartDefinition.chartType.toString().split('.').last,
-      "JsonDataPaths": chartDefinition.jsonDataPaths
+      "JsonDataPaths": ""
     };
     return this.post<Success>("job/$jobId/charts/create", data, (result) => Success.fromMap(result));
   }
