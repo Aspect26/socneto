@@ -99,7 +99,7 @@ namespace Application
         
 
 
-        public IWebHost BuildWebHost()
+        public IWebHost BuildWebHost(bool? isDevelopment = default)
         {
             IWebHostEnvironment environment = null;
 
@@ -107,9 +107,10 @@ namespace Application
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var isDevelopment = aspNetCoreEnv == "Development";
+            
+            var isDevelopmentBool = isDevelopment ?? aspNetCoreEnv == "Development";
 
-            if (isDevelopment)
+            if (isDevelopmentBool)
             {
                 builder.AddJsonFile($"appsettings.Development.json", true, true);
             }
@@ -128,7 +129,7 @@ namespace Application
                     environment = hostingContext.HostingEnvironment;
                 })
                 .ConfigureServices(services =>
-                    ConfigureServices(services, configuration, isDevelopment))
+                    ConfigureServices(services, configuration, isDevelopmentBool))
                 .Configure(app =>
                 {
                     if (environment.IsDevelopment())

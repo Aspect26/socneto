@@ -32,42 +32,45 @@ namespace Infrastructure.DataGenerator
             IDataAcquirerMetadataContext context,
             DataAcquirerInputModel acquirerInputModel)
         {
-            var count = acquirerInputModel.BatchSize;
-
             ulong id = 0;
-            var posts = new List<DataAcquirerPost>();
-            for (int i = 0; i < count; i++)
+            while (true)
             {
-                if (!_postsEnumerator.MoveNext())
+                var count = acquirerInputModel.BatchSize;
+
+                var posts = new List<DataAcquirerPost>();
+                for (int i = 0; i < count; i++)
                 {
-                    _postsEnumerator.Reset();
-                    _postsEnumerator.MoveNext();
+                    if (!_postsEnumerator.MoveNext())
+                    {
+                        _postsEnumerator.Reset();
+                        _postsEnumerator.MoveNext();
+                    }
+
+                    var post = _postsEnumerator.Current;
+                    var daPost = DataAcquirerPost.FromValues(
+                        post.PostId,
+                        post.Text,
+                        post.Source,
+                        post.UserId,
+                        post.PostDateTime);
+
+                    posts.Add(daPost);
                 }
 
-                var post = _postsEnumerator.Current;
-                var daPost = DataAcquirerPost.FromValues(
-                    post.PostId,
-                    post.Text,
-                    post.Source,
-                    post.UserId,
-                    post.PostDateTime);
+                id += (ulong) count;
+                try
+                {
+                    await Task.Delay(_downloadSimulatedDelay, CancellationToken.None);
+                }
+                catch (TaskCanceledException)
+                {
+                }
 
-                posts.Add(daPost);
+                foreach (var post in posts)
+                {
+                    yield return post;
+                };
             }
-
-            id += (ulong) count;
-            try
-            {
-                await Task.Delay(_downloadSimulatedDelay, CancellationToken.None);
-            }
-            catch (TaskCanceledException)
-            {
-            }
-
-            foreach (var post in posts)
-            {
-                yield return post;
-            };
         }
     }
 

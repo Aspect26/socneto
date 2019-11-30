@@ -39,7 +39,7 @@ namespace ConsoleApi.KafkaMock
             var listenTasks = commands.Select(r =>
 
                 Task.Run(() => _postSaver.ListenAndSaveAsync(
-                    r.OutputMessageBrokerChannels[0],
+                    r.AnalysisOutputChannel ?? r.OutputMessageBrokerChannels[0],
                     outputDirectory,
                     CancellationToken.None)))
                 .ToList();
