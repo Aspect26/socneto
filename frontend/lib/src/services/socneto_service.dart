@@ -11,6 +11,7 @@ import 'package:sw_project/src/services/local_storage_service.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_job_management_service.dart';
 import 'package:sw_project/src/services/socneto_mock_data_service.dart';
+import 'package:tuple/tuple.dart';
 
 
 class SocnetoService {
@@ -63,7 +64,7 @@ class SocnetoService {
       await this._dataService.getAvailableAnalyzers();
 
   Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers,
-      String language, TwitterCredentials twitterCredentials, RedditCredentials redditCredentials) async =>
+      String language, List<Tuple2<String, TwitterCredentials>> twitterCredentials, List<Tuple2<String, RedditCredentials>> redditCredentials) async =>
       await this._job_management_service.submitNewJob(jobName, query, networks, analyzers, language, twitterCredentials, redditCredentials);
   Future<JobStatus> stopJob(String jobId) async =>
       await this._job_management_service.stopJob(jobId);
