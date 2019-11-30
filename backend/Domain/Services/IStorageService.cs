@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Socneto.Api.Models;
 using Socneto.Domain.Models;
 
 using DataPoint = System.Collections.Generic.IList<dynamic>;
@@ -22,7 +23,9 @@ namespace Socneto.Domain.Services
 
         Task<IList<SocnetoComponent>> GetAcquirers();
 
-        Task<IList<IList<DataPoint>>> GetAnalyses();
+        Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest);
+
+        Task<ArrayAnalysisResult> GetAnalysisArray(GetArrayAnalysisStorageRequest getAnalysisStorageRequest);
 
     }
 }
