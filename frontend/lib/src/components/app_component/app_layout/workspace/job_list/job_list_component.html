@@ -11,7 +11,7 @@
 
     <material-list focusList class="dark">
 
-        <material-select-item *ngFor="let job of displayedJobs" (trigger)="selectJob(job.id)" focusItem [selected]="job == selectedJob">
+        <material-select-item *ngFor="let job of displayedJobs" [routerLink]="jobUrl(job.id)" focusItem [selected]="job == selectedJob">
 
             <material-button icon *ngIf="job.isRunning" class="material-list-item-primary" aria-hidden="true" (trigger)="stopJob(job); $event.stopPropagation()">
                 <material-icon icon="stop"></material-icon>

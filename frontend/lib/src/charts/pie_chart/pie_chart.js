@@ -19,7 +19,11 @@ class PieChart {
     create(selector, dataSet) {
         this._removeOld(selector);
 
-        let elementWidth = document.getElementsByClassName("tab-content")[0].clientWidth;
+        let element = document.getElementsByClassName("tab-content")[0];
+        if (element == null)
+            return;
+
+        let elementWidth = element.clientWidth;
         let chartWidth = elementWidth - this._CHART_PADDING_HORIZONTAL;
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_VERTICAL;
         let radius = Math.min(chartWidth, chartHeight) / 2;

@@ -18,29 +18,32 @@
             <div *ngFor="let dataPath of dataPaths; let i = index" class="data-path-row">
                 <div class="data-path">
                     <span class="label">
-                        Line {{ i + 1 }}:
+                        {{ getDataPathLabel(i) }}:
                     </span>
                     <material-dropdown-select class="analyser-select"
                                               buttonText="{{ dataPath.analyser.identifier }}"
-                                              [(selection)]="dataPath.analyser"
                                               [options]="analysers"
-                                              [itemRenderer]="itemRenderer">
+                                              [itemRenderer]="analyserItemRenderer"
+                                              [selection]="dataPath.analyser"
+                                              (selectionChange)="onDataPathAnalyserChanged(dataPath, $event)">
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
-                                              buttonText="{{ dataPath.property }}"
+                                              buttonText="{{ dataPath.property.name }}"
                                               [(selection)]="dataPath.property"
-                                              [options]="dataPath.analyser.properties">
+                                              [options]="dataPath.analyser.properties"
+                                              [itemRenderer]="propertyItemRenderer">
                     </material-dropdown-select>
                 </div>
 
-                <material-button icon (trigger)="onRemoveDataPath(dataPath)">
+                <material-button *ngIf="dataPaths.length > requiredNumberOfDataPaths" icon (trigger)="onRemoveDataPath(dataPath)">
                     <material-icon icon="remove"></material-icon>
                 </material-button>
+                <div *ngIf="dataPaths.length <= requiredNumberOfDataPaths" class="datapath-spacer"></div>
             </div>
 
             <div>
-                <material-button icon (trigger)="onAddDataPath()">
+                <material-button *ngIf="chartType != scatterChartType" icon (trigger)="onAddDataPath()">
                     <material-icon icon="add"></material-icon>
                 </material-button>
             </div>

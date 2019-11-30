@@ -37,6 +37,17 @@
                         </material-input>
                     </div>
 
+                    <div>
+                        Language:
+                        <material-dropdown-select
+                            [options]="['en', 'cs']"
+                            [(selection)]="languageSelection"
+                            [itemRenderer]="languagesItemRenderer"
+                            [buttonText]="languageSelection.selectedValue"
+                            class="language-select">
+                        </material-dropdown-select>
+                    </div>
+
                     Data acquirers:
                     <components-select
                             [components]="availableSocialNetworks"
@@ -63,7 +74,7 @@
                 <div>
                     <material-tab-panel [activeTabIndex]="0">
 
-                        <material-tab class="tab" label="Twitter" style="">
+                        <material-tab class="tab" label="Twitter">
 
                             <div>
                                 <material-toggle [(ngModel)]="useCustomTwitterCredentials" label="Use custom"></material-toggle>
@@ -103,6 +114,38 @@
 
                         </material-tab>
 
+                        <material-tab class="tab" label="Reddit">
+
+                            <div>
+                                <material-toggle [(ngModel)]="useCustomRedditCredentials" label="Use custom"></material-toggle>
+                            </div>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Application ID"
+                                    [disabled]="!useCustomRedditCredentials"
+                                    [(ngModel)]="redditCredentials.appId"
+                                    class="labeled-input">
+                            </material-input>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Application Secret Key"
+                                    [disabled]="!useCustomRedditCredentials"
+                                    [(ngModel)]="redditCredentials.appSecret"
+                                    class="labeled-input">
+                            </material-input>
+
+                            <material-input
+                                    floatingLabel
+                                    label="Refresh Token"
+                                    [disabled]="!useCustomRedditCredentials"
+                                    [(ngModel)]="redditCredentials.refreshToken"
+                                    class="labeled-input">
+                            </material-input>
+
+                        </material-tab>
+
                     </material-tab-panel>
                 </div>
 
@@ -110,10 +153,8 @@
 
         </material-stepper>
 
-
-
         <div footer>
-            <material-button (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)">Next</material-button>
+            <material-button *ngIf="jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
 
             <material-button *ngIf="isJobDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
             <material-button *ngIf="!isJobDefinitionCorrect()" disabled class="close-button">Submit</material-button>
