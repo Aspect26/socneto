@@ -16,5 +16,9 @@ namespace Api.Models
         
         [JsonProperty("jobName")]
         public string JobName { get; set; }
+
+        [JsonProperty("attributes")]
+        public Dictionary<string,Dictionary<string,string>> Attributes { get; set; }
+
     }
 }
