@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
 
 namespace Domain
 {
@@ -7,4 +8,9 @@ namespace Domain
         public LogLevel? Default { get; set; }
     }
 
+    public class SystemMetricsOptions
+    {
+        [Required]
+        public string SystemMetricsChannelName { get; set; }
+    }
 }
