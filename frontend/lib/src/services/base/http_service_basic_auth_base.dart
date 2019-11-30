@@ -35,7 +35,7 @@ abstract class HttpServiceBasicAuthBase extends HttpServiceBase {
   }
 
   @override
-  Future<Response> httpPost(String path, Map data, {Map<String, String> headers}) async {
+  Future<Response> httpPost(String path, Map<String, dynamic> data, {Map<String, String> headers}) async {
     if (this._base64Credentials != null) {
       headers = this._appendAuthorizationHeader(headers);
     }

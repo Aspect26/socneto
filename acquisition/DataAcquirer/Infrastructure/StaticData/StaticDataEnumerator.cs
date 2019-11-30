@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Infrastructure.DataGenerator
     public class StaticDataEnumerator : IDataAcquirer
     {
         private readonly TimeSpan _downloadSimulatedDelay;
-        private readonly IEnumerator<UniPostStaticData> _postsEnumerator;
+        private readonly IEnumerable<UniPostStaticData> _postsEnumerator;
         private readonly IStaticDataProvider _dataProvider;
 
         public StaticDataEnumerator(
@@ -25,7 +26,7 @@ namespace Infrastructure.DataGenerator
         {
             _dataProvider = dataProvider;
             _downloadSimulatedDelay = randomGenratorOptionsAccessor.Value.DownloadDelay;
-            _postsEnumerator = dataProvider.GetEnumerator();
+            _postsEnumerator = _dataProvider.GetEnumerable();
         }
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
@@ -37,25 +38,17 @@ namespace Infrastructure.DataGenerator
             {
                 var count = acquirerInputModel.BatchSize;
 
-                var posts = new List<DataAcquirerPost>();
-                for (int i = 0; i < count; i++)
-                {
-                    if (!_postsEnumerator.MoveNext())
-                    {
-                        _postsEnumerator.Reset();
-                        _postsEnumerator.MoveNext();
-                    }
-
-                    var post = _postsEnumerator.Current;
-                    var daPost = DataAcquirerPost.FromValues(
+                var posts = _postsEnumerator
+                    .Take(count)
+                    .Select(post =>
+                     DataAcquirerPost.FromValues(
                         post.PostId,
                         post.Text,
                         post.Source,
                         post.UserId,
-                        post.PostDateTime);
+                        post.PostDateTime))
+                    .ToList();
 
-                    posts.Add(daPost);
-                }
 
                 id += (ulong) count;
                 try

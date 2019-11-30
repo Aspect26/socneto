@@ -23,8 +23,8 @@ class LineChartStrategy implements ChartStrategy {
       this._chartData.add([]);
       for (var dataPointValue in currentLineData) {
         // TODO: what if 'x' axis is not date?
-        var datetimeString = dataPointValue[0] as String;
-        var date = DateTime.parse(datetimeString.substring(0, 26));
+        var timestamp = dataPointValue[0] as int;
+        var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
         this._chartData.last.add({'x': date.toIso8601String(), 'y': dataPointValue[1]});
       }
 
@@ -39,8 +39,7 @@ class LineChartStrategy implements ChartStrategy {
   }
 
   List<String> _getLineChartLabels() {
-    var jsonDataPathsExceptFirst = this._chartDefinition.jsonDataPaths.sublist(1);
-    return jsonDataPathsExceptFirst.map<String>((jsonDataPath) => jsonDataPath.split("/").last).toList();
+    return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property.name).toList();
   }
 
 }
