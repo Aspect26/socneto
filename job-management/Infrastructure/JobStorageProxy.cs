@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Infrastructure
 {
-    public class JobStorageProxy : IJobStorage, IDisposable
+    public class JobStorageProxy : IJobStorage
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<JobStorageProxy> _logger;
@@ -104,13 +104,6 @@ namespace Infrastructure
                 var error = await response.Content.ReadAsStringAsync();
                 throw new InvalidOperationException($"Adding data to storage failed: {error}");
             }
-        }
-
-        public void Dispose()
-        {
-            _httpClient?.Dispose();
-        }
-
-        
+        }        
     }
 }
