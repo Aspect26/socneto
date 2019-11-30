@@ -9,7 +9,7 @@ namespace Socneto.Api.Models
         public string AnalyserId { get; set; }
         
         [JsonProperty("analysisProperties")]
-        public List<string> AnalysisProperties { get; set; }
+        public string[] AnalysisProperties { get; set; }
     }
     
 }

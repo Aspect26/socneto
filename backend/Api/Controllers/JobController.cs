@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
-using Socneto.Domain.Models;
 using Socneto.Domain.Services;
-
 
 namespace Socneto.Api.Controllers
 {
@@ -18,13 +16,16 @@ namespace Socneto.Api.Controllers
     {
         private readonly IJobService _jobService;
         private readonly IStorageService _storageService;
+        private readonly IGetAnalysisService _getAnalysisService;
         private readonly ILogger<JobController> _logger;
 
 
-        public JobController(IJobService jobService, IStorageService storageService, ILogger<JobController> logger)
+        public JobController(IJobService jobService, IStorageService storageService, IGetAnalysisService getAnalysisService, 
+            ILogger<JobController> logger)
         {
             _jobService = jobService;
             _storageService = storageService;
+            _getAnalysisService = getAnalysisService;
             _logger = logger;
         }
 
@@ -61,18 +62,7 @@ namespace Socneto.Api.Controllers
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
 
-            // TODO: this should be done in separate service
-            var aggregationAnalysisStorageRequest = new GetAggregationAnalysisStorageRequest
-            {
-                Type = AnalysisType.AGGREGATION,
-                ResultRequestType = AnalysisResultType.MAP_SUM,           // TODO: this should be computed from the analyser's data format
-                ComponentId = analysisRequest.AnalyserId,
-                AnalysisProperty = analysisRequest.AnalysisProperty,
-                AnalysisResultValue = AnalysisResultValue.numberMapValue  // TODO: this should be computed from the analyser's data format
-            };
-            
-            
-            var analysisResult = await _storageService.GetAnalysisAggregation(aggregationAnalysisStorageRequest);
+            var analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperty);
             var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
@@ -84,21 +74,8 @@ namespace Socneto.Api.Controllers
         {
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
-
-            // TODO: this should be done in separate service
-            var arrayAnalysisStorageRequest = new GetArrayAnalysisStorageRequest
-            {
-                Type = AnalysisType.LIST,
-                ResultRequestType = AnalysisResultType.LIST_WITH_TIME,     // TODO: this should be computed from the analyser's data format
-                ComponentId = analysisRequest.AnalyserId,
-                AnalysisProperties = analysisRequest.AnalysisProperties.Select(analysisProperty => new ArrayAnalysisRequestProperty
-                {
-                    AnalysisProperty = analysisProperty,
-                    AnalysisResultValue = AnalysisResultValue.numberValue  // TODO: this should be computed from the analyser's data format
-                }).ToList()
-            };
             
-            var analysisResult = await _storageService.GetAnalysisArray(arrayAnalysisStorageRequest);
+            var analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperties);
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
