@@ -21,6 +21,7 @@ namespace Domain.SubmittedJobConfiguration
             List<string> dataAnalysers,
             List<string> dataAcquirers,
             string topicQuery,
+            string language,
             Dictionary<string, Dictionary<string, string>> attributes)
         {
             JobId = jobId;
@@ -29,6 +30,7 @@ namespace Domain.SubmittedJobConfiguration
             DataAcquirers = dataAcquirers;
             TopicQuery = topicQuery;
             Attributes = attributes;
+            Language = language;
         }
 
 
@@ -37,6 +39,7 @@ namespace Domain.SubmittedJobConfiguration
         public List<string> DataAnalysers { get; }
         public List<string> DataAcquirers { get; }
         public string TopicQuery { get; }
+        public string Language { get; }
 
         public Dictionary<string, Dictionary<string, string>> Attributes { get; }
 
@@ -45,6 +48,7 @@ namespace Domain.SubmittedJobConfiguration
             List<string> analysers,
             List<string> acquirers,
             string topicQuery,
+            string language,
             Dictionary<string, Dictionary<string, string>> attributes)
         {
             return new JobConfigUpdateCommand(
@@ -53,6 +57,7 @@ namespace Domain.SubmittedJobConfiguration
                 analysers,
                 acquirers,
                 topicQuery,
+                language,
                 attributes);
         }
     }
