@@ -151,7 +151,7 @@ namespace Domain.ComponentManagement
                     .GetValueOrDefault(dataAcquirer, new Dictionary<string, string>());
 
                 attributes.Add("TopicQuery", jobConfigUpdateCommand.TopicQuery);
-
+                attributes.Add("Language", jobConfigUpdateCommand.Language);
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
                     JobId = jobConfigUpdateCommand.JobId,
@@ -230,5 +230,4 @@ namespace Domain.ComponentManagement
             return analysers;
         }
     }
-
 }
