@@ -15,8 +15,9 @@ namespace Infrastructure
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<JobStorageProxy> _logger;
+        private readonly Uri _baseUri;
         private readonly Uri _addJobUri;
-        private readonly Uri _addJobConfigUri;
+        private readonly string _addJobConfigRouteTemplate;
         private readonly Uri _updateJobUri;
         private readonly Uri _getJobUri;
 
@@ -27,11 +28,11 @@ namespace Infrastructure
         {
             _httpClient = httpClient;
             this._logger = logger;
-            var baseUri = jobStorageOptionsAccessor.Value.BaseUri;
-            _addJobUri = new Uri(baseUri, jobStorageOptionsAccessor.Value.AddJobRoute);
-            _addJobConfigUri = new Uri(baseUri, jobStorageOptionsAccessor.Value.AddJobConfigRoute);
-            _updateJobUri = new Uri(baseUri, jobStorageOptionsAccessor.Value.UpdateJobRoute);
-            _getJobUri = new Uri(baseUri, jobStorageOptionsAccessor.Value.GetJobRoute);
+            _baseUri = jobStorageOptionsAccessor.Value.BaseUri;
+            _addJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.AddJobRoute);
+            _addJobConfigRouteTemplate =  jobStorageOptionsAccessor.Value.AddJobConfigRoute;
+            _updateJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.UpdateJobRoute);
+            _getJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.GetJobRoute);
         }
 
         public async Task InsertJobComponentConfig(JobComponentConfig jobConfig)
@@ -39,7 +40,9 @@ namespace Infrastructure
             var jsonBody = JsonConvert.SerializeObject(jobConfig);
             var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(_addJobConfigUri, httpContent);
+            var jobConfigRoute = string.Format(_addJobConfigRouteTemplate, jobConfig.JobId);
+            var addJobConfigUri = new Uri(_baseUri, jobConfigRoute);
+            var response = await _httpClient.PostAsync(addJobConfigUri, httpContent);
 
             if (!response.IsSuccessStatusCode)
             {
