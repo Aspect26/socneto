@@ -32,11 +32,29 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    var body = this._getChartDefinitionBody(chartDefinition);
-    List<dynamic> listOfData = await this.postList<dynamic>("job/$jobId/analysis", body, (result) => result);
-    List<List<List<dynamic>>> typedListOfData = listOfData.map((d) => (d as List<dynamic>).map((ld) => ld as List<dynamic>).toList()).toList();
+    // TODO: type definition should be a parameter
+    if (chartDefinition.chartType == ChartType.Pie) {
+      var body = {
+        "type": "AGGREGATION",
+        "resultRequestType": "MAP_COUNT_AGGREGATION", // should be also specified somehow
+        "componentId": "comp_3",      // chartDefinition.analysisDataPaths[0].analyser.identifier,
+        "resultName": "keywords",     // chartDefinition.analysisDataPaths[0].property,
+        "valueName": "NumberValue"
+      };
 
-    return typedListOfData;
+      Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", body, (result) => result);
+
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      print(result);
+      print(result["aggregations"]);
+
+      return result["aggregations"];
+    } else {
+      var body = this._getChartDefinitionBody(chartDefinition);
+      List<dynamic> listOfData = await this.postList<dynamic>("job/$jobId/analysis", body, (result) => result);
+      List<List<List<dynamic>>> typedListOfData = listOfData.map((d) => (d as List<dynamic>).map((ld) => ld as List<dynamic>).toList()).toList();
+      return typedListOfData;
+    }
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
@@ -56,6 +74,6 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Map _getChartDefinitionBody(ChartDefinition chartDefinition) =>
       {
         "ChartType": chartDefinition.chartType.toString().split('.').last,
-        "JsonDataPaths": chartDefinition.jsonDataPaths
+        "JsonDataPaths": "null"
       };
 }
