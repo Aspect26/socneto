@@ -40,7 +40,7 @@ namespace Api
                 .AddSingletonService<IDataAcquirerMetadataContext, NullContext>()
                 .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
                     .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir)
-                .BuildWebHost();
+                .BuildWebHost(false);
 
             await InitializeApplication(app);
 

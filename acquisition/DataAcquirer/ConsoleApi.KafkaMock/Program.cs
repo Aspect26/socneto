@@ -13,8 +13,7 @@ namespace ConsoleApi.KafkaMock
     {
         public static void Main(string[] args)
         {
-            MainAsync(args).GetAwaiter().GetResult();
-            
+            MainAsync(args).GetAwaiter().GetResult();            
         }
 
         public static async Task MainAsync(string[] args)
@@ -23,7 +22,8 @@ namespace ConsoleApi.KafkaMock
             args = new[]
             {
                 "commands.json",
-                "job_management.job_configuration.DataAcquirer_Twitter",
+                //"job_management.job_configuration.DataAcquirer_Twitter",
+                "job_management.job_configuration.DataAcquirer_StaticDataSet_movietweets",
                 Path.Combine(Directory.GetCurrentDirectory(),"output_data")
             };
 #endif

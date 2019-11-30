@@ -27,7 +27,7 @@ namespace ConsoleApi.KafkaMock
 
         public async Task SendCommands(
             string topic,
-            IEnumerable<DataAcquirerJobConfig> commands,
+            IEnumerable<DataAcquirerCommand> commands,
             TimeSpan commandDelay)
         {
             foreach (var command in commands)
