@@ -46,6 +46,7 @@ namespace Api.Controllers
                 jobSubmitRequest.SelectedDataAnalysers,
                 jobSubmitRequest.SelectedDataAcquirers,
                 jobSubmitRequest.TopicQuery,
+                jobSubmitRequest.Language,
                 jobSubmitRequest.Attributes
                 );
 
