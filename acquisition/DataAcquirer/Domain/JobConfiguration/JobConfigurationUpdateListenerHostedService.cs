@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -27,7 +27,7 @@ namespace Domain.JobConfiguration
             _logger.LogInformation("Service {serviceName} started",
                 nameof(JobConfigurationUpdateListenerHostedService));
             
-            _listenTask = _jobConfigurationUpdateListener.ListenAsync(_cancellationTokenSource.Token);
+            _listenTask = Task.Run(()=> _jobConfigurationUpdateListener.ListenAsync(_cancellationTokenSource.Token));
 
             return Task.CompletedTask;
         }
