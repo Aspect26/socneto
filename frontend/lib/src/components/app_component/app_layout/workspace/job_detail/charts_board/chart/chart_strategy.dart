@@ -39,11 +39,7 @@ class LineChartStrategy implements ChartStrategy {
   }
 
   List<String> _getLineChartLabels() {
-    /* TODO:
-    var jsonDataPathsExceptFirst = this._chartDefinition.jsonDataPaths.sublist(1);
-    return jsonDataPathsExceptFirst.map<String>((jsonDataPath) => jsonDataPath.split("/").last).toList();
-     */
-    return ["asd", "aaa", "asdsa", "afasad"];
+    return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property.name).toList();
   }
 
 }
