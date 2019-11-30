@@ -31,9 +31,9 @@ public class JobDtoServiceImpl implements JobDtoService {
     }
 
     @Override
-    public List<JobDto> findAllByUsername(String username) {
+    public List<JobDto> findAllByUser(String user) {
         // TODO validate
-        return jobMapper.jobsToJobDtos(toList(jobService.findAllByUsername(username)));
+        return jobMapper.jobsToJobDtos(toList(jobService.findAllByUser(user)));
     }
 
     @Override

@@ -16,8 +16,8 @@ public class ListResultRequest extends ResultRequest {
 
     private final List<ListParamsResultRequest> params;
 
-    public ListResultRequest(ResultRequestType resultRequestType, UUID jobId, String componentName, List<ListParamsResultRequest> params) {
-        super(resultRequestType, jobId, componentName);
+    public ListResultRequest(ResultRequestType resultRequestType, UUID jobId, String componentId, List<ListParamsResultRequest> params) {
+        super(resultRequestType, jobId, componentId);
         this.params = params;
     }
 

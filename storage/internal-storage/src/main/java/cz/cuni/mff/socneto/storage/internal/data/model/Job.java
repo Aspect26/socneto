@@ -12,19 +12,16 @@ import java.util.UUID;
 public class Job {
     @Id
     private UUID jobId;
-    private String username;
     private String jobName;
-    private boolean hasFinished;
-    private Date startedAt;
-    private Date finishedAt;
-    @ElementCollection
-    @CollectionTable(name = "data_analysers", joinColumns = @JoinColumn(name = "jobId"))
-    @Column(name = "dataAnalysers")
-    private List<String> dataAnalysers;
-    @ElementCollection
-    @CollectionTable(name = "data_acquirers", joinColumns = @JoinColumn(name = "jobId"))
-    @Column(name = "dataAcquirers")
-    private List<String> dataAcquirers;
+    @Column(name = "userId")
+    private String user;
     private String topicQuery;
     private String status;
+    private String language;
+    private Date startedAt;
+    private Date finishedAt;
+
+    @OneToMany(targetEntity = Component.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "jobId")
+    private List<Component> componentConfigs; //TODO rename component
 }

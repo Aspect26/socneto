@@ -11,7 +11,7 @@ public interface JobDtoService {
 
     List<JobDto> findAll();
 
-    List<JobDto> findAllByUsername(String username);
+    List<JobDto> findAllByUser(String user);
 
     JobDto save(JobDto job);
 

@@ -26,6 +26,11 @@ public class ComponentDtoServiceImpl implements ComponentDtoService {
     }
 
     @Override
+    public ComponentDto find(String componentId, UUID jobId) {
+        return componentMapper.componentToComponentDto(componentService.find(componentId, jobId));
+    }
+
+    @Override
     public List<ComponentDto> getAllByType(ComponentType type) {
         // TODO validate
         return componentMapper.componentsToComponentDtos(toList(componentService.getAllByType(type)));
