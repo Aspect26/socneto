@@ -69,15 +69,6 @@ namespace Domain.ComponentManagement
                 return JobConfigUpdateResult.Failed("No storage is present. Job can't be done");
             }
 
-            var analysers = await PushAnalyserJobConfig(
-                storage.AnalysedDataInputChannel,
-                jobConfigUpdateCommand);
-
-            var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
-            await PushNetworkDataAcquisitionJobConfig(
-                storage.AcquiredDataInputChannel,
-                analysersInputs,
-                jobConfigUpdateCommand);
 
             var job = new Job
             {
@@ -89,6 +80,18 @@ namespace Domain.ComponentManagement
                 TopicQuery = jobConfigUpdateCommand.TopicQuery,
                 StartedAt = DateTime.Now.Millisecond,
             };
+
+            var analysers = await PushAnalyserJobConfig(
+                storage.AnalysedDataInputChannel,
+                jobConfigUpdateCommand);
+
+            var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
+            await PushNetworkDataAcquisitionJobConfig(
+                storage.AcquiredDataInputChannel,
+                analysersInputs,
+                jobConfigUpdateCommand);
+
+
 
             await _jobStorage.InsertNewJobAsync(job);
 
@@ -108,7 +111,7 @@ namespace Domain.ComponentManagement
                     Command = JobCommand.Stop.ToString()
                 };
 
-                var acquirers = job.JobComponentConfigs.Where(r =>r.ComponentType == _identifiers.DataAcquirerComponentTypeName );
+                var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
                 foreach (var dataAcquirer in acquirers)
                 {
                     await NotifyComponent(dataAcquirer.ComponentId, notification);
@@ -160,6 +163,19 @@ namespace Domain.ComponentManagement
                 };
 
                 await NotifyComponent(dataAcquirer, notification);
+
+
+                //var componentConfig = new JobComponentConfig
+                //{
+                //    ComponentId = dataAcquirer,
+                //    Attributes = attributes,
+                //    ComponentType = ,
+                //    InputChannelName = analyserCmp.InputChannelName,
+                //    UpdateChannelName = analyserCmp.UpdateChannelName,
+                //    JobId = jobConfigUpdateCommand.JobId
+                //};
+
+                //await _jobStorage.InsertJobComponentConfigAsync(componentConfig);
             }
         }
 
@@ -186,6 +202,7 @@ namespace Domain.ComponentManagement
 
         private async Task<List<SubscribedComponent>> PushAnalyserJobConfig(
             string storageChannelName,
+
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
@@ -213,17 +230,29 @@ namespace Domain.ComponentManagement
                 OutputMessageBrokerChannels = new[] { storageChannelName },
             };
 
-            var configUpdateTasks = analysers.Select(analyserCmp =>
+            var configUpdateTasks = analysers.Select(async analyserCmp =>
             {
                 _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
                     analyserCmp,
                     JsonConvert.SerializeObject(notification));
 
-                var analyserTask = _componentConfigUpdateNotifier.NotifyComponentAsync(
+                await _componentConfigUpdateNotifier.NotifyComponentAsync(
                     analyserCmp.UpdateChannelName,
                     notification);
 
-                return analyserTask;
+                var componentConfig = new JobComponentConfig
+                {
+                    ComponentId = analyserCmp.ComponentId,
+                    Attributes = analyserCmp
+                     .Attributes
+                     .ToDictionary(r => r.Key, r => (object)r.Value),
+                    ComponentType = analyserCmp.ComponentType,
+                    InputChannelName = analyserCmp.InputChannelName,
+                    UpdateChannelName = analyserCmp.UpdateChannelName,
+                    JobId = jobConfigUpdateCommand.JobId
+                };
+
+                await _jobStorage.InsertJobComponentConfigAsync(componentConfig);
             });
 
             await Task.WhenAll(configUpdateTasks);
