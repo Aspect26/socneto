@@ -161,7 +161,7 @@ class CreateChartModalComponent {
       return;
     }
 
-    this._submitController.add(ChartDefinition(this.dataPaths.map((dataPath) => dataPath.toJsonPath()).toList(), this.chartType));
+    this._submitController.add(ChartDefinition(this.dataPaths, this.chartType));
   }
 
   bool isDefinitionCorrect() {

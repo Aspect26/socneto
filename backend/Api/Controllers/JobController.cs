@@ -8,9 +8,6 @@ using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Services;
 
-using DataPoint = System.Collections.Generic.IList<dynamic>;
-
-
 namespace Socneto.Api.Controllers
 {
     [Authorize]
@@ -19,13 +16,16 @@ namespace Socneto.Api.Controllers
     {
         private readonly IJobService _jobService;
         private readonly IStorageService _storageService;
+        private readonly IGetAnalysisService _getAnalysisService;
         private readonly ILogger<JobController> _logger;
 
 
-        public JobController(IJobService jobService, IStorageService storageService, ILogger<JobController> logger)
+        public JobController(IJobService jobService, IStorageService storageService, IGetAnalysisService getAnalysisService, 
+            ILogger<JobController> logger)
         {
             _jobService = jobService;
             _storageService = storageService;
+            _getAnalysisService = getAnalysisService;
             _logger = logger;
         }
 
@@ -56,20 +56,38 @@ namespace Socneto.Api.Controllers
         }
         
         [HttpPost]
-        [Route("api/job/{jobId:guid}/analysis")]
-        public async Task<ActionResult<Task<IList<IList<DataPoint>>>>> GetJobAnalysis([FromRoute]Guid jobId, [FromBody] CreateChartDefinitionRequest chartDefinition)
+        [Route("api/job/{jobId:guid}/aggregation_analysis")]
+        public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisRequest analysisRequest)
         {
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
 
-            var data = await _storageService.GetAnalyses();
-            return Ok(data);
+            var analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperty);
+            var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
+            
+            return Ok(analysisResponse);
+        }
+        
+        [HttpPost]
+        [Route("api/job/{jobId:guid}/array_analysis")]
+        public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisRequest analysisRequest)
+        {
+            if (! await  IsAuthorizedToSeeJob(jobId))
+                return Unauthorized();
+            
+            var analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperties);
+            var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
+            
+            return Ok(analysisResponse);
         }
 
         private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)
         {
+            /*  TODO: uncomment this
             var job = await _storageService.GetJob(jobId);
             return job.Username == User.Identity.Name;
+            */
+            return await Task.FromResult(true);
         }
     }
 }

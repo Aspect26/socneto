@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -6,19 +8,56 @@ namespace Domain
 {
     public class EventTracker<T> : IEventTracker<T>
     {
+        private readonly EventQueue _eventQueue;
         private readonly ILogger<T> _logger;
         private readonly string _componentOptionsJson;
 
-        public EventTracker(ILogger<T> logger,
+        private readonly List<string> _levels = new List<string> {
+            "fatal",
+            "error",
+            "warning",
+            "info",
+            "metrics"
+        };
+        private readonly int _defaulLogLevelIndex;
+
+        public EventTracker(
+            EventQueue eventQueue,
+            ILogger<T> logger,
             IOptions<ComponentOptions> componentOptionsAccessor,
             IOptions<LogLevelOptions> logLevelOptionsAccessor)
         {
+            _eventQueue = eventQueue;
             _logger = logger;
-            _componentOptionsJson = JsonConvert.SerializeObject( componentOptionsAccessor.Value);
-            
-            // TODO use it when elastic is ready
-            var defaulLogLevel = logLevelOptionsAccessor.Value.Default ?? LogLevel.Information;
+            _componentOptionsJson = JsonConvert.SerializeObject(componentOptionsAccessor.Value);
 
+            var defaultLogLevel = logLevelOptionsAccessor.Value.Default ?? LogLevel.Information;
+
+            _defaulLogLevelIndex = 0;
+            switch (defaultLogLevel)
+            {
+                case LogLevel.Trace:
+                    _defaulLogLevelIndex = _levels.IndexOf("metrics");
+                    break;
+                case LogLevel.Debug:
+                    _defaulLogLevelIndex = _levels.IndexOf("metrics");
+                    break;
+                case LogLevel.Information:
+                    _defaulLogLevelIndex = _levels.IndexOf("info");
+                    break;
+                case LogLevel.Warning:
+                    _defaulLogLevelIndex = _levels.IndexOf("warning");
+                    break;
+                case LogLevel.Error:
+                    _defaulLogLevelIndex = _levels.IndexOf("error");
+                    break;
+                case LogLevel.Critical:
+                    _defaulLogLevelIndex = _levels.IndexOf("fatal");
+                    break;
+                case LogLevel.None:
+                    _defaulLogLevelIndex = int.MaxValue;
+                    break;
+            }
         }
         public void TrackError(string eventName, string message, object serializableAttributes = null)
         {
@@ -46,14 +85,20 @@ namespace Domain
         }
 
         private void Track(
-            string eventType, 
-            string eventName, 
-            string message, 
+            string eventType,
+            string eventName,
+            string message,
             object serializableAttributes = null)
         {
+            var currentLevelIndex = _levels.IndexOf(eventType);
+            if (_defaulLogLevelIndex < currentLevelIndex)
+            {
+                return;
+            }
+
             var loggerMessage = "{eventName}:{message}\nOn component: {siteOptions}";
             object[] paramsObjects;
-            if(serializableAttributes!=null)
+            if (serializableAttributes != null)
             {
                 loggerMessage += "\nAttributes:{attributes}";
                 paramsObjects = new object[] {
@@ -70,12 +115,10 @@ namespace Domain
                     _componentOptionsJson};
             }
 
-            
-            
             switch (eventType)
             {
                 case "fatal":
-                    _logger.LogCritical(loggerMessage,paramsObjects);
+                    _logger.LogCritical(loggerMessage, paramsObjects);
                     break;
                 case "error":
                     _logger.LogError(loggerMessage, paramsObjects);
@@ -90,8 +133,16 @@ namespace Domain
                     _logger.LogTrace(loggerMessage, paramsObjects);
                     break;
             }
-            // todo send to elastic
+
+            var metric = new
+            {
+                eventType,
+                eventName,
+                message,
+                timestamp = DateTime.Now.ToString("s"),
+                attributes = serializableAttributes
+            };
+            _eventQueue.Enqueue(metric);
         }
     }
-
 }

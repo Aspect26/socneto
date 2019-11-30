@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
+import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
@@ -32,11 +34,41 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    var body = this._getChartDefinitionBody(chartDefinition);
-    List<dynamic> listOfData = await this.postList<dynamic>("job/$jobId/analysis", body, (result) => result);
-    List<List<List<dynamic>>> typedListOfData = listOfData.map((d) => (d as List<dynamic>).map((ld) => ld as List<dynamic>).toList()).toList();
+    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
+    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
+    if (chartDefinition.chartType == ChartType.Pie) {
+      return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
+    } else {
+      return await this._getArrayChartData(jobId, analyserId, propertyNames);
+    }
+  }
 
-    return typedListOfData;
+  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
+    AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
+    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
+
+    List<List<dynamic>> values = [];
+    var aggregations = result["aggregations"];
+    aggregations.forEach((key, value) => {
+      values.add([key, value])
+    });
+
+    var returnValue = [values];
+    return returnValue;
+  }
+
+  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames) async {
+    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames);
+    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
+
+    List<List<dynamic>> values = [];
+    var dataPoints = result["data"];
+    dataPoints.forEach((datum) => {
+      values.add(datum)
+    });
+
+    var returnValue = [values];
+    return returnValue;
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
@@ -49,13 +81,13 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
-    var body = this._getChartDefinitionBody(chartDefinition);
+    var body = {
+      "ChartType": chartDefinition.chartType.toString().split('.').last,
+      // TODO: this is wrong now (JsonDataPaths)
+      "JsonDataPaths": chartDefinition.analysisDataPaths
+    };
+
     return this.post<Success>("job/$jobId/charts/create", body, (result) => Success.fromMap(result));
   }
 
-  Map _getChartDefinitionBody(ChartDefinition chartDefinition) =>
-      {
-        "ChartType": chartDefinition.chartType.toString().split('.').last,
-        "JsonDataPaths": chartDefinition.jsonDataPaths
-      };
 }

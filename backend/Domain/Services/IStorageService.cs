@@ -22,7 +22,9 @@ namespace Socneto.Domain.Services
 
         Task<IList<SocnetoComponent>> GetAcquirers();
 
-        Task<IList<IList<DataPoint>>> GetAnalyses();
+        Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest);
+
+        Task<ArrayAnalysisResult> GetAnalysisArray(GetArrayAnalysisStorageRequest getAnalysisStorageRequest);
 
     }
 }
