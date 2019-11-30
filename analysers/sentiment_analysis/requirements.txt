@@ -1,0 +1,4 @@
+kafka-python==1.4.6
+numpy==1.17.3
+pandas==0.25.2
+fasttext==0.9.1
