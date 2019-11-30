@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Socneto.Api.Authentication;
 using Socneto.Domain;
 using Socneto.Domain.Services;
-using Socneto.Domain.Services.Mock;
 using Socneto.Infrastructure;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
@@ -60,6 +59,7 @@ namespace Socneto.Api
 #endif
                 .AddTransient<IJobService, JobService>()
                 .AddTransient<IUserService, UserService>()
+                .AddTransient<IGetAnalysisService, GetAnalysisService>()
                 .AddTransient<IStorageService, StorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"))
