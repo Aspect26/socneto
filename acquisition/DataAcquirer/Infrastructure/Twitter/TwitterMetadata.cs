@@ -1,3 +1,4 @@
+using System;
 using Domain.Acquisition;
 
 namespace Infrastructure.Twitter
@@ -10,5 +11,6 @@ namespace Infrastructure.Twitter
         public string Query { get; set; }
         public string Language { get; set; }
         public int BatchSize { get; set; }
+        public Guid JobId { get ; set ; }
     }
 }

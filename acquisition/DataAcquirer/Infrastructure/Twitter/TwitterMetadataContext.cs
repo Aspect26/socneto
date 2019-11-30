@@ -1,4 +1,4 @@
-﻿using Domain.Acquisition;
+using Domain.Acquisition;
 using Domain.JobManagement;
 using System;
 using System.Threading.Tasks;
@@ -15,12 +15,12 @@ namespace Infrastructure.Twitter
             _jobId = jobId;
             _jobMetadataStorage = jobMetadataStorage;
         }
-        public async Task<T> GetOrCreateAsync<T>(T defaultMetadata) where T : IDataAcquirerMetadata
+        public async Task<T> GetOrCreateAsync<T>(T defaultMetadata) where T : class,IDataAcquirerMetadata
         {
-            var metadata = await _jobMetadataStorage.GetAsync(_jobId);
+            var metadata = await _jobMetadataStorage.GetAsync<T>(_jobId);
             if (metadata == null)
             {
-                await _jobMetadataStorage.SaveAsync(_jobId, defaultMetadata);
+                await _jobMetadataStorage.SaveAsync(defaultMetadata);
                 return defaultMetadata;
             }
 
@@ -36,7 +36,7 @@ namespace Infrastructure.Twitter
 
         public async Task UpdateAsync(IDataAcquirerMetadata metadata)
         {
-            await _jobMetadataStorage.SaveAsync(_jobId, metadata);
+            await _jobMetadataStorage.SaveAsync(metadata);
         }
     }
 }

@@ -35,6 +35,7 @@ namespace Infrastructure.Twitter
 
             var defaultMetadata = new TwitterMetadata
             {
+                JobId = acquirerInputModel.JobId,
                 Credentials = credentials,
                 MaxId = ulong.MaxValue,
                 SinceId = 0,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Domain.Acquisition;
 
@@ -6,12 +6,14 @@ namespace Domain.JobManagement
 {
     public class NullMetadataStorage : IDataAcquirerMetadataStorage
     {
-        public Task<IDataAcquirerMetadata> GetAsync(Guid jobId)
+
+        Task<T> IDataAcquirerMetadataStorage.GetAsync<T>(Guid jobId)
         {
-            return Task.FromResult((IDataAcquirerMetadata)new NullMetadata());
+
+            return Task.FromResult((T)(IDataAcquirerMetadata) new NullMetadata());
         }
 
-        public Task SaveAsync(Guid jobId, IDataAcquirerMetadata defaultMetadata)
+        Task IDataAcquirerMetadataStorage.SaveAsync<T>(T metadata)
         {
             return Task.CompletedTask;
         }
