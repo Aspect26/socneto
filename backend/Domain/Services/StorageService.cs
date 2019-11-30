@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Socneto.Domain.Models;
 using Socneto.Infrastructure;
-
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
 
@@ -72,9 +73,20 @@ namespace Socneto.Domain.Services
             return await response.Content.ReadAsAsync<List<SocnetoComponent>>();
         }
 
-        public Task<IList<IList<DataPoint>>> GetAnalyses()
+        public async Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest)
         {
-            throw new NotImplementedException();
+            var response = await Post($"results", getAnalysisRequest);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<AggregationAnalysisResult>();
+        }
+
+        public async Task<ArrayAnalysisResult> GetAnalysisArray(GetArrayAnalysisStorageRequest getAnalysisRequest)
+        {
+            var response = await Post($"results", getAnalysisRequest);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<ArrayAnalysisResult>();
         }
 
         private async Task<HttpResponseMessage> Get(string path)
@@ -82,9 +94,12 @@ namespace Socneto.Domain.Services
             return await _client.GetAsync($"{_host}/{path}");
         }
         
-        private async Task<HttpResponseMessage> Post(string path, HttpContent body)
+        private async Task<HttpResponseMessage> Post(string path, object data)
         {
-            return await _client.PostAsync($"{_host}/{path}", body);
+            var json = JsonConvert.SerializeObject(data);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            return await _client.PostAsync($"{_host}/{path}", stringContent);
         }
     }
 }
