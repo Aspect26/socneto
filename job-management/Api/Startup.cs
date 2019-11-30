@@ -1,6 +1,6 @@
 ﻿using Domain.Abstract;
 using Domain.ComponentManagement;
-using Domain.Job;
+using Domain.JobStorage;
 using Domain.Models;
 using Domain.Registration;
 using Domain.SubmittedJobConfiguration;
@@ -45,7 +45,7 @@ namespace Api
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
 
-            services.AddHttpClient<IJobConfigStorage, JobConfigStorageProxy>();
+            
             services.AddHttpClient<IJobStorage, JobStorageProxy>();
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
@@ -85,8 +85,8 @@ namespace Api
                 .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestValidationOptions"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<JobConfigStorageOptions>()
-                .Bind(Configuration.GetSection($"{optionRootName}:JobConfigStorageOptions"))
+            services.AddOptions<JobStorageOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:JobStorageOptions"))
                 .ValidateDataAnnotations();
             
             services.AddOptions<JobStorageOptions>()
