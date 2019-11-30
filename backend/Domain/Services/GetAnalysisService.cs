@@ -18,11 +18,11 @@ namespace Socneto.Domain.Services
         {
             var storageRequest = new GetAggregationAnalysisStorageRequest
             {
-                Type = AnalysisType.AGGREGATION,
-                ResultRequestType = AnalysisResultType.MAP_SUM,           // TODO: this should be computed from the analyser's data format
+                Type = AnalysisType.Aggregation,
+                ResultRequestType = AnalysisResultType.MapSum,           // TODO: this should be computed from the analyser's data format
                 ComponentId = analyserId,
                 AnalysisProperty = analysisProperty,
-                AnalysisResultValue = AnalysisResultValue.numberMapValue  // TODO: this should be computed from the analyser's data format
+                AnalysisResultValue = AnalysisResultValue.NumberMapValue  // TODO: this should be computed from the analyser's data format
             };
             
             return await _storageService.GetAnalysisAggregation(storageRequest);
@@ -32,13 +32,13 @@ namespace Socneto.Domain.Services
         {
             var arrayAnalysisStorageRequest = new GetArrayAnalysisStorageRequest
             {
-                Type = AnalysisType.LIST,
-                ResultRequestType = AnalysisResultType.LIST_WITH_TIME,     // TODO: this should be computed from the analyser's data format
+                Type = AnalysisType.List,
+                ResultRequestType = AnalysisResultType.ListWithTime,     // TODO: this should be computed from the analyser's data format
                 ComponentId = analyserId,
                 AnalysisProperties = analysisProperties.Select(analysisProperty => new ArrayAnalysisRequestProperty
                 {
                     AnalysisProperty = analysisProperty,
-                    AnalysisResultValue = AnalysisResultValue.numberValue  // TODO: this should be computed from the analyser's data format
+                    AnalysisResultValue = AnalysisResultValue.NumberValue  // TODO: this should be computed from the analyser's data format
                 }).ToList()
             };
             

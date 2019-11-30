@@ -1,43 +1,16 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Socneto.Domain.Models
 {
-
-    // TODO: to lowercase somehow
-    public enum AnalysisType
-    {
-        AGGREGATION,
-        LIST
-    }
-
-    public enum AnalysisResultType
-    {
-        MAP_SUM,
-        LIST_SUM,
-        LIST_WITH_TIME,
-        LIST
-    }
-
-    public enum AnalysisResultValue
-    {
-        numberValue,
-        textValue,
-        numberListValue,
-        testListValue,
-        numberMapValue,
-        textMapValue
-    }
-    
     public class GetAggregationAnalysisStorageRequest
     {
         [JsonProperty("type")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisType Type { get; set; }
         
         [JsonProperty("resultRequestType")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisResultType ResultRequestType { get; set; }
         
         [JsonProperty("componentId")]
@@ -47,10 +20,9 @@ namespace Socneto.Domain.Models
         public string AnalysisProperty { get; set; }
         
         [JsonProperty("valueName")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisResultValue AnalysisResultValue { get; set; }
     }
-    
+
     public class GetArrayAnalysisStorageRequest
     {
         [JsonProperty("type")]
@@ -76,5 +48,53 @@ namespace Socneto.Domain.Models
         [JsonProperty("valueName")]
         [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisResultValue AnalysisResultValue { get; set; }
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AnalysisType
+    {
+        [EnumMember(Value = "AGGREGATION")]
+        Aggregation,
+        
+        [EnumMember(Value = "LIST")]
+        List,
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AnalysisResultType
+    {
+        [EnumMember(Value = "MAP_SUM")]
+        MapSum,
+        
+        [EnumMember(Value = "LIST_SUM")]
+        ListSum,
+        
+        [EnumMember(Value = "LIST_WITH_TIME")]
+        ListWithTime,
+        
+        [EnumMember(Value = "LIST")]
+        List
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AnalysisResultValue
+    {
+        [EnumMember(Value = "numberValue")]
+        NumberValue,
+        
+        [EnumMember(Value = "textValue")]
+        TextValue,
+        
+        [EnumMember(Value = "numberListValue")]
+        NumberListValue,
+        
+        [EnumMember(Value = "testListValue")]
+        TestListValue,
+        
+        [EnumMember(Value = "numberMapValue")]
+        NumberMapValue,
+        
+        [EnumMember(Value = "textMapValue")]
+        TextMapValue
     }
 }
