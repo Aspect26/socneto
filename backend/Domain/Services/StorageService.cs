@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Socneto.Api.Models;
 using Socneto.Domain.Models;
 using Socneto.Infrastructure;
-
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
 
@@ -78,9 +75,7 @@ namespace Socneto.Domain.Services
 
         public async Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest)
         {
-            getAnalysisRequest.Type = AnalysisType.AGGREGATION;
-            
-            var response = await this.Post($"results", getAnalysisRequest);
+            var response = await Post($"results", getAnalysisRequest);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsAsync<AggregationAnalysisResult>();
@@ -88,9 +83,7 @@ namespace Socneto.Domain.Services
 
         public async Task<ArrayAnalysisResult> GetAnalysisArray(GetArrayAnalysisStorageRequest getAnalysisRequest)
         {
-            getAnalysisRequest.Type = AnalysisType.LIST;
-            
-            var response = await this.Post($"results", getAnalysisRequest);
+            var response = await Post($"results", getAnalysisRequest);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsAsync<ArrayAnalysisResult>();
