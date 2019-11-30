@@ -35,7 +35,7 @@ namespace Infrastructure
             _getJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.GetJobRoute);
         }
 
-        public async Task InsertJobComponentConfig(JobComponentConfig jobConfig)
+        public async Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
         {
             var jsonBody = JsonConvert.SerializeObject(jobConfig);
             var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
