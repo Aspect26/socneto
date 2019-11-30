@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
@@ -17,7 +17,9 @@ namespace Infrastructure.Kafka
         {
 
             if (string.IsNullOrEmpty(kafkaOptionsObject.Value.ServerAddress))
+            {
                 throw new ArgumentNullException(nameof(kafkaOptionsObject.Value.ServerAddress));
+            }
             _logger = logger;
             _serverAddress = kafkaOptionsObject.Value.ServerAddress;
             

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -138,6 +139,7 @@ namespace Domain
                 eventType,
                 eventName,
                 message,
+                timestamp = DateTime.Now.ToString("s"),
                 attributes = serializableAttributes
             };
             _eventQueue.Enqueue(metric);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace Infrastructure.DataGenerator
             _staticDataPath = staticGeneratorOptionsAccessor.Value.StaticDataPath;
         }
 
-        public IEnumerator<UniPostStaticData> GetEnumerator()
+        public IEnumerable<UniPostStaticData> GetEnumerable()
         {
             _streamReader = new StreamReader(_staticDataPath);
 
@@ -34,7 +34,7 @@ namespace Infrastructure.DataGenerator
                         r.User,
                         DateTime.Now.ToString("s")));
 
-            return enumerable.GetEnumerator();
+            return enumerable;
         }
 
         public void Dispose()

@@ -22,8 +22,7 @@ public class EventQueue
             return null;
         }
 
-        while (
-            cancellationToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             if (_eventQueue.TryDequeue(out object objEvent))
             {
