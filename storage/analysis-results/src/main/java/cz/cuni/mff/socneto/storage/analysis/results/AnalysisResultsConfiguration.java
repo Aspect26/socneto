@@ -2,7 +2,9 @@ package cz.cuni.mff.socneto.storage.analysis.results;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RequestOptions;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+@Slf4j
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "cz.cuni.mff.socneto.storage.analysis.results.repository")
 public class AnalysisResultsConfiguration {
@@ -35,6 +38,9 @@ public class AnalysisResultsConfiguration {
 
     @Value("${elasticsearch.port}")
     private int port;
+
+    @Value("${elasticsearch.wait.millis}")
+    private int wait;
 
     @Bean
     public TransportClient client() throws UnknownHostException {
@@ -51,7 +57,7 @@ public class AnalysisResultsConfiguration {
     public RestHighLevelClient heightClient() {
         return new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("localhost", 9200, "http")
+                        new HttpHost(host, 9200, "http")
                 )
         );
     }
@@ -60,9 +66,14 @@ public class AnalysisResultsConfiguration {
     // Move away
 
     @PostConstruct
-    void init() throws IOException {
+    void init() throws IOException, InterruptedException {
+        Thread.sleep(wait);
+
+        log.info("Loading scripts");
+
         RestHighLevelClient restHighLevelClient = heightClient();
         ObjectMapper objectMapper = new ObjectMapper();
+
 
         var resource = this.getClass().getResource("scripts.json");
         var array = (ArrayNode) objectMapper.readTree(resource);
@@ -77,8 +88,10 @@ public class AnalysisResultsConfiguration {
                     throw new IllegalStateException("Not accepted script: " + node.get("name").asText());
                 }
             } catch (IOException e) {
-                throw new IllegalStateException("Wrong script: " + node.get("name").asText());
+                throw new IllegalStateException("Script: " + node.get("name").asText() + ": " + e.getMessage());
             }
         });
+
+        log.info("Scripts loaded.");
     }
 }
