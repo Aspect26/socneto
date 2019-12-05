@@ -17,5 +17,4 @@ public interface JobDtoService {
 
     JobDto update(JobDto job);
 
-    void delete(UUID id);
 }

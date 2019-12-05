@@ -1,12 +1,12 @@
 package cz.cuni.mff.socneto.storage.internal.service;
 
 import cz.cuni.mff.socneto.storage.internal.api.dto.JobDto;
+import cz.cuni.mff.socneto.storage.internal.api.service.ComponentJobConfigDtoService;
 import cz.cuni.mff.socneto.storage.internal.api.service.JobDtoService;
 import cz.cuni.mff.socneto.storage.internal.data.mapper.JobMapper;
 import cz.cuni.mff.socneto.storage.internal.data.model.Job;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,8 @@ public class JobDtoServiceImpl implements JobDtoService {
 
     private final JobService jobService;
     private final JobMapper jobMapper;
+
+    private final ComponentJobConfigDtoService componentJobConfigDtoService;
 
     @Override
     public JobDto find(UUID id) {
@@ -46,12 +48,6 @@ public class JobDtoServiceImpl implements JobDtoService {
     public JobDto update(JobDto job) {
         // TODO validate
         return jobMapper.jobToJobDto(jobService.update(jobMapper.jobDtoToJob(job)));
-    }
-
-    @Override
-    public void delete(UUID id) {
-        // TODO validate
-        jobService.delete(id);
     }
 
     // TODO remove

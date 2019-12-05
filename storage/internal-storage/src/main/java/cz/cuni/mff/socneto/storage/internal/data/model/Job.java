@@ -2,9 +2,10 @@ package cz.cuni.mff.socneto.storage.internal.data.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -20,8 +21,4 @@ public class Job {
     private String language;
     private Date startedAt;
     private Date finishedAt;
-
-    @OneToMany(targetEntity = Component.class, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "jobId")
-    private List<Component> componentConfigs; //TODO rename component
 }

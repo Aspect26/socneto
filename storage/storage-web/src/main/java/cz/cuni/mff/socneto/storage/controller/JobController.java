@@ -1,8 +1,6 @@
 package cz.cuni.mff.socneto.storage.controller;
 
-import cz.cuni.mff.socneto.storage.internal.api.dto.ComponentDto;
 import cz.cuni.mff.socneto.storage.internal.api.dto.JobDto;
-import cz.cuni.mff.socneto.storage.internal.api.service.ComponentDtoService;
 import cz.cuni.mff.socneto.storage.internal.api.service.JobDtoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +14,14 @@ import java.util.UUID;
 public class JobController {
 
     private final JobDtoService jobDtoService;
-    private final ComponentDtoService componentDtoService;
 
     @GetMapping("/jobs")
-    public List<JobDto> getJobsByUser(@RequestParam("user") String user) {
-        return jobDtoService.findAllByUser(user);
+    public List<JobDto> getJobsByUsername(@RequestParam(value = "username", required = false) String username) {
+        if (username == null) {
+            return jobDtoService.findAll();
+        } else {
+            return jobDtoService.findAllByUser(username);
+        }
     }
 
     @GetMapping("/jobs/{id}")
@@ -35,12 +36,8 @@ public class JobController {
 
     @PutMapping("/jobs/{id}")
     public JobDto updateJob(@PathVariable UUID id, @RequestBody JobDto job) {
+        job.setJobId(id);
         return jobDtoService.update(job);
-    }
-
-    @GetMapping("/jobs/{jobId}/component/{componentId}")
-    public ComponentDto updateJob(@PathVariable UUID jobId, @PathVariable String componentId) {
-        return componentDtoService.find(componentId, jobId);
     }
 
 }

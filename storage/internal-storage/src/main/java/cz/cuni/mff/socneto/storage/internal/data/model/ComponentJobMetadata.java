@@ -11,18 +11,11 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class JobComponentMetadata {
+public class ComponentJobMetadata {
     @Id
-    private UUID id;
+    private Long id;
     private String componentId;
     private UUID jobId;
-    private boolean finished;
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    private ObjectNode componentAttributes;
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    private ObjectNode jobAttributes;
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private ObjectNode componentMetadata;

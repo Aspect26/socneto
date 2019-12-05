@@ -33,7 +33,7 @@ public class PostReceiver {
                 .authorId(postMessage.getAuthorId())
                 .text(postMessage.getText())
                 .source(postMessage.getSource())
-                .dateTime(postMessage.getDateTime())
+                .dateTime(postMessage.getDateTime().toString())
                 .build();
 
         var analyzedObject = AnalyzedObjectDto.<PostDto, String>builder()

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,12 +18,10 @@ public class JobDto {
     @NotBlank(message = "Job name can't be null.")
     private String jobName;
     @NotBlank(message = "User can't be null.")
-    private String user;
+    private String username;
     private String topicQuery;
     private String status;
     private String language;
     private Date startedAt;
     private Date finishedAt;
-
-    private List<ComponentDto> componentConfigs; //TODO rename component
 }

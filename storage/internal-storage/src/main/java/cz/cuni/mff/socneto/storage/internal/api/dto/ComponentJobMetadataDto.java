@@ -6,14 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ComponentDto {
+public class ComponentJobMetadataDto {
+    private Long id; // internal
     private String componentId;
-    private ComponentType type;
-    private String inputChannelName;
-    private String updateChannelName;
-    private ObjectNode attributes;
+    private UUID jobId;
+    private ObjectNode componentMetadata;
 }
