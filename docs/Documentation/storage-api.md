@@ -153,32 +153,6 @@ None.
 
 None.
 
-
-### Remove component
-
-`DELETE /components/{id}`
-
-#### Request parameters
-
-
-| Name | Description             | Example |
-| :--- | :---------------------- | :--- |
-| `id` | Id of a given component | `DataAcquirer_twitter` |
-
-#### Response
-
-**Codes**:
-
-| Status code | Description                                                           |
-| :---------- | :-------------------------------------------------------------------- |
-| `204`       | Request was successful |
-
-<!-- TODO rest -->
-
-**Example**: 
-
-None.
-
 ## Job
 
 Used to keep track job.
@@ -359,6 +333,7 @@ Each submitted job uses multiple components. Each component is configured differ
 
 ### Insert component config
 
+POST
 <!-- TODO question. Why there is no insert? -->
 
 <!-- 
@@ -374,50 +349,6 @@ Each submitted job uses multiple components. Each component is configured differ
 ## Component's jobs metadata
 
 
-
-### Get all components
-<!-- I think that this endpoint is not required -->
-Returns metadata for all component's jobs
-
-`GET /components/{componentId}/metadata`
-
-#### Request parameters
-
-| Name | Description             | Example |
-| :--- | :---------------------- |:---|
-| `componentId` | Id of the given component |`DataAcquirer_twitter` |
-
-#### Response
-
-**Codes**:
-
-| Status code | Description                                                            |
-| :---------- | :--------------------------------------------------------------------- |
-| `200`       | Request was successful. The requested objects can be found in the body |
-
-<!-- TODO rest -->
-
-**Example**:
-
-```json
-[
-    {
-        "prop_y":"value",
-        ...
-    },
-    ...
-    {
-        "prop_x":"value",
-        ...
-    }
-]
-```
-
-
-@GetMapping("/components/{componentId}/metadata/job/{jobId}")
-public JobComponentMetadataDto getJobComponentMetadata(@PathVariable String componentId, @PathVariable UUID jobId) {
-    return jobComponentMetadataDtoService.find(componentId, jobId);
-}
 
 ### Get component's job's metadata by id
 
