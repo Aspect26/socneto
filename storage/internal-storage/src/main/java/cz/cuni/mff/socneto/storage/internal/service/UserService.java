@@ -31,7 +31,7 @@ public class UserService {
         repository.deleteById(username);
     }
 
-    // TODO: remove
+    // TODO: read default user from properties
 
     @PostConstruct
     public void initDb() {

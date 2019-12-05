@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,16 +19,14 @@ public class ComponentService {
                 .orElseThrow(() -> new EntityNotFoundException("Component with id: " + id + " not found"));
     }
 
-    public Component find(String componentId, UUID jobId) {
-        // TODO validate
-        return repository.findByComponentIdAndJobId(componentId, jobId)
-                .orElseThrow(() -> new EntityNotFoundException("Component with id: " + componentId + "and job id: " + jobId + " not found"));
-    }
-
-
-    public Iterable<Component> getAllByType(ComponentType type) {
+    public Iterable<Component> findAllByType(ComponentType type) {
         return repository.getAllByType(type);
     }
+
+    public Iterable<Component> findAll() {
+        return repository.findAll();
+    }
+
 
     public Component save(Component component) {
         return repository.save(component);
@@ -37,10 +34,6 @@ public class ComponentService {
 
     public Component update(Component component) {
         return repository.save(component);
-    }
-
-    public void delete(String id) {
-        repository.deleteById(id);
     }
 
 }

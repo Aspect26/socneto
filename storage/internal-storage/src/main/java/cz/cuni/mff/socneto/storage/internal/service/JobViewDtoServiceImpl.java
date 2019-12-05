@@ -35,12 +35,6 @@ public class JobViewDtoServiceImpl implements JobViewDtoService {
         return jobViewMapper.jobViewToJobViewDto(jobViewService.update(jobViewMapper.jobViewDtoToJobView(jobView)));
     }
 
-    @Override
-    public void delete(UUID id) {
-        // TODO validate
-        jobViewService.delete(id);
-    }
-
     private ArrayList<JobView> toList(Iterable<JobView> jobViews) {
         ArrayList<JobView> list = new ArrayList<>();
         jobViews.iterator().forEachRemaining(list::add);
