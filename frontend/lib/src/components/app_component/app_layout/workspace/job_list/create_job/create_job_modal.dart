@@ -9,6 +9,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_components/utils/angular/scroll_host/angular_2.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/Credentials.dart';
@@ -43,6 +44,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialTabComponent,
     ModalComponent,
     ComponentsSelectComponent,
+    ComponentCredentialsComponent,
     MaterialStepperComponent,
     StepDirective,
     SummaryDirective,

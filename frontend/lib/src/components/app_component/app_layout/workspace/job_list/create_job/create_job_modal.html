@@ -1,0 +1,88 @@
+<modal [(visible)]="displayed">
+    <material-dialog headered
+                     class="dialog"
+                     [error]="errorMessage">
+
+        <div header>
+            <h1>Create new job</h1>
+            <material-button icon autoFocus (trigger)="onCloseDialog()">
+                <material-icon icon="close"></material-icon>
+            </material-button>
+        </div>
+
+        <material-stepper #jobStepper
+                          legalJumps="all"
+                          orientation="horizontal">
+
+            <template step name="Job Definition"
+                      [optional] = "false"
+                      [hideButtons]="true">
+
+                <div>
+                    Title:
+                    <material-input
+                            label="Name of the job"
+                            floatingLabel
+                            [(ngModel)]="jobName"
+                            class="labeled-input">
+                    </material-input>
+
+                    <div>
+                        Topic:
+                        <material-input
+                                label="The topic to be queried"
+                                floatingLabel
+                                [(ngModel)]="topic"
+                                class="labeled-input">
+                        </material-input>
+                    </div>
+
+                    <div>
+                        Language:
+                        <material-dropdown-select
+                            [options]="['en', 'cs']"
+                            [(selection)]="languageSelection"
+                            [itemRenderer]="languagesItemRenderer"
+                            [buttonText]="languageSelection.selectedValue"
+                            class="language-select">
+                        </material-dropdown-select>
+                    </div>
+
+                    Data acquirers:
+                    <components-select
+                            [components]="availableSocialNetworks"
+                            [loading]="loadingSocialNetworks"
+                            (change)="onSocialNetworksSelectionChange($event)"
+                            (refresh)="onSocialNetworksRefresh()">
+                    </components-select>
+
+                    Data analyzers:
+                    <components-select
+                            [components]="availableDataAnalyzers"
+                            [loading]="loadingDataAnalyzers"
+                            (change)="onDataAnalyzersSelectionChange($event)"
+                            (refresh)="onDataAnalyzersRefresh()">
+                    </components-select>
+                </div>
+
+            </template>
+
+            <template step name="Credentials"
+                      [optional]="true"
+                      [hideButtons]="true">
+                <div>
+                    <component-credentials [acquirers]="availableSocialNetworks"></component-credentials>
+                </div>
+            </template>
+
+        </material-stepper>
+
+        <div footer>
+            <material-button *ngIf="jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
+
+            <material-button *ngIf="isJobDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-button *ngIf="!isJobDefinitionCorrect()" disabled class="close-button">Submit</material-button>
+        </div>
+
+    </material-dialog>
+</modal>
