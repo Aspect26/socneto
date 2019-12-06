@@ -1,3 +1,137 @@
+# Used entities
+
+In the entities definitions, the following types are used:
+
+- `guid` - Universally unique identifier
+- `string` - text
+- `double` - number
+- `json` - free form json object
+- `date` - iso format e.g. `2019-12-06T09:49:12`
+- `enum`
+  - `componentType` - `DATA_ACQUIER` or `DATA_ANALYSER`
+  - `eventType` - `FATAL`, `ERROR`, `WARN`, `INFO` or `METRIC`
+- `[]`(square bracket) - identifies array of some type
+
+## Job
+```json
+{
+    "jobId":guid,
+    "jobName":string,
+    "username":string,
+    "topicQuery":string,
+    "status":string,
+    "language" : string,
+    "startedAt": string,
+    "finished":string
+}
+```
+
+## Component Job Config
+
+This entity is a configuration of a job given to specific component. Not Metadata.
+
+```json
+{
+    "jobId":guid,
+    "componentId":string,
+    "attributes":json,
+    "outputChannelNames":[string]
+}
+```
+
+## Component Job Metadata
+
+This entity is a custom object used by any component, to store any metadata about a specific job.
+
+```json
+{
+    "componentId":string,
+    "jobId":guid,
+    "componentMetadata":json
+}
+```
+
+
+## Component
+```json
+{
+    "componentId":string,
+    "type":enum,
+    "inputChannelName":string,
+    "updateChannelName":string,
+    "attributes":json
+}
+```
+
+## Post
+```json
+{
+    "postId": guid,
+    "originalPostId": string,
+    "jobId":guid,
+    "text":string,
+    "source":string,
+    "authorId":string,
+    "dateTime":date,
+}
+```
+
+## Registration request kafka message
+
+```json
+{
+    "componentType": enum,
+    "componentId":string,
+    "inputChannelName":string,
+    "updateChannelName":string,
+    "attributes":json
+}
+```
+
+## Analysis result kafka message
+
+```json
+{
+    "postId":guid,
+    "jobId":guid,
+    "componentId":string,
+    "results":{
+        "sentiment_analysis":{
+            "numberValue":double,
+            "textValue":string,
+            "numberListValue":[double],
+            "textListValue":[string],
+            "numberMapValue":{string:double},
+            "textMapValue":{string:string}
+        }
+    }
+}
+```
+## NewJobMessage
+
+```json
+{
+    "jobId":string,
+    "attributes":json,
+    "outputChannelNames":[string]
+}
+```
+
+## Metrics Message
+
+This message is sent over both, kafka and http
+
+```json
+{
+    "componentId":string,
+    "eventType":enum,
+    "eventName":string,
+    "message":string,
+    "timestamp":date,
+    "attributes":json
+}
+```
+
 # Storage API
 
 ## Components
