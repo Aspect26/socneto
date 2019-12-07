@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Api.Models
 {
@@ -21,7 +22,7 @@ namespace Api.Models
         public string Language { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string,Dictionary<string,string>> Attributes { get; set; }
+        public Dictionary<string,Dictionary<string,JObject>> Attributes { get; set; }
 
     }
 }

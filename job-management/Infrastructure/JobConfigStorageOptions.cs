@@ -10,6 +10,6 @@ namespace Infrastructure
         public string UpdateJobRoute { get; set; }
         public string GetJobRoute { get; set; }
 
-        public string AddJobConfigRoute { get; set; }
+        
     }
 }

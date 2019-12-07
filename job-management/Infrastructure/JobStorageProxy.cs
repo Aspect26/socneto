@@ -8,6 +8,7 @@ using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Infrastructure
 {
@@ -17,9 +18,12 @@ namespace Infrastructure
         private readonly ILogger<JobStorageProxy> _logger;
         private readonly Uri _baseUri;
         private readonly Uri _addJobUri;
-        private readonly string _addJobConfigRouteTemplate;
         private readonly Uri _updateJobUri;
         private readonly Uri _getJobUri;
+        private JsonSerializerSettings _dateSettings = new JsonSerializerSettings
+        {
+            DateFormatString = "yyyy-MM-ddTHH:mm:ss"
+        };
 
         public JobStorageProxy(
             HttpClient httpClient, 
@@ -27,33 +31,17 @@ namespace Infrastructure
             ILogger<JobStorageProxy> logger)
         {
             _httpClient = httpClient;
-            this._logger = logger;
+            _logger = logger;
             _baseUri = jobStorageOptionsAccessor.Value.BaseUri;
             _addJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.AddJobRoute);
-            _addJobConfigRouteTemplate =  jobStorageOptionsAccessor.Value.AddJobConfigRoute;
             _updateJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.UpdateJobRoute);
             _getJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.GetJobRoute);
-        }
-
-        public async Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
-        {
-            var jsonBody = JsonConvert.SerializeObject(jobConfig);
-            var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-            var jobConfigRoute = string.Format(_addJobConfigRouteTemplate, jobConfig.JobId);
-            var addJobConfigUri = new Uri(_baseUri, jobConfigRoute);
-            var response = await _httpClient.PostAsync(addJobConfigUri, httpContent);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new InvalidOperationException($"Adding job to storage failed: {error}");
-            }
+            
         }
 
         public async Task InsertNewJobAsync(Job job)
         {
-            var jsonBody = JsonConvert.SerializeObject(job);
+            var jsonBody = JsonConvert.SerializeObject(job, _dateSettings);
             var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(_addJobUri, httpContent);
@@ -67,10 +55,11 @@ namespace Infrastructure
 
         public async Task<Job> GetJobAsync(Guid jobId)
         {
-            var url = _getJobUri.AbsolutePath
-                .TrimEnd('/');
+            var route = _getJobUri.AbsolutePath
+                .TrimEnd('/') 
+                + "/" + jobId.ToString();
 
-            url += jobId.ToString();
+            var url = new Uri(_baseUri, route);
 
             var response = await _httpClient.GetAsync(url);
 
@@ -82,8 +71,8 @@ namespace Infrastructure
 
             var content = await response.Content.ReadAsStringAsync();
             try
-            {
-                return JsonConvert.DeserializeObject<Job>(content);
+            { 
+                return JsonConvert.DeserializeObject<Job>(content, _dateSettings);
             }
             catch (JsonReaderException jre)
             {
@@ -105,5 +94,32 @@ namespace Infrastructure
                 throw new InvalidOperationException($"Adding data to storage failed: {error}");
             }
         }        
+    }
+    public class JobPayloadObject
+    {
+        [JsonProperty("jobId")]
+        public Guid JobId { get; set; }
+
+        [JsonProperty("jobName")]
+        public string JobName { get; set; }
+
+        [JsonProperty("username")]
+        public string Owner { get; set; }
+
+        [JsonProperty("finished")]
+        public DateTime? FinishedAt { get; set; }
+
+        [JsonProperty("startedAt")]
+        public DateTime StartedAt { get; set; }
+
+        [JsonProperty("topicQuery")]
+        public string TopicQuery { get; set; }
+
+        [JsonProperty("language")]
+        public string Language { get; set; }
+
+        [JsonProperty("status")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public JobStatus JobStatus { get; set; }
     }
 }

@@ -9,7 +9,8 @@ namespace Domain.JobStorage
         Task InsertNewJobAsync(Job job);
         Task UpdateJobAsync(Job job);
 
-        Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig);
         Task<Job> GetJobAsync(Guid jobId);
+
+
     }
 }

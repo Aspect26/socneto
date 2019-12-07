@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Domain.SubmittedJobConfiguration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Domain.Models
 {
@@ -18,21 +19,19 @@ namespace Domain.Models
         public string Owner { get; set; }
 
         [JsonProperty("finished")]
-        public long? FinishedAt { get; set; }
+        public DateTime? FinishedAt { get; set; }
 
         [JsonProperty("startedAt")]
-        public long StartedAt { get; set; }
+        public DateTime StartedAt { get; set; }
 
         [JsonProperty("topicQuery")]
         public string TopicQuery { get; set; }
 
+        [JsonProperty("language")]
+        public string Language { get; set; }
+
         [JsonProperty("status")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public JobStatus JobStatus { get; set; }
-
-        [JsonProperty("componentConfigs")]
-        public List<JobComponentConfig> JobComponentConfigs { get; set; }
     }
-
-    
-
 }
