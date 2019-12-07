@@ -5,14 +5,14 @@ using Domain.Acquisition;
 namespace Domain.JobManagement
 {
     public class NullMetadataStorage : IDataAcquirerMetadataStorage
+        
     {
-
-        Task<T> IDataAcquirerMetadataStorage.GetAsync<T>(Guid jobId)
+        public Task<T> GetAsync<T>(Guid jobId) where T : class, IDataAcquirerMetadata
         {
             return Task.FromResult((T)(IDataAcquirerMetadata) new NullMetadata());
         }
 
-        Task IDataAcquirerMetadataStorage.SaveAsync<T>(T metadata)
+        public Task SaveAsync<T>(Guid jobId, T metadata) where T : class, IDataAcquirerMetadata
         {
             return Task.CompletedTask;
         }

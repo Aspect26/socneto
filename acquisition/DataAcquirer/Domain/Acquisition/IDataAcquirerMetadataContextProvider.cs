@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Domain.Acquisition
 {
-    public interface IDataAcquirerMetadataContextProvider
+    public interface IDataAcquirerMetadataContextProvider 
     {
         IDataAcquirerMetadataContext Get(Guid jobId);
     }

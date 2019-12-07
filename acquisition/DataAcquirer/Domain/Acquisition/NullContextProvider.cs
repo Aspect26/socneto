@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Domain.Acquisition
 {
@@ -10,7 +10,7 @@ namespace Domain.Acquisition
         }
     }
 
-    
+
 
 
 }
