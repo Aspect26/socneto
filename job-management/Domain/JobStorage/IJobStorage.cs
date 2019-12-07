@@ -8,9 +8,7 @@ namespace Domain.JobStorage
     {
         Task InsertNewJobAsync(Job job);
         Task UpdateJobAsync(Job job);
-
         Task<Job> GetJobAsync(Guid jobId);
-
 
     }
 }

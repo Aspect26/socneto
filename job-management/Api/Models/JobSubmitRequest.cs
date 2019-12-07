@@ -22,7 +22,7 @@ namespace Api.Models
         public string Language { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string,Dictionary<string,JObject>> Attributes { get; set; }
 
+        public Dictionary<string,Dictionary<string,JObject>> Attributes { get; set; }
     }
 }

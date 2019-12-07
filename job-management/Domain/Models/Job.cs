@@ -27,6 +27,7 @@ namespace Domain.Models
         [JsonProperty("topicQuery")]
         public string TopicQuery { get; set; }
 
+
         [JsonProperty("language")]
         public string Language { get; set; }
 
