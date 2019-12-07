@@ -1,14 +1,6 @@
-using Domain;
-using Domain.Acquisition;
-using Domain.JobManagement;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Twitter
 {

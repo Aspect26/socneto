@@ -1,10 +1,10 @@
-﻿namespace Infrastructure.Twitter
+namespace Infrastructure.Twitter
 {
     public class TwitterCredentials
     {
-        public string ConsumerKey { get; internal set; }
-        public string ConsumerSecret { get; internal set; }
-        public string AccessToken { get; internal set; }
-        public string AccessTokenSecret { get; internal set; }
+        public string ConsumerKey { get;  set; }
+        public string ConsumerSecret { get; set; }
+        public string AccessToken { get; set; }
+        public string AccessTokenSecret { get;set; }
     }
 }

@@ -9,6 +9,7 @@ using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.Registration;
+using Infrastructure.Metadata;
 using Infrastructure.Twitter;
 using Infrastructure.Twitter.Abstract;
 using Microsoft.AspNetCore.Hosting;
@@ -38,12 +39,13 @@ namespace Api
             var builder = new DataAcquisitionServiceWebApiBuilder(args)
                 .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>()
                 .AddSingletonService<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
-                .AddSingletonService<IDataAcquirerMetadataStorage, TwitterJsonFileMetadataStorage>()
+                .AddSingletonService<IDataAcquirerMetadataStorage, NullMetadataStorage>()
                 .AddSingletonService<TwitterBatchLoaderFactory>()
                 .AddSingletonService<TwitterContextProvider>()
+
                 .AddSingletonService<IDataAcquirerMetadataContext, TwitterMetadataContext>()
-                .ConfigureSpecificOptions<TwitterJsonStorageOptions>("DataAcquisitionService:TwitterJsonStorageOptions")
-                .PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)
+                .ConfigureSpecificOptions<MetadataStorageProxyOptions>("DataAcquisitionService:MetadataStorageProxyOptions")
+                //.PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)
                 .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
                 .ConfigureSpecificOptions<TwitterBatchLoaderOptions>("DataAcquisitionService:TwitterBatchLoaderOptions")
             .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
