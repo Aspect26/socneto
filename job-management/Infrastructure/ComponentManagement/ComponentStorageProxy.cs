@@ -99,7 +99,7 @@ namespace Infrastructure.ComponentManagement
         public async Task<List<JobComponentConfig>> GetAllComponentJobConfigsAsync(string componentId)
         {
             var jobConfigUri = new Uri(
-                _insertComponentJobConfigUriTemplate
+                _getComponentJobConfigUriTemplate
                 .Replace("componentId", componentId));
 
             var response = await _httpClient.GetAsync(jobConfigUri);
