@@ -111,7 +111,6 @@ namespace Domain.ComponentManagement
                     JobId = jobId,
                     Command = JobCommand.Stop.ToString()
                 };
-
                 return JobConfigUpdateResult.Successfull(jobId, JobStatus.Stopped);
                 //var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
                 //foreach (var dataAcquirer in acquirers)
@@ -129,6 +128,7 @@ namespace Domain.ComponentManagement
                 //await _jobStorage.UpdateJobAsync(job);
 
                 // return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
+
 
             }
             catch (Exception e)
@@ -157,6 +157,7 @@ namespace Domain.ComponentManagement
 
                 attributes.Add("TopicQuery",new JObject(jobConfigUpdateCommand.TopicQuery));
                 attributes.Add("Language", new JObject(jobConfigUpdateCommand.Language));
+
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
                     JobId = jobConfigUpdateCommand.JobId,
@@ -165,7 +166,6 @@ namespace Domain.ComponentManagement
                 };
 
                 await NotifyComponent(dataAcquirer, notification);
-
 
                 var componentConfig = new JobComponentConfig
                 {
@@ -252,6 +252,7 @@ namespace Domain.ComponentManagement
                 };
 
                 await _componentRegistry.InsertJobComponentConfigAsync(componentConfig);
+
             });
 
             await Task.WhenAll(configUpdateTasks);

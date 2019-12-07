@@ -18,19 +18,20 @@ namespace Infrastructure
         private readonly ILogger<JobStorageProxy> _logger;
         private readonly Uri _baseUri;
         private readonly Uri _addJobUri;
+
         private readonly Uri _updateJobUri;
         private readonly Uri _getJobUri;
         private JsonSerializerSettings _dateSettings = new JsonSerializerSettings
         {
             DateFormatString = "yyyy-MM-ddTHH:mm:ss"
         };
-
         public JobStorageProxy(
             HttpClient httpClient, 
             IOptions<JobStorageOptions> jobStorageOptionsAccessor,
             ILogger<JobStorageProxy> logger)
         {
             _httpClient = httpClient;
+
             _logger = logger;
             _baseUri = jobStorageOptionsAccessor.Value.BaseUri;
             _addJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.AddJobRoute);
@@ -55,6 +56,7 @@ namespace Infrastructure
 
         public async Task<Job> GetJobAsync(Guid jobId)
         {
+
             var route = _getJobUri.AbsolutePath
                 .TrimEnd('/') 
                 + "/" + jobId.ToString();
@@ -71,6 +73,7 @@ namespace Infrastructure
 
             var content = await response.Content.ReadAsStringAsync();
             try
+
             { 
                 return JsonConvert.DeserializeObject<Job>(content, _dateSettings);
             }
