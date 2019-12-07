@@ -43,7 +43,7 @@ namespace Domain.SubmittedJobConfiguration
         public string TopicQuery { get; }
         public string Language { get; }
       
-        public Dictionary<string, Dictionary<string, JObject>> Attributes { get; 
+        public Dictionary<string, Dictionary<string, JObject>> Attributes { get; } 
 
         public static JobConfigUpdateCommand NewJob(Guid jobId,
             string jobName,
