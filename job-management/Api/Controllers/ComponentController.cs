@@ -45,7 +45,10 @@ namespace Api.Controllers
                 jobSubmitRequest.JobName,
                 jobSubmitRequest.SelectedDataAnalysers,
                 jobSubmitRequest.SelectedDataAcquirers,
-                jobSubmitRequest.TopicQuery);
+                jobSubmitRequest.TopicQuery,
+                jobSubmitRequest.Language,
+                jobSubmitRequest.Attributes
+                );
 
             var configUpdateResult = await _subscribedComponentManager
                 .StartJobAsync(jobConfigUpdateNotification);

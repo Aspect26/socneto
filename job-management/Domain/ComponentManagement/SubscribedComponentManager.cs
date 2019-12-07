@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Job;
+using Domain.JobStorage;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
@@ -13,23 +13,24 @@ namespace Domain.ComponentManagement
 {
     public class SubscribedComponentManager : ISubscribedComponentManager
     {
+        private readonly ComponentIdentifiers _identifiers;
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
-        private readonly IJobConfigStorage _jobConfigStorage;
         private readonly IJobStorage _jobStorage;
         private readonly ILogger<SubscribedComponentManager> _logger;
 
         public SubscribedComponentManager(
             IComponentRegistry componentRegistry,
             IComponentConfigUpdateNotifier componentConfigUpdateNotifier,
-            IJobConfigStorage jobConfigStorage,
+
             IJobStorage jobStorage,
+            IOptions<ComponentIdentifiers> options,
             ILogger<SubscribedComponentManager> logger
         )
         {
+            _identifiers = options.Value;
             _componentRegistry = componentRegistry;
             _componentConfigUpdateNotifier = componentConfigUpdateNotifier;
-            _jobConfigStorage = jobConfigStorage;
             _jobStorage = jobStorage;
 
             _logger = logger;
@@ -68,6 +69,18 @@ namespace Domain.ComponentManagement
                 return JobConfigUpdateResult.Failed("No storage is present. Job can't be done");
             }
 
+
+            var job = new Job
+            {
+                FinishedAt = null,
+                JobName = jobConfigUpdateCommand.JobName,
+                JobStatus = JobStatus.Running,
+                JobId = jobConfigUpdateCommand.JobId,
+                Owner = "admin",
+                TopicQuery = jobConfigUpdateCommand.TopicQuery,
+                StartedAt = DateTime.Now.Millisecond,
+            };
+
             var analysers = await PushAnalyserJobConfig(
                 storage.AnalysedDataInputChannel,
                 jobConfigUpdateCommand);
@@ -78,27 +91,9 @@ namespace Domain.ComponentManagement
                 analysersInputs,
                 jobConfigUpdateCommand);
 
-            var jobConfig = new JobConfig
-            {
-                JobStatus = JobStatus.Running,
-                JobId = jobConfigUpdateCommand.JobId,
-                TopicQuery = jobConfigUpdateCommand.TopicQuery,
-                DataAnalysers = jobConfigUpdateCommand.DataAnalysers.ToList(),
-                DataAcquirers = jobConfigUpdateCommand.DataAcquirers.ToList()
-            };
 
-            // TODO: get the owner somehow
-            var job = new Models.Job
-            {
-                JobId = jobConfigUpdateCommand.JobId,
-                JobName = jobConfigUpdateCommand.JobName,
-                Owner = "admin",
-                HasFinished = false,
-                StartedAt = DateTime.Now
-            };
 
             await _jobStorage.InsertNewJobAsync(job);
-            await _jobConfigStorage.InsertNewJobConfigAsync(jobConfig);
 
             return JobConfigUpdateResult.Successfull(
                 jobConfigUpdateCommand.JobId,
@@ -109,61 +104,78 @@ namespace Domain.ComponentManagement
         {
             try
             {
-                var jobConfig = await _jobConfigStorage.GetJobConfigAsync(jobId);
+                var job = await _jobStorage.GetJobAsync(jobId);
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
                     JobId = jobId,
                     Command = JobCommand.Stop.ToString()
                 };
 
-                foreach (var dataAcquirer in jobConfig.DataAcquirers)
+                var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
+                foreach (var dataAcquirer in acquirers)
                 {
-                    await NotifyComponent(dataAcquirer, notification);
+                    await NotifyComponent(dataAcquirer.ComponentId, notification);
                 }
-                foreach (var dataAnalyser in jobConfig.DataAnalysers)
+                var analysers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.AnalyserComponentTypeName);
+                foreach (var dataAnalyser in analysers)
                 {
-                    await NotifyComponent(dataAnalyser, notification);
+                    await NotifyComponent(dataAnalyser.ComponentId, notification);
                 }
-                
-                jobConfig.JobStatus = JobStatus.Stopped;
 
-                await _jobConfigStorage.UpdateJobConfig(jobConfig);
+                job.JobStatus = JobStatus.Stopped;
 
-                return JobConfigUpdateResult.Successfull(jobId, jobConfig.JobStatus);
+                await _jobStorage.UpdateJobAsync(job);
+
+                return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
 
             }
             catch (Exception e)
             {
-                _logger.LogError("Could not stop the job {jobId}, due to error {error}", 
+                _logger.LogError("Could not stop the job {jobId}, due to error {error}",
                     jobId,
                     e.Message);
-                throw  new InvalidOperationException($"Could not stop the job {jobId}, due to error {e.Message}");
+                throw new InvalidOperationException($"Could not stop the job {jobId}, due to error {e.Message}");
             }
         }
-        
+
         private async Task PushNetworkDataAcquisitionJobConfig(
             string storageChannelName,
             IEnumerable<string> selectedAnalysersChannels,
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
-
             var outputChannels = selectedAnalysersChannels
                 .Concat(new[] { storageChannelName, })
                 .ToArray();
 
-            var notification = new DataAcquisitionConfigUpdateNotification
-            {
-                JobId = jobConfigUpdateCommand.JobId,
-                Attributes = new Dictionary<string, string>()
-                {
-                    {"TopicQuery", jobConfigUpdateCommand.TopicQuery }
-                },
-                OutputMessageBrokerChannels = outputChannels,
-            };
-
             foreach (var dataAcquirer in jobConfigUpdateCommand.DataAcquirers)
             {
+                var attributes = jobConfigUpdateCommand
+                    .Attributes
+                    .GetValueOrDefault(dataAcquirer, new Dictionary<string, string>());
+
+                attributes.Add("TopicQuery", jobConfigUpdateCommand.TopicQuery);
+                attributes.Add("Language", jobConfigUpdateCommand.Language);
+                var notification = new DataAcquisitionConfigUpdateNotification
+                {
+                    JobId = jobConfigUpdateCommand.JobId,
+                    Attributes = attributes,
+                    OutputMessageBrokerChannels = outputChannels,
+                };
+
                 await NotifyComponent(dataAcquirer, notification);
+
+
+                //var componentConfig = new JobComponentConfig
+                //{
+                //    ComponentId = dataAcquirer,
+                //    Attributes = attributes,
+                //    ComponentType = ,
+                //    InputChannelName = analyserCmp.InputChannelName,
+                //    UpdateChannelName = analyserCmp.UpdateChannelName,
+                //    JobId = jobConfigUpdateCommand.JobId
+                //};
+
+                //await _jobStorage.InsertJobComponentConfigAsync(componentConfig);
             }
         }
 
@@ -190,6 +202,7 @@ namespace Domain.ComponentManagement
 
         private async Task<List<SubscribedComponent>> PushAnalyserJobConfig(
             string storageChannelName,
+
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
@@ -202,7 +215,6 @@ namespace Domain.ComponentManagement
                 if (analyserComponent == null)
                 {
                     _logger.LogWarning("Analyser {analyserName} was not registered", analyser);
-
                 }
                 else
                 {
@@ -218,21 +230,33 @@ namespace Domain.ComponentManagement
                 OutputMessageBrokerChannels = new[] { storageChannelName },
             };
 
-            var configUpdateTasks = analysers.Select(analyserCmp =>
+            var configUpdateTasks = analysers.Select(async analyserCmp =>
             {
                 _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
                     analyserCmp,
                     JsonConvert.SerializeObject(notification));
-                var analyserTask = _componentConfigUpdateNotifier.NotifyComponentAsync(
+
+                await _componentConfigUpdateNotifier.NotifyComponentAsync(
                     analyserCmp.UpdateChannelName,
                     notification);
 
-                return analyserTask;
+                var componentConfig = new JobComponentConfig
+                {
+                    ComponentId = analyserCmp.ComponentId,
+                    Attributes = analyserCmp
+                     .Attributes
+                     .ToDictionary(r => r.Key, r => (object)r.Value),
+                    ComponentType = analyserCmp.ComponentType,
+                    InputChannelName = analyserCmp.InputChannelName,
+                    UpdateChannelName = analyserCmp.UpdateChannelName,
+                    JobId = jobConfigUpdateCommand.JobId
+                };
+
+                await _jobStorage.InsertJobComponentConfigAsync(componentConfig);
             });
 
             await Task.WhenAll(configUpdateTasks);
             return analysers;
         }
     }
-
 }
