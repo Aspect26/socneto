@@ -14,6 +14,9 @@ namespace Domain.ComponentManagement
         public string BaseUri { get; set; }
         public string AddOrUpdateComponentRoute { get; set; }
         public string GetComponentRoute { get; set; }
+
+        public string ComponentJobConfigRoute { get; set; }
+
     }
     
 }
