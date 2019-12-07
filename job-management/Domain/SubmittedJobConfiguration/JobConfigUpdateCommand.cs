@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.SubmittedJobConfiguration
@@ -22,7 +23,8 @@ namespace Domain.SubmittedJobConfiguration
             List<string> dataAcquirers,
             string topicQuery,
             string language,
-            Dictionary<string, Dictionary<string, string>> attributes)
+            Dictionary<string, Dictionary<string, JObject>> attributes)
+
         {
             JobId = jobId;
             JobName = jobName;
@@ -40,8 +42,8 @@ namespace Domain.SubmittedJobConfiguration
         public List<string> DataAcquirers { get; }
         public string TopicQuery { get; }
         public string Language { get; }
-
-        public Dictionary<string, Dictionary<string, string>> Attributes { get; }
+      
+        public Dictionary<string, Dictionary<string, JObject>> Attributes { get; 
 
         public static JobConfigUpdateCommand NewJob(Guid jobId,
             string jobName,
@@ -49,7 +51,8 @@ namespace Domain.SubmittedJobConfiguration
             List<string> acquirers,
             string topicQuery,
             string language,
-            Dictionary<string, Dictionary<string, string>> attributes)
+
+            Dictionary<string, Dictionary<string,JObject >> attributes)
         {
             return new JobConfigUpdateCommand(
                 jobId,

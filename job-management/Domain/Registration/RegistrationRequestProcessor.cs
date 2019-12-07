@@ -42,8 +42,6 @@ namespace Domain.Registration
                     , nameof(request.ComponentId));
             }
 
-            
-
             if (string.IsNullOrWhiteSpace(request.ComponentType))
             {
                 throw new ArgumentException("Component type must not be empty"
@@ -74,11 +72,11 @@ namespace Domain.Registration
 
             ValidateAttributes(request.ComponentType, request.Attributes);
 
-            var componentRegisterModel = new ComponentRegistrationModel(
+            var componentRegisterModel = new ComponentModel(
                 request.ComponentId,
-                request.UpdateChannelName,
-                request.InputChannelName,
                 request.ComponentType,
+                request.InputChannelName,
+                request.UpdateChannelName,
                 request.Attributes);
             try
             {

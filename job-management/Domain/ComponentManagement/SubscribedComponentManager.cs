@@ -8,6 +8,7 @@ using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.ComponentManagement
 {
@@ -37,7 +38,7 @@ namespace Domain.ComponentManagement
         }
 
         public async Task<SubscribedComponentResultModel> SubscribeComponentAsync(
-            ComponentRegistrationModel componentRegistrationModel)
+            ComponentModel componentRegistrationModel)
         {
             try
             {
@@ -78,7 +79,7 @@ namespace Domain.ComponentManagement
                 JobId = jobConfigUpdateCommand.JobId,
                 Owner = "admin",
                 TopicQuery = jobConfigUpdateCommand.TopicQuery,
-                StartedAt = DateTime.Now.Millisecond,
+                StartedAt = DateTime.Now,
             };
 
             var analysers = await PushAnalyserJobConfig(
@@ -110,23 +111,24 @@ namespace Domain.ComponentManagement
                     JobId = jobId,
                     Command = JobCommand.Stop.ToString()
                 };
+                return JobConfigUpdateResult.Successfull(jobId, JobStatus.Stopped);
+                //var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
+                //foreach (var dataAcquirer in acquirers)
+                //{
+                //    await NotifyComponent(dataAcquirer.ComponentId, notification);
+                //}
+                //var analysers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.AnalyserComponentTypeName);
+                //foreach (var dataAnalyser in analysers)
+                //{
+                //    await NotifyComponent(dataAnalyser.ComponentId, notification);
+                //}
 
-                var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
-                foreach (var dataAcquirer in acquirers)
-                {
-                    await NotifyComponent(dataAcquirer.ComponentId, notification);
-                }
-                var analysers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.AnalyserComponentTypeName);
-                foreach (var dataAnalyser in analysers)
-                {
-                    await NotifyComponent(dataAnalyser.ComponentId, notification);
-                }
+                //job.JobStatus = JobStatus.Stopped;
 
-                job.JobStatus = JobStatus.Stopped;
+                //await _jobStorage.UpdateJobAsync(job);
 
-                await _jobStorage.UpdateJobAsync(job);
+                // return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
 
-                return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
 
             }
             catch (Exception e)
@@ -151,10 +153,11 @@ namespace Domain.ComponentManagement
             {
                 var attributes = jobConfigUpdateCommand
                     .Attributes
-                    .GetValueOrDefault(dataAcquirer, new Dictionary<string, string>());
+                    .GetValueOrDefault(dataAcquirer, new Dictionary<string, JObject>());
 
-                attributes.Add("TopicQuery", jobConfigUpdateCommand.TopicQuery);
-                attributes.Add("Language", jobConfigUpdateCommand.Language);
+                attributes.Add("TopicQuery",new JObject(jobConfigUpdateCommand.TopicQuery));
+                attributes.Add("Language", new JObject(jobConfigUpdateCommand.Language));
+
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
                     JobId = jobConfigUpdateCommand.JobId,
@@ -164,24 +167,22 @@ namespace Domain.ComponentManagement
 
                 await NotifyComponent(dataAcquirer, notification);
 
+                var componentConfig = new JobComponentConfig
+                {
+                    ComponentId = dataAcquirer,
+                    Attributes = attributes
+                     .ToDictionary(r => r.Key, r => r.Value),
+                    JobId = jobConfigUpdateCommand.JobId,
+                    OutputMessageBrokerChannels = notification.OutputMessageBrokerChannels
+                };
 
-                //var componentConfig = new JobComponentConfig
-                //{
-                //    ComponentId = dataAcquirer,
-                //    Attributes = attributes,
-                //    ComponentType = ,
-                //    InputChannelName = analyserCmp.InputChannelName,
-                //    UpdateChannelName = analyserCmp.UpdateChannelName,
-                //    JobId = jobConfigUpdateCommand.JobId
-                //};
-
-                //await _jobStorage.InsertJobComponentConfigAsync(componentConfig);
+                await _componentRegistry.InsertJobComponentConfigAsync(componentConfig);
             }
         }
 
         private async Task NotifyComponent(string component, object notification)
         {
-            var dataSource = await _componentRegistry.GetComponentById(component);
+            var dataSource = await _componentRegistry.GetComponentByIdAsync(component);
 
             if (dataSource == null)
             {
@@ -200,17 +201,17 @@ namespace Domain.ComponentManagement
             }
         }
 
-        private async Task<List<SubscribedComponent>> PushAnalyserJobConfig(
+        private async Task<List<ComponentModel>> PushAnalyserJobConfig(
             string storageChannelName,
 
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
-            var analysers = new List<SubscribedComponent>();
+            var analysers = new List<ComponentModel>();
             foreach (var analyser in jobConfigUpdateCommand.DataAnalysers)
             {
                 var analyserComponent = await _componentRegistry
-                    .GetComponentById(analyser);
+                    .GetComponentByIdAsync(analyser);
 
                 if (analyserComponent == null)
                 {
@@ -245,14 +246,13 @@ namespace Domain.ComponentManagement
                     ComponentId = analyserCmp.ComponentId,
                     Attributes = analyserCmp
                      .Attributes
-                     .ToDictionary(r => r.Key, r => (object)r.Value),
-                    ComponentType = analyserCmp.ComponentType,
-                    InputChannelName = analyserCmp.InputChannelName,
-                    UpdateChannelName = analyserCmp.UpdateChannelName,
-                    JobId = jobConfigUpdateCommand.JobId
+                     .ToDictionary(r => r.Key, r => r.Value),
+                    JobId = jobConfigUpdateCommand.JobId,
+                    OutputMessageBrokerChannels = notification.OutputMessageBrokerChannels
                 };
 
-                await _jobStorage.InsertJobComponentConfigAsync(componentConfig);
+                await _componentRegistry.InsertJobComponentConfigAsync(componentConfig);
+
             });
 
             await Task.WhenAll(configUpdateTasks);

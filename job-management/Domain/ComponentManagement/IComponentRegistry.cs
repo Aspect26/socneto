@@ -6,8 +6,11 @@ namespace Domain.ComponentManagement
 {
     public interface IComponentRegistry
     {
-        Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel);
-        Task<SubscribedComponent> GetComponentById(string componentId);
+        Task<bool> AddOrUpdateAsync(ComponentModel componentRegistrationModel);
+        Task<ComponentModel> GetComponentByIdAsync(string componentId);
         StorageComponent GetRegisteredStorage();
+
+        Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig);
+        Task<List<JobComponentConfig>> GetAllComponentJobConfigsAsync(string componentId);
     }
 }
