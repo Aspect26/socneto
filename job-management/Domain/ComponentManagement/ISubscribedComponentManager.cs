@@ -8,7 +8,7 @@ namespace Domain.ComponentManagement
 {
     public interface ISubscribedComponentManager
     {
-        Task<SubscribedComponentResultModel> SubscribeComponentAsync(ComponentRegistrationModel componentRegistrationModel);
+        Task<SubscribedComponentResultModel> SubscribeComponentAsync(ComponentModel componentRegistrationModel);
 
         Task<JobConfigUpdateResult> StartJobAsync(JobConfigUpdateCommand jobConfigUpdateCommand);
 

@@ -40,7 +40,7 @@ namespace Api
                     });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
@@ -95,15 +95,10 @@ namespace Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseCors(MyAllowSpecificOrigins);
-            app.UseMvc();
+            //app.UseMvc();
         }
     }
 }

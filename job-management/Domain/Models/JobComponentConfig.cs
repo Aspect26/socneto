@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
@@ -9,20 +10,15 @@ namespace Domain.Models
         [JsonProperty("jobId")]
         public Guid JobId { get; set; }
 
+        
         [JsonProperty("componentId")]
         public string ComponentId { get; set; }
 
-        [JsonProperty("type")]
-        public string ComponentType { get; set; }
-
-        [JsonProperty("inputChannelName")]
-        public string InputChannelName { get; set; }
-
-        [JsonProperty("updateChannelName")]
-        public string UpdateChannelName { get; set; }
-
         [JsonProperty("attributes")]
-        public Dictionary<string,object> Attributes { get; set; }
+        public Dictionary<string, JObject> Attributes { get; set; }
+
+        [JsonProperty("outputChannelNames")]
+        public string[] OutputMessageBrokerChannels { get; set; }
     }
 
 }

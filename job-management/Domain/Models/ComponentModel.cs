@@ -3,25 +3,25 @@ using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
-    public class ComponentRegistrationModel
+    public class ComponentModel
     {
         public string ComponentId { get; }
-        public string UpdateChannelId { get; }
+        public string UpdateChannelName { get; }
         public string ComponentType { get; }
-        public string InputChannelId { get; }
+        public string InputChannelName { get; }
 
         public IReadOnlyDictionary<string,JObject> Attributes { get; }
         
-        public ComponentRegistrationModel(
+        public ComponentModel(
             string componentId, 
-            string updateChannelId, 
-            string inputChannelId,
             string requestComponentType,
+            string inputChannelId,
+            string updateChannelId, 
             Dictionary<string,JObject> attributes)
         {
             ComponentId = componentId;
-            UpdateChannelId = updateChannelId;
-            InputChannelId = inputChannelId;
+            UpdateChannelName = updateChannelId;
+            InputChannelName = inputChannelId;
             ComponentType = requestComponentType;
             Attributes = attributes ?? new Dictionary<string, JObject>();
         }

@@ -6,7 +6,7 @@ namespace Infrastructure.ComponentManagement
 {
     public class SubscribedComponentPayloadObject
     {
-        [JsonProperty("id")]
+        [JsonProperty("componentId")]
         public string ComponentId { get; set; }
 
         [JsonProperty("type")]
