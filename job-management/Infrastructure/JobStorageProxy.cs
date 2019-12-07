@@ -83,16 +83,17 @@ namespace Infrastructure
 
         public async Task UpdateJobAsync(Job job)
         {
-            var jsonBody = JsonConvert.SerializeObject(job);
-            var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            await InsertNewJobAsync(job);
+            //var jsonBody = JsonConvert.SerializeObject(job);
+            //var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PutAsync(_updateJobUri, httpContent);
+            //var response = await _httpClient.PutAsync(_updateJobUri, httpContent);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new InvalidOperationException($"Adding data to storage failed: {error}");
-            }
+            //if (!response.IsSuccessStatusCode)
+            //{
+            //    var error = await response.Content.ReadAsStringAsync();
+            //    throw new InvalidOperationException($"Adding data to storage failed: {error}");
+            //}
         }        
     }
     public class JobPayloadObject
