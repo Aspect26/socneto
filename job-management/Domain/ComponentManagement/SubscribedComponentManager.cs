@@ -86,13 +86,12 @@ namespace Domain.ComponentManagement
                 storage.AnalysedDataInputChannel,
                 jobConfigUpdateCommand);
 
+
             var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
             await PushNetworkDataAcquisitionJobConfig(
                 storage.AcquiredDataInputChannel,
                 analysersInputs,
                 jobConfigUpdateCommand);
-
-
 
             await _jobStorage.InsertNewJobAsync(job);
 
@@ -152,11 +151,21 @@ namespace Domain.ComponentManagement
             foreach (var dataAcquirer in jobConfigUpdateCommand.DataAcquirers)
             {
                 var attributes = jobConfigUpdateCommand
-                    .Attributes
-                    .GetValueOrDefault(dataAcquirer, new Dictionary<string, JObject>());
+                    .Attributes ?? new JObject();
+                try
+                {
+                    var topicQuery = new JProperty("TopicQuery", jobConfigUpdateCommand.TopicQuery);
+                    attributes.Add(topicQuery);
+                    var languageProperty = new JProperty("Language", jobConfigUpdateCommand.Language);
+                    attributes.Add(languageProperty);
 
-                attributes.Add("TopicQuery",new JObject(jobConfigUpdateCommand.TopicQuery));
-                attributes.Add("Language", new JObject(jobConfigUpdateCommand.Language));
+                }
+                catch (Exception e)
+                {
+
+                    throw;
+                }
+
 
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
@@ -170,8 +179,7 @@ namespace Domain.ComponentManagement
                 var componentConfig = new JobComponentConfig
                 {
                     ComponentId = dataAcquirer,
-                    Attributes = attributes
-                     .ToDictionary(r => r.Key, r => r.Value),
+                    Attributes = attributes,
                     JobId = jobConfigUpdateCommand.JobId,
                     OutputMessageBrokerChannels = notification.OutputMessageBrokerChannels
                 };
@@ -244,9 +252,7 @@ namespace Domain.ComponentManagement
                 var componentConfig = new JobComponentConfig
                 {
                     ComponentId = analyserCmp.ComponentId,
-                    Attributes = analyserCmp
-                     .Attributes
-                     .ToDictionary(r => r.Key, r => r.Value),
+                    Attributes = analyserCmp.Attributes,
                     JobId = jobConfigUpdateCommand.JobId,
                     OutputMessageBrokerChannels = notification.OutputMessageBrokerChannels
                 };

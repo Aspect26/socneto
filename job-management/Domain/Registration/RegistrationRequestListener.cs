@@ -34,16 +34,19 @@ namespace Domain.Registration
             _registrationChannelName = requestListenerOptionsAccessor.Value.RegistrationChannelName;
         }
 
-        public Task Listen(CancellationToken cancellationToken)
+        public async Task Listen(CancellationToken cancellationToken)
         {
-            return _messageBrokerConsumer.ConsumeAsync(
-                _registrationChannelName,
-                ProcessRegistrationRequest,
-                cancellationToken);
+                    await _messageBrokerConsumer.ConsumeAsync(
+                        _registrationChannelName,
+                        ProcessRegistrationRequest,
+                        cancellationToken);
+                
+            
         }
 
         private async Task ProcessRegistrationRequest(string registrationRequest)
         {
+
             _logger.LogInformation("Registration request accepted: {registrationRequestJson}",
                 registrationRequest);
 
@@ -68,7 +71,7 @@ namespace Domain.Registration
             }
             catch (Exception e)
             {
-                _logger.LogError("Unexpected error: {errorMessage}",e.Message);
+                _logger.LogError("Unexpected error: {errorMessage}", e.Message);
             }
         }
     }

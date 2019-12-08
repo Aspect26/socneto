@@ -35,12 +35,12 @@ namespace Tests.Integration
         {
             var componentId = $"testComponentId_{Guid.NewGuid()}";
             await InsertComponent(componentId);
-            
+
 
             var jobId = Guid.NewGuid();
             await InsertJob(jobId);
 
-            await InsertComponentJobConfigAsync(componentId, jobId);            
+            await InsertComponentJobConfigAsync(componentId, jobId);
         }
 
         private async Task InsertComponentJobConfigAsync(string componentId, Guid jobId)
@@ -59,11 +59,12 @@ namespace Tests.Integration
                 ComponentId = componentId,
                 JobId = jobId,
                 OutputMessageBrokerChannels = new[] { "channels.output1" },
-                Attributes = new Dictionary<string, JObject>()
+                Attributes = new JObject()
             };
             await _componentRegistry.InsertJobComponentConfigAsync(jobComponent);
 
             var components = await _componentRegistry.GetAllComponentJobConfigsAsync(componentId);
+            
 
             if (components.Count != 1)
             {
@@ -71,7 +72,7 @@ namespace Tests.Integration
             }
 
             var errors = assert(jobComponent, components[0]).Where(r => !(r is null));
-            
+
             AssertErrors("Component Job config", errors);
         }
 
@@ -83,10 +84,9 @@ namespace Tests.Integration
                 yield return AssertProperty("Job name", (r) => r.JobName, a, b);
                 yield return AssertProperty("status", (r) => r.JobStatus, a, b);
                 yield return AssertProperty("Language", (r) => r.Language, a, b);
-              
-                
+
                 //yield return AssertProperty("Owner", (r) => r.Owner, a, b);
-                
+
                 // removed due to utc fuck up
                 //yield return AssertProperty("StartedAt", (r) => r.StartedAt, a, b);
                 yield return AssertProperty("Topic query", (r) => r.TopicQuery, a, b);
@@ -108,7 +108,7 @@ namespace Tests.Integration
 
             var errors = assert(newJob, retrievedJob).Where(r => !(r is null));
             AssertErrors("Job insert", errors);
-            
+
             var toBeUpdatedJob = new Job
             {
                 FinishedAt = null,
@@ -124,13 +124,13 @@ namespace Tests.Integration
 
             var updatedJob = await _jobStorage.GetJobAsync(jobId);
             var errorsAfterUpdate = assert(toBeUpdatedJob, updatedJob);
-            
-            AssertErrors( "JobUpdate", errors);
+
+            AssertErrors("JobUpdate", errors);
         }
 
-        private void AssertErrors(string name,IEnumerable<string> errors)
+        private void AssertErrors(string name, IEnumerable<string> errors)
         {
-            if (errors.Where(r=>!(r is null)).Any())
+            if (errors.Where(r => !(r is null)).Any())
             {
                 var errorMessage = string.Join('\n', errors);
                 _logger.LogError($"{name} failed. Errors: ", errorMessage);
@@ -140,34 +140,32 @@ namespace Tests.Integration
 
         private async Task InsertComponent(string componentId)
         {
-            
+
             IEnumerable<string> assert(ComponentModel a, ComponentModel b)
             {
                 yield return AssertProperty("Type", (r) => r.ComponentType, a, b);
                 yield return AssertProperty("Input channel", (r) => r.InputChannelName, a, b);
                 yield return AssertProperty("Update channel", (r) => r.UpdateChannelName, a, b);
                 yield return AssertProperty("Attribute count", (r) => r.Attributes.Count, a, b);
-                
+
             }
             _logger.LogInformation("Starting testing storage api");
 
-            
+
             var componentRegistrationModel = new ComponentModel(
                 componentId,
                 "DATA_ANALYSER",
                 "channel.input",
                 "channel.update",
-                new Dictionary<string, JObject>
+                JObject.FromObject(new
                 {
+
+                    AnalyserFormat = new
                     {
-                        "AnalyserFormat",
-                        JObject.FromObject(new
-                        {
-                            Foo="Bar",
-                            Baz="Boo"
-                        }) }
-                }
-                );
+                        Foo = "Bar",
+                        Baz = "Boo"
+                    }
+                }));
 
             await _componentRegistry.AddOrUpdateAsync(componentRegistrationModel);
 

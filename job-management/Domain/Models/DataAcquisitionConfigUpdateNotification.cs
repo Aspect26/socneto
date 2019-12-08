@@ -14,7 +14,7 @@ namespace Domain.Models
         public string Command { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string, JObject> Attributes { get; set; }
+        public JObject Attributes { get; set; }
 
         [JsonProperty("outputMessageBrokerChannels")]
         public string[]  OutputMessageBrokerChannels { get; set; }

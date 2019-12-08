@@ -51,9 +51,7 @@ namespace Infrastructure.ComponentManagement
         {
             var subscribedComponent = new SubscribedComponentPayloadObject
             {
-                Attributes = componentRegistrationModel
-                    .Attributes
-                    .ToDictionary(r => r.Key, r => r.Value),
+                Attributes = componentRegistrationModel.Attributes,
                 ComponentId = componentRegistrationModel.ComponentId,
                 ComponentType = componentRegistrationModel.ComponentType,
                 InputChannelName = componentRegistrationModel.InputChannelName,
@@ -104,7 +102,12 @@ namespace Infrastructure.ComponentManagement
 
             var response = await _httpClient.GetAsync(jobConfigUri);
 
-            if (!response.IsSuccessStatusCode)
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            else if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
                 throw new InvalidOperationException($"Adding job to storage failed: {error}");
@@ -132,6 +135,10 @@ namespace Infrastructure.ComponentManagement
 
             var response = await _httpClient.GetAsync(getUriWithParams);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
