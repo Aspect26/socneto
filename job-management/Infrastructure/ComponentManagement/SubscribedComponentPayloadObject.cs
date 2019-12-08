@@ -19,6 +19,6 @@ namespace Infrastructure.ComponentManagement
         public string UpdateChannelName { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string, JObject> Attributes { get; set; }
+        public JObject Attributes { get; set; }
     }
 }

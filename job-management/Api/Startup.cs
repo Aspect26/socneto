@@ -9,7 +9,6 @@ using Infrastructure.ComponentManagement;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +28,7 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -40,8 +40,7 @@ namespace Api
                     });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
+            
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
 
@@ -50,7 +49,7 @@ namespace Api
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
-#if DEBUG
+#if DEBUGx
             services.AddSingleton<IMessageBrokerConsumer, MockKafka>();
             services.AddTransient<IMessageBrokerProducer, MockKafka>();
             services.AddHttpClient<IComponentRegistry, ComponentStorageProxyMock>();
@@ -98,7 +97,12 @@ namespace Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(MyAllowSpecificOrigins);
-            //app.UseMvc();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

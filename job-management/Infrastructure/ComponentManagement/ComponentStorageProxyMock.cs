@@ -35,7 +35,7 @@ namespace Infrastructure.ComponentManagement
                 "mock_type",
                 "inputChannel",
                 "updateChannel",
-                new Dictionary<string, JObject>());
+                new JObject());
             return Task.FromResult(component);
         }
 
