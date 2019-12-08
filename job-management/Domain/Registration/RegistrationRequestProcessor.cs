@@ -99,7 +99,7 @@ namespace Domain.Registration
 
         private void ValidateAttributes(
             string componentType,
-            Dictionary<string, JObject> attributes)
+            JObject attributes)
         {
 
             if (componentType == _componentIdentifiers.AnalyserComponentTypeName)
@@ -118,7 +118,7 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAnalyser(Dictionary<string, JObject> attributes)
+        private void ValidateDataAnalyser(JObject attributes)
         {
             var formatElement = _registrationRequestValidation.AnalyserOutputFormatElementName;
             if (attributes == null || !attributes.ContainsKey(formatElement))
@@ -128,7 +128,7 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAcquirer(Dictionary<string, JObject> attributes)
+        private void ValidateDataAcquirer( JObject attributes)
         {
             // nothing to validate yet
         }

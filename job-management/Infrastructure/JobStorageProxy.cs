@@ -47,6 +47,7 @@ namespace Infrastructure
 
             var response = await _httpClient.PostAsync(_addJobUri, httpContent);
 
+
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
@@ -65,6 +66,10 @@ namespace Infrastructure
 
             var response = await _httpClient.GetAsync(url);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
@@ -98,32 +103,5 @@ namespace Infrastructure
             //    throw new InvalidOperationException($"Adding data to storage failed: {error}");
             //}
         }        
-    }
-    public class JobPayloadObject
-    {
-        [JsonProperty("jobId")]
-        public Guid JobId { get; set; }
-
-        [JsonProperty("jobName")]
-        public string JobName { get; set; }
-
-        [JsonProperty("username")]
-        public string Owner { get; set; }
-
-        [JsonProperty("finished")]
-        public DateTime? FinishedAt { get; set; }
-
-        [JsonProperty("startedAt")]
-        public DateTime StartedAt { get; set; }
-
-        [JsonProperty("topicQuery")]
-        public string TopicQuery { get; set; }
-
-        [JsonProperty("language")]
-        public string Language { get; set; }
-
-        [JsonProperty("status")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public JobStatus JobStatus { get; set; }
     }
 }
