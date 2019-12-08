@@ -10,20 +10,20 @@ namespace Domain.Models
         public string ComponentType { get; }
         public string InputChannelName { get; }
 
-        public IReadOnlyDictionary<string,JObject> Attributes { get; }
+        public JObject Attributes { get; }
         
         public ComponentModel(
             string componentId, 
             string requestComponentType,
             string inputChannelId,
             string updateChannelId, 
-            Dictionary<string,JObject> attributes)
+            JObject attributes)
         {
             ComponentId = componentId;
             UpdateChannelName = updateChannelId;
             InputChannelName = inputChannelId;
             ComponentType = requestComponentType;
-            Attributes = attributes ?? new Dictionary<string, JObject>();
+            Attributes = attributes;
         }
 
     }

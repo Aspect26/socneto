@@ -81,8 +81,18 @@ namespace Infrastructure.Kafka
 
                             _logger.LogTrace(
                                 $"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Value}");
-                            
-                            await onRecieveAction(consumeResult.Value);
+
+                            try
+                            {
+                                await onRecieveAction(consumeResult.Value);
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.LogError(
+                                    "Processing message failed: {message} \n{exception}",
+                                    consumeResult.Value,
+                                    e);
+                            }
 
                             if (consumeResult.Offset % commitPeriod == 0)
                             {

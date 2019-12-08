@@ -23,7 +23,7 @@ namespace Domain.SubmittedJobConfiguration
             List<string> dataAcquirers,
             string topicQuery,
             string language,
-            Dictionary<string, Dictionary<string, JObject>> attributes)
+            JObject attributes)
 
         {
             JobId = jobId;
@@ -43,7 +43,7 @@ namespace Domain.SubmittedJobConfiguration
         public string TopicQuery { get; }
         public string Language { get; }
       
-        public Dictionary<string, Dictionary<string, JObject>> Attributes { get; } 
+        public JObject Attributes { get; } 
 
         public static JobConfigUpdateCommand NewJob(Guid jobId,
             string jobName,
@@ -51,8 +51,7 @@ namespace Domain.SubmittedJobConfiguration
             List<string> acquirers,
             string topicQuery,
             string language,
-
-            Dictionary<string, Dictionary<string,JObject >> attributes)
+            JObject attributes)
         {
             return new JobConfigUpdateCommand(
                 jobId,
