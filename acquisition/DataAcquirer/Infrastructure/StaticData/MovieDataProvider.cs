@@ -27,13 +27,18 @@ namespace Infrastructure.DataGenerator
             _csvReader = new CsvReader(_streamReader);
 
             var enumerable = _csvReader.GetRecords<MovieSetEntity>()
-                    .Select(r => new UniPostStaticData(
-                        Guid.NewGuid().ToString(),
-                        r.Text,
-                        "en",
-                        "MOVIE_DATASET",
-                        r.User,
-                        DateTime.Now.ToString("s")));
+                                        .Select(r =>
+                    {
+                        var id = Guid.NewGuid();
+                        return new UniPostStaticData(
+                            id,
+                            $"movie_{id}",
+                            r.Text,
+                            "MOVIE_DATASET",
+                            r.User,
+                            DateTime.Now.ToString("s"),
+                            "q");
+                    });
 
             return enumerable;
         }

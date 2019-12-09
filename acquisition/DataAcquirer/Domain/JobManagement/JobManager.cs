@@ -149,7 +149,8 @@ namespace Domain.JobManagement
                         dataPost.UserId,
                         dataPost.DateTime,
                         dataAcquirerInputModel.JobId,
-                        dataPost.Query) ;
+                        dataPost.Query);
+
 
                     var jsonData = JsonConvert.SerializeObject(uniPost);
                     var messageBrokerMessage = new MessageBrokerMessage(

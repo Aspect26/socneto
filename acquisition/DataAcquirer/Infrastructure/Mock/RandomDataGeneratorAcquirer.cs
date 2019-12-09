@@ -12,9 +12,9 @@ using Microsoft.Extensions.Options;
 namespace Infrastructure.DataGenerator
 {
 
-    public class RandomDataGeneratorAcquirer :IDataAcquirer
+    public class RandomDataGeneratorAcquirer : IDataAcquirer
     {
-        private readonly Random _random ;
+        private readonly Random _random;
         private readonly TimeSpan _downloadDelay;
 
         public RandomDataGeneratorAcquirer(
@@ -45,11 +45,12 @@ namespace Infrastructure.DataGenerator
         {
             var postText = GetRandomString(seed, 100);
             var postSource = "random-data";
-            var postUser = GetRandomString(seed,12);
+            var postUser = GetRandomString(seed, 12);
             var dateTimeString = DateTime.Now.ToString("s");
 
+            var id = Guid.NewGuid();
             return DataAcquirerPost.FromValues(
-                Guid.NewGuid().ToString(),
+                $"tw-{id}",
                 postText,
                 "en",
                 postSource,
@@ -69,7 +70,7 @@ namespace Infrastructure.DataGenerator
             return new DateTime(year, month, day, hour, minute, second);
         }
 
-        public static string GetRandomString(int seed,int length)
+        public static string GetRandomString(int seed, int length)
         {
             var random = new Random(seed);
             const string chars = "   ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -77,6 +78,6 @@ namespace Infrastructure.DataGenerator
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        
+
     }
 }
