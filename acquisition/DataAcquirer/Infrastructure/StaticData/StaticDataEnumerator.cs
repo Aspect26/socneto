@@ -41,7 +41,7 @@ namespace Infrastructure.DataGenerator
                     .Take(count)
                     .Select(post =>
                      DataAcquirerPost.FromValues(
-                        post.PostId,
+                        post.OriginalPostId,
                         post.Text,
                         post.Language,
                         post.Source,
