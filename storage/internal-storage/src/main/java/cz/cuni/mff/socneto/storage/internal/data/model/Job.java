@@ -15,7 +15,7 @@ public class Job {
     private UUID jobId;
     private String jobName;
     @Column(name = "userId")
-    private String user;
+    private String username;
     private String topicQuery;
     private String status;
     private String language;
