@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 public class ComponentJobMetadata {
     @Id
+    @GeneratedValue
     private Long id;
     private String componentId;
     private UUID jobId;
