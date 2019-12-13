@@ -21,21 +21,21 @@ namespace Infrastructure.ComponentManagement
             _client = client;
             _logger = logger;
         }
-        public Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel)
+        public Task<bool> AddOrUpdateAsync(ComponentModel componentRegistrationModel)
         {
             _logger.LogWarning($"Mock {nameof(AddOrUpdateAsync)} method was called");
             return Task.FromResult(true);
         }
 
-        public Task<SubscribedComponent> GetComponentById(string componentId)
+        public Task<ComponentModel> GetComponentByIdAsync(string componentId)
         {
-            _logger.LogWarning($"Mock {nameof(GetComponentById)} method was called");
-            var component =  new SubscribedComponent(
+            _logger.LogWarning($"Mock {nameof(GetComponentByIdAsync)} method was called");
+            var component =  new ComponentModel(
                 "mock_cmp",
                 "mock_type",
                 "inputChannel",
                 "updateChannel",
-                new Dictionary<string, JObject>());
+                new JObject());
             return Task.FromResult(component);
         }
 
@@ -51,6 +51,16 @@ namespace Infrastructure.ComponentManagement
         public void Dispose()
         {
             _client?.Dispose();
+        }
+
+        public Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<List<JobComponentConfig>> GetAllComponentJobConfigsAsync(string componentId)
+        {
+            return Task.FromResult(new List<JobComponentConfig>());
         }
     }
 }

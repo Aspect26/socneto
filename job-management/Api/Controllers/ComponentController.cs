@@ -23,9 +23,11 @@ namespace Api.Controllers
         [HttpPost]
         [Route("/api/job/submit")]
         public async Task<ActionResult<JobResponse>> SubmitJob(
-            [FromBody]JobSubmitRequest jobSubmitRequest)
+            
+            )
         {
-
+            var body = await new System.IO.StreamReader(this.Request.Body).ReadToEndAsync();
+            JobSubmitRequest jobSubmitRequest = JsonConvert.DeserializeObject<JobSubmitRequest>(body);
             if (jobSubmitRequest == null)
             {
                 return BadRequest("Body not found");
@@ -45,7 +47,10 @@ namespace Api.Controllers
                 jobSubmitRequest.JobName,
                 jobSubmitRequest.SelectedDataAnalysers,
                 jobSubmitRequest.SelectedDataAcquirers,
-                jobSubmitRequest.TopicQuery);
+                jobSubmitRequest.TopicQuery,
+                jobSubmitRequest.Language,
+                jobSubmitRequest.Attributes
+                );
 
             var configUpdateResult = await _subscribedComponentManager
                 .StartJobAsync(jobConfigUpdateNotification);

@@ -20,11 +20,13 @@ public class JobViewController {
 
     @PostMapping("/jobs/{jobId}/view")
     public JobViewDto createJobView(@PathVariable("jobId") UUID jobId, @RequestBody JobViewDto jobViewDto) {
+        jobViewDto.setJobId(jobId);
         return jobViewDtoService.save(jobViewDto);
     }
 
     @PutMapping("/jobs/{jobId}/view")
     public JobViewDto updateJobView(@PathVariable("jobId") UUID jobId, @RequestBody JobViewDto jobViewDto) {
+        jobViewDto.setJobId(jobId);
         return jobViewDtoService.update(jobViewDto);
     }
 }

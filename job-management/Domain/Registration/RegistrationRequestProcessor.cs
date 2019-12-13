@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using Domain.JobStorage;
+using Newtonsoft.Json;
 
 namespace Domain.Registration
 {
@@ -16,12 +18,16 @@ namespace Domain.Registration
         private readonly ComponentIdentifiers _componentIdentifiers;
         private readonly ISubscribedComponentManager _subscribedComponentManager;
         private readonly IMessageBrokerApi _messageBrokerApi;
+        private readonly IComponentRegistry _componentRegistry;
+        private readonly IMessageBrokerProducer _producer;
         private readonly RegistrationRequestValidationOptions _registrationRequestValidation;
         private readonly ILogger<RegistrationRequestProcessor> _logger;
 
         public RegistrationRequestProcessor(
                 ISubscribedComponentManager subscribedComponentManager,
                 IMessageBrokerApi messageBrokerApi,
+                IComponentRegistry componentRegistry,
+                IMessageBrokerProducer producer,
                 IOptions<ComponentIdentifiers> componentIdentifierOptions,
                 IOptions<RegistrationRequestValidationOptions> registrationRequestValidationOptions,
                 ILogger<RegistrationRequestProcessor> logger)
@@ -29,6 +35,8 @@ namespace Domain.Registration
             _componentIdentifiers = componentIdentifierOptions.Value;
             _subscribedComponentManager = subscribedComponentManager;
             _messageBrokerApi = messageBrokerApi;
+            _componentRegistry = componentRegistry;
+            _producer = producer;
             _registrationRequestValidation = registrationRequestValidationOptions.Value;
             _logger = logger;
         }
@@ -42,8 +50,6 @@ namespace Domain.Registration
                     , nameof(request.ComponentId));
             }
 
-            
-
             if (string.IsNullOrWhiteSpace(request.ComponentType))
             {
                 throw new ArgumentException("Component type must not be empty"
@@ -56,7 +62,7 @@ namespace Domain.Registration
                     nameof(request.ComponentType),
                     "Component type must be valid component identifier");
             }
-            
+
 
             if (string.IsNullOrWhiteSpace(request.UpdateChannelName))
             {
@@ -74,12 +80,13 @@ namespace Domain.Registration
 
             ValidateAttributes(request.ComponentType, request.Attributes);
 
-            var componentRegisterModel = new ComponentRegistrationModel(
+            var componentRegisterModel = new ComponentModel(
                 request.ComponentId,
-                request.UpdateChannelName,
-                request.InputChannelName,
                 request.ComponentType,
+                request.InputChannelName,
+                request.UpdateChannelName,
                 request.Attributes);
+
             try
             {
                 var subscribeComponentModel = await _subscribedComponentManager
@@ -93,15 +100,38 @@ namespace Domain.Registration
             catch (Exception e)
             {
                 _logger.LogError("Unexpected error while processing request: {errorMessage}", e.Message);
+                throw;
             }
 
             await _messageBrokerApi.CreateChannel(channelModel);
 
+            try
+            {
+                await ReplayComponentsJobConfigs(channelModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Could not perform replay - exception: {exception}", e);
+                throw new InvalidOperationException("could not replay components job config", e);
+            }
+        }
+
+        private async Task ReplayComponentsJobConfigs(MessageBrokerChannelModel channelModel)
+        {
+            var componentJobs = await _componentRegistry.GetAllComponentJobConfigsAsync(
+                channelModel.ComponentId);
+            foreach (var componentJob in componentJobs)
+            {
+                var serializedComponentJob = JsonConvert.SerializeObject(componentJob);
+                var message = new MessageBrokerMessage("key", serializedComponentJob);
+                await _producer.ProduceAsync(channelModel.UpdateChannelName,
+                    message);
+            }
         }
 
         private void ValidateAttributes(
             string componentType,
-            Dictionary<string, JObject> attributes)
+            JObject attributes)
         {
 
             if (componentType == _componentIdentifiers.AnalyserComponentTypeName)
@@ -120,7 +150,7 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAnalyser(Dictionary<string, JObject> attributes)
+        private void ValidateDataAnalyser(JObject attributes)
         {
             var formatElement = _registrationRequestValidation.AnalyserOutputFormatElementName;
             if (attributes == null || !attributes.ContainsKey(formatElement))
@@ -130,7 +160,7 @@ namespace Domain.Registration
             }
         }
 
-        private void ValidateDataAcquirer(Dictionary<string, JObject> attributes)
+        private void ValidateDataAcquirer(JObject attributes)
         {
             // nothing to validate yet
         }

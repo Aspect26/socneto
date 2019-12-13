@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +24,17 @@ public class ComponentDtoServiceImpl implements ComponentDtoService {
         return componentMapper.componentToComponentDto(componentService.find(id));
     }
 
+
     @Override
-    public List<ComponentDto> getAllByType(ComponentType type) {
-        // TODO validate
-        return componentMapper.componentsToComponentDtos(toList(componentService.getAllByType(type)));
+    public List<ComponentDto> findAll() {
+        return componentMapper.componentsToComponentDtos(toList(componentService.findAll()));
     }
 
+    @Override
+    public List<ComponentDto> findAllByType(ComponentType type) {
+        // TODO validate
+        return componentMapper.componentsToComponentDtos(toList(componentService.findAllByType(type)));
+    }
 
     @Override
     public ComponentDto save(ComponentDto component) {
@@ -42,12 +46,6 @@ public class ComponentDtoServiceImpl implements ComponentDtoService {
     public ComponentDto update(ComponentDto component) {
         // TODO validate
         return componentMapper.componentToComponentDto(componentService.update(componentMapper.componentDtoToComponent(component)));
-    }
-
-    @Override
-    public void delete(String id) {
-        // TODO validate
-        componentService.delete(id);
     }
 
     private ArrayList<Component> toList(Iterable<Component> components) {

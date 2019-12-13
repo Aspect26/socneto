@@ -23,7 +23,7 @@ public class PostReceiver {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-//    @KafkaListener(topics = "${app.topic.toDbRaw}")
+    @KafkaListener(topics = "${app.topic.toDbRaw}")
     public void listenPosts(@Payload String post) throws IOException {
 
         PostMessage postMessage = objectMapper.readValue(post, PostMessage.class);
@@ -33,7 +33,7 @@ public class PostReceiver {
                 .authorId(postMessage.getAuthorId())
                 .text(postMessage.getText())
                 .source(postMessage.getSource())
-                .dateTime(postMessage.getDateTime())
+                .dateTime(postMessage.getDateTime().toString())
                 .build();
 
         var analyzedObject = AnalyzedObjectDto.<PostDto, String>builder()

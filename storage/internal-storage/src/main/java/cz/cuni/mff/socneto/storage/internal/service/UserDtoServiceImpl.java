@@ -25,16 +25,4 @@ public class UserDtoServiceImpl implements UserDtoService {
         return userMapper.userToUserDto(userService.save(userMapper.userDtoToUser(user)));
     }
 
-    @Override
-    public UserDto update(UserDto user) {
-        // TODO validate
-        return userMapper.userToUserDto(userService.update(userMapper.userDtoToUser(user)));
-    }
-
-    @Override
-    public void delete(String username) {
-        // TODO validate
-        userService.delete(username);
-    }
-
 }

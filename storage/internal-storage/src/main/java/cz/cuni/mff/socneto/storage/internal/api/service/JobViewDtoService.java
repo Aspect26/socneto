@@ -12,5 +12,4 @@ public interface JobViewDtoService {
 
     JobViewDto update(JobViewDto jobView);
 
-    void delete(UUID id);
 }
