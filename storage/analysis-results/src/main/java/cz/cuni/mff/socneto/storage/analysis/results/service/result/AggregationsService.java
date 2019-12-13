@@ -76,7 +76,7 @@ public class AggregationsService {
 
     private BoolQueryBuilder createFilterQuery(UUID jobId, String componentId) {
         // TODO: jobId
-        return QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentName", componentId)); // TODO componentId
+        return QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentId", componentId));
     }
 
     private InternalScriptedMetric executeQuery(ScriptedMetricAggregationBuilder aggregation, BoolQueryBuilder filter) {

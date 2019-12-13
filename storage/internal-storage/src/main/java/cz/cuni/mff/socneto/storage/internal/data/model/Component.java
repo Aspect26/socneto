@@ -14,10 +14,12 @@ import javax.persistence.*;
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Component {
     @Id
-    private String id;
+    private String componentId;
     @Enumerated(EnumType.STRING)
     private ComponentType type;
+    @Column(nullable = false)
     private String inputChannelName;
+    @Column(nullable = false)
     private String updateChannelName;
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")

@@ -1,6 +1,6 @@
 ﻿using Domain.Abstract;
 using Domain.ComponentManagement;
-using Domain.Job;
+using Domain.JobStorage;
 using Domain.Models;
 using Domain.Registration;
 using Domain.SubmittedJobConfiguration;
@@ -9,7 +9,6 @@ using Infrastructure.ComponentManagement;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +28,7 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -40,17 +40,16 @@ namespace Api
                     });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
 
-            services.AddHttpClient<IJobConfigStorage, JobConfigStorageProxy>();
+            
             services.AddHttpClient<IJobStorage, JobStorageProxy>();
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
-#if DEBUG
+#if DEBUGx
             services.AddSingleton<IMessageBrokerConsumer, MockKafka>();
             services.AddTransient<IMessageBrokerProducer, MockKafka>();
             services.AddHttpClient<IComponentRegistry, ComponentStorageProxyMock>();
@@ -85,8 +84,8 @@ namespace Api
                 .Bind(Configuration.GetSection($"{optionRootName}:RegistrationRequestValidationOptions"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<JobConfigStorageOptions>()
-                .Bind(Configuration.GetSection($"{optionRootName}:JobConfigStorageOptions"))
+            services.AddOptions<JobStorageOptions>()
+                .Bind(Configuration.GetSection($"{optionRootName}:JobStorageOptions"))
                 .ValidateDataAnnotations();
             
             services.AddOptions<JobStorageOptions>()
@@ -95,15 +94,15 @@ namespace Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseCors(MyAllowSpecificOrigins);
-            app.UseMvc();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

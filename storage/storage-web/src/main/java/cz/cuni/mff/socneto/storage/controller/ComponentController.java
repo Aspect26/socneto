@@ -20,8 +20,12 @@ public class ComponentController {
     }
 
     @GetMapping("/components")
-    public List<ComponentDto> getComponentsByType(@RequestParam("type") ComponentType type) {
-        return componentDtoService.getAllByType(type);
+    public List<ComponentDto> getComponentsByType(@RequestParam(value = "type", required = false) ComponentType type) {
+        if (type == null) {
+            return componentDtoService.findAll();
+        } else {
+            return componentDtoService.findAllByType(type);
+        }
     }
 
     @PostMapping("/components")
@@ -32,10 +36,5 @@ public class ComponentController {
     @PutMapping("/components/{id}")
     public ComponentDto updateComponent(@RequestBody ComponentDto componentDto) {
         return componentDtoService.update(componentDto);
-    }
-
-    @DeleteMapping("/components/{id}")
-    public void getJob(@PathVariable("id") String id) {
-        componentDtoService.delete(id);
     }
 }

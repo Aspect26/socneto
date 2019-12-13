@@ -26,8 +26,8 @@ public class AnalysisReceiver {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-//    @KafkaListener(topics = "${app.topic.toDbAnalyzed}")
-    public void listenAnalyzedPosts(@Payload String post) throws IOException, InterruptedException {
+    @KafkaListener(topics = "${app.topic.toDbAnalyzed}")
+    public void listenAnalyzedPosts(@Payload String post) throws IOException {
 
         var analysisMessage = objectMapper.readValue(post, AnalysisMessage.class);
         var searchAnalysisDto = map(analysisMessage);

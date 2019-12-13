@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +16,12 @@ public class JobController {
     private final JobDtoService jobDtoService;
 
     @GetMapping("/jobs")
-    public List<JobDto> getJobsByUser(@RequestParam("userId") String username) {
-        return jobDtoService.findAllByUsername(username);
+    public List<JobDto> getJobsByUsername(@RequestParam(value = "username", required = false) String username) {
+        if (username == null) {
+            return jobDtoService.findAll();
+        } else {
+            return jobDtoService.findAllByUser(username);
+        }
     }
 
     @GetMapping("/jobs/{id}")
@@ -32,7 +35,8 @@ public class JobController {
     }
 
     @PutMapping("/jobs/{id}")
-    public JobDto updateJob(@PathVariable("id") UUID id, @RequestBody JobDto job) {
+    public JobDto updateJob(@PathVariable UUID id, @RequestBody JobDto job) {
+        job.setJobId(id);
         return jobDtoService.update(job);
     }
 

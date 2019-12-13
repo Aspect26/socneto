@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ namespace Domain.Registration
         private readonly RegistrationRequestListener _registrationRequestListener;
         private readonly ILogger<RegistrationRequestListenerHostedService> _logger;
         private Task _listenTask;
-        private readonly CancellationTokenSource _cancellationTokenSource 
+        private readonly CancellationTokenSource _cancellationTokenSource
             = new CancellationTokenSource();
 
         public RegistrationRequestListenerHostedService(
@@ -22,9 +23,16 @@ namespace Domain.Registration
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Service {serviceName} started", 
+            _logger.LogInformation("Service {serviceName} started",
                 nameof(RegistrationRequestListenerHostedService));
-            _listenTask = _registrationRequestListener.Listen(_cancellationTokenSource.Token);
+
+
+            _listenTask = Task.Run(async () =>
+            {
+                
+                    await _registrationRequestListener.Listen(_cancellationTokenSource.Token);
+                
+            });
             return Task.CompletedTask;
         }
 

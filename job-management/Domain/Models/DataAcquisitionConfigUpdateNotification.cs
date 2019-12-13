@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
 {
@@ -13,7 +14,7 @@ namespace Domain.Models
         public string Command { get; set; }
 
         [JsonProperty("attributes")]
-        public Dictionary<string, string> Attributes { get; set; }
+        public JObject Attributes { get; set; }
 
         [JsonProperty("outputMessageBrokerChannels")]
         public string[]  OutputMessageBrokerChannels { get; set; }
