@@ -7,9 +7,9 @@ namespace Socneto.Api.Models
     {
         public Guid JobId { get; set; }
         public string JobName { get; set; }
-        public bool IsRunning { get; set; }
+        public  JobStatus Status { get; set; }
         public DateTime StartedAt { get; set; }
-        public DateTime? PausedAt { get; set; }
+        public DateTime? FinishedAt { get; set; }
 
         public static JobDto FromModel(Job job)
         {
@@ -17,9 +17,9 @@ namespace Socneto.Api.Models
             {
                 JobId = job.JobId,
                 JobName =  job.JobName,
-                IsRunning = job.IsRunning,
+                Status = job.Status,
                 StartedAt =  job.StartedAt,
-                PausedAt = job.PausedAt
+                FinishedAt = job.FinishedAt,
             };
         }
     }

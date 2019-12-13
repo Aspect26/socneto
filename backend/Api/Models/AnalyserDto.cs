@@ -34,8 +34,8 @@ namespace Socneto.Api.Models
             
             return new AnalyserDto
             {
-                Identifier = model.Id,
-                ComponentType = model.Type,
+                Identifier = model.ComponentId,
+                ComponentType = model.ComponentType,
                 AnalysisProperties = typedAnalysisProperties
             };
         }

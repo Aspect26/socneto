@@ -68,31 +68,13 @@ class JobListComponent implements AfterChanges {
     this._setSelectedJob(this._router.current);
   }
 
-  int get runningJobs => jobs.where((job) => job.isRunning).length;
+  int get runningJobs => jobs.where((job) => job.status == JobStatusCode.Running).length;
+  JobStatusCode get runningJobStatus => JobStatusCode.Running;
+  JobStatusCode get stoppedJobStatus => JobStatusCode.Stopped;
   String jobUrl(String jobId) => RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId));
 
   void selectJob(String jobId) {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
-  }
-
-  void pauseJob(Job job) async {
-    try {
-      final jobStatus = await this._socnetoService.pauseJob(job.id);
-      this._setJobStatus(job, jobStatus);
-    } on HttpException catch (e){
-      Toastr.error("Job pause", "Unable to pause job");
-      print(e);
-    }
-  }
-
-  void resumeJob(Job job) async {
-    try {
-      final jobStatus = await this._socnetoService.resumeJob(job.id);
-      this._setJobStatus(job, jobStatus);
-    } on HttpException catch (e){
-      Toastr.error("Job resume", "Unable to resume job");
-      print(e);
-    }
   }
 
   void stopJob(Job job) async {
@@ -146,7 +128,7 @@ class JobListComponent implements AfterChanges {
     }
 
     this.jobs.sort((a,b) => a.startedAt.compareTo(b.startedAt));
-    this.jobs.sort((a, b) => a.isRunning? b.isRunning? 1 : 0 : b.isRunning? 0 : -1);
+    this.jobs.sort((a, b) => a.status == JobStatusCode.Running? b.status == JobStatusCode.Running? 1 : 0 : b.status == JobStatusCode.Running? 0 : -1);
     this._updateDisplayedJobs();
   }
 
@@ -164,7 +146,7 @@ class JobListComponent implements AfterChanges {
   }
 
   void _setJobStatus(Job job, JobStatus jobStatus) {
-    job.isRunning = jobStatus.status == JobStatusCode.Running;
+    job.status = jobStatus.status;
   }
 
   void _updateDisplayedJobs() {
