@@ -88,6 +88,16 @@ This entity is a custom object used by any component, to store any metadata abou
 }
 ```
 
+#### Registration request kafka message - attributes example (analyser only)
+```json
+{
+    "outputFormat": {
+        "accuracy": "number",
+        "polarity": "number"
+    }
+}
+```
+
 ## Analysis result kafka message
 
 ```json
