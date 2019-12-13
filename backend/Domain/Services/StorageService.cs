@@ -27,7 +27,7 @@ namespace Socneto.Domain.Services
         
         public async Task<User> GetUser(string username)
         {
-            var response = await Get($"users?userId={username}");
+            var response = await Get($"users?username={username}");
             response.EnsureSuccessStatusCode();
             
             return await response.Content.ReadAsAsync<User>();
@@ -35,7 +35,7 @@ namespace Socneto.Domain.Services
 
         public async Task<IList<Job>> GetUserJobs(string username)
         {
-            var response = await Get($"jobs?userId={username}");
+            var response = await Get($"jobs?username={username}");
             response.EnsureSuccessStatusCode();
             
             return await response.Content.ReadAsAsync<List<Job>>();
@@ -49,6 +49,30 @@ namespace Socneto.Domain.Services
             return await response.Content.ReadAsAsync<Job>();
         }
 
+        public async Task<JobView> GetJobView(Guid jobId)
+        {
+            var response = await Get($"jobs/{jobId}/view");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<JobView>();
+        }
+        
+        public async Task<JobView> StoreJobView(Guid jobId, JobView jobView)
+        {
+            var response = await Post($"jobs/{jobId}/view", jobView);
+            response.EnsureSuccessStatusCode();
+            
+            return await response.Content.ReadAsAsync<JobView>();
+        }
+
+        public async Task<JobView> UpdateJobView(Guid jobId, JobView jobView)
+        {
+            var response = await Put($"jobs/{jobId}/view", jobView);
+            response.EnsureSuccessStatusCode();
+            
+            return await response.Content.ReadAsAsync<JobView>();
+        }
+
         public async Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId)
         {
             var response = await Get($"analyzedPosts?jobId={jobId}");
@@ -56,7 +80,7 @@ namespace Socneto.Domain.Services
             
             return await response.Content.ReadAsAsync<List<AnalyzedPost>>();
         }
-
+        
         public async Task<IList<SocnetoComponent>> GetAnalysers()
         {
             var response = await Get($"components?type=DATA_ANALYSER");
@@ -96,10 +120,20 @@ namespace Socneto.Domain.Services
         
         private async Task<HttpResponseMessage> Post(string path, object data)
         {
+            var content = this.CreateHttpContent(data);
+            return await _client.PostAsync($"{_host}/{path}", content);
+        }
+
+        private async Task<HttpResponseMessage> Put(string path, object data)
+        {
+            var content = this.CreateHttpContent(data);
+            return await _client.PutAsync($"{_host}/{path}", content);
+        }
+
+        private HttpContent CreateHttpContent(object data)
+        {
             var json = JsonConvert.SerializeObject(data);
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            
-            return await _client.PostAsync($"{_host}/{path}", stringContent);
+            return new StringContent(json, Encoding.UTF8, "application/json");
         }
     }
 }
