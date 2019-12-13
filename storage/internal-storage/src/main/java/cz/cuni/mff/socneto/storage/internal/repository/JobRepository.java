@@ -9,6 +9,6 @@ import java.util.UUID;
 @Repository
 public interface JobRepository extends CrudRepository<Job, UUID> {
 
-    Iterable<Job> findAllByUser(String user);
+    Iterable<Job> findAllByUsername(String user);
     
 }
