@@ -22,12 +22,14 @@ namespace Domain.JobConfiguration
             _jobConfigurationUpdateListener = jobConfigurationUpdateListener;
             _logger = logger;
         }
-        public async Task StartAsync(CancellationToken cancellationToken)
+        
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Service {serviceName} started",
                 nameof(JobConfigurationUpdateListenerHostedService));
 
-            _listenTask = _jobConfigurationUpdateListener.ListenAsync(_cancellationTokenSource.Token);
+            _listenTask = Task.Run(async () => await _jobConfigurationUpdateListener.ListenAsync(_cancellationTokenSource.Token), cancellationToken);
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

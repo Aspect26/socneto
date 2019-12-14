@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Model;
+using Microsoft.Extensions.Options;
 
 namespace Domain.Analyser
 {
@@ -13,7 +14,6 @@ namespace Domain.Analyser
     
     public class MockAnalyser : IAnalyser
     {
-        
         private Dictionary<string, double> _emoticonsPolarity = new Dictionary<string, double>
         {
             { ":D", 1.0f },
@@ -51,15 +51,15 @@ namespace Domain.Analyser
 
             var analysis = new Analysis
             {
-                Data = new Dictionary<string, AnalysisValue>
+                Data = new Dictionary<string, AnalysisResult>
                 {
-                    ["polarity"] = new AnalysisValue
+                    ["polarity"] = new AnalysisResult
                     {
-                        Value = polarity, ValueType = AnalysisValueType.Number
+                        NumberValue = polarity
                     },
-                    ["accuracy"] = new AnalysisValue
+                    ["accuracy"] = new AnalysisResult
                     {
-                        Value = accuracy
+                        NumberValue = accuracy
                     }
                 }
             };

@@ -19,10 +19,9 @@ namespace Domain.JobConfiguration
 
         public JobConfigurationUpdateListener(
             IMessageBrokerConsumer messageBrokerConsumer,
-        IJobManager jobManager,
+            IJobManager jobManager,
             IOptions<ComponentOptions> componentOptionsAccessor,
-            ILogger<JobConfigurationUpdateListener> logger
-            )
+            ILogger<JobConfigurationUpdateListener> logger)
         {
             if (string.IsNullOrEmpty(componentOptionsAccessor.Value.UpdateChannelName))
             {
@@ -47,7 +46,6 @@ namespace Domain.JobConfiguration
 
         private Task ProcessJobConfigAsync(string configJson)
         {
-
             _logger.LogInformation("RCJ : {rcj}", configJson);
             try
             {
@@ -57,7 +55,7 @@ namespace Domain.JobConfiguration
             }
             catch (Exception e)
             {
-                _logger.LogError("Config error {error}",e.Message);
+                _logger.LogError("Config error {error}", e.Message);
             }
             return Task.CompletedTask;
         }

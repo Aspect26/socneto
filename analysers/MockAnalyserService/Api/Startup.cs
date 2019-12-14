@@ -27,23 +27,19 @@ namespace Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddSingleton<NewPostToAnalyzeListener>();
-            services.AddHostedService<NewPostToAnalyzerLestenerHostedService>();
-
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
+            
+            services.AddSingleton<NewPostToAnalyzeListener>();
+            services.AddHostedService<NewPostToAnalyzerLestenerHostedService>();
             
             services.AddSingleton<IJobManager, JobManager>();
             services.AddTransient<IAnalyser, MockAnalyser>();
             services.AddTransient<IRegistrationService, RegistrationService>();
 
-#if DEBUG
-            services.AddTransient<IMessageBrokerProducer, MockProducer>();
-            services.AddTransient<IMessageBrokerConsumer, MockConsumer>();
-#else
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
-           services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
-#endif
+            services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+
             services.Configure<ComponentOptions>(
                 Configuration.GetSection("DataAcquisitionService:ComponentOptions"));
 

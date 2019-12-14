@@ -5,10 +5,10 @@ namespace Domain.JobConfiguration
 {
     public class DataAnalyzerJobConfig
     {
-        [JsonProperty("jsonId")]
+        [JsonProperty("jobId")]
         public Guid JobId { get; set; }
         
-        [JsonProperty("jsonId")]
-        public string OutputChannelName { get; set; }
+        [JsonProperty("outputChannelNames")]
+        public string[] OutputChannelNames { get; set; }
     }
 }
