@@ -40,7 +40,7 @@ namespace Socneto.Api.Controllers
                 return Ok(new ArrayList());
             }
 
-            var mappedChartDefinitions = jobView.ViewConfiguration
+            var mappedChartDefinitions = jobView.ViewConfiguration.ChartDefinitions
                 .Select(ChartDefinitionDto.FromModel)
                 .ToList();
             
@@ -66,22 +66,18 @@ namespace Socneto.Api.Controllers
             };
 
             var jobView = await _storageService.GetJobView(jobId);
-            if (jobView == null)
-            {
-                var viewConfiguration = new List<ChartDefinition> { newChartDefinition };
 
-                jobView =  new JobView
-                {
-                    JobId = jobId,
-                    ViewConfiguration = viewConfiguration
-                };
-
-                await _storageService.StoreJobView(jobId, jobView);
-            }
-            else
+            if (jobView.ViewConfiguration == null)
             {
-                jobView.ViewConfiguration.Add(newChartDefinition);
+                jobView.ViewConfiguration = new ViewConfiguration {ChartDefinitions = new List<ChartDefinition>() };
             }
+
+            if (jobView.ViewConfiguration.ChartDefinitions == null)
+            {
+                jobView.ViewConfiguration.ChartDefinitions = new List<ChartDefinition>();
+            }
+            
+            jobView.ViewConfiguration.ChartDefinitions.Add(newChartDefinition);
             
             return Ok(SuccessResponse.True());
         }
