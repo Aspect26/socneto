@@ -5,7 +5,7 @@ namespace Socneto.Api.Models
 {
     public class ChartDefinitionDto
     {
-        public List<string> JsonDataPaths { get; set; }
+        public List<AnalysisDataPath> AnalysisDataPaths { get; set; }
         
         public string ChartType { get; set; }
 
@@ -13,7 +13,7 @@ namespace Socneto.Api.Models
         {
             return new ChartDefinitionDto
             {
-                JsonDataPaths = chartDefinition.JsonDataPaths,
+                AnalysisDataPaths = chartDefinition.AnalysisDataPaths,
                 ChartType = chartDefinition.ChartType.ToString()
             };
         }
