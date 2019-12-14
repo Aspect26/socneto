@@ -16,7 +16,7 @@ namespace Api
         public static async Task MainAsync(string[] args)
         {
 #if !DEBUG
-            var delay = TimeSpan.FromSeconds(20);
+            var delay = TimeSpan.FromSeconds(60);
             Console.WriteLine($"Waiting {delay}");
             await Task.Delay(delay);
 #endif
