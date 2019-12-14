@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Models;
+using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
 {
@@ -13,6 +16,15 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class ChartsController : ControllerBase
     {
+        
+        private IStorageService _storageService;
+        private ILogger<ComponentsController> _logger;
+
+        public ChartsController(IStorageService storageService, ILogger<ComponentsController> logger)
+        {
+            _storageService = storageService;
+            _logger = logger;
+        }
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/charts")]
@@ -21,12 +33,14 @@ namespace Socneto.Api.Controllers
             if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
 
-            // TODO: get from DB
-            var chartDefinitions = new List<ChartDefinition>();
-            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, JsonDataPaths = new List<string>() { "DataAnalyzer_Mock.polarity" }});
-            chartDefinitions.Add(new ChartDefinition{ChartType = ChartType.Line, JsonDataPaths = new List<string>() { "DataAnalyzer_Mock.polarity", "DataAnalyzer_Mock.accuracy" }});
-            
-            var mappedChartDefinitions = chartDefinitions
+            var jobView = await _storageService.GetJobView(jobId);
+
+            if (jobView == null)
+            {
+                return Ok(new ArrayList());
+            }
+
+            var mappedChartDefinitions = jobView.ViewConfiguration.ChartDefinitions
                 .Select(ChartDefinitionDto.FromModel)
                 .ToList();
             
@@ -45,13 +59,26 @@ namespace Socneto.Api.Controllers
                 return BadRequest();
             }
 
-            var chartDefinition = new ChartDefinition
+            var newChartDefinition = new ChartDefinition
             {
-                JsonDataPaths = request.JsonDataPaths,
-                ChartType = chartType
+                ChartType = chartType,
+                AnalysisDataPaths = request.AnalysisDataPaths
             };
+
+            var jobView = await _storageService.GetJobView(jobId);
+
+            if (jobView.ViewConfiguration == null)
+            {
+                jobView.ViewConfiguration = new ViewConfiguration {ChartDefinitions = new List<ChartDefinition>() };
+            }
+
+            if (jobView.ViewConfiguration.ChartDefinitions == null)
+            {
+                jobView.ViewConfiguration.ChartDefinitions = new List<ChartDefinition>();
+            }
             
-            // TODO: store to DB
+            jobView.ViewConfiguration.ChartDefinitions.Add(newChartDefinition);
+            
             return Ok(SuccessResponse.True());
         }
         

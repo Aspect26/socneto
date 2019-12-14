@@ -13,14 +13,15 @@ namespace Domain
     public interface IJobManager
     {
         void Register(DataAnalyzerJobConfig jobConfig);
-        string GetJobConfigOutput(Guid postJobId);
+        string[] GetJobConfigOutput(Guid postJobId);
     }
+    
     public class JobManager : IJobManager
     {
         private class JobManagerJobRecord
         {
             public Guid JobId { get; set; }
-            public string Output { get; set; }
+            public string[] Outputs { get; set; }
         }
         
         private readonly ILogger<JobManager> _logger;
@@ -44,12 +45,12 @@ namespace Domain
             lock (_dictionaryLock)
             {
                 var json = JsonConvert.SerializeObject(jobConfig);
-                _logger.LogInformation("Config recieved {}", json);
+                _logger.LogInformation("Config received {}", json);
 
                 var jobManagerJobRecord = new JobManagerJobRecord
                 {
                     JobId = jobConfig.JobId,
-                    Output = jobConfig.OutputChannelName
+                    Outputs = jobConfig.OutputChannelNames
                 };
 
                 _runningJobsRecords.TryAdd(jobManagerJobRecord.JobId, jobManagerJobRecord);
@@ -57,9 +58,9 @@ namespace Domain
             }
         }
 
-        public string GetJobConfigOutput(Guid postJobId)
+        public string[] GetJobConfigOutput(Guid postJobId)
         {
-            return _runningJobsRecords[postJobId].Output;
+            return _runningJobsRecords[postJobId].Outputs;
         }
     }
 }
