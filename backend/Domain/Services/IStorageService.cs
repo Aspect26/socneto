@@ -18,6 +18,12 @@ namespace Socneto.Domain.Services
 
         Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId);
 
+        Task<JobView> GetJobView(Guid jobId);
+
+        Task<JobView> StoreJobView(Guid jobId, JobView jobView);
+
+        Task<JobView> UpdateJobView(Guid jobId, JobView jobView);
+
         Task<IList<SocnetoComponent>> GetAnalysers();
 
         Task<IList<SocnetoComponent>> GetAcquirers();

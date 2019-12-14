@@ -5,6 +5,7 @@ import 'package:sw_project/src/models/AnalysisDataPath.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
+import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
@@ -23,8 +24,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<Job> mockJobs = [
-    Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", DateTime.now(), true, null),
-    Job("480cd21c-deb9-4e3b-8aca-083154aac90b", "Paused job", DateTime.now(), false, DateTime.fromMicrosecondsSinceEpoch(1550000000000000))
+    Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
+    Job("480cd21c-deb9-4e3b-8aca-083154aac90b", "Finished job", JobStatusCode.Stopped, DateTime.fromMicrosecondsSinceEpoch(1540000000000000), DateTime.fromMicrosecondsSinceEpoch(1550000000000000))
   ];
 
   static final List<SocnetoComponent> mockAcquirers = [
