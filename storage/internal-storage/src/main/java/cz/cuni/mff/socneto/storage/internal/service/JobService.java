@@ -24,7 +24,7 @@ public class JobService {
     }
 
     public Iterable<Job> findAllByUser(String user) {
-        return repository.findAllByUser(user);
+        return repository.findAllByUsername(user);
     }
 
     public Job save(Job job) {
