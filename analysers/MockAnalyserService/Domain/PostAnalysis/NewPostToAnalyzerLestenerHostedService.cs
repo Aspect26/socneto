@@ -20,12 +20,14 @@ namespace Domain.PostAnalysis
             _newPostToAnalyzeListener = newPostToAnalyzeListener;
             _logger = logger;
         }
-        public async Task StartAsync(CancellationToken cancellationToken)
+        
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Service {serviceName} started",
                 nameof(NewPostToAnalyzerLestenerHostedService));
 
-            _listenTask = _newPostToAnalyzeListener.ListenAsync(_cancellationTokenSource.Token);
+            _listenTask = Task.Run(async () => await _newPostToAnalyzeListener.ListenAsync(_cancellationTokenSource.Token), cancellationToken);
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Domain.Model
@@ -11,7 +10,7 @@ namespace Domain.Model
             
         }
         private UniPost(
-            string postId, 
+            Guid postId, 
             string text, 
             string source, 
             string userId, 
@@ -27,7 +26,10 @@ namespace Domain.Model
         }
 
         [JsonProperty("postId")]
-        public string PostId { set; get; }
+        public Guid PostId { set; get; }
+        
+        [JsonProperty("originalPostId")]
+        public string OriginalPostId { get; set; }
 
         [JsonProperty("jobId")]
         public Guid JobId { get; set; }
@@ -45,7 +47,7 @@ namespace Domain.Model
         public string PostDateTime { get; set; }
 
         public static UniPost FromValues(
-            string postId, 
+            Guid postId, 
             string text, 
             string source, 
             string userId, 
