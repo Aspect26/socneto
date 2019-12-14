@@ -67,6 +67,8 @@ namespace Domain.JobConfiguration
                 throw new InvalidOperationException($"Could not parse job config {jre.Message}");
             }
 
+            // TODO: this is only temporray solution!!! (Because the command received is null)
+            jobConfig.Command = "start";
             if (jobConfig.Command == null)
             {
                 const string error = "Job notification was not processed. Empty command";
