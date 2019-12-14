@@ -81,6 +81,8 @@ services:
       - '8888:8888'
     container_name: storageservice
     depends_on:
+      - mongo_db
+      - db
       - elasticsearch
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
@@ -94,6 +96,23 @@ services:
       - kafka
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
+
+  backend:
+    build: './backend'
+    ports: 
+      - '6010:6010'
+    container_name: backend
+    depends_on:
+      - storage
+      - kafka
+
+  data-acquisition-service:
+    build: 
+        context: './acquisition/DataAcquirer'
+        dockerfile: 'Dockerfile.mock'
+
+  mock-analyser-service:
+    build: './analysers/MockAnalyserService'
 
 volumes:
   data01:

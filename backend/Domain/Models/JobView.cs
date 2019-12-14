@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 
 namespace Socneto.Domain.Models
@@ -8,6 +9,12 @@ namespace Socneto.Domain.Models
     {
         public Guid JobId { get; set; }
 
-        public IList<ChartDefinition> ViewConfiguration { get; set; }
-    }    
+        public ViewConfiguration ViewConfiguration { get; set; }
+    }
+
+    public class ViewConfiguration
+    {
+        [JsonProperty("chartDefinitions")]
+        public IList<ChartDefinition> ChartDefinitions { get; set; }
+    }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,14 @@ namespace Socneto.Domain.Services
         private readonly HttpClient _client = new HttpClient();
         private readonly ILogger<StorageService> _logger;
 
-        public StorageService(ILogger<StorageService> logger, IOptions<StorageOptions> storageOptions)
+        public StorageService(ILogger<StorageService> logger, IOptions<StorageOptions> storageOptionsObject)
         {
             _logger = logger;
-            _host = storageOptions.Value.ServerAddress;
+            
+            if (string.IsNullOrEmpty(storageOptionsObject.Value.ServerAddress))
+                throw new ArgumentNullException(nameof(storageOptionsObject.Value.ServerAddress));
+            
+            _host = storageOptionsObject.Value.ServerAddress;
         }
         
         public async Task<User> GetUser(string username)
@@ -85,16 +90,18 @@ namespace Socneto.Domain.Services
         {
             var response = await Get($"components?type=DATA_ANALYSER");
             response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsAsync<List<SocnetoComponent>>();
+            var responseString = await response.Content.ReadAsStringAsync();
+            
+            return JsonConvert.DeserializeObject<List<SocnetoComponent>>(responseString);
         }
 
         public async Task<IList<SocnetoComponent>> GetAcquirers()
         {
             var response = await Get($"components?type=DATA_ACQUIRER");
             response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsAsync<List<SocnetoComponent>>();
+            var responseString = await response.Content.ReadAsStringAsync();
+            
+            return JsonConvert.DeserializeObject<List<SocnetoComponent>>(responseString);
         }
 
         public async Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest)
@@ -115,19 +122,36 @@ namespace Socneto.Domain.Services
 
         private async Task<HttpResponseMessage> Get(string path)
         {
-            return await _client.GetAsync($"{_host}/{path}");
+            var fullPath = GetFullPath(path);
+            
+            _logger.LogDebug($"GET {fullPath}");
+            
+            return await _client.GetAsync(fullPath);
         }
         
         private async Task<HttpResponseMessage> Post(string path, object data)
         {
-            var content = this.CreateHttpContent(data);
-            return await _client.PostAsync($"{_host}/{path}", content);
+            var fullPath = GetFullPath(path);
+            var content = CreateHttpContent(data);
+            
+            _logger.LogDebug($"POST {fullPath} | {content}");
+            
+            return await _client.PostAsync(fullPath, content);
         }
 
         private async Task<HttpResponseMessage> Put(string path, object data)
         {
-            var content = this.CreateHttpContent(data);
-            return await _client.PutAsync($"{_host}/{path}", content);
+            var fullPath = GetFullPath(path);
+            var content = CreateHttpContent(data);
+            
+            _logger.LogDebug($"PUT {fullPath} | {content}");
+            
+            return await _client.PutAsync(fullPath, content);
+        }
+
+        private string GetFullPath(string path)
+        {
+            return $"{_host}/{path}";
         }
 
         private HttpContent CreateHttpContent(object data)

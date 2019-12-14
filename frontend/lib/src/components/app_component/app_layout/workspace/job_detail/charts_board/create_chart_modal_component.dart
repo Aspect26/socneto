@@ -87,9 +87,10 @@ class CreateChartModalComponent {
     this.displayed = false;
   }
 
-  void reset() {
+  void reset() async {
     this.dataPaths.clear();
 
+    await this.loadAnalyzers();
     var requiredNumberOfDataPaths = this.requiredNumberOfDataPaths;
     this._addDefaultDataPaths(requiredNumberOfDataPaths);
 
@@ -170,8 +171,10 @@ class CreateChartModalComponent {
 
   void _addDefaultDataPaths(int count) {
     for (var i = 0; i < count; i++) {
-      final analyser = this.analysers[0];
-      this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties[0]));
+      if (this.analysers.isNotEmpty) {
+        final analyser = this.analysers[0];
+        this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties[0]));
+      }
     }
   }
 
