@@ -169,7 +169,7 @@ namespace Domain.JobManagement
                         dataPost.PostDateTime,
                         dataAcquirerInputModel.JobId);
 
-                    var jsonData = JsonConvert.SerializeObject(dataPost);
+                    var jsonData = JsonConvert.SerializeObject(uniPost);
                     var messageBrokerMessage = new MessageBrokerMessage(
                         "acquired-data-post",
                         jsonData);

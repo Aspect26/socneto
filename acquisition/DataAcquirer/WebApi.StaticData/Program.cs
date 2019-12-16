@@ -24,6 +24,10 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
+            var delay = TimeSpan.FromSeconds(80);
+            Console.WriteLine($"Waiting {delay}");
+            await Task.Delay(delay);
+        
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
             var directory = new FileInfo(assemblyPath).Directory.FullName;
             
