@@ -54,9 +54,9 @@ namespace Domain.ComponentManagement
             }
             catch (Exception e)
             {
-                const string error = "Subscription failed due to: {error}";
-                _logger.LogError(error, e.Message);
-                return SubscribedComponentResultModel.Failed(string.Format(error, e.Message));
+                string error = $"Subscription failed due to: {e.Message}";
+                _logger.LogError(error);
+                return SubscribedComponentResultModel.Failed(error);
             }
         }
 
@@ -241,8 +241,9 @@ namespace Domain.ComponentManagement
 
             var configUpdateTasks = analysers.Select(async analyserCmp =>
             {
-                _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
+                _logger.LogInformation("Config pushed to: {componentName}, updateChannelName: {ucn}, config: {config}",
                     analyserCmp,
+                    analyserCmp.UpdateChannelName,
                     JsonConvert.SerializeObject(notification));
 
                 await _componentConfigUpdateNotifier.NotifyComponentAsync(
