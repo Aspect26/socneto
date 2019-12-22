@@ -6,6 +6,69 @@ using Newtonsoft.Json;
 
 namespace Domain
 {
+
+    public class NullEventTracker<T> : IEventTracker<T>
+    {
+        private readonly ILogger<NullEventTracker<T>> _logger;
+
+        public NullEventTracker(ILogger<NullEventTracker<T>> logger)
+        {
+            _logger = logger;
+        }
+        public void TrackError(string eventName, string message, object serializableAttributes = null)
+        {
+            var attributes = serializableAttributes != null
+                ? JsonConvert.SerializeObject(serializableAttributes)
+                : "none";
+            _logger.LogError("{eventName}: {message}. Payload: {payload}",
+                eventName,
+                message,
+                attributes);
+        }
+
+        public void TrackFatal(string eventName, string message, object serializableAttributes = null)
+        {
+            var attributes = serializableAttributes != null
+                ? JsonConvert.SerializeObject(serializableAttributes)
+                : "none";
+            _logger.LogError("{eventName}: {message}. Payload: {payload}",
+              eventName,
+              message,
+              attributes);
+        }
+
+        public void TrackInfo(string eventName, string message, object serializableAttributes = null)
+        {
+            var attributes = serializableAttributes != null
+                ? JsonConvert.SerializeObject(serializableAttributes)
+                : "none";
+            _logger.LogInformation("{eventName}: {message}. Payload: {payload}",
+              eventName,
+              message,
+              attributes);
+        }
+
+        public void TrackStatistics(string eventName, object serializableAttributes = null)
+        {
+            var attributes = serializableAttributes != null
+                ? JsonConvert.SerializeObject(serializableAttributes)
+                : "none";
+            _logger.LogTrace("{eventName}: {message}. Payload: {payload}",
+              eventName,
+              attributes);
+        }
+
+        public void TrackWarning(string eventName, string message, object serializableAttributes = null)
+        {
+            var attributes = serializableAttributes != null
+                ? JsonConvert.SerializeObject(serializableAttributes)
+                : "none";
+            _logger.LogWarning("{eventName}: {message}. Payload: {payload}",
+              eventName,
+              message,
+              attributes);
+        }
+    }
     public class EventTracker<T> : IEventTracker<T>
     {
         private readonly EventQueue _eventQueue;

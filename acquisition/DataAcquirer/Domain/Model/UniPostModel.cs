@@ -9,12 +9,14 @@ namespace Domain.Model
         private DataAcquirerPost(
          string postId,
          string text,
+         string language,
          string source,
          string userId,
          string postDateTime)
         {
             PostId = postId;
             Text = text;
+            Language = language;
             UserId = userId;
             Source = source;
             PostDateTime = postDateTime;
@@ -30,14 +32,17 @@ namespace Domain.Model
 
         public string PostDateTime { get; }
 
+        public string Language { get; }
+
         public static DataAcquirerPost FromValues(
             string postId,
             string text,
+            string language,
             string source,
             string userId,
             string dateTimeString)
         {
-            return new DataAcquirerPost(postId, text, source, userId, dateTimeString);
+            return new DataAcquirerPost(postId, text,language, source, userId, dateTimeString);
         }
     }
 
@@ -47,6 +52,7 @@ namespace Domain.Model
         private UniPostModel(
             string postId,
             string text,
+            string language,
             string source,
             string userId,
             string postDateTime,
@@ -54,6 +60,7 @@ namespace Domain.Model
         {
             PostId = postId;
             Text = text;
+            Language = language;
             UserId = userId;
             Source = source;
             PostDateTime = postDateTime;
@@ -69,6 +76,8 @@ namespace Domain.Model
         [JsonProperty("text")]
         public string Text { get; }
 
+        [JsonProperty("language")]
+        public string Language { get; }
         [JsonProperty("source")]
         public string Source { get; }
 
@@ -81,13 +90,14 @@ namespace Domain.Model
         public static UniPostModel FromValues(
             string postId,
             string text,
+            string language,
             string source,
             string userId,
             string dateTimeString,
             Guid jobId)
         {
 
-            return new UniPostModel(postId, text, source, userId, dateTimeString, jobId);
+            return new UniPostModel(postId, text,language, source, userId, dateTimeString, jobId);
         }
 
 

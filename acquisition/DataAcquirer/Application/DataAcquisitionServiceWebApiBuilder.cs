@@ -10,6 +10,7 @@ using Domain.JobManagement.Abstract;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
+using Infrastructure.Twitter;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -151,11 +152,12 @@ namespace Application
 
             //test job replay
 
-            ReplayJobConfigsAsync(webHost).GetAwaiter().GetResult();
+            // ReplayJobConfigsAsync(webHost).GetAwaiter().GetResult();
 
             return webHost;
         }
 
+        [Obsolete("This functionality has been moved to job management servcie",true)]
         private static async Task ReplayJobConfigsAsync(IWebHost webHost)
         {
             var jm = webHost.Services.GetRequiredService<IJobManager>();
@@ -180,6 +182,8 @@ namespace Application
 
             services.AddHostedService<EventSendingHostedService>();
             services.AddSingleton<EventQueue>();
+
+            services.AddSingleton<TwitterContextProvider>();
 
             services.AddSingleton<IJobManager, JobManager>();
 
