@@ -164,6 +164,7 @@ namespace Domain.JobManagement
                     var uniPost = UniPostModel.FromValues(
                         dataPost.PostId,
                         dataPost.Text,
+                        dataPost.Language,
                         dataPost.Source,
                         dataPost.UserId,
                         dataPost.PostDateTime,

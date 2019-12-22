@@ -1,15 +1,63 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
 using Domain.Model;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Infrastructure.DataGenerator
 {
+    public class FileProducerOptions
+    {
+        [Required]
+        public string DestinationFilePath { get; set; }
+    }
+
+    public class FileProducer : IMessageBrokerProducer
+    {
+        private class MyPost
+        {
+            [JsonProperty("language")]
+            public string Language { get; set; }
+        }
+        private readonly string _filePath;
+        private readonly ILogger<FileProducer> _logger;
+
+
+        private Dictionary<string, int> _languages =new  Dictionary<string, int>();
+        public FileProducer(
+            IOptions<FileProducerOptions> fileProducerOptionsAccessor,
+            ILogger<FileProducer> logger)
+        {
+            _filePath = fileProducerOptionsAccessor.Value.DestinationFilePath;
+            _logger = logger;
+        }
+        public async Task ProduceAsync(string topic, MessageBrokerMessage message)
+        {
+            _logger.LogInformation("Post saved. TS: {timestamp}, post {post}",
+                DateTime.Now.ToString("s"),
+                message.JsonPayloadPayload);
+
+            var post = JsonConvert.DeserializeObject<MyPost>(message.JsonPayloadPayload);
+
+            var lang = post.Language ?? "null";
+            var count = _languages.GetValueOrDefault(lang, 0);
+            _languages[lang] = count + 1;
+
+            _logger.LogInformation(JsonConvert.SerializeObject(_languages));
+            
+            using (var writer = new StreamWriter(_filePath, append: true))
+            {
+                await writer.WriteLineAsync(message.JsonPayloadPayload);
+            }
+        }
+    }
+
     public class MockProducer : IMessageBrokerProducer
     {
         private class Post

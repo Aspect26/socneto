@@ -86,7 +86,7 @@ namespace Infrastructure.DataGenerator
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
 
-            await Task.Delay(TimeSpan.MaxValue);
+            await Task.Delay(Timeout.InfiniteTimeSpan);
         }
     }
 }

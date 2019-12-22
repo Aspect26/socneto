@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Twitter
 {
-
     public class TwitterDataAcquirer : IDataAcquirer
     {
-        private TwitterContext _twitterContext;
+        private readonly TwitterContextProvider _twitterContextProvider;
         private readonly IEventTracker<TwitterDataAcquirer> _logger;
 
         public TwitterDataAcquirer(
+            TwitterContextProvider twitterContextProvider,
             IEventTracker<TwitterDataAcquirer> logger)
         {
+            _twitterContextProvider = twitterContextProvider;
             _logger = logger;
         }
 
@@ -33,24 +34,21 @@ namespace Infrastructure.Twitter
                 AccessTokenSecret = acquirerInputModel.Attributes.GetValue("AccessTokenSecret")
             };
 
+            var parsedTwitterQuery = ParseTwitterQuery(acquirerInputModel.Query);
+
             var defaultMetadata = new TwitterMetadata
             {
                 Credentials = credentials,
                 MaxId = ulong.MaxValue,
                 SinceId = 0,
-                Language = acquirerInputModel.Attributes.GetValue("Language", "en"),
-                Query = acquirerInputModel.Query,
+                //Language = acquirerInputModel.Attributes.GetValue("Language", "en"),
+                Query = parsedTwitterQuery,
                 BatchSize = acquirerInputModel.BatchSize
             };
 
             var metadata = await context.GetOrCreateAsync(defaultMetadata);
 
-            if (_twitterContext == null)
-            {
-                // TODO support multiuser
-                // TODO use singleton object handling this
-                CreateContext(credentials);
-            }
+            var twitterContext =await  _twitterContextProvider.GetContextAsync(credentials);
 
             long foundPosts = 0;
             var mostRecentPost = DateTime.MinValue;
@@ -63,7 +61,10 @@ namespace Infrastructure.Twitter
                     metadata.SinceId,
                     metadata.BatchSize);
 
-                var batches = QueryPastPostAsync(acquirerInputModel.JobId, twitterInputModel);
+                var batches = QueryPastPostAsync(
+                    twitterContext,
+                    acquirerInputModel.JobId, 
+                    twitterInputModel);
 
                 await foreach (var batch in batches)
                 {
@@ -99,8 +100,8 @@ namespace Infrastructure.Twitter
                         {
                             foundPosts,
                             mostRecentPost,
-                            query = acquirerInputModel.Query,
-                            language = acquirerInputModel.QueryLanguage,
+                            query = metadata.Query,
+                            language = metadata.Language,
                             jobId = acquirerInputModel.JobId
                         });
 
@@ -113,12 +114,20 @@ namespace Infrastructure.Twitter
             }
         }
 
+        private string ParseTwitterQuery(string query)
+        {
+            return query
+                .Replace("NOT ", "-")
+                .Replace(" AND ", " ");
+        }
+
         private async IAsyncEnumerable<IList<Status>> QueryPastPostAsync(
+            TwitterContext context,
             Guid jobId,
             TwitterQueryInput acquirerInputModel)
         {
             var searchTerm = acquirerInputModel.SearchTerm;
-            var language = acquirerInputModel.Language;
+            var language = acquirerInputModel.Language ?? "";
             var maxId = acquirerInputModel.MaxId;
             var sinceId = acquirerInputModel.SinceId;
             var batchSize = acquirerInputModel.BatchSize;
@@ -133,7 +142,12 @@ namespace Infrastructure.Twitter
                        "QueryData",
                        "Downloading data");
 
-                    var search = await GetStatusBatchAsync(searchTerm, batchSize, language, maxId: maxId, sinceId: sinceId);
+                    var search = await GetStatusBatchAsync( context,
+                        searchTerm, 
+                        batchSize, 
+                        language, 
+                        maxId: maxId, 
+                        sinceId: sinceId);
 
                     batch = search
                         .Statuses
@@ -166,7 +180,7 @@ namespace Infrastructure.Twitter
 
 
 
-        private async Task<Search> GetStatusBatchAsync(
+        private async Task<Search> GetStatusBatchAsync(TwitterContext context,
             string searchTerm,
             int batchSize,
             string language,
@@ -175,52 +189,24 @@ namespace Infrastructure.Twitter
         {
             var combinedSearchResults = new List<Status>();
 
-            return await _twitterContext.Search
+            return await context.Search
                 .Where(search => search.Type == SearchType.Search &&
                        search.Query == searchTerm &&
-                       search.SearchLanguage == language &&
+                       // search.SearchLanguage == language &&
                        search.Count == batchSize &&
                        search.MaxID == maxId &&
-                       search.SinceID == sinceId &&
-                       search.TweetMode == TweetMode.Compat)
+                       search.SinceID == sinceId)
                 .SingleOrDefaultAsync();
         }
 
-        private void CreateContext(TwitterCredentials credentials)
-        {
-            try
-            {
 
-                var auth = new SingleUserAuthorizer
-                {
-                    CredentialStore = new SingleUserInMemoryCredentialStore
-                    {
-                        ConsumerKey = credentials.ConsumerKey,
-                        ConsumerSecret = credentials.ConsumerSecret,
-                        AccessToken = credentials.AccessToken,
-                        AccessTokenSecret = credentials.AccessTokenSecret
-                    }
-                };
-                _twitterContext = new TwitterContext(auth);
-            }
-            catch (Exception e)
-            {
-                _logger.TrackError(
-                    "QueryData",
-                    "Twitter context failed to initialize",
-                    new
-                    {
-                        exception = e
-                    });
-                throw;
-            }
-        }
 
         private static DataAcquirerPost FromStatus(Status item)
         {
             return DataAcquirerPost.FromValues(
                                 item.StatusID.ToString(),
                                 item.Text ?? item.FullText,
+                                item.Lang,
                                 "Twitter",
                                 item.User.UserID.ToString(),
                                 item.CreatedAt.ToString("s"));

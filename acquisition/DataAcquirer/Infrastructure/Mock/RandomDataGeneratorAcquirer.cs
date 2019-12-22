@@ -52,6 +52,7 @@ namespace Infrastructure.DataGenerator
             return DataAcquirerPost.FromValues(
                 Guid.NewGuid().ToString(),
                 postText,
+                "en",
                 postSource,
                 postUser,
                 dateTimeString);
