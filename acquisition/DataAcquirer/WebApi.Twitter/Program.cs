@@ -33,6 +33,7 @@ namespace Api
                 .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>()
                 .AddSingletonService<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
                 .AddSingletonService<IDataAcquirerMetadataStorage, TwitterJsonFileMetadataStorage>()
+                .AddSingletonService<TwitterBatchLoaderFactory>()
                 .AddSingletonService<IDataAcquirerMetadataContext, TwitterMetadataContext>()
                 .ConfigureSpecificOptions<TwitterJsonStorageOptions>("DataAcquisitionService:TwitterJsonStorageOptions")
                 .PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)

@@ -25,23 +25,15 @@ namespace Domain.Registration
             _messageBrokerConsumer = messageBrokerConsumer;
             _logger = logger;
 
-            if (string.IsNullOrWhiteSpace(requestListenerOptionsAccessor.Value.RegistrationChannelName))
-            {
-                throw new ArgumentException("Argument must be valid channel name",
-                    nameof(requestListenerOptionsAccessor.Value.RegistrationChannelName));
-            }
-
             _registrationChannelName = requestListenerOptionsAccessor.Value.RegistrationChannelName;
         }
 
         public async Task Listen(CancellationToken cancellationToken)
         {
-                    await _messageBrokerConsumer.ConsumeAsync(
-                        _registrationChannelName,
-                        ProcessRegistrationRequest,
-                        cancellationToken);
-                
-            
+            await _messageBrokerConsumer.ConsumeAsync(
+                _registrationChannelName,
+                ProcessRegistrationRequest,
+                cancellationToken);
         }
 
         private async Task ProcessRegistrationRequest(string registrationRequest)
@@ -50,7 +42,7 @@ namespace Domain.Registration
             _logger.LogInformation("Registration request accepted: {registrationRequestJson}",
                 registrationRequest);
 
-            RegistrationRequestMessage registrationRequestMessage = null;
+            RegistrationRequestMessage registrationRequestMessage ;
             try
             {
                 registrationRequestMessage = JsonConvert.DeserializeObject<RegistrationRequestMessage>(registrationRequest);

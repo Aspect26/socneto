@@ -1,0 +1,22 @@
+2019-12-27T17:31:44.7189336+01:00  [INF] Sending registration request (2a639451)
+2019-12-27T17:31:47.4279083+01:00  [INF] Service "DataAcquisitionService" register request sent (ccfa4753)
+2019-12-27T17:31:47.6227601+01:00  [INF] User profile is available. Using '"C:\Users\Jry\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2019-12-27T17:31:52.3744431+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" started (605c0d96)
+2019-12-27T17:31:56.2640042+01:00  [INF] Logging service started (436ce12d)
+2019-12-27T17:31:56.2945981+01:00  [INF] "StartNewJob":"Starting listening"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Twitter\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Twitter\"}"
+Attributes:"{\"channelName\":\"job_management.job_configuration.DataAcquirer_Twitter\"}" (7c770f49)
+2019-12-27T17:31:56.3099889+01:00  [INF] Consuming topic: 'job_management.job_configuration.DataAcquirer_Twitter' (924f1038)
+2019-12-27T17:42:22.5280448+01:00  [ERR] localhost:9094/1001: Disconnected (after 626054ms in state UP) (4aeb4ac5)
+2019-12-27T17:42:22.5312585+01:00  [ERR] GroupCoordinator: Disconnected (after 623128ms in state UP) (1d18ec78)
+2019-12-27T17:42:28.8579377+01:00  [ERR] localhost:9094/1001: Connect to ipv4#127.0.0.1:9094 failed: No connection could be made because the target machine actively refused it... (after 2003ms in state CONNECT) (43565888)
+2019-12-27T17:42:28.8821067+01:00  [ERR] GroupCoordinator: Connect to ipv4#127.0.0.1:9094 failed: No connection could be made because the target machine actively refused it... (after 2003ms in state CONNECT) (95fe358a)
+2019-12-27T17:42:28.9004165+01:00  [ERR] 2/2 brokers are down (8fa1e8bf)
+2019-12-27T17:45:22.2165525+01:00  [ERR] 1/1 brokers are down (e2dcb415)
+2019-12-27T17:50:52.4683427+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" is stopping (59354200)
+2019-12-27T17:50:52.5853993+01:00  [INF] Failed to consume: "The operation was canceled.". 
+Topic "job_management.job_configuration.DataAcquirer_Twitter", 
+Address "localhost:9094" (d382e803)
+2019-12-27T17:50:52.5882615+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" stopped (b5622728)
+2019-12-27T17:50:52.5919956+01:00  [INF] Logging service is stopping (c33e30e4)
+2019-12-27T17:50:54.1760704+01:00  [INF] Logging service stopped (846bbb08)

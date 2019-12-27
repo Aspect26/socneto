@@ -74,6 +74,18 @@ namespace Application
             return this;
         }
 
+        public DataAcquisitionServiceWebApiBuilder AddSingletonService<TConcrete>()
+          where TConcrete : class
+        {
+            void addSingletonServiceAction(IServiceCollection sp)
+            {
+                sp.AddSingleton<TConcrete>();
+            }
+
+            _singletonServices.Add(addSingletonServiceAction);
+            return this;
+        }
+
         public DataAcquisitionServiceWebApiBuilder PostConfigure<TOptions>(Action<TOptions> action)
             where TOptions : class
         {
@@ -96,9 +108,6 @@ namespace Application
             _transientServices.Add(AddTransientServiceAction);
             return this;
         }
-
-        
-
 
         public IWebHost BuildWebHost(bool? isDevelopment = default)
         {
@@ -222,7 +231,6 @@ namespace Application
         {
             var rootName = "DataAcquisitionService";
 
-
             services.AddOptions<ComponentOptions>()
                 .Bind(configuration.GetSection($"{rootName}:ComponentOptions"))
                 .ValidateDataAnnotations()                ;
@@ -237,7 +245,7 @@ namespace Application
 
 
             services.AddOptions<MockConsumerOptions>()
-                .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
+                .Bind(configuration.GetSection($"{rootName}:MockConsumerOptions"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<LogLevelOptions>()
@@ -245,8 +253,8 @@ namespace Application
                 .ValidateDataAnnotations();
 
             services.AddOptions<SystemMetricsOptions>()
-                    .Bind(configuration.GetSection("DataAcquisitionService:SystemMetricsOptions"))
-                    .ValidateDataAnnotations();
+                .Bind(configuration.GetSection($"{rootName}:SystemMetricsOptions"))
+                .ValidateDataAnnotations();
 
         }
 

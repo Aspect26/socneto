@@ -4,7 +4,6 @@ namespace Infrastructure.Twitter
 {
     public class TwitterMetadata : IDataAcquirerMetadata
     {
-        public TwitterCredentials Credentials { get; set; }
         public ulong MaxId { get;  set; }
         public ulong SinceId { get; set; }
         public string Query { get; set; }

@@ -22,7 +22,7 @@ namespace Domain.JobManagement
         private readonly IDataAcquirerJobStorage _dataAcquirerJobStorage;
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
-        private readonly IDataAcquirerMetadataContextProvider _dataAcquirerMetadataContextProvider;
+
         private readonly IEventTracker<JobManager> _logger;
 
         // concurent dictionary does not suffice
@@ -36,14 +36,12 @@ namespace Domain.JobManagement
             IDataAcquirerJobStorage dataAcquirerJobStorage,
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
-            IDataAcquirerMetadataContextProvider dataAcquirerMetadataContextProvider,
             IEventTracker<JobManager> logger)
         {
             _dataAcquirerJobStorage = dataAcquirerJobStorage;
             //   _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
             _producer = producer;
-            _dataAcquirerMetadataContextProvider = dataAcquirerMetadataContextProvider;
             _logger = logger;
         }
 
@@ -118,25 +116,30 @@ namespace Domain.JobManagement
                         new { jobId = jobConfig.JobId });
                     return;
                 }
-                var queryLanguage = "en";
-                var supported = new[] { "en", "cs" };
+                //var queryLanguage = "en";
+                //var supported = new[] { "en", "cs" };
+                //if (jobConfig.Attributes.TryGetValue("Language", out var desiredLanguage))
+                //{
+                //    if (supported.Contains(desiredLanguage))
+                //    {
+                //        queryLanguage = desiredLanguage;
+                //    }
+                //    else
+                //    {
+                //        _logger.TrackError(
+                //            "StartNewJob",
+                //            "Unrecognized language",
+                //            new
+                //            {
+                //                language = desiredLanguage,
+                //                jobId = jobConfig.JobId
+                //            });
+                //    }
+                //}
+                string queryLanguage = null;
                 if (jobConfig.Attributes.TryGetValue("Language", out var desiredLanguage))
                 {
-                    if (supported.Contains(desiredLanguage))
-                    {
-                        queryLanguage = desiredLanguage;
-                    }
-                    else
-                    {
-                        _logger.TrackError(
-                            "StartNewJob",
-                            "Unrecognized language",
-                            new
-                            {
-                                language = desiredLanguage,
-                                jobId = jobConfig.JobId
-                            });
-                    }
+                    queryLanguage = desiredLanguage;
                 }
 
                 await _dataAcquirerJobStorage.SaveAsync(jobConfig.JobId, jobConfig);
@@ -156,8 +159,7 @@ namespace Domain.JobManagement
                    batchSize
                );
 
-                var context = _dataAcquirerMetadataContextProvider.Get(jobConfig.JobId);
-                var batch = _acquirer.GetPostsAsync(context, dataAcquirerInputModel);
+                var batch = _acquirer.GetPostsAsync(dataAcquirerInputModel);
 
                 await foreach (var dataPost in batch)
                 {
@@ -168,7 +170,8 @@ namespace Domain.JobManagement
                         dataPost.Source,
                         dataPost.UserId,
                         dataPost.PostDateTime,
-                        dataAcquirerInputModel.JobId);
+                        dataAcquirerInputModel.JobId,
+                        dataPost.Query);
 
                     var jsonData = JsonConvert.SerializeObject(uniPost);
                     var messageBrokerMessage = new MessageBrokerMessage(
@@ -186,11 +189,11 @@ namespace Domain.JobManagement
                 _runningJobsRecords.Remove(jobConfig.JobId);
                 _logger.TrackError(
                     "RunJob",
-                    "Job encountered an error and stopped.", 
+                    "Job encountered an error and stopped.",
                     new
                     {
-                        jobId=jobConfig.JobId,
-                        exception =e
+                        jobId = jobConfig.JobId,
+                        exception = e
                     });
             }
         }
@@ -198,9 +201,9 @@ namespace Domain.JobManagement
         private async Task SendRecordToOutputs(string[] outputChannels,
             MessageBrokerMessage messageBrokerMessage)
         {
-                _logger.TrackStatistics(
-                    "SendingData",
-                    new { channels = outputChannels });
+            _logger.TrackStatistics(
+                "SendingData",
+                new { channels = outputChannels });
 
             foreach (var outputChannel in outputChannels)
             {

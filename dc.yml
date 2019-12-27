@@ -28,17 +28,14 @@ services:
   db:
     image: "postgres"
     container_name: storagedb
-    restart: always
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=password123
       - POSTGRES_DB=storagedb
     ports:
       - "5432:5432"
-
   mongo_db:
     image: mongo
-    restart: always
     ports:
       - "27017:27017"
 
@@ -58,8 +55,6 @@ services:
         hard: -1
     volumes:
       - data01:/usr/share/elasticsearch/data
-
-
   kibana:
     depends_on:
       - logstash
@@ -91,38 +86,33 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
-  # jms:
-  #   build: './job-management'
-  #   ports:
-  #     - '6009:6009'
-  #   container_name: jms
-  #   depends_on:
-  #     - storage
-  #     - kafka
-  #   environment:
-  #     - ELASTICSEARCH_WAIT_MILLIS=40000
+  jms:
+    build: './job-management'
+    ports:
+      - '6009:6009'
+    container_name: jms
+    depends_on:
+      - storage
+      - kafka
+    environment:
+      - ELASTICSEARCH_WAIT_MILLIS=40000
 
-  # backend:
-  #   build: './backend'
-  #   ports: 
-  #     - '6010:6010'
-  #   container_name: backend
-  #   depends_on:
-  #     - storage
-  #     - kafka
+  backend:
+    build: './backend'
+    ports: 
+      - '6010:6010'
+    container_name: backend
+    depends_on:
+      - storage
+      - kafka
 
-  # data-acquisition-service:
-  #   build: 
-  #       context: './acquisition/DataAcquirer'
-  #       dockerfile: 'Dockerfile.mock'
+  data-acquisition-service:
+    build: 
+        context: './acquisition/DataAcquirer'
+        dockerfile: 'Dockerfile.mock'
 
-  # sentiment-analyser:
-  #   build: './analysers/sentiment_analysis'
-  #   restart: always
-  #   depends_on:
-  #     - storage
-  #     - kafka
-
+  mock-analyser-service:
+    build: './analysers/MockAnalyserService'
 
 volumes:
   data01:

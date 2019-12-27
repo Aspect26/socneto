@@ -26,7 +26,6 @@ namespace Infrastructure.DataGenerator
         }
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-            IDataAcquirerMetadataContext context,
             DataAcquirerInputModel jobConfig)
         {
             await Task.Delay(_downloadDelay);

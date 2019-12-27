@@ -4,11 +4,10 @@ WORKDIR /usr/src/app
 
 COPY model_1574374374.795886.bin ./
 COPY Analysis.py ./
-COPY sentiment_analyser.py ./
 COPY main.py ./
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "./main.py" ]
+CMD [ "python", "./main.py", "--server_address","kafka:9092" ]

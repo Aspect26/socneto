@@ -12,7 +12,8 @@ namespace Domain.Model
          string language,
          string source,
          string userId,
-         string postDateTime)
+         string postDateTime,
+         string query)
         {
             PostId = postId;
             Text = text;
@@ -20,6 +21,7 @@ namespace Domain.Model
             UserId = userId;
             Source = source;
             PostDateTime = postDateTime;
+            Query = query;
         }
 
         public string PostId { get; }
@@ -31,7 +33,7 @@ namespace Domain.Model
         public string UserId { get; }
 
         public string PostDateTime { get; }
-
+        public string Query { get; }
         public string Language { get; }
 
         public static DataAcquirerPost FromValues(
@@ -40,9 +42,10 @@ namespace Domain.Model
             string language,
             string source,
             string userId,
-            string dateTimeString)
+            string dateTimeString,
+            string query = null)
         {
-            return new DataAcquirerPost(postId, text,language, source, userId, dateTimeString);
+            return new DataAcquirerPost(postId, text,language, source, userId, dateTimeString,query);
         }
     }
 
@@ -56,7 +59,8 @@ namespace Domain.Model
             string source,
             string userId,
             string postDateTime,
-            Guid jobId)
+            Guid jobId,
+            string query)
         {
             PostId = postId;
             Text = text;
@@ -65,6 +69,7 @@ namespace Domain.Model
             Source = source;
             PostDateTime = postDateTime;
             JobId = jobId;
+            Query = query;
         }
 
         [JsonProperty("postId")]
@@ -73,6 +78,8 @@ namespace Domain.Model
         [JsonProperty("jobId")]
         public Guid JobId { get; }
 
+        [JsonProperty("query")]
+        public string Query { get; }
         [JsonProperty("text")]
         public string Text { get; }
 
@@ -94,10 +101,11 @@ namespace Domain.Model
             string source,
             string userId,
             string dateTimeString,
-            Guid jobId)
+            Guid jobId,
+            string query)
         {
 
-            return new UniPostModel(postId, text,language, source, userId, dateTimeString, jobId);
+            return new UniPostModel(postId, text,language, source, userId, dateTimeString, jobId,query);
         }
 
 

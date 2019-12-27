@@ -65,7 +65,7 @@ namespace ConsoleApi.Twitter
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
-            services.AddTransient<IMessageBrokerProducer, FileProducer>();
+            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
 
             services.AddSingleton<IMessageBrokerConsumer, MockConsumer>();
 
@@ -74,12 +74,10 @@ namespace ConsoleApi.Twitter
             // TW
             services.AddSingleton<IDataAcquirer, TwitterDataAcquirer>()
               .AddSingleton<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
-              .AddSingleton<IDataAcquirerMetadataStorage, TwitterJsonFileMetadataStorage>()
-              .AddSingleton<IDataAcquirerMetadataContext, TwitterMetadataContext>();
-
-
-
-
+              .AddSingleton<IDataAcquirerMetadataStorage, NullMetadataStorage>()
+              .AddSingleton<IDataAcquirerMetadataContext, TwitterMetadataContext>()
+                .AddSingleton<TwitterBatchLoaderFactory>();
+            
             ConfigureCommonOptions(configuration, services);
             return services.BuildServiceProvider();
         }
@@ -102,9 +100,9 @@ namespace ConsoleApi.Twitter
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<FileProducerOptions>()
-                .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
-                .ValidateDataAnnotations();
+            //services.AddOptions<FileProducerOptions>()
+            //    .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
+            //    .ValidateDataAnnotations();
 
             services.AddOptions<TwitterCredentialsOptions>()
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
@@ -137,10 +135,9 @@ namespace ConsoleApi.Twitter
 
             var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
 
-            var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
+            // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
             // TODO add NOT cocktail NOT music
-
-            // var query = "\"snake bites\" OR \"morsure de serpent\"";
+            var query = "snake bite NOT cocktail NOT darts NOT piercing";
             var jobConfig = new DataAcquirerJobConfig()
             {
                 Attributes = new Dictionary<string, string>
@@ -152,7 +149,7 @@ namespace ConsoleApi.Twitter
                     {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
                 },
                 JobId = Guid.NewGuid(),
-                OutputMessageBrokerChannels = new string[] { "MOCK-Post-output" }
+                OutputMessageBrokerChannels = new string[] { "job_management.component_data_input.DataAnalyser_sentiment" }
             };
             try
             {
