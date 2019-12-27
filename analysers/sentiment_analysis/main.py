@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import argparse
 import Analysis as a
 import logging
 from kafka import KafkaConsumer, KafkaProducer
@@ -14,7 +15,8 @@ fh = logging.FileHandler('sentiment_analyser' + ts + '.log')
 fh.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
 logger.addHandler(fh)
@@ -23,77 +25,106 @@ logger.addHandler(ch)
 model_path = "model_1574374374.795886.bin"
 analysis = a.Analysis(model_path)
 
-def register_itself(topic, input_topic,producer):
-    request =     {
+
+def register_itself(kafka_server, topic, input_topic, producer):
+    request = {
         "ComponentId": "DataAnalyser_sentiment",
         "ComponentType": "DATA_ANALYSER",
         "UpdateChannelName": "job_management.job_configuration.DataAnalyser_sentiment",
-        "InputChannelName": input_topic
+        "InputChannelName": input_topic,
+        "attributes": {
+            "outputFormat": {
+                "polarity": "number",
+                "accuracy": "number"
+            }
+        }
     }
-    producer = KafkaProducer(bootstrap_servers=config['kafka_server'])
-    
+    producer = KafkaProducer(bootstrap_servers=kafka_server)
+
     json_request = json.dumps(request)
     post_bytes = json_request.encode('utf-8')
-    future = producer.send(topic,post_bytes)
+    future = producer.send(topic, post_bytes)
     future.get(timeout=60)
     logger.info("Sent registration request: " + json_request)
-    
+
+
 def analyse(text):
     polarity, confidence = analysis.get_text_sentiment(text)
     return {
-        "sentiment_analysis":{
-            "polarity":{
-                "value":polarity,
-                "type":"number"
+        "sentiment_analysis": {
+            "polarity": {
+                "value": polarity,
+                "type": "number"
             },
             # "strength":{
             #     "value":0.1,
             #     "type":"number"
             # },
-            "confidence":{
-                "value":confidence,
-                "type":"number"
+            "confidence": {
+                "value": confidence,
+                "type": "number"
             }
         }
     }
 
+
 def process_acquired_data(config, producer):
-    consumer = KafkaConsumer(config['input_topic'],bootstrap_servers=config['kafka_server'])
-    
+    consumer = KafkaConsumer(
+        config['input_topic'], bootstrap_servers=config['kafka_server'])
+
     while True:
         try:
-            for msg in consumer:     
+            for msg in consumer:
                 try:
-                    #validate that message is unipost
+                    # validate that message is unipost
                     payload = msg.value
                     logger.info("received {}".format(payload))
                     post = json.loads(payload)
-                    analysis= analyse(post["Text"])
+                    text = post["text"]
+                    analysis = analyse(text)
                     json_analysis = json.dumps(analysis)
-                    logger.info("analysed {}".format(json_analysis))
+                    logger.info("analysis. Text:{} results:{}".format(
+                        text, json_analysis))
                     bytes_analysis = json_analysis.encode('utf-8')
-                    future = producer.send(config['output_topic'],bytes_analysis)
+                    future = producer.send(
+                        config['output_topic'], bytes_analysis)
                     future.get(timeout=60)
                 except Exception as e:
                     logger.error(e)
-                
+
         except Exception as e:
             print(e)
             time.sleep(5)
-    
+
+
 def main(config):
+    logger.info("input config: {}".format(config))
+
     producer = KafkaProducer(bootstrap_servers=config['kafka_server'])
 
-    register_itself(config['registration_topic'], config['input_topic'], producer)
+    register_itself(config['kafka_server'],
+                    config['registration_topic'], config['input_topic'], producer)
 
-    process_acquired_data(config,producer)
+    process_acquired_data(config, producer)
 
-config = {
-    "input_topic":"job_management.component_data_input.DataAnalyser_sentiment",
-    "output_topic":"job_management.component_data_analyzed_input.storage_db",
-    "kafka_server":"localhost:9094",
-    "registration_topic":"job_management.registration.request"
+
+parser = argparse.ArgumentParser(description='Configure kafka options')
+parser.add_argument('--server_address', type=str, required=False,
+                    help='address of the kafka server', default="localhost:9094")
+parser.add_argument('--input_topic', type=str, required=False, help='name of the input topic',
+                    default="job_management.component_data_input.DataAnalyser_sentiment")
+parser.add_argument('--output_topic', type=str, required=False, help='address of the kafka server',
+                    default="job_management.component_data_analyzed_input.storage_db")
+parser.add_argument('--registration_topic', type=str, required=False,
+                    help='address of the kafka server', default="job_management.registration.request")
+
+args = parser.parse_args()
+default_config = {
+    "input_topic": args.input_topic,
+    "output_topic": args.output_topic,
+    "kafka_server": args.server_address,
+    "registration_topic": args.registration_topic
 }
 
-main(config)
 
+main(default_config)
