@@ -67,8 +67,6 @@ namespace Domain.JobConfiguration
                 throw new InvalidOperationException($"Could not parse job config {jre.Message}");
             }
 
-            // TODO: this is only temporray solution!!! (Because the command received is null)
-            jobConfig.Command = "start";
             if (jobConfig.Command == null)
             {
                 const string error = "Job notification was not processed. Empty command";
@@ -82,35 +80,30 @@ namespace Domain.JobConfiguration
                 throw new InvalidOperationException(error);
             }
 
-            // TODO separate constants
-            var stopIdentifier = "stop";
-            var startIdentifier = "start";
-            var command = jobConfig.Command.ToLower();
-            if (command == stopIdentifier)
+            switch (jobConfig.Command)
             {
-                await _jobManager.StopJobAsync(jobConfig.JobId);
-            }
-            else if (command == startIdentifier)
-            {
-                try
-                {
-                    await _jobManager.StartNewJobAsync(jobConfig);
-                }
-                catch (JobException e)
-                {
-                    _logger.TrackError(
-                        "StartNewJob", 
-                        "Job failed to start", 
-                        new { 
-                            jobId = jobConfig.JobId ,
-                            exception=e
-                        });
-                }
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(
-                    $"Invalid command identifier {jobConfig.Command}");
+                case JobCommand.Start:
+                    try
+                    {
+                        await _jobManager.StartNewJobAsync(jobConfig);
+                    }
+                    catch (JobException e)
+                    {
+                        _logger.TrackError(
+                            "StartNewJob",
+                            "Job failed to start",
+                            new
+                            {
+                                jobId = jobConfig.JobId,
+                                exception = e
+                            });
+                    }
+                    break;
+                case JobCommand.Stop:
+                    await _jobManager.StopJobAsync(jobConfig.JobId);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

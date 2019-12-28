@@ -39,7 +39,9 @@ namespace Api
                 .PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)
                 .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
             .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
-            var app = builder.BuildWebHost();
+            
+            
+            var app = builder.BuildWebHost(false);
             await InitializeApplication(app);
 
             app.Run();
