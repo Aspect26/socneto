@@ -26,7 +26,6 @@ namespace Infrastructure.DataGenerator
         }
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-            IDataAcquirerMetadataContext context,
             DataAcquirerInputModel jobConfig)
         {
             await Task.Delay(_downloadDelay);
@@ -52,6 +51,7 @@ namespace Infrastructure.DataGenerator
             return DataAcquirerPost.FromValues(
                 Guid.NewGuid().ToString(),
                 postText,
+                "en",
                 postSource,
                 postUser,
                 dateTimeString);

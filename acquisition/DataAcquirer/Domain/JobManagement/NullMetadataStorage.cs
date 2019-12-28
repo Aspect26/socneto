@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Domain.Acquisition;
 
@@ -8,7 +8,7 @@ namespace Domain.JobManagement
     {
         public Task<IDataAcquirerMetadata> GetAsync(Guid jobId)
         {
-            return Task.FromResult((IDataAcquirerMetadata)new NullMetadata());
+            return Task.FromResult<IDataAcquirerMetadata>(null);
         }
 
         public Task SaveAsync(Guid jobId, IDataAcquirerMetadata defaultMetadata)

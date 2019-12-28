@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataGenerator
 {
-    public class MovieDataProvider : IStaticDataProvider, IDisposable
+    public sealed class MovieDataProvider : IStaticDataProvider, IDisposable
     {
         private readonly string _staticDataPath;
         private StreamReader _streamReader;
@@ -30,6 +30,7 @@ namespace Infrastructure.DataGenerator
                     .Select(r => new UniPostStaticData(
                         Guid.NewGuid().ToString(),
                         r.Text,
+                        "en",
                         "MOVIE_DATASET",
                         r.User,
                         DateTime.Now.ToString("s")));

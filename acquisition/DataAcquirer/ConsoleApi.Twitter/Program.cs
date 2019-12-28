@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Domain.JobManagement.Abstract;
 using Infrastructure.DataGenerator;
 using Infrastructure.StaticData;
+using System.Reflection;
 
 namespace ConsoleApi.Twitter
 {
@@ -50,27 +51,34 @@ namespace ConsoleApi.Twitter
                 logging => logging
                 .AddConsole()
                 .SetMinimumLevel(LogLevel.Information));
-            
+
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
 
             services.AddTransient<IJobManager, JobManager>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
-            
+
             services.AddTransient<IDataAcquirer, TwitterDataAcquirer>();
+
+            services.AddSingleton<TwitterContextProvider>();
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
-            services.AddTransient<IMessageBrokerProducer, MockProducer>();
+            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+
+            services.AddSingleton<IMessageBrokerConsumer, MockConsumer>();
+
+            services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
+            services.AddSingleton(typeof(IEventTracker<>), typeof(NullEventTracker<>));
+            // TW
+            services.AddSingleton<IDataAcquirer, TwitterDataAcquirer>()
+              .AddSingleton<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
+              .AddSingleton<IDataAcquirerMetadataStorage, NullMetadataStorage>()
+              .AddSingleton<IDataAcquirerMetadataContext, TwitterMetadataContext>()
+                .AddSingleton<TwitterBatchLoaderFactory>();
             
-            services.AddSingleton<IMessageBrokerConsumer, InteractiveConsumer>();
-            services.AddSingleton<JobManipulationUseCase>();
-
-
             ConfigureCommonOptions(configuration, services);
-
-
             return services.BuildServiceProvider();
         }
 
@@ -92,44 +100,65 @@ namespace ConsoleApi.Twitter
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
 
+            //services.AddOptions<FileProducerOptions>()
+            //    .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
+            //    .ValidateDataAnnotations();
+
             services.AddOptions<TwitterCredentialsOptions>()
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
                 .ValidateDataAnnotations();
+
+            // TW
+
+            var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
+            var directory = new FileInfo(assemblyPath).Directory.FullName;
+            var twitterMetaDir = Path.Combine(directory, "metatw");
+            var jobMetaDir = Path.Combine(directory, "metajob");
+
+            Directory.CreateDirectory(twitterMetaDir);
+            Directory.CreateDirectory(jobMetaDir);
+
+            services.AddOptions<TwitterJsonStorageOptions>()
+                .Bind(configuration.GetSection($"{rootName}:TwitterJsonStorageOptions"))
+                .PostConfigure(o => o.Directory = twitterMetaDir);
+
+            services.AddOptions<DataAcquirerJobFileStorageOptions>()
+                .Bind(configuration.GetSection($"{rootName}:DataAcquirerJobFileStorageOptions"))
+                .PostConfigure(o => o.Directory = jobMetaDir);
         }
 
         public static async Task MainAsync(string[] args)
         {
             var builtProvider = Build();
 
-            var uc = builtProvider.GetRequiredService<JobManipulationUseCase>();
+            var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
-            await uc.SimpleStartStop();
+            var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
 
-            //var jobManager = builtProvider.GetRequiredService<IJobManager>();
+            // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
+            // TODO add NOT cocktail NOT music
+            var query = "snake bite NOT cocktail NOT darts NOT piercing";
+            var jobConfig = new DataAcquirerJobConfig()
+            {
+                Attributes = new Dictionary<string, string>
+                {
+                    {"TopicQuery", query },
+                    {"AccessToken", twitterCredentialsOptions.Value.AccessToken},
+                    {"AccessTokenSecret" , twitterCredentialsOptions.Value.AccessTokenSecret},
+                    {"ApiKey",  twitterCredentialsOptions.Value.ApiKey},
+                    {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
+                },
+                JobId = Guid.NewGuid(),
+                OutputMessageBrokerChannels = new string[] { "job_management.component_data_input.DataAnalyser_sentiment" }
+            };
+            try
+            {
+                await jobManager.StartNewJobAsync(jobConfig);
+            }
+            catch
+            {
 
-            //var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
-
-            //var jobConfig = new DataAcquirerJobConfig()
-            //{
-            //    Attributes = new Dictionary<string, string>
-            //    {
-            //        {"TopicQuery", "capi hnizdo" },
-            //        {"AccessToken", twitterCredentialsOptions.Value.AccessToken},
-            //        {"AccessTokenSecret" , twitterCredentialsOptions.Value.AccessTokenSecret},
-            //        {"ApiKey",  twitterCredentialsOptions.Value.ApiKey},
-            //        {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
-            //    },
-            //    JobId = Guid.NewGuid(),
-            //    OutputMessageBrokerChannels = new string[] { "MOCK-Post-output" }
-            //};
-            //try
-            //{
-            //    await jobManager.StartNewJobAsync(jobConfig);
-            //}
-            //catch
-            //{
-
-            //}
+            }
 
             await Task.Delay(TimeSpan.FromHours(1));
         }

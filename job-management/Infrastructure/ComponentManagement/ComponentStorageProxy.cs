@@ -47,7 +47,7 @@ namespace Infrastructure.ComponentManagement
             _insertComponentJobConfigUriTemplate = baseUri.AbsoluteUri.TrimEnd('/') + componentStorageOptionsAccessor.Value.ComponentJobConfigRoute;
         }
 
-        public async Task<bool> AddOrUpdateAsync(ComponentModel componentRegistrationModel)
+        public async Task AddOrUpdateAsync(ComponentModel componentRegistrationModel)
         {
             var subscribedComponent = new SubscribedComponentPayloadObject
             {
@@ -63,15 +63,10 @@ namespace Infrastructure.ComponentManagement
 
             var response = await _httpClient.PostAsync(_addComponentUri, httpContent);
 
-            if (response.IsSuccessStatusCode)
-            {
-                // TODO validate response, hould be the same as the added entity
-                return true;
-            }
-            else
+            if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
-                throw new InvalidOperationException($"Adding data to storage failed: {error}");
+                throw new InvalidOperationException($"Adding data to storage failed:code:{response.StatusCode} {error}");
             }
         }
 

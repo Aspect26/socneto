@@ -44,8 +44,9 @@ namespace Api
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
 
-            
-            services.AddHttpClient<IJobStorage, JobStorageProxy>();
+#warning using in memory storage
+            // services.AddHttpClient<IJobStorage, JobStorageProxy>();
+            services.AddSingleton<IJobStorage, InMemoryJobStorage>();
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
@@ -56,7 +57,9 @@ namespace Api
 #else
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
-            services.AddHttpClient<IComponentRegistry, ComponentStorageProxy>();
+            //services.AddHttpClient<IComponentRegistry, ComponentStorageProxy>();
+#warning using in memory storage
+            services.AddSingleton<IComponentRegistry, InMemoryRegistry>();
 #endif
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
 

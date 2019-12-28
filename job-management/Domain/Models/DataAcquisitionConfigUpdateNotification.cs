@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.SubmittedJobConfiguration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Domain.Models
@@ -11,7 +13,8 @@ namespace Domain.Models
         public Guid  JobId { get; set; }
         
         [JsonProperty("command")]
-        public string Command { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public JobCommand Command { get; set; }
 
         [JsonProperty("attributes")]
         public JObject Attributes { get; set; }

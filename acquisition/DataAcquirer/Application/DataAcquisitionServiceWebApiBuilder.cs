@@ -10,6 +10,7 @@ using Domain.JobManagement.Abstract;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
+using Infrastructure.Twitter;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,6 +74,18 @@ namespace Application
             return this;
         }
 
+        public DataAcquisitionServiceWebApiBuilder AddSingletonService<TConcrete>()
+          where TConcrete : class
+        {
+            void addSingletonServiceAction(IServiceCollection sp)
+            {
+                sp.AddSingleton<TConcrete>();
+            }
+
+            _singletonServices.Add(addSingletonServiceAction);
+            return this;
+        }
+
         public DataAcquisitionServiceWebApiBuilder PostConfigure<TOptions>(Action<TOptions> action)
             where TOptions : class
         {
@@ -95,9 +108,6 @@ namespace Application
             _transientServices.Add(AddTransientServiceAction);
             return this;
         }
-
-        
-
 
         public IWebHost BuildWebHost(bool? isDevelopment = default)
         {
@@ -151,11 +161,12 @@ namespace Application
 
             //test job replay
 
-            ReplayJobConfigsAsync(webHost).GetAwaiter().GetResult();
+            // ReplayJobConfigsAsync(webHost).GetAwaiter().GetResult();
 
             return webHost;
         }
 
+        [Obsolete("This functionality has been moved to job management servcie",true)]
         private static async Task ReplayJobConfigsAsync(IWebHost webHost)
         {
             var jm = webHost.Services.GetRequiredService<IJobManager>();
@@ -180,6 +191,8 @@ namespace Application
 
             services.AddHostedService<EventSendingHostedService>();
             services.AddSingleton<EventQueue>();
+
+            services.AddSingleton<TwitterContextProvider>();
 
             services.AddSingleton<IJobManager, JobManager>();
 
@@ -218,7 +231,6 @@ namespace Application
         {
             var rootName = "DataAcquisitionService";
 
-
             services.AddOptions<ComponentOptions>()
                 .Bind(configuration.GetSection($"{rootName}:ComponentOptions"))
                 .ValidateDataAnnotations()                ;
@@ -233,7 +245,7 @@ namespace Application
 
 
             services.AddOptions<MockConsumerOptions>()
-                .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
+                .Bind(configuration.GetSection($"{rootName}:MockConsumerOptions"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<LogLevelOptions>()
@@ -241,8 +253,8 @@ namespace Application
                 .ValidateDataAnnotations();
 
             services.AddOptions<SystemMetricsOptions>()
-                    .Bind(configuration.GetSection("DataAcquisitionService:SystemMetricsOptions"))
-                    .ValidateDataAnnotations();
+                .Bind(configuration.GetSection($"{rootName}:SystemMetricsOptions"))
+                .ValidateDataAnnotations();
 
         }
 
