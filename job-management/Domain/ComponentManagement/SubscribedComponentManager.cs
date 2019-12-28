@@ -42,13 +42,7 @@ namespace Domain.ComponentManagement
         {
             try
             {
-                var registered = await _componentRegistry
-                    .AddOrUpdateAsync(componentRegistrationModel);
-
-                if (!registered)
-                {
-                    return SubscribedComponentResultModel.AlreadyExists();
-                }
+                await _componentRegistry.AddOrUpdateAsync(componentRegistrationModel);
 
                 return SubscribedComponentResultModel.Successful();
             }
@@ -108,7 +102,7 @@ namespace Domain.ComponentManagement
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
                     JobId = jobId,
-                    Command = JobCommand.Stop.ToString()
+                    Command = JobCommand.Stop
                 };
                 return JobConfigUpdateResult.Successfull(jobId, JobStatus.Stopped);
                 //var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
@@ -172,6 +166,7 @@ namespace Domain.ComponentManagement
                     JobId = jobConfigUpdateCommand.JobId,
                     Attributes = attributes,
                     OutputMessageBrokerChannels = outputChannels,
+                    Command = JobCommand.Start
                 };
 
                 await NotifyComponent(dataAcquirer, notification);

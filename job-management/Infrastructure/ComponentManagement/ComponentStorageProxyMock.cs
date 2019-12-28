@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Domain.ComponentManagement;
@@ -9,7 +8,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Infrastructure.ComponentManagement
 {
-    public class ComponentStorageProxyMock : IComponentRegistry, IDisposable
+
+
+    public class ComponentStorageProxyMock : IComponentRegistry
     {
         private readonly HttpClient _client;
         private readonly ILogger<ComponentStorageProxyMock> _logger;
@@ -21,7 +22,7 @@ namespace Infrastructure.ComponentManagement
             _client = client;
             _logger = logger;
         }
-        public Task<bool> AddOrUpdateAsync(ComponentModel componentRegistrationModel)
+        public Task AddOrUpdateAsync(ComponentModel componentRegistrationModel)
         {
             _logger.LogWarning($"Mock {nameof(AddOrUpdateAsync)} method was called");
             return Task.FromResult(true);
@@ -47,12 +48,7 @@ namespace Infrastructure.ComponentManagement
                 AcquiredDataInputChannel = "acquiredData"
             };
         }
-
-        public void Dispose()
-        {
-            _client?.Dispose();
-        }
-
+        
         public Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
         {
             return Task.CompletedTask;
