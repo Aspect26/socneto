@@ -39,7 +39,7 @@ namespace Infrastructure.DataGenerator
             {
                 JobId = fixedGuid,
                 Attributes = attributes,
-                Command = "start",
+                Command = JobCommand.Start,
                 OutputMessageBrokerChannels = new string[] { "s1" }
             };
             var queue = new Queue<DataAcquirerJobConfig>();
@@ -60,7 +60,7 @@ namespace Infrastructure.DataGenerator
                 {
                     JobId = Guid.NewGuid(),
                     Attributes = attributes,
-                    Command = "start",
+                    Command = JobCommand.Start,
                     OutputMessageBrokerChannels = new string[] { "o_1" }
                 };
 
