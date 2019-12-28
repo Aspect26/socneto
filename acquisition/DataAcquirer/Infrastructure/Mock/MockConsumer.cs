@@ -17,8 +17,7 @@ namespace Infrastructure.DataGenerator
         private readonly string _consumedTopic;
         private readonly IReadOnlyDictionary<string,string> _customAttributes;
         private readonly Queue<DataAcquirerJobConfig> _configs;
-        private readonly List<string> _topics;
-
+        
         public MockConsumer(
             IOptions<MockConsumerOptions> mockConsumerOptionsAccessor,
             ILogger<MockConsumer> logger)
@@ -33,14 +32,14 @@ namespace Infrastructure.DataGenerator
         public Queue<DataAcquirerJobConfig> GetFixed()
         {
             var attributes = _customAttributes.ToDictionary(r => r.Key, r => r.Value);
-            attributes.Add("TopicQuery", _topics.First());
+            attributes.Add("TopicQuery", "?");
 
             var fixedGuid = Guid.Parse("01c3ee17-c9f4-492f-ac9c-e9f6ecd1fa7e");
             var config= new DataAcquirerJobConfig()
             {
                 JobId = fixedGuid,
                 Attributes = attributes,
-                Command = "start",
+                Command = JobCommand.Start,
                 OutputMessageBrokerChannels = new string[] { "s1" }
             };
             var queue = new Queue<DataAcquirerJobConfig>();
@@ -61,7 +60,7 @@ namespace Infrastructure.DataGenerator
                 {
                     JobId = Guid.NewGuid(),
                     Attributes = attributes,
-                    Command = "start",
+                    Command = JobCommand.Start,
                     OutputMessageBrokerChannels = new string[] { "o_1" }
                 };
 
@@ -86,7 +85,7 @@ namespace Infrastructure.DataGenerator
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
 
-            await Task.Delay(TimeSpan.MaxValue);
+            await Task.Delay(Timeout.InfiniteTimeSpan);
         }
     }
 }

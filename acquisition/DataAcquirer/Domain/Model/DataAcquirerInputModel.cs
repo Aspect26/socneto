@@ -51,7 +51,5 @@ namespace Domain.Model
             earliestRecordId,
             numberOfPostToRetreive);
         }
-
-
     }
 }

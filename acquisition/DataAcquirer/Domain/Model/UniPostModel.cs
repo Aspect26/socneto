@@ -9,15 +9,19 @@ namespace Domain.Model
         private DataAcquirerPost(
          string postId,
          string text,
+         string language,
          string source,
          string userId,
-         string postDateTime)
+         string postDateTime,
+         string query)
         {
             PostId = postId;
             Text = text;
+            Language = language;
             UserId = userId;
             Source = source;
             PostDateTime = postDateTime;
+            Query = query;
         }
 
         public string PostId { get; }
@@ -29,15 +33,19 @@ namespace Domain.Model
         public string UserId { get; }
 
         public string PostDateTime { get; }
+        public string Query { get; }
+        public string Language { get; }
 
         public static DataAcquirerPost FromValues(
             string postId,
             string text,
+            string language,
             string source,
             string userId,
-            string dateTimeString)
+            string dateTimeString,
+            string query = null)
         {
-            return new DataAcquirerPost(postId, text, source, userId, dateTimeString);
+            return new DataAcquirerPost(postId, text,language, source, userId, dateTimeString,query);
         }
     }
 
@@ -47,17 +55,21 @@ namespace Domain.Model
         private UniPostModel(
             string postId,
             string text,
+            string language,
             string source,
             string userId,
             string postDateTime,
-            Guid jobId)
+            Guid jobId,
+            string query)
         {
             PostId = postId;
             Text = text;
+            Language = language;
             UserId = userId;
             Source = source;
             PostDateTime = postDateTime;
             JobId = jobId;
+            Query = query;
         }
 
         [JsonProperty("postId")]
@@ -66,9 +78,13 @@ namespace Domain.Model
         [JsonProperty("jobId")]
         public Guid JobId { get; }
 
+        [JsonProperty("query")]
+        public string Query { get; }
         [JsonProperty("text")]
         public string Text { get; }
 
+        [JsonProperty("language")]
+        public string Language { get; }
         [JsonProperty("source")]
         public string Source { get; }
 
@@ -81,13 +97,15 @@ namespace Domain.Model
         public static UniPostModel FromValues(
             string postId,
             string text,
+            string language,
             string source,
             string userId,
             string dateTimeString,
-            Guid jobId)
+            Guid jobId,
+            string query)
         {
 
-            return new UniPostModel(postId, text, source, userId, dateTimeString, jobId);
+            return new UniPostModel(postId, text,language, source, userId, dateTimeString, jobId,query);
         }
 
 

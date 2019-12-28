@@ -30,7 +30,6 @@ namespace Infrastructure.DataGenerator
         }
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-            IDataAcquirerMetadataContext context,
             DataAcquirerInputModel acquirerInputModel)
         {
             ulong id = 0;
@@ -44,6 +43,7 @@ namespace Infrastructure.DataGenerator
                      DataAcquirerPost.FromValues(
                         post.PostId,
                         post.Text,
+                        post.Language,
                         post.Source,
                         post.UserId,
                         post.PostDateTime))

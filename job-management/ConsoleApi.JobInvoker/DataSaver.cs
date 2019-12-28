@@ -8,24 +8,25 @@ using Domain.Abstract;
 using Infrastructure.Kafka;
 using Microsoft.Extensions.Logging;
 
-namespace ConsoleApi.KafkaMock
+namespace ConsoleApi.JobInvoker
 {
-
-    public class PostSaver
+    public class DataSaver
     {
         private readonly IMessageBrokerConsumer _kafkaConsumer;
-        private readonly ILogger<PostSaver> _logger;
+        private readonly ILogger<DataSaver> _logger;
         
-        public PostSaver(
+        public DataSaver(
             IMessageBrokerConsumer kafkaConsumer,
-            ILogger<PostSaver> logger)
+            ILogger<DataSaver> logger)
         {
             _kafkaConsumer = kafkaConsumer;
             _logger = logger;            
         }
 
 
-        public async Task ListenAndSaveAsync(string topic, DirectoryInfo directory, CancellationToken cancellationToken)
+        public async Task ListenAndSaveAsync(string topic, 
+            DirectoryInfo directory, 
+            CancellationToken cancellationToken)
         {
             _logger.LogInformation("started listening for '{topic}'", topic);
             var ts = DateTime.Now.ToString("s").Replace(":", "").Replace("-", "");
@@ -50,7 +51,7 @@ namespace ConsoleApi.KafkaMock
 
         private async Task SaveAsync(string json, FileInfo filePath)
         {
-            _logger.LogTrace("Post saved. TS: {timestamp}, post {post}" , 
+            _logger.LogTrace("DataObjectSaved saved. TS: {timestamp}, post {post}" , 
                 DateTime.Now.ToString("s"),
                 json);
             using (var writer = new StreamWriter(filePath.FullName, append: true))

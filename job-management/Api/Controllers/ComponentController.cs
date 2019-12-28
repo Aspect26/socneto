@@ -22,15 +22,13 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("/api/job/submit")]
-        public async Task<ActionResult<JobResponse>> SubmitJob(
-            
-            )
+        public async Task<ActionResult<JobResponse>> SubmitJob()
         {
             var body = await new System.IO.StreamReader(this.Request.Body).ReadToEndAsync();
             JobSubmitRequest jobSubmitRequest = JsonConvert.DeserializeObject<JobSubmitRequest>(body);
             if (jobSubmitRequest == null)
             {
-                return BadRequest("Body not found");
+                return BadRequest("Invalid body");
             }
             if (jobSubmitRequest?.SelectedDataAnalysers?.Any() == false)
             {
@@ -59,9 +57,9 @@ namespace Api.Controllers
             {
                 return BadRequest($"Job submit failed, error: {configUpdateResult.Error}");
             }
-            
+
             var jobSubmitResponse = new JobResponse(
-                configUpdateResult.JobId, 
+                configUpdateResult.JobId,
                 configUpdateResult.Status);
             return Ok(jobSubmitResponse);
         }
@@ -71,7 +69,7 @@ namespace Api.Controllers
         public async Task<ActionResult<JobResponse>> StopJob(
             [FromRoute]Guid jobId)
         {
-            var result=   await _subscribedComponentManager.StopJob(jobId);
+            var result = await _subscribedComponentManager.StopJob(jobId);
 
             if (result.HasError)
             {
