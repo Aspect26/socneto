@@ -1,7 +1,8 @@
-﻿using Domain;
+using Domain;
 using LinqToTwitter;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace Infrastructure.Twitter
 {
     public class TwitterContextProvider
     {
-        private readonly Dictionary<string, TwitterContext> _contextPerUser
-            = new Dictionary<string, TwitterContext>();
+        private readonly ConcurrentDictionary<string, TwitterContext> _contextPerUser
+            = new ConcurrentDictionary<string, TwitterContext>();
         private readonly IEventTracker<TwitterContextProvider> _eventTracker;
         private readonly ILogger<TwitterContextProvider> _logger;
 
@@ -57,7 +58,7 @@ namespace Infrastructure.Twitter
                     && r.Count == 1)
                     .SingleOrDefaultAsync();
 
-                _contextPerUser[key] = newContext;
+                _contextPerUser.TryAdd(key, newContext);
                 return newContext;
 
             }
