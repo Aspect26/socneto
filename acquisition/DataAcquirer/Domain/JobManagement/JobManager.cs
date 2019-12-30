@@ -163,15 +163,17 @@ namespace Domain.JobManagement
 
                 await foreach (var dataPost in batch)
                 {
+                    var postId = Guid.NewGuid();
                     var uniPost = UniPostModel.FromValues(
-                        dataPost.PostId,
+                        postId,
+                        dataPost.OriginalPostId,
                         dataPost.Text,
                         dataPost.Language,
                         dataPost.Source,
                         dataPost.UserId,
                         dataPost.PostDateTime,
                         dataAcquirerInputModel.JobId,
-                        dataPost.Query);
+                        dataPost.Query) ;
 
                     var jsonData = JsonConvert.SerializeObject(uniPost);
                     var messageBrokerMessage = new MessageBrokerMessage(

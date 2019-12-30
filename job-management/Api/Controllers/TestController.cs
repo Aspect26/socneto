@@ -29,9 +29,9 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("/api/test/say-hello")]
-        public async Task<ActionResult> SayHelloAsync()
+        public Task<ActionResult> SayHelloAsync()
         {
-            return Ok(new { message = "hello" });
+            return Task.FromResult<ActionResult>( Ok(new { message = "hello" }));
         }
 
         [HttpGet]
