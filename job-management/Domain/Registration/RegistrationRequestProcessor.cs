@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Domain.JobStorage;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace Domain.Registration
 {
@@ -105,14 +106,23 @@ namespace Domain.Registration
 
             await _messageBrokerApi.CreateChannel(channelModel);
 
-            try
+            while (true)
             {
-                await ReplayComponentsJobConfigs(channelModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Could not perform replay - exception: {exception}", e);
-                throw new InvalidOperationException("could not replay components job config", e);
+                try
+                {
+                    await ReplayComponentsJobConfigs(channelModel);
+                    break;
+                }
+                catch (HttpRequestException hre) when (hre.Message.Contains("Connection refused"))
+                {
+                    _logger.LogError("Could not contact storage. Will try again");
+                    await Task.Delay(TimeSpan.FromSeconds(30));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Could not perform replay - exception: {exception}", e);
+                    throw new InvalidOperationException("could not replay components job config", e);
+                }
             }
         }
 

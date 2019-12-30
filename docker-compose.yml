@@ -86,6 +86,7 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
+  
   jms:
     build: './job-management'
     ports:
@@ -96,5 +97,26 @@ services:
       - kafka
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
+
+  sentiment-analyser:
+    container_name: se
+    build: './analysers/sentiment_analysis' 
+    # build: 
+    #   shm_size: 2gb
+    #   context: './analysers/sentiment_analysis'
+    #   dockerfile: './analysers/sentiment_analysis/dockerfile'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+  
+  twitter-acquirer:
+    container_name: tw-acquirer
+    build: './acquisition/DataAcquirer'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+  
 volumes:
   data01:

@@ -26,7 +26,7 @@ model_path = "model_1574374374.795886.bin"
 analysis = a.Analysis(model_path)
 
 
-def register_itself(kafka_server, topic, input_topic, componentId, producer):
+def register_itself(topic, input_topic, componentId, producer):
     request = {
         "ComponentId": componentId,
         "ComponentType": "DATA_ANALYSER",
@@ -39,7 +39,6 @@ def register_itself(kafka_server, topic, input_topic, componentId, producer):
             }
         }
     }
-    producer = KafkaProducer(bootstrap_servers=kafka_server)
 
     json_request = json.dumps(request)
     post_bytes = json_request.encode('utf-8')
@@ -83,10 +82,10 @@ def process_acquired_data(config, producer):
                     text = post["text"]
                     analysis = analyse(text)
                     result = {
-                        "postId":post["postId"],
-                        "jobId":post["jobId"],
-                        "componentId":config["componentId"],
-                        "results":analysis
+                        "postId": post["postId"],
+                        "jobId": post["jobId"],
+                        "componentId": config["componentId"],
+                        "results": analysis
                     }
                     json_result = json.dumps(result)
                     bytes_analysis = json_result.encode('utf-8')
@@ -106,15 +105,22 @@ def process_acquired_data(config, producer):
 def main(config):
     logger.info("input config: {}".format(config))
 
-    producer = KafkaProducer(bootstrap_servers=config['kafka_server'])
+    producer = None
+    while True:
+        try:
+            producer = KafkaProducer(bootstrap_servers=config['kafka_server'])
+            logger.info("producer connected")
+            break
+        except Exception as e:
+            print(e)
 
-    register_itself(config['kafka_server'],
-                    config['registration_topic'], 
+    register_itself(config['registration_topic'],
                     config['input_topic'],
                     config['componentId'],
-                     producer)
+                    producer)
 
     process_acquired_data(config, producer)
+
 
 parser = argparse.ArgumentParser(description='Configure kafka options')
 parser.add_argument('--server_address', type=str, required=False,
@@ -127,15 +133,22 @@ parser.add_argument('--registration_topic', type=str, required=False,
                     help='address of the kafka server', default="job_management.registration.request")
 parser.add_argument('--component_id', type=str, required=False,
                     help='id of the component', default="DataAnalyser_sentiment")
+parser.add_argument('--sleep_on_startup', action='store_true', required=False,
+                    help='id of the component', default=False)
 
 args = parser.parse_args()
+
 default_config = {
     "input_topic": args.input_topic,
     "output_topic": args.output_topic,
     "kafka_server": args.server_address,
     "registration_topic": args.registration_topic,
-    "componentId":args.component_id
+    "componentId": args.component_id
 }
+
+if args.sleep_on_startup:
+    print("Waiting a minute")
+    time.sleep(180)
 
 
 main(default_config)

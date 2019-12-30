@@ -125,8 +125,7 @@ namespace Infrastructure.ComponentManagement
         {
             var getUriWithParams = _getComponentUri
                 .AbsoluteUri
-                .Replace("componentId",
-                componentId);
+                .Replace("componentId", componentId);
 
             var response = await _httpClient.GetAsync(getUriWithParams);
 

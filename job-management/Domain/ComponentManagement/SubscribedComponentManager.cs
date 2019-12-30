@@ -152,14 +152,12 @@ namespace Domain.ComponentManagement
                     attributes.Add(topicQuery);
                     var languageProperty = new JProperty("Language", jobConfigUpdateCommand.Language);
                     attributes.Add(languageProperty);
-
                 }
                 catch (Exception e)
                 {
-
+                    _logger.LogError("Error while adding attributes: {exception}", e);
                     throw;
                 }
-
 
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
