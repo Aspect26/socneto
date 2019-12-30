@@ -14,7 +14,6 @@ namespace Api
 {
     public class Program
     {
-
         public static void Main(string[] args)
         {
             var app = CreateWebHostBuilder(args).Build();
@@ -24,7 +23,7 @@ namespace Api
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                    .UseStartup<Startup>();
+               .UseStartup<Startup>();
         }
     }
 }

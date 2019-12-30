@@ -33,7 +33,7 @@ namespace Infrastructure.Kafka
             var config = new ConsumerConfig
             {
                 BootstrapServers = _serverAddress,
-                GroupId = "my-consumer-group" + Guid.NewGuid(),
+                GroupId = "my-consumer-group" + Guid.NewGuid().ToString(),
                 EnableAutoCommit = false,
                 StatisticsIntervalMs = 5000,
                 SessionTimeoutMs = 6000,

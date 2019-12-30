@@ -30,7 +30,6 @@ namespace ConsoleApi.Reddit
         }
         static async Task MainAsync(string[] args)
         {
-
             // 1) Invoke-WebRequest  "https://www.reddit.com/api/v1/authorize?client_id=Mx2Rp1J2roDMdg&response_type=code&state=wtfisthis&redirect_uri=http://localhost:8080&duration=permanent&scope=read"
             // the same url with sanitizek uri https://www.reddit.com/api/v1/authorize?client_id=Mx2Rp1J2roDMdg&response_type=code&state=wtfisthis&redirect_uri=http%3A%2F%2Flocalhost%3A8080&duration=permanent&scope=read
 
