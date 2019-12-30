@@ -21,6 +21,11 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
+            if (args.Contains("--sleep_on_startup"))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(180));
+            }
+
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
             var directory = new FileInfo(assemblyPath).Directory.FullName; 
             var twitterMetaDir = Path.Combine(directory, "metatw");
@@ -44,7 +49,7 @@ namespace Api
             var app = builder.BuildWebHost(false);
             await InitializeApplication(app);
 
-            app.Run();
+            await app.RunAsync();
         }
 
         private static async Task InitializeApplication(IWebHost app)

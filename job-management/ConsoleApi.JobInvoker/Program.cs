@@ -4,14 +4,9 @@ using Infrastructure.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -94,11 +89,13 @@ namespace ConsoleApi.JobInvoker
             var builder = new ConfigurationBuilder()
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-            var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (aspNetCoreEnv == "Development")
-            {
-                builder.AddJsonFile($"appsettings.Development.json", true, true);
-            }
+            //var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            //if (aspNetCoreEnv == "Development")
+            //{
+#if DEBUG
+            builder.AddJsonFile($"appsettings.Development.json", true, true);
+#endif
+            //}
             var configuration = builder.Build();
 
             var services = new ServiceCollection();
@@ -130,43 +127,6 @@ namespace ConsoleApi.JobInvoker
             return services.BuildServiceProvider();
         }
 
-    }
-
-    public class JobInvokerOptions
-    {
-        [Required]
-        public Uri JobSubmitUri { get; set; }
-    }
-    public class Invoker
-    {
-        private readonly JobInvokerOptions _jobInvokerOptions;
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<Invoker> _logger;
-
-        public Invoker(
-            IOptions<JobInvokerOptions> jobInvokerOptions,
-            HttpClient httpClient,
-            ILogger<Invoker> logger)
-        {
-            _jobInvokerOptions = jobInvokerOptions.Value;
-            _httpClient = httpClient;
-            _logger = logger;
-        }
-
-        public async Task InvokeCommand(JobSubmitRequest request)
-        {
-            var contentJson = JsonConvert.SerializeObject(request);
-            var stringContent = new StringContent(contentJson, Encoding.UTF8, "application/json");
-            using (var r = await _httpClient.PostAsync(_jobInvokerOptions.JobSubmitUri, stringContent))
-            {
-                
-                if(!r.IsSuccessStatusCode)
-                {
-                    var err = await r.Content.ReadAsStringAsync();
-                    _logger.LogError("Error on jms side: {error}", err);
-                }
-            }
-        }
     }
 
 }

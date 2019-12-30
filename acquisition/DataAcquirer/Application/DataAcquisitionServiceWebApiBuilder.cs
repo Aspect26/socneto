@@ -118,9 +118,7 @@ namespace Application
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             
-            var isDevelopmentBool = isDevelopment ?? aspNetCoreEnv == "Development";
-
-            if (isDevelopmentBool)
+            if (aspNetCoreEnv == "Development")
             {
                 builder.AddJsonFile($"appsettings.Development.json", true, true);
             }
@@ -139,7 +137,7 @@ namespace Application
                     environment = hostingContext.HostingEnvironment;
                 })
                 .ConfigureServices(services =>
-                    ConfigureServices(services, configuration, isDevelopmentBool))
+                    ConfigureServices(services, configuration, isDevelopment ?? false))
                 .Configure(app =>
                 {
                     if (environment.IsDevelopment())

@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "./main.py", "--server_address","kafka:9092" ]
+CMD [ "python", "./main.py", "--server_address","kafka:9092" , "--sleep_on_startup"]
