@@ -1,0 +1,98 @@
+2019-12-31T19:26:49.0417407+01:00  [INF] Sending registration request (2a639451)
+2019-12-31T19:26:51.8642076+01:00  [ERR] localhost:9094/bootstrap: Connect to ipv4#127.0.0.1:9094 failed: No connection could be made because the target machine actively refused it... (after 2014ms in state CONNECT) (ef95e6b7)
+2019-12-31T19:26:51.8675693+01:00  [ERR] 1/1 brokers are down (e2dcb415)
+2019-12-31T19:27:49.5068839+01:00  [INF] Sending registration request (2a639451)
+2019-12-31T19:27:49.6803114+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:27:49.6825984+01:00  [INF] Service "DataAcquisitionService" register request sent (ccfa4753)
+2019-12-31T19:27:49.8202462+01:00  [INF] User profile is available. Using '"C:\Users\Jry\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2019-12-31T19:27:49.9549212+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" started (605c0d96)
+2019-12-31T19:27:49.9597342+01:00  [INF] Logging service started (436ce12d)
+2019-12-31T19:27:49.9912263+01:00  [INF] "StartNewJob":"Starting listening"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"channelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}" (7c770f49)
+2019-12-31T19:27:50.0049443+01:00  [INF] Consuming topic {} (c8aa1843)
+2019-12-31T19:27:50.1260201+01:00  [INF] "StartNewJob":"Config recieved"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":{\"jobId\":\"0a717784-30e5-46b2-8651-9a102631a9bc\",\"command\":\"Start\",\"attributes\":{\"TopicQuery\":\"apple\"},\"outputMessageBrokerChannels\":[\"o_1\"]}}" (7c770f49)
+2019-12-31T19:27:50.2846712+01:00  [ERR] "RunJob":"Job encountered an error and stopped."
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"jobId\":\"0a717784-30e5-46b2-8651-9a102631a9bc\",\"exception\":{\"ClassName\":\"System.ArgumentNullException\",\"Message\":\"Value cannot be null.\",\"Data\":null,\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":\"   at System.IO.Path.GetFullPath(String path)\r\n   at System.IO.DirectoryInfo..ctor(String path)\r\n   at Domain.JobConfiguration.DataAcquirerJobFileStorage.SaveAsync(Guid jobId, DataAcquirerJobConfig jobConfig) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Domain\\JobConfiguration\\DataAcquirerJobFileStorage.cs:line 75\r\n   at Domain.JobManagement.JobManager.RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Domain\\JobManagement\\JobManager.cs:line 145\",\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"ExceptionMethod\":null,\"HResult\":-2147467261,\"Source\":\"System.Private.CoreLib\",\"WatsonBuckets\":null,\"ParamName\":\"path\"}}" (7c770f49)
+2019-12-31T19:27:50.2967349+01:00  [INF] "StartNewJob":"Job removed"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":\"0a717784-30e5-46b2-8651-9a102631a9bc\"}" (7c770f49)
+2019-12-31T19:29:06.6204763+01:00  [INF] Sending registration request (2a639451)
+2019-12-31T19:29:06.9071149+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:29:06.9101821+01:00  [INF] Service "DataAcquisitionService" register request sent (ccfa4753)
+2019-12-31T19:29:07.0778616+01:00  [INF] User profile is available. Using '"C:\Users\Jry\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2019-12-31T19:29:07.1949549+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" started (605c0d96)
+2019-12-31T19:29:07.2030034+01:00  [INF] Logging service started (436ce12d)
+2019-12-31T19:29:07.2906731+01:00  [INF] "StartNewJob":"Starting listening"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"channelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}" (7c770f49)
+2019-12-31T19:29:07.2994529+01:00  [INF] Consuming topic {} (c8aa1843)
+2019-12-31T19:29:07.4704763+01:00  [INF] "StartNewJob":"Config recieved"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":{\"jobId\":\"536140c3-b26d-4b72-b0b2-de69c32904c0\",\"command\":\"Start\",\"attributes\":{\"TopicQuery\":\"apple\"},\"outputMessageBrokerChannels\":[\"o_1\"]}}" (7c770f49)
+2019-12-31T19:29:07.5951109+01:00  [ERR] "RunJob":"Job encountered an error and stopped."
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"jobId\":\"536140c3-b26d-4b72-b0b2-de69c32904c0\",\"exception\":{\"ClassName\":\"System.ArgumentNullException\",\"Message\":\"Value cannot be null.\",\"Data\":null,\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":\"   at System.IO.Path.GetFullPath(String path)\r\n   at System.IO.DirectoryInfo..ctor(String path)\r\n   at Domain.JobConfiguration.DataAcquirerJobFileStorage.SaveAsync(Guid jobId, DataAcquirerJobConfig jobConfig) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Domain\\JobConfiguration\\DataAcquirerJobFileStorage.cs:line 75\r\n   at Domain.JobManagement.JobManager.RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Domain\\JobManagement\\JobManager.cs:line 145\",\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"ExceptionMethod\":null,\"HResult\":-2147467261,\"Source\":\"System.Private.CoreLib\",\"WatsonBuckets\":null,\"ParamName\":\"path\"}}" (7c770f49)
+2019-12-31T19:29:07.6034152+01:00  [INF] "StartNewJob":"Job removed"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":\"536140c3-b26d-4b72-b0b2-de69c32904c0\"}" (7c770f49)
+2019-12-31T19:29:12.2086678+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:29:12.2114002+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:29:12.2158478+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:29:12.2187833+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:38:40.2653327+01:00  [INF] Sending registration request (2a639451)
+2019-12-31T19:38:40.6432970+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:38:40.6549473+01:00  [INF] Service "DataAcquisitionService" register request sent (ccfa4753)
+2019-12-31T19:38:40.7865974+01:00  [INF] User profile is available. Using '"C:\Users\Jry\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2019-12-31T19:38:40.9804945+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" started (605c0d96)
+2019-12-31T19:38:40.9917701+01:00  [INF] Logging service started (436ce12d)
+2019-12-31T19:38:41.0565568+01:00  [INF] "StartNewJob":"Starting listening"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"channelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}" (7c770f49)
+2019-12-31T19:38:41.0644311+01:00  [INF] Consuming topic {} (c8aa1843)
+2019-12-31T19:38:41.2985923+01:00  [INF] "StartNewJob":"Config recieved"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":{\"jobId\":\"5eb1c5ff-35dd-4b4c-8d88-b7b60f6d1506\",\"command\":\"Start\",\"attributes\":{\"TopicQuery\":\"apple\"},\"outputMessageBrokerChannels\":[\"o_1\"]}}" (7c770f49)
+2019-12-31T19:38:41.3133655+01:00  [WRN] "AcquirerJobsAlreadyExists":"The job for acquirer already exists"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"jobId\":\"5eb1c5ff-35dd-4b4c-8d88-b7b60f6d1506\",\"config\":{\"jobId\":\"5eb1c5ff-35dd-4b4c-8d88-b7b60f6d1506\",\"command\":\"Start\",\"attributes\":{\"TopicQuery\":\"apple\"},\"outputMessageBrokerChannels\":[\"o_1\"]}}" (7c770f49)
+2019-12-31T19:38:41.5096424+01:00  [ERR] "RunJob":"Job encountered an error and stopped."
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"jobId\":\"5eb1c5ff-35dd-4b4c-8d88-b7b60f6d1506\",\"exception\":{\"ClassName\":\"System.ArgumentException\",\"Message\":\"Credentials field contains null value\",\"Data\":null,\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":\"   at Infrastructure.Reddit.RedditContextProvider.GetContextAsync(RedditCredentials credentials) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Infrastructure\\Reddit\\RedditContextProvider.cs:line 37\r\n   at Infrastructure.Reddit.RedditDataAcquirer.GetPostsAsync(DataAcquirerInputModel acquirerInputModel)+MoveNext() in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Infrastructure\\Reddit\\RedditDataAcquirer.cs:line 35\r\n   at Infrastructure.Reddit.RedditDataAcquirer.GetPostsAsync(DataAcquirerInputModel acquirerInputModel)+System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult()\r\n   at Domain.JobManagement.JobManager.RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Domain\\JobManagement\\JobManager.cs:line 164\r\n   at Domain.JobManagement.JobManager.RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken) in D:\\swproj\\socneto\\acquisition\\DataAcquirer\\Domain\\JobManagement\\JobManager.cs:line 164\",\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"ExceptionMethod\":null,\"HResult\":-2147024809,\"Source\":\"Infrastructure\",\"WatsonBuckets\":null,\"ParamName\":\"credentials\"}}" (7c770f49)
+2019-12-31T19:38:41.5169723+01:00  [INF] "StartNewJob":"Job removed"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":\"5eb1c5ff-35dd-4b4c-8d88-b7b60f6d1506\"}" (7c770f49)
+2019-12-31T19:38:46.0066472+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:38:46.0093772+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:38:46.0116862+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:38:46.0147443+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:38:46.0171266+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:40:30.4910675+01:00  [INF] Sending registration request (2a639451)
+2019-12-31T19:40:30.6741851+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:40:30.6763638+01:00  [INF] Service "DataAcquisitionService" register request sent (ccfa4753)
+2019-12-31T19:40:30.7696437+01:00  [INF] User profile is available. Using '"C:\Users\Jry\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2019-12-31T19:40:30.8317006+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" started (605c0d96)
+2019-12-31T19:40:30.8369992+01:00  [INF] Logging service started (436ce12d)
+2019-12-31T19:40:30.8595266+01:00  [INF] "StartNewJob":"Starting listening"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"channelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}" (7c770f49)
+2019-12-31T19:40:30.8708762+01:00  [INF] Consuming topic {} (c8aa1843)
+2019-12-31T19:40:30.9735159+01:00  [INF] "StartNewJob":"Config recieved"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"config\":{\"jobId\":\"d7d077d7-5df6-43c5-96b6-61427a67a76c\",\"command\":\"Start\",\"attributes\":{\"TopicQuery\":\"apple\"},\"outputMessageBrokerChannels\":[\"o_1\"]}}" (7c770f49)
+2019-12-31T19:40:30.9836055+01:00  [WRN] "AcquirerJobsAlreadyExists":"The job for acquirer already exists"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"jobId\":\"d7d077d7-5df6-43c5-96b6-61427a67a76c\",\"config\":{\"jobId\":\"d7d077d7-5df6-43c5-96b6-61427a67a76c\",\"command\":\"Start\",\"attributes\":{\"TopicQuery\":\"apple\"},\"outputMessageBrokerChannels\":[\"o_1\"]}}" (7c770f49)
+2019-12-31T19:40:54.4196537+01:00  [INF] Sending registration request (2a639451)
+2019-12-31T19:40:54.7383971+01:00  [INF] Topic {}, Message {} (1ee75338)
+2019-12-31T19:40:54.7404895+01:00  [INF] Service "DataAcquisitionService" register request sent (ccfa4753)
+2019-12-31T19:40:54.8282932+01:00  [INF] User profile is available. Using '"C:\Users\Jry\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2019-12-31T19:40:54.9031870+01:00  [INF] Service "JobConfigurationUpdateListenerHostedService" started (605c0d96)
+2019-12-31T19:40:54.9085144+01:00  [INF] Logging service started (436ce12d)
+2019-12-31T19:40:54.9372916+01:00  [INF] "StartNewJob":"Starting listening"
+On component: "{\"ComponentType\":\"DATA_ACQUIRER\",\"ComponentId\":\"DataAcquirer_Reddit\",\"InputChannelName\":\"n/a\",\"UpdateChannelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}"
+Attributes:"{\"channelName\":\"job_management.job_configuration.DataAcquirer_Reddit\"}" (7c770f49)
+2019-12-31T19:40:54.9423620+01:00  [INF] Consuming topic {} (c8aa1843)
