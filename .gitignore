@@ -348,5 +348,5 @@ MigrationBackup/
 # our
 **/appsettings.Development.json
 /analysers/sentiment_analysis/model_1574374374.795886.bin
-Logs/*
+**/Logs/*
 /acquisition/DataAcquirer/WebApi.StaticData/Logs/*
