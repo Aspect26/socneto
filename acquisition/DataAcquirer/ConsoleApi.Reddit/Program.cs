@@ -21,6 +21,7 @@ using Reddit.Inputs.Search;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -198,15 +199,26 @@ namespace ConsoleApi.Reddit
                 appId: "Mx2Rp1J2roDMdg",
                 appSecret: "eDT3-0no1WHyTuBWTLoNDQNUqWA",
                 refreshToken: "291925913345-DFbyOHX5f6zz-__Dqbr41jCOoPs");
-
+            var indices = Enumerable.Range(0, 100);
             // ei33zr
             // ei37wh
             string after = null;
-            var limit = 5;
+            var limit = 50;
             //var before = "ei2mja";
-            DateTime? before = DateTime.Parse("31.12.2019 15:40:28");
-            var query = "\"new year\"";
+            DateTime? before = null;
+            var query = "university OR study OR studying OR college NOT football";
             // Since we only need the posts, there's no need to call .About() on this one.  --Kris
+            int total = 0;
+            string MaxStr(string a, string b)
+            {
+                var cmp = StringComparer.Create(CultureInfo.InvariantCulture, false);
+
+                if (cmp.Compare(a, b) > 0)
+                {
+                    return a;
+                }
+                return b;
+            }
 
             DateTime Max(DateTime a, DateTime? b)
             {
@@ -221,18 +233,25 @@ namespace ConsoleApi.Reddit
                 }
                 return a;
             }
-            List<Post> get(RedditClient reddit, string after, int limit, string query, int count)
+            List<Post> get(
+                RedditClient reddit,
+                string after,
+                int limit,
+                string query,
+                int count)
             {
                 var searchInput = new SearchGetSearchInput(
                                         q: query,
                                         after: after,
-                                        limit: limit);
+                                        //  before:before,
+                                        limit: limit,
+                                        count: count);
                 return reddit.Search(searchInput);
             }
+            var subs = new ConcurrentDictionary<string, int>();
             while (true)
             {
                 var maxBefore = before;
-
                 var count = 0;
                 var postListing = get(reddit, after, limit, query, count);
                 var outDated = false;
@@ -247,18 +266,30 @@ namespace ConsoleApi.Reddit
                             Console.WriteLine("Outdated encountered");
                             break;
                         }
+                        
                         count++;
+                        subs.AddOrUpdate(item.Subreddit, 1, (k, v) => v + 1);
                         maxBefore = Max(item.Created, maxBefore);
                         var title = item.Title;
                         var text = item.Listing.SelfText;
-                        if (text.Length > 20)
+                        var subLength = 20000;
+                        if (text.Length > subLength)
                         {
-                            text = text.Substring(0, 20);
+                            text = text.Substring(0, subLength);
                         }
                         Console.WriteLine($"{item.Fullname} {item.Listing.CreatedUTC}");
-                        //Console.WriteLine($"\t{title}");
-                        //Console.WriteLine($"\t{text}");
+                        Console.WriteLine($"\t{title}");
+                        Console.WriteLine($"\t{text}");
+                        var comments = item.Comments.GetTop(100);
+                        foreach (var (i, c) in indices.Zip(comments))
+                        {
+                            Console.WriteLine($"C-{$"{i:00}"}:\t{c.Body}");
+                        }
+                        Console.WriteLine(string.Concat(Enumerable.Range(0, 80).Select(r => "*")));
+
+
                     }
+                    PrintDict(subs, total + count);
                     if (outDated)
                     {
                         Console.WriteLine("outdated");
@@ -269,13 +300,30 @@ namespace ConsoleApi.Reddit
                     postListing = get(reddit, after, limit, query, count);
                 }
                 before = maxBefore;
-                Console.WriteLine($"waiting: before; {before}, after: {after}, c:{count} ");
+                Console.WriteLine($"waiting: before; {before} after: {after}, c:{count} ");
+                total += count;
+
+                PrintDict(subs, total);
                 after = null;
                 count = 0;
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
 
+        private static void PrintDict(ConcurrentDictionary<string, int> subs, int total)
+        {
+            Console.WriteLine($"total:{total}");
+            foreach (var (k, v) in subs
+                                .OrderByDescending(r => r.Value)
+                                .Take(10))
+            {
+                Console.WriteLine($"\t{k}:{v}");
+            }
+            if (subs.TryGetValue("ApplyingToCollege", out var val))
+            {
+                Console.WriteLine($"applying: {val}");
+            }
+        }
 
 
         private static List<Post> GetPosts(
