@@ -117,7 +117,7 @@ namespace Application
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            
+
             if (aspNetCoreEnv == "Development")
             {
                 builder.AddJsonFile($"appsettings.Development.json", true, true);
@@ -126,7 +126,7 @@ namespace Application
             var configuration = builder.Build();
             var webHost = WebHost
                 .CreateDefaultBuilder(_args)
-                .ConfigureLogging(logging=>
+                .ConfigureLogging(logging =>
                 {
                     logging.AddFile("Logs/ts-{Date}.txt");
                     logging.AddConfiguration(configuration.GetSection("Logging"));
@@ -144,7 +144,7 @@ namespace Application
                     {
                         app.UseDeveloperExceptionPage();
                     }
-                    
+
                     app.UseRouting();
 
                     app.UseEndpoints(endpoints =>
@@ -164,19 +164,6 @@ namespace Application
             return webHost;
         }
 
-        [Obsolete("This functionality has been moved to job management servcie",true)]
-        private static async Task ReplayJobConfigsAsync(IWebHost webHost)
-        {
-            var jm = webHost.Services.GetRequiredService<IJobManager>();
-            var js = webHost.Services.GetRequiredService<IDataAcquirerJobStorage>();
-
-            var jobs = await js.GetAllAsync();
-            foreach (var job in jobs)
-            {
-                await jm.StartNewJobAsync(job);
-            }
-        }
-
         private void ConfigureServices(
             IServiceCollection services,
             IConfiguration configuration,
@@ -190,12 +177,10 @@ namespace Application
             services.AddHostedService<EventSendingHostedService>();
             services.AddSingleton<EventQueue>();
 
-            services.AddSingleton<TwitterContextProvider>();
-
             services.AddSingleton<IJobManager, JobManager>();
 
             services.AddSingleton(typeof(IEventTracker<>),typeof( EventTracker<>));
-            services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
+            services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobInMemoryStorage>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
 

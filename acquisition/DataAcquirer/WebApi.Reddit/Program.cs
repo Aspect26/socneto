@@ -9,13 +9,13 @@ using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.Registration;
-using Infrastructure.Twitter;
+using Infrastructure.Reddit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Api
+namespace WebApi.Reddit
 {
     public class Program
     {
@@ -26,28 +26,18 @@ namespace Api
                 await Task.Delay(TimeSpan.FromSeconds(180));
             }
 
-            var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
-            var directory = new FileInfo(assemblyPath).Directory.FullName; 
-            var twitterMetaDir = Path.Combine(directory, "metatw");
-            var jobMetaDir = Path.Combine(directory, "metajob");
-
-            Directory.CreateDirectory(twitterMetaDir);
-            Directory.CreateDirectory(jobMetaDir);
+            //var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
 
             var builder = new DataAcquisitionServiceWebApiBuilder(args)
-                .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>()
-                .AddSingletonService<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
-                .AddSingletonService<IDataAcquirerMetadataStorage, TwitterJsonFileMetadataStorage>()
-                .AddSingletonService<TwitterBatchLoaderFactory>()
-                .AddSingletonService<TwitterContextProvider>()
-                .AddSingletonService<IDataAcquirerMetadataContext, TwitterMetadataContext>()
-                .ConfigureSpecificOptions<TwitterJsonStorageOptions>("DataAcquisitionService:TwitterJsonStorageOptions")
-                .PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)
-                .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
-            .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
-            
-            
-            var app = builder.BuildWebHost(false);
+                .AddSingletonService<IDataAcquirer, RedditDataAcquirer>()
+                //.AddSingletonService<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
+                //.AddSingletonService<IDataAcquirerMetadataStorage, TwitterJsonFileMetadataStorage>()
+                .AddSingletonService<RedditContextProvider>()
+            //    .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
+            //.PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
+            ;
+
+            var app = builder.BuildWebHost(true);
             await InitializeApplication(app);
 
             await app.RunAsync();
@@ -59,7 +49,7 @@ namespace Api
 
             await RegisterComponentAsync(app, logger);
         }
-        
+
 
         private static async Task RegisterComponentAsync(IWebHost app, ILogger<Program> logger)
         {
@@ -97,7 +87,7 @@ namespace Api
 
         public static void Main(string[] args)
         {
-            MainAsync(args).GetAwaiter().GetResult();    
-        }        
+            MainAsync(args).GetAwaiter().GetResult();
+        }
     }
 }

@@ -9,6 +9,7 @@ using Domain.Model;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
+using Infrastructure.Reddit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -209,16 +210,16 @@ namespace ConsoleApi.Reddit
             var query = "university OR study OR studying OR college NOT football";
             // Since we only need the posts, there's no need to call .About() on this one.  --Kris
             int total = 0;
-            string MaxStr(string a, string b)
-            {
-                var cmp = StringComparer.Create(CultureInfo.InvariantCulture, false);
+            //string MaxStr(string a, string b)
+            //{
+            //    var cmp = StringComparer.Create(CultureInfo.InvariantCulture, false);
 
-                if (cmp.Compare(a, b) > 0)
-                {
-                    return a;
-                }
-                return b;
-            }
+            //    if (cmp.Compare(a, b) > 0)
+            //    {
+            //        return a;
+            //    }
+            //    return b;
+            //}
 
             DateTime Max(DateTime a, DateTime? b)
             {
