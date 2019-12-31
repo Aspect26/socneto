@@ -125,7 +125,7 @@ namespace ConsoleApi.Twitter
     public class InteractiveConsumer : IMessageBrokerConsumer
     {
         private readonly ILogger<InteractiveConsumer> _logger;
-        ConcurrentDictionary<string, Queue<string>> _channels
+        readonly ConcurrentDictionary<string, Queue<string>> _channels
             = new ConcurrentDictionary<string, Queue<string>>();
 
         public InteractiveConsumer(
