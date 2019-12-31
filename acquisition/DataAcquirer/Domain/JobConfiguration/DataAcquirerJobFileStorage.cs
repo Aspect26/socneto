@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,18 +10,18 @@ namespace Domain.JobConfiguration
 {
     public class DataAcquirerJobFileStorage : IDataAcquirerJobStorage
     {
-        private readonly DataAcquirerJobFileStorageOptions _twitterJsonStorageOptions;
+        private readonly DataAcquirerJobFileStorageOptions _redditStorage;
         private object _rwLock = new object();
         public DataAcquirerJobFileStorage(
             IOptions<DataAcquirerJobFileStorageOptions> options)
         {
-            _twitterJsonStorageOptions = options.Value;
+            _redditStorage = options.Value;
         }
 
         public async Task<IList<DataAcquirerJobConfig>> GetAllAsync()
         {
-            var directory = new DirectoryInfo(_twitterJsonStorageOptions.Directory);
-            var files = directory.GetFiles(_twitterJsonStorageOptions.FilePathPrefix + "*");
+            var directory = new DirectoryInfo(_redditStorage.Directory);
+            var files = directory.GetFiles(_redditStorage.FilePathPrefix + "*");
 
             var loadTasks = files.Select(r => GetByPathAsync(r.FullName));
 
@@ -31,8 +31,8 @@ namespace Domain.JobConfiguration
 
         public Task RemoveJobAsync(Guid jobId)
         {
-            var directory = new DirectoryInfo(_twitterJsonStorageOptions.Directory);
-            var fileName = _twitterJsonStorageOptions.FilePathPrefix + "_" + jobId;
+            var directory = new DirectoryInfo(_redditStorage.Directory);
+            var fileName = _redditStorage.FilePathPrefix + "_" + jobId;
             var file = Path.Combine(directory.FullName, fileName);
             try
             {
@@ -72,8 +72,8 @@ namespace Domain.JobConfiguration
 
         public Task SaveAsync(Guid jobId, DataAcquirerJobConfig jobConfig)
         {
-            var directory = new DirectoryInfo(_twitterJsonStorageOptions.Directory);
-            var fileName = _twitterJsonStorageOptions.FilePathPrefix + "_" + jobId;
+            var directory = new DirectoryInfo(_redditStorage.Directory);
+            var fileName = _redditStorage.FilePathPrefix + "_" + jobId;
             var file = Path.Combine(directory.FullName, fileName);
 
             lock (_rwLock)
