@@ -37,7 +37,7 @@ namespace Domain.Model
         public string Language { get; }
 
         public static DataAcquirerPost FromValues(
-            string postId,
+            string originalPostId,
             string text,
             string language,
             string source,
@@ -45,7 +45,7 @@ namespace Domain.Model
             string dateTimeString,
             string query = null)
         {
-            return new DataAcquirerPost(postId, text,language, source, userId, dateTimeString,query);
+            return new DataAcquirerPost(originalPostId, text,language, source, userId, dateTimeString,query);
         }
     }
 
