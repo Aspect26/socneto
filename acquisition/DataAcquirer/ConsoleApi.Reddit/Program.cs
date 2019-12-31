@@ -29,140 +29,14 @@ using System.Threading.Tasks;
 
 namespace ConsoleApi.Reddit
 {
-    public class RedditCredentials
-    {
-        public RedditCredentials(
-            string appId,
-            string apiSecret,
-            string refreshToken)
-        {
-            AppId = appId;
-            ApiSecret = apiSecret;
-            RefreshToken = refreshToken;
-        }
-
-        public string AppId { get; }
-        public string ApiSecret { get; }
-        public string RefreshToken { get; }
-    }
-
-    public class RedditContextProvider
-    {
-        private readonly ConcurrentDictionary<string, RedditClient> _redditClients =
-            new ConcurrentDictionary<string, RedditClient>();
-        private readonly IEventTracker<RedditContextProvider> _eventTracker;
-
-        public RedditContextProvider(
-            IEventTracker<RedditContextProvider> eventTracker)
-        {
-            _eventTracker = eventTracker;
-        }
-        public Task<RedditClient> GetContextAsync(RedditCredentials credentials)
-        {
-            credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
-
-            var props = new[]
-            {
-                credentials.AppId,
-                credentials.ApiSecret,
-                credentials.RefreshToken
-            };
-            if (props.Any(r => string.IsNullOrEmpty(r)))
-            {
-                throw new ArgumentException("Credentials field contains null value", nameof(credentials));
-            }
-
-            var key = string.Join('+', props);
-            if (_redditClients.TryGetValue(key, out var context))
-            {
-                return Task.FromResult(context);
-            }
-
-            try
-            {
-                var redditContext = new RedditClient(
-                    appId: credentials.AppId,
-                    appSecret: credentials.ApiSecret,
-                    refreshToken: credentials.RefreshToken);
-
-                var searchInput = new SearchGetSearchInput(q: "foo bar", count: 5);
-                var s = redditContext.Search(searchInput);
-
-                _redditClients.TryAdd(key, redditContext);
-                return Task.FromResult(redditContext);
-
-            }
-            catch (Exception e)
-            {
-                _eventTracker.TrackError(
-                    "RedditContext",
-                    "Encountered error while creating context",
-                    new
-                    {
-                        exception = e
-                    });
-                throw;
-            }
-        }
-
-    }
-
-    public class RedditDataAcquirer : IDataAcquirer
-    {
-        private readonly RedditContextProvider _redditContextProvider;
-        private readonly IEventTracker<RedditDataAcquirer> _eventTracker;
-
-        public RedditDataAcquirer(
-            RedditContextProvider redditContextProvider,
-            IEventTracker<RedditDataAcquirer> eventTracker)
-        {
-            _redditContextProvider = redditContextProvider;
-            _eventTracker = eventTracker;
-        }
-        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-            DataAcquirerInputModel acquirerInputModel)
-        {
-            var credentials = ExtractCredentials(acquirerInputModel);
-            var reddit = await _redditContextProvider.GetContextAsync(credentials);
-
-            // TODO actual searching
-            var searchPost = reddit
-                .Subreddit("all")
-                .Search(new SearchGetSearchInput("Bernie Sanders"));
-
-            var posts = searchPost
-                .Select(r => r.Listing)
-                .Select(r => DataAcquirerPost.FromValues(
-                r.Id,
-                r.SelfText,
-                "en",
-                "reddit",
-                "n/a",
-                DateTime.Now.ToString("s"),
-                acquirerInputModel.Query));
-
-            foreach (var post in posts)
-            {
-                yield return post;
-            }
-        }
-
-        private RedditCredentials ExtractCredentials(DataAcquirerInputModel acquirerInputModel)
-        {
-            return new RedditCredentials(
-                acquirerInputModel.Attributes.GetValue("appId"),
-                acquirerInputModel.Attributes.GetValue("appSecret"),
-                acquirerInputModel.Attributes.GetValue("refreshToken"));
-        }
-    }
-
 
 
     class Program
     {
         public static void Main(string[] args)
         {
-            MainAsync(args).GetAwaiter().GetResult();
+            //MainAsync_2(args)
+            TestRedditAsync().GetAwaiter().GetResult();
         }
 
         static async Task MainAsync(string[] args)
@@ -192,88 +66,91 @@ namespace ConsoleApi.Reddit
                 attributes,
                 0,
                 ulong.MaxValue,
-                10);
+                3);
 
             var batch = redditAcquirer.GetPostsAsync(inputModel);
             await foreach (var item in batch)
             {
-                Console.WriteLine(JsonConvert.SerializeObject(item, Formatting.Indented));
+                //Console.WriteLine(JsonConvert.SerializeObject(item, Formatting.Indented));
             }
+            Console.WriteLine("Search ended");
+            Console.ReadLine();
         }
         static async Task MainAsync_2(string[] args)
         {
-            // 1) Invoke-WebRequest  "https://www.reddit.com/api/v1/authorize?client_id=Mx2Rp1J2roDMdg&response_type=code&state=wtfisthis&redirect_uri=http://localhost:8080&duration=permanent&scope=read"
-            // the same url with sanitizek uri https://www.reddit.com/api/v1/authorize?client_id=Mx2Rp1J2roDMdg&response_type=code&state=wtfisthis&redirect_uri=http%3A%2F%2Flocalhost%3A8080&duration=permanent&scope=read
+            // `between` and `after` does not work together
+            var query = "\"new year\"";
+            var posts = GetPosts(query, limit: 25);
+            var tenth = posts[9].Fullname;
+            var fifteenth = posts[15].Fullname;
 
-
-            // 2) 
-            /*$user = 'Mx2Rp1J2roDMdg'
-             * $pass = 'eDT3-0no1WHyTuBWTLoNDQNUqWA'
-             * $pair = "$($user):$($pass)"
-            $encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($pair))
->>
->> $basicAuthValue = "Basic $encodedCreds"
->>
->> $Headers = @{
->> Authorization = $basicAuthValue
->> }
-            $body = 'grant_type=authorization_code&code=LTPtJwE4rxG7B-hczvtoktPo91A&redirect_uri=http://localhost:8080'
-            Invoke-WebRequest -Method Post -Body $body -Headers $Headers "https://www.reddit.com/api/v1/access_token"
-
-
-    */
-
-            //"access_token": "291925913345-hgvdLNp1OkO0RnkB0vCRiGhuTfk", "token_type": "bearer", "expires_in":
-            //        3600, "refresh_token": "291925913345-DFbyOHX5f6zz-__Dqbr41jCOoPs", "scope": "read"}
-
-
-            // More info here https://github.com/reddit-archive/reddit/wiki/OAuth2
-            var reddit = new RedditAPI(
-                appId: "Mx2Rp1J2roDMdg",
-                appSecret: "eDT3-0no1WHyTuBWTLoNDQNUqWA",
-                refreshToken: "291925913345-DFbyOHX5f6zz-__Dqbr41jCOoPs");
-
-
-            // Since we only need the posts, there's no need to call .About() on this one.  --Kris
-            var worldnews = reddit.Subreddit("college");
-
-            // Just keep going until we hit a post from before today.  Note that the API may sometimes return posts slightly out of order.  --Kris
-            var posts = new List<SelfPost>();
-            string after = "";
-            DateTime start = DateTime.Now;
-            DateTime today = DateTime.Today.AddDays(-5);
-            bool outdated = false;
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromMinutes(6));
-            do
+            var afterTenth = GetPosts(query, after: tenth, limit: 25);
+            var beforeFifteenth = GetPosts(query, before: fifteenth, limit: 25);
+            var betweenTenAndFifteen = GetPosts(query, after: tenth, before: fifteenth, limit: 25, count: 0);
+            Console.WriteLine("{0};{1}", tenth, fifteenth);
+            foreach (var post in posts)
             {
-                foreach (var post in worldnews.Posts.GetNew())
-                {
-                    if (post.Created >= today)
-                    {
-                        if (post is SelfPost sp)
-                        {
-                            posts.Add(sp);
-                        }
-                    }
-                    else
-                    {
-                        outdated = true;
-                        break;
-                    }
+                Console.WriteLine(post.Fullname);
+            }
 
-                    after = post.Fullname;
-                }
-                Console.WriteLine($"Posts {posts.Count}");
-                //if(cts.IsCancellationRequested)
-                {
-                    break;
-                }
-            } while (!outdated
-                && start.AddMinutes(5) > DateTime.Now
-                && worldnews.Posts.New.Count > 0);  // This is automatically populated with the results of the last GetNew call.  --Kris
+            Console.WriteLine("Data");
+            foreach (var post in afterTenth)
+            {
+                Console.WriteLine(post.Fullname);
+            }
+            Console.WriteLine("Data");
+            foreach (var post in beforeFifteenth)
+            {
+                Console.WriteLine(post.Fullname);
+            }
+            Console.WriteLine("Data");
+            foreach (var post in betweenTenAndFifteen)
+            {
+                Console.WriteLine(post.Fullname);
+            }
+
+
             Console.ReadLine();
-            var x = posts.Take(5).Select(r => r.SelfText);
+
+            //TestReddit();
+
+            //// Just keep going until we hit a post from before today.  Note that the API may sometimes return posts slightly out of order.  --Kris
+            //var posts = new List<SelfPost>();
+            //string after = "";
+            //DateTime start = DateTime.Now;
+            //DateTime today = DateTime.Today.AddDays(-5);
+            //bool outdated = false;
+            //var cts = new CancellationTokenSource();
+            //cts.CancelAfter(TimeSpan.FromMinutes(6));
+            //do
+            //{
+            //    foreach (var post in worldnews.Posts.GetNew())
+            //    {
+            //        if (post.Created >= today)
+            //        {
+            //            if (post is SelfPost sp)
+            //            {
+            //                posts.Add(sp);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            outdated = true;
+            //            break;
+            //        }
+
+            //        after = post.Fullname;
+            //    }
+            //    Console.WriteLine($"Posts {posts.Count}");
+            //    //if(cts.IsCancellationRequested)
+            //    {
+            //        break;
+            //    }
+            //} while (!outdated
+            //    && start.AddMinutes(5) > DateTime.Now
+            //    && worldnews.Posts.New.Count > 0);  // This is automatically populated with the results of the last GetNew call.  --Kris
+            //Console.ReadLine();
+            //var x = posts.Take(5).Select(r => r.SelfText);
 
 
 
@@ -311,7 +188,115 @@ namespace ConsoleApi.Reddit
 
             //}
 
-            //await Task.Delay(TimeSpan.FromHours(1));
+            await Task.Delay(TimeSpan.FromHours(1));
+
+        }
+
+        private static async Task TestRedditAsync()
+        {
+            var reddit = new RedditClient(
+                appId: "Mx2Rp1J2roDMdg",
+                appSecret: "eDT3-0no1WHyTuBWTLoNDQNUqWA",
+                refreshToken: "291925913345-DFbyOHX5f6zz-__Dqbr41jCOoPs");
+
+            // ei33zr
+            // ei37wh
+            string after = null;
+            var limit = 5;
+            //var before = "ei2mja";
+            DateTime? before = DateTime.Parse("31.12.2019 15:40:28");
+            var query = "\"new year\"";
+            // Since we only need the posts, there's no need to call .About() on this one.  --Kris
+
+            DateTime Max(DateTime a, DateTime? b)
+            {
+                if (!b.HasValue)
+                {
+                    return a;
+                }
+
+                if (a < b.Value)
+                {
+                    return b.Value;
+                }
+                return a;
+            }
+            List<Post> get(RedditClient reddit, string after, int limit, string query, int count)
+            {
+                var searchInput = new SearchGetSearchInput(
+                                        q: query,
+                                        after: after,
+                                        limit: limit);
+                return reddit.Search(searchInput);
+            }
+            while (true)
+            {
+                var maxBefore = before;
+
+                var count = 0;
+                var postListing = get(reddit, after, limit, query, count);
+                var outDated = false;
+                while (postListing.Count > 0)
+                {
+                    var children = postListing;
+                    foreach (var item in children)
+                    {
+                        if (item.Created <= before)
+                        {
+                            outDated = true;
+                            Console.WriteLine("Outdated encountered");
+                            break;
+                        }
+                        count++;
+                        maxBefore = Max(item.Created, maxBefore);
+                        var title = item.Title;
+                        var text = item.Listing.SelfText;
+                        if (text.Length > 20)
+                        {
+                            text = text.Substring(0, 20);
+                        }
+                        Console.WriteLine($"{item.Fullname} {item.Listing.CreatedUTC}");
+                        //Console.WriteLine($"\t{title}");
+                        //Console.WriteLine($"\t{text}");
+                    }
+                    if (outDated)
+                    {
+                        Console.WriteLine("outdated");
+                        break;
+                    }
+                    after = postListing.Count > 0 ? postListing.Last().Fullname : after;
+                    Console.WriteLine($"after:{after}");
+                    postListing = get(reddit, after, limit, query, count);
+                }
+                before = maxBefore;
+                Console.WriteLine($"waiting: before; {before}, after: {after}, c:{count} ");
+                after = null;
+                count = 0;
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+        }
+
+
+
+        private static List<Post> GetPosts(
+            string query,
+            string after = null,
+            string before = null,
+            int limit = 25,
+            int count = 0)
+        {
+            var reddit = new RedditClient(
+                            appId: "Mx2Rp1J2roDMdg",
+                            appSecret: "eDT3-0no1WHyTuBWTLoNDQNUqWA",
+                            refreshToken: "291925913345-DFbyOHX5f6zz-__Dqbr41jCOoPs");
+
+            var searchInput = new SearchGetSearchInput(
+                q: query,
+                after: after,
+                before: before,
+                limit: limit,
+                count: count);
+            return reddit.Search(searchInput);
         }
 
         public static IServiceProvider Configure()
@@ -319,11 +304,9 @@ namespace ConsoleApi.Reddit
             var builder = new ConfigurationBuilder()
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-            var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (aspNetCoreEnv == "Development")
-            {
-                builder.AddJsonFile($"appsettings.Development.json", true, true);
-            }
+#if DEBUG
+            builder.AddJsonFile($"appsettings.Development.json", true, true);
+#endif
             var configuration = builder.Build();
 
 

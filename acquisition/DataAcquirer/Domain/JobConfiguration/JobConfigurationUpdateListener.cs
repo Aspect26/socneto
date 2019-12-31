@@ -67,19 +67,6 @@ namespace Domain.JobConfiguration
                 throw new InvalidOperationException($"Could not parse job config {jre.Message}");
             }
 
-            if (jobConfig.Command == null)
-            {
-                const string error = "Job notification was not processed. Empty command";
-                _logger.TrackError(
-                        "StartNewJob",
-                        error,
-                        new
-                        {
-                            jobId = jobConfig.JobId,
-                        });
-                throw new InvalidOperationException(error);
-            }
-
             switch (jobConfig.Command)
             {
                 case JobCommand.Start:
