@@ -29,6 +29,9 @@ namespace ConsoleApi.CustomStaticData
             objectName = "tweets.csv";
             var mappingName = "tweets.csv.mapping";
 
+            objectName = "tweets.apple.json";
+            mappingName = "tweets.json.mapping";
+
             var attributesDict = new Dictionary<string, string>{
                     { "bucketName",bucketName },
                     {  "objectName",objectName },
