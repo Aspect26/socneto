@@ -10,6 +10,7 @@ using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
 using Infrastructure.Reddit;
+using Infrastructure.CustomStaticData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,17 +21,15 @@ namespace ConsoleApi.CustomStaticData
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.WriteLine("Hello World!");
-            var services = Configure(args);
+            var services = Configure();
             var app = services.GetRequiredService<CustomStaticDataApp>();
 
-          app.DoAsync().GetAwaiter().GetResult();
-
+            app.DoAsync().GetAwaiter().GetResult();
         }
 
-        public static IServiceProvider Configure(string[] args)
+        public static IServiceProvider Configure()
         {
             var builder = new ConfigurationBuilder()
                            .SetBasePath(Directory.GetCurrentDirectory())
@@ -39,7 +38,7 @@ namespace ConsoleApi.CustomStaticData
             builder.AddJsonFile($"appsettings.Development.json", true, true);
 #endif
             var configuration = builder.Build();
-            
+
             var services = new ServiceCollection();
             services.AddLogging(
                 logging => logging
@@ -65,7 +64,7 @@ namespace ConsoleApi.CustomStaticData
 
             services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
             services.AddSingleton(typeof(IEventTracker<>), typeof(NullEventTracker<>));
-            
+
             services.AddTransient<IDataAcquirer, CustomStaticDataAcquirer>();
 
             services.AddSingleton<CustomStaticDataApp>();
@@ -96,23 +95,6 @@ namespace ConsoleApi.CustomStaticData
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
 
-            // TW
-
-            //var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
-            //var directory = new FileInfo(assemblyPath).Directory.FullName;
-            //var twitterMetaDir = Path.Combine(directory, "metatw");
-            //var jobMetaDir = Path.Combine(directory, "metajob");
-
-            //Directory.CreateDirectory(twitterMetaDir);
-            //Directory.CreateDirectory(jobMetaDir);
-
-            //services.AddOptions<TwitterJsonStorageOptions>()
-            //    .Bind(configuration.GetSection($"{rootName}:TwitterJsonStorageOptions"))
-            //    .PostConfigure(o => o.Directory = twitterMetaDir);
-
-            //services.AddOptions<DataAcquirerJobFileStorageOptions>()
-            //    .Bind(configuration.GetSection($"{rootName}:DataAcquirerJobFileStorageOptions"))
-            //    .PostConfigure(o => o.Directory = jobMetaDir);
             return services.BuildServiceProvider();
 
         }
