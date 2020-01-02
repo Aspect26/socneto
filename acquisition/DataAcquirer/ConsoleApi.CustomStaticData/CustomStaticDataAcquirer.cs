@@ -31,6 +31,20 @@ namespace ConsoleApi.CustomStaticData
         [JsonProperty("indices")]
         public Dictionary<string, int> Indices { get; set; }
     }
+    public class JsonMappingAttributes
+    {
+        [JsonProperty("hasHeaders")]
+        public bool HasHeaders { get; set; }
+
+        [JsonProperty("dateTimeFormatString")]
+        public string DateTimeFormatString { get; set; }
+
+        [JsonProperty("fixedValues")]
+        public Dictionary<string, string> FixedValues { get; set; }
+
+        [JsonProperty("elements")]
+        public Dictionary<string, string> Elements { get; set; }
+    }
 
     public class MappingAttributesRoot
     {
@@ -119,16 +133,16 @@ namespace ConsoleApi.CustomStaticData
             }
             catch (MinioException e)
             {
-                _logger.TrackError(
-                    "CustomDataAcquirer",
-                    $"Object '{bucketName}-{objectName}' does not exist",
-                    new
-                    {
-                        bucketName,
-                        objectName,
-                        exception = e
-                    });
-                yield break;
+                //_logger.TrackError(
+                //    "CustomDataAcquirer",
+                //    $"Object '{bucketName}-{objectName}' does not exist",
+                //    new
+                //    {
+                //        bucketName,
+                //        objectName,
+                //        exception = e
+                //    });
+                throw new InvalidOperationException($"Mapping object {mappingName} does not exits");
             }
 
             var reader = _customStreamReaderFactory.Create(atts);
@@ -224,19 +238,23 @@ namespace ConsoleApi.CustomStaticData
                 {
                     return serializer.Deserialize<MappingAttributesRoot>(jsonTextReader);
                 }
-
             }
         }
 
     }
     public class CustomStreamReaderFactory
     {
+        private readonly IEventTracker<CustomStreamReaderFactory> _eventTracker;
+        private readonly IEventTracker<JsonStreamReader> _jsonEventTracker;
         private readonly IEventTracker<CsvStreamReader> _csvEventTracker;
 
         public CustomStreamReaderFactory(
+            IEventTracker<CustomStreamReaderFactory> eventTracker,
             IEventTracker<JsonStreamReader> jsonEventTracker,
             IEventTracker<CsvStreamReader> csvEventTracker)
         {
+            _eventTracker = eventTracker;
+            _jsonEventTracker = jsonEventTracker;
             _csvEventTracker = csvEventTracker;
         }
         public ICustomStreamReader Create(MappingAttributesRoot attributes)
@@ -250,7 +268,8 @@ namespace ConsoleApi.CustomStaticData
                 }
                 else if (attributes.DataFormat == "json")
                 {
-                    return new JsonStreamReader(attributes);
+                    var jsonAttributes = attributes.MappingAttributes.ToObject<JsonMappingAttributes>();
+                    return new JsonStreamReader(jsonAttributes, _jsonEventTracker);
                 }
                 else
                 {
@@ -260,7 +279,6 @@ namespace ConsoleApi.CustomStaticData
             }
             catch (JsonException)
             {
-                // TODO track error
                 throw;
             }
 
@@ -275,6 +293,8 @@ namespace ConsoleApi.CustomStaticData
 
         bool TryGetPost(out DataAcquirerPost post);
     }
+
+   
 
     public class CsvStreamReader : ICustomStreamReader
     {
@@ -415,22 +435,105 @@ namespace ConsoleApi.CustomStaticData
 
     public class JsonStreamReader : ICustomStreamReader
     {
-        private readonly MappingAttributesRoot _customDataAttributes;
+        private readonly JsonMappingAttributes _attributes;
+        private readonly IEventTracker<JsonStreamReader> _eventTracker;
 
-        public JsonStreamReader(MappingAttributesRoot customDataAttributes)
+        private readonly ConcurrentQueue<DataAcquirerPost>
+            _posts = new ConcurrentQueue<DataAcquirerPost>();
+
+        public JsonStreamReader(
+            JsonMappingAttributes attributes,
+            IEventTracker<JsonStreamReader> eventTracker)
         {
-            _customDataAttributes = customDataAttributes;
+            _attributes = attributes;
+            _eventTracker = eventTracker;
         }
-        public bool ReadingEnded => throw new NotImplementedException();
+        public bool ReadingEnded { get; private set; }
 
         public void StartPopulating(Stream stream)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using var reader = new StreamReader(stream);
+                
+                
+
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var post = ParsePostFromLine(line);
+
+                    while (_posts.Count > 1000)
+                    {
+                        // TODO God forgive me for I have sinned
+                        // If anyone know how to implement backpressure,
+                        // please let me know
+                        Task.Delay(10).GetAwaiter().GetResult();
+                    }
+                    _posts.Enqueue(post);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                ReadingEnded = true;
+            }
+        }
+
+        private DataAcquirerPost ParsePostFromLine(string line)
+        {
+            var settings = new JsonSerializerSettings()
+            {
+                DateParseHandling=DateParseHandling.None
+            };
+            var readPost = JsonConvert.DeserializeObject<JObject>(line,settings);
+
+            var mutablePost = new JObject();
+            mutablePost.TryAdd("source", "CustomStaticData");
+            foreach (var (k, v) in _attributes.FixedValues)
+            {
+                mutablePost.TryAdd(k, v);
+            }
+            foreach (var (k, element) in _attributes.Elements)
+            {
+                if (readPost.TryGetValue(element, out var value))
+                {
+                    if (k == "dateTime")
+                    {
+                        if (DateTime.TryParseExact(
+                            value.Value<string>(),
+                            _attributes.DateTimeFormatString,
+                            null,
+                            System.Globalization.DateTimeStyles.None,
+                            out var exactTime))
+                        {
+                            value = exactTime.ToString("s");
+                        }
+                        else
+                        {
+                            value = DateTime.Now.ToString("s");
+                        }
+                    }
+
+                    mutablePost.TryAdd(k, value);
+                }
+            }
+            var post = mutablePost.ToObject<MutableDataAcquirerPost>();
+            var dataAcquirerPost = post.Freeze();
+            return dataAcquirerPost;
         }
 
         public bool TryGetPost(out DataAcquirerPost post)
         {
-            throw new NotImplementedException();
+            if (ReadingEnded)
+            {
+                post = null;
+                return false;
+            }
+            return _posts.TryDequeue(out post);
         }
     }
 }
