@@ -46,9 +46,10 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("keywords", AnalysisPropertyType.Number))], ChartType.Line),
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("wordCount", AnalysisPropertyType.Number))], ChartType.Pie),
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("keywords", AnalysisPropertyType.Number))], ChartType.Scatter)
+    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("polarity", AnalysisPropertyType.Number)), AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, true),
+    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("keywords", AnalysisPropertyType.Number)), AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, false),
+    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("wordCount", AnalysisPropertyType.Number))], ChartType.Pie, false),
+    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("keywords", AnalysisPropertyType.Number))], ChartType.Scatter, false)
   ];
 
   Future<User> login(String username, String password) async =>
@@ -63,23 +64,39 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<List<Post>> getJobPosts(String jobId) async =>
     Future.value([]);
 
-  /*
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    if (chartDefinition.chartType == ChartType.Line) {
+    if (chartDefinition.chartType == ChartType.Line && chartDefinition.isXDateTime) {
       return Future.value([
         [
-          ["2019-10-23T10:01:46.2458271+00:00", 1],
-          ["2019-10-23T10:00:46.2458271+00:00", 0],
-          ["2019-10-23T09:59:46.2458271+00:00", 0],
-          ["2019-10-23T09:58:46.2458271+00:00", 1],
-          ["2019-10-23T09:57:46.2458271+00:00", 0]
+          [1571824906245, 1],
+          [1571825006245, 0],
+          [1571825206245, 0],
+          [1571825256245, 1],
+          [1571825356245, 0]
         ],
         [
-          ["2019-10-23T10:01:46.2458271+00:00", 0.98],
-          ["2019-10-23T10:00:46.2458271+00:00", 0.95],
-          ["2019-10-23T09:59:46.2458271+00:00", 0.99],
-          ["2019-10-23T09:58:46.2458271+00:00", 0.93],
-          ["2019-10-23T09:57:46.2458271+00:00", 0.9]
+          [1571824906245, 0.98],
+          [1571824956245, 0.95],
+          [1571825106245, 0.99],
+          [1571825276245, 0.93],
+          [1571825336245, 0.9]
+        ]
+      ]);
+    } else if (chartDefinition.chartType == ChartType.Line && !chartDefinition.isXDateTime) {
+      return Future.value([
+        [
+          [1, 1],
+          [2, 0],
+          [4, 0],
+          [9, 1],
+          [10, 0]
+        ],
+        [
+          [2, 0.98],
+          [5, 0.95],
+          [7, 0.99],
+          [10, 0.93],
+          [11, 0.9]
         ]
       ]);
     } else if (chartDefinition.chartType == ChartType.Pie) {
@@ -100,45 +117,44 @@ class SocnetoMockDataService extends SocnetoDataService {
       return null;
     }
   }
-   */
 
-  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
-    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
-    if (chartDefinition.chartType == ChartType.Pie) {
-      return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
-    } else {
-      return await this._getArrayChartData(jobId, analyserId, propertyNames);
-    }
-  }
-
-  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
-    AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
-    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
-
-    List<List<dynamic>> values = [];
-    var aggregations = result["aggregations"];
-    aggregations.forEach((key, value) => {
-      values.add([key, value])
-    });
-
-    var returnValue = [values];
-    return returnValue;
-  }
-
-  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames) async {
-    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames);
-    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
-
-    List<List<dynamic>> values = [];
-    var dataPoints = result["data"];
-    dataPoints.forEach((datum) => {
-      values.add(datum)
-    });
-
-    var returnValue = [values];
-    return returnValue;
-  }
+//  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
+//    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
+//    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
+//    if (chartDefinition.chartType == ChartType.Pie) {
+//      return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
+//    } else {
+//      return await this._getArrayChartData(jobId, analyserId, propertyNames);
+//    }
+//  }
+//
+//  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
+//    AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
+//    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
+//
+//    List<List<dynamic>> values = [];
+//    var aggregations = result["aggregations"];
+//    aggregations.forEach((key, value) => {
+//      values.add([key, value])
+//    });
+//
+//    var returnValue = [values];
+//    return returnValue;
+//  }
+//
+//  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames) async {
+//    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames);
+//    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
+//
+//    List<List<dynamic>> values = [];
+//    var dataPoints = result["data"];
+//    dataPoints.forEach((datum) => {
+//      values.add(datum)
+//    });
+//
+//    var returnValue = [values];
+//    return returnValue;
+//  }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
     Future.value(mockAcquirers);

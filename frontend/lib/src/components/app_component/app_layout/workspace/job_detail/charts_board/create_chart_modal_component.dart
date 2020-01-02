@@ -32,6 +32,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialRadioComponent,
     MaterialRadioGroupComponent,
     MaterialInputComponent,
+    MaterialCheckboxComponent,
     AutoDismissDirective,
     AutoFocusDirective,
     MaterialButtonComponent,
@@ -42,6 +43,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     ChartTypeSelectComponent,
     NgFor,
     NgIf,
+    NgClass
   ],
   templateUrl: 'create_chart_modal_component.html',
   styleUrls: ['create_chart_modal_component.css'],
@@ -61,6 +63,7 @@ class CreateChartModalComponent {
   String errorMessage;
   List<AnalysisDataPath> dataPaths = [];
   ChartType chartType;
+  bool useTimeAsX = false;
 
   CreateChartModalComponent(this._socnetoService) {
     this.loadAnalyzers();
@@ -89,6 +92,7 @@ class CreateChartModalComponent {
 
   void reset() async {
     this.dataPaths.clear();
+    this.useTimeAsX = false;
 
     await this.loadAnalyzers();
     var requiredNumberOfDataPaths = this.requiredNumberOfDataPaths;
@@ -117,6 +121,7 @@ class CreateChartModalComponent {
   }
 
   ChartType get scatterChartType => ChartType.Scatter;
+  ChartType get lineChartType => ChartType.Line;
 
   String getDataPathLabel(int index) {
     switch (this.chartType) {
@@ -125,10 +130,14 @@ class CreateChartModalComponent {
       case ChartType.Pie:
         return "Partition ${index + 1}";
       case ChartType.Scatter:
-        return index == 0? "X - Axis" : "Y Axis";
+        return index == 0? "X - Axis" : "Y - Axis";
       default:
         return "";
     }
+  }
+
+  void onUseTimeAsXChange(bool checked) {
+    this.useTimeAsX = checked;
   }
 
   void onRemoveDataPath(AnalysisDataPath dataPath) {
@@ -138,6 +147,7 @@ class CreateChartModalComponent {
   void onChartTypeSelected(ChartType chartType) {
     this.chartType = chartType;
     this.dataPaths.clear();
+    this.useTimeAsX = false;
 
     var requiredNumberOfDataPaths = this.requiredNumberOfDataPaths;
     this._addDefaultDataPaths(requiredNumberOfDataPaths);
@@ -162,7 +172,8 @@ class CreateChartModalComponent {
       return;
     }
 
-    this._submitController.add(ChartDefinition(this.dataPaths, this.chartType));
+    var usedDataPaths = this.useTimeAsX && this.chartType == ChartType.Line? this.dataPaths.sublist(1, this.dataPaths.length) : this.dataPaths;
+    this._submitController.add(ChartDefinition(usedDataPaths, this.chartType, this.useTimeAsX));
   }
 
   bool isDefinitionCorrect() {

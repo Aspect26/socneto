@@ -82,8 +82,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
-      "ChartType": chartDefinition.chartType.toString().split('.').last,
-      "AnalysisDataPaths": chartDefinition.analysisDataPaths
+      "chart_type": chartDefinition.chartType.toString().split('.').last,
+      "analysis_data_paths": chartDefinition.analysisDataPaths,
+      "is_x_post_datetime": chartDefinition.isXDateTime
     };
 
     return this.post<Success>("job/$jobId/charts/create", body, (result) => Success.fromMap(result));
