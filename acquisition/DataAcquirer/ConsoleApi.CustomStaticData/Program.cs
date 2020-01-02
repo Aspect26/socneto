@@ -26,7 +26,7 @@ namespace ConsoleApi.CustomStaticData
             var services = Configure(args);
             var app = services.GetRequiredService<CustomStaticDataApp>();
 
-            app.DoAsync().GetAwaiter().GetResult();
+          app.DoAsync().GetAwaiter().GetResult();
 
         }
 
@@ -69,6 +69,7 @@ namespace ConsoleApi.CustomStaticData
             services.AddTransient<IDataAcquirer, CustomStaticDataAcquirer>();
 
             services.AddSingleton<CustomStaticDataApp>();
+            services.AddSingleton<CustomStreamReaderFactory>();
 
             var rootName = "DataAcquisitionService";
 
