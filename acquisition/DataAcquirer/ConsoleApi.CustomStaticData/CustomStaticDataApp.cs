@@ -27,7 +27,7 @@ namespace ConsoleApi.CustomStaticData
             var objectName = "tweets_tiny_no_headers.csv";
             objectName = "tweets_tiny.csv";
             objectName = "tweets.csv";
-            var mappingName = "tweets.mapping";
+            var mappingName = "tweets.csv.mapping";
 
             var attributesDict = new Dictionary<string, string>{
                     { "bucketName",bucketName },
