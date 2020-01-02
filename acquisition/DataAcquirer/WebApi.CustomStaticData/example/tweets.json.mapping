@@ -1,0 +1,16 @@
+{
+    "dataFormat":"json",
+    "mappingAttributes":{
+        "hasHeaders":true,
+        "dateTimeFormatString":"yyyy'-'MM'-'dd'T'HH':'mm':'ss",
+        "fixedValues":{
+            "language":"cs"
+        },
+        "elements":{
+            "originalPostId":"PostId",
+            "text":"Text",
+            "authorId":"UserId",
+            "dateTime":"PostDateTime"
+        }
+    }
+}
