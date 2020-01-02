@@ -27,10 +27,12 @@ namespace ConsoleApi.CustomStaticData
             var objectName = "tweets_tiny_no_headers.csv";
             objectName = "tweets_tiny.csv";
             objectName = "tweets.csv";
+            var mappingName = "tweets.mapping";
 
             var attributesDict = new Dictionary<string, string>{
-                { "bucketName",bucketName },
-                {  "objectName",objectName }
+                    { "bucketName",bucketName },
+                    {  "objectName",objectName },
+                    {"mappingName",mappingName }
                 };
             var attributes = new DataAcquirerAttributes(attributesDict);
             var guid = Guid.NewGuid();
@@ -46,7 +48,7 @@ namespace ConsoleApi.CustomStaticData
             var posts = _dataAcquirer.GetPostsAsync(daInput);
             await foreach (var item in posts)
             {
-                //Console.WriteLine(item.Text);
+                Console.WriteLine(item.Text);
             }
 
         }
@@ -69,14 +71,14 @@ namespace ConsoleApi.CustomStaticData
             objectName = "tweets_tiny.csv";
             objectName = "tweets.csv";
 
-            var atts = new CustomDataAttributes
+            var atts = new MappingAttributesRoot
             {
-                HasHeaders = true
+                //    HasHeaders = true
             };
             try
             {
                 var metadata = await minio.StatObjectAsync(bucketName, objectName);
-                
+
                 // Get input stream to have content of 'my-objectname' from 'my-bucketname'
                 await minio.GetObjectAsync(bucketName, objectName,
                     (stream) =>
@@ -86,10 +88,10 @@ namespace ConsoleApi.CustomStaticData
                         {
                             try
                             {
-                                if (atts.HasHeaders)
-                                {
-                                    csvreader.ReadHeader();
-                                }
+                                //if (atts.HasHeaders)
+                                //{
+                                //    csvreader.ReadHeader();
+                                //}
                             }
                             catch (ReaderException)
                             {
