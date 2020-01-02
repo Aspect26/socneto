@@ -6,6 +6,7 @@ namespace Socneto.Domain.Models
     {
         public List<AnalysisDataPath> AnalysisDataPaths { get; set; }
         public ChartType ChartType { get; set; }
+        public bool IsXPostDatetime { get; set; }
     }
 
     public class AnalysisDataPath

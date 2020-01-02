@@ -62,7 +62,8 @@ namespace Socneto.Api.Controllers
             var newChartDefinition = new ChartDefinition
             {
                 ChartType = chartType,
-                AnalysisDataPaths = request.AnalysisDataPaths
+                AnalysisDataPaths = request.AnalysisDataPaths,
+                IsXPostDatetime = request.IsXPostDateTime
             };
 
             var jobView = await _storageService.GetJobView(jobId);
@@ -78,6 +79,8 @@ namespace Socneto.Api.Controllers
             }
             
             jobView.ViewConfiguration.ChartDefinitions.Add(newChartDefinition);
+
+            await _storageService.UpdateJobView(jobId, jobView);
             
             return Ok(SuccessResponse.True());
         }

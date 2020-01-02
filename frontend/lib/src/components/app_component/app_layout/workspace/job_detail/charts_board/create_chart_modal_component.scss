@@ -44,6 +44,10 @@
             flex-shrink: 0;
             margin-right: 10px;
             width: 90px;
+
+            &.disabled {
+              color: rgba(0, 0, 0, 0.38);
+            }
           }
 
           .analyser-select {

@@ -16,8 +16,11 @@ class LineChart {
     _CHART_PADDING_BOTTOM = 20;
     _CHART_PADDING_RIGHT = 10;
 
-    create(selector, dataSets, dataLabels) {
+    _isXDate = false;
+
+    create(selector, dataSets, dataLabels, isXDate) {
         this._removeOld(selector);
+        this._isXDate = isXDate;
 
         let element = document.getElementsByClassName("tab-content")[0];
         if (element == null)
@@ -50,26 +53,27 @@ class LineChart {
     }
 
     _createXScale(dataSets, width) {
-        // TODO: what if this is not time?
-        return d3.scaleTime()
-            .domain(d3.extent(dataSets.flat(), function(datum) { return new Date(datum.x); }))
-            .range([0, width]);
+        if (this._isXDate) {
+            return d3.scaleTime()
+                .domain(d3.extent(dataSets.flat(), datum => new Date(datum.x)))
+                .range([0, width]);
+        } else {
+            return d3.scaleLinear()
+                .domain(d3.extent(dataSets.flat(), datum => datum.x))
+                .range([0, width])
+        }
     }
 
     _createYScale(dataSets, height) {
         return d3.scaleLinear()
-            .domain(d3.extent(dataSets.flat(), function(datum) { return datum.y; }))
+            .domain(d3.extent(dataSets.flat(), datum => datum.y))
             .range([height, 0]);
     }
 
     _createChartCurve(xScale, yScale) {
         return d3.line()
-            .x(function (datum, _) {
-                return xScale(new Date(datum.x));
-            })
-            .y(function (datum) {
-                return yScale(datum.y);
-            });
+            .x((datum, _) => xScale(this._isXDate? new Date(datum.x) : datum.x))
+            .y(datum => yScale(datum.y));
     }
 
     _createSvg(selector, width) {
@@ -132,7 +136,6 @@ class LineChart {
             .attr("class", "tooltip")
             .style("opacity", 0);
 
-
         let verticalMarker = d3.select(containerSelector).append("div")
             .attr("class", "position-marker vertical")
             .style("opacity", 0);
@@ -188,7 +191,8 @@ class LineChart {
             let previousDatum = null;
             for (let j = 0; j < dataSet.length; j++) {
                 let datum = dataSet[j];
-                if (new Date(datum.x) > x) {
+                let currentX = this._isXDate? new Date(datum.x) : datum.x;
+                if (currentX > x) {
                     let currentValue = datum.value;
                     if (previousDatum != null) {
                         currentValue = this._interpolateValue(x, previousDatum, datum);
@@ -208,10 +212,10 @@ class LineChart {
     }
 
     _interpolateValue(currentX, previousDatum, nextDatum) {
-        let xTimeMillis = currentX.getTime();
-        let previousTimeMillis = new Date(previousDatum.x).getTime();
-        let nextTimeMillis = new Date(nextDatum.x).getTime();
-        let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
+        let xValue = this._isXDate? currentX.getTime() : currentX;
+        let previousXValue = this._isXDate? new Date(previousDatum.x).getTime() : previousDatum.x;
+        let nextXValue = this._isXDate? new Date(nextDatum.x).getTime() : nextDatum.x;
+        let positionBetween = (xValue - previousXValue) / (nextXValue - previousXValue);
 
         let valuesDiff = nextDatum.y - previousDatum.y;
         let valueInterpolation = positionBetween * valuesDiff;
