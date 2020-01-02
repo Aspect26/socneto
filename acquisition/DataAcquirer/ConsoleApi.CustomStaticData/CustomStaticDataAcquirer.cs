@@ -22,6 +22,9 @@ namespace ConsoleApi.CustomStaticData
         [JsonProperty("hasHeaders")]
         public bool HasHeaders { get; set; }
 
+        [JsonProperty("dateTimeFormatString")]
+        public string DateTimeFormatString { get; set; }
+
         [JsonProperty("fixedValues")]
         public Dictionary<string, string> FixedValues { get; set; }
 
@@ -349,6 +352,23 @@ namespace ConsoleApi.CustomStaticData
             {
                 if (csvreader.TryGetField<string>(index, out var value))
                 {
+                    if (k == "dateTime")
+                    {
+                        if (DateTime.TryParseExact(
+                            value,
+                            _attributes.DateTimeFormatString,
+                            null,
+                            System.Globalization.DateTimeStyles.None,
+                            out var exactTime))
+                        {
+                            value = exactTime.ToString("s");
+                        }
+                        else
+                        {
+                            value = DateTime.Now.ToString("s");
+                        }
+                    }
+
                     mutablePost.TryAdd(k, value);
                 }
             }
