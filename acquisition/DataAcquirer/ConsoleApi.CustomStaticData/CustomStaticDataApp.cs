@@ -24,7 +24,7 @@ namespace ConsoleApi.CustomStaticData
         {
             //await DoStaticTest();
 
-            var bucketName = "data1";
+            var bucketName = "example-datasets";
             var objectName = "tweets_tiny_no_headers.csv";
             objectName = "tweets_tiny.csv";
             objectName = "tweets.csv";
