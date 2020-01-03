@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models

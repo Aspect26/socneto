@@ -28,7 +28,8 @@ namespace Domain.Model
             Query = query;
         }
 
-        [JsonProperty("orignalPostId")]
+        
+        [JsonProperty("originalPostId")]
         public string OriginalPostId { get; }
 
         [JsonProperty("postId")]

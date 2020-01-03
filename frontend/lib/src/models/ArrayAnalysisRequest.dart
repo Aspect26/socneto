@@ -5,8 +5,8 @@ class ArrayAnalysisRequest {
   ArrayAnalysisRequest(this.analyserId, this.analysisProperties);
 
   Map<String, dynamic> toMap() => {
-    'analyserId': this.analyserId,
-    'analysisProperties': this.analysisProperties
+    'analyser_id': this.analyserId,
+    'analysis_properties': this.analysisProperties
   };
 
 }

@@ -1,4 +1,4 @@
-<div [class.disabled]="!selected" (click)="toggled()" class="component-select">
+<div [ngClass]="{'deselected': !selected, 'disabled': disabled && selected}" (click)="toggled()" class="component-select">
     <p>{{ component.identifier }}</p>
     <div class="component-image-wrapper">
         <img [src]="iconPath" alt="Socneto component logo">

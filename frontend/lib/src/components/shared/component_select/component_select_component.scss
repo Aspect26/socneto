@@ -22,8 +22,17 @@
 
     }
 
-    div.disabled {
+    div.deselected {
       background-color: map-get($background, 900);
+
+      img {
+        filter: grayscale(100%);
+        -webkit-filter: grayscale(100%);
+      }
+    }
+
+    div.disabled {
+      background-color: map-get($background, 300);
 
       img {
         filter: grayscale(100%);

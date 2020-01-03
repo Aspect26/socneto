@@ -8,7 +8,7 @@ namespace Socneto.Api.Models
         
         public static LoginResponse FromModel(User user)
         {
-            return new LoginResponse()
+            return new LoginResponse
             {
                 Username = user.Username,
             };
