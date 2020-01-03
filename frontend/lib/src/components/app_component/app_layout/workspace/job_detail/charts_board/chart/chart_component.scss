@@ -11,6 +11,7 @@
 
     display: block;
     position: relative;
+    padding: 20px;
 
     &.highlight {
       background-color: get-color($primary, A200);
