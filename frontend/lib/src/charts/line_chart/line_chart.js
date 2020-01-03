@@ -79,7 +79,7 @@ class LineChart {
     _createSvg(selector, width) {
         return d3.select(selector)
             .append("svg")
-            .attr("width", width)
+            .attr("width", "100%")
             .attr("height", this._ELEMENT_HEIGHT)
             .attr("class", "line-chart")
             .append("g")
@@ -146,25 +146,28 @@ class LineChart {
 
         let self = this;
         d3.select(containerSelector)
-            .on('mouseover', function (d, i) {
-                mouseHoverDiv.transition().duration(100).style("opacity", 1);
-                verticalMarker.transition().duration(100).style("opacity", 1);
-                horizontalMarker.transition().duration(100).style("opacity", 1);
+            .on('mouseover', () => {
+                mouseHoverDiv.style("opacity", 1);
+                verticalMarker.style("opacity", 1);
+                horizontalMarker.style("opacity", 1);
             })
-            .on('mouseout', function (d, i) {
-                mouseHoverDiv.transition().duration(100).style("opacity", 0);
-                verticalMarker.transition().duration(100).style("opacity", 0);
-                horizontalMarker.transition().duration(100).style("opacity", 0);
+            .on('mouseout', () => {
+                mouseHoverDiv.style("opacity", 0);
+                verticalMarker.style("opacity", 0);
+                horizontalMarker.style("opacity", 0);
             })
             .on('mousemove', function (d, _) {
-                mouseHoverDiv.style("left", (d3.event.layerX) + "px").style("top", (d3.event.layerY) + "px");
+                mouseHoverDiv.style("left", (d3.event.layerX - mouseHoverDiv._groups[0][0].clientWidth) + "px").style("top", (d3.event.layerY) + "px");
                 verticalMarker.style("left", (d3.event.layerX) + "px");
-
                 horizontalMarker.style("top", (d3.event.layerY) + "px");
 
                 let mouseChartPosition = d3.mouse(this)[0] - self._LEGEND_WIDTH;
                 let tooltipHtml = self._createMouseHoverTooltipHtml(mouseChartPosition, xScale, dataSets, dataLabels);
-                mouseHoverDiv.html(tooltipHtml);
+                mouseHoverDiv.style("opacity", tooltipHtml === ""? 0 : 1);
+                console.log(tooltipHtml);
+                if (tooltipHtml !== "") {
+                    mouseHoverDiv.html(tooltipHtml);
+                }
             });
     }
 

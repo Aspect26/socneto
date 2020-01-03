@@ -45,7 +45,7 @@ class PieChart {
     _createSvg(selector, width, height) {
         return d3.select(selector)
             .append("svg")
-            .attr("width", width)
+            .attr("width", "100%")
             .attr("height", height)
             .attr("class", "pie-chart")
             .append("g")
