@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
@@ -15,6 +16,35 @@ using Newtonsoft.Json;
 namespace Infrastructure.CustomStaticData
 {
 
+    public class PostValidator
+    {
+        private const string _validationErrorsFound = "The following errors were found parsing a post:\n{0}";
+        private const string _errorEmpty = "Field '{0}' must not be null";
+
+        public static OkErrorResult ValidatePost(DataAcquirerPost post)
+        {
+            IEnumerable<string> enumerateErrors()
+            {
+                if (string.IsNullOrEmpty(post.OriginalPostId))
+                {
+                    yield return string.Format(_errorEmpty, post.OriginalPostId);
+                }
+                if (string.IsNullOrEmpty(post.DateTime))
+                {
+                    yield return string.Format(_errorEmpty, post.DateTime);
+                }
+            }
+            var validationsErrors = enumerateErrors();
+            if (validationsErrors.Any())
+            {
+                var errors = string.Join("\n", validationsErrors);
+                var errorMessage = string.Format(_validationErrorsFound, errors);
+                return OkErrorResult.Error(errorMessage);
+            }
+            return OkErrorResult.Successful();
+        }
+
+    }
     public class CustomStaticDataAcquirer : IDataAcquirer
     {
         private readonly string _endpoint;
@@ -96,11 +126,26 @@ namespace Infrastructure.CustomStaticData
 
                 });
 
-                while (!reader.ReadingEnded)
+                while (!reader.IsCompleted)
                 {
                     if (reader.TryGetPost(out var post))
                     {
-                        yield return post;
+                        var validation = PostValidator.ValidatePost(post);
+                        if (validation.IsSuccessful)
+                        {
+                            yield return post;
+                        }
+                        else
+                        {
+                            _logger.TrackWarning(
+                                "CustomStaticData",
+                                "Invalid post encountered",
+                                new
+                                {
+                                    errorMessage = validation.ErrorMessage,
+                                    post
+                                });
+                        }
                     }
                     else
                     {

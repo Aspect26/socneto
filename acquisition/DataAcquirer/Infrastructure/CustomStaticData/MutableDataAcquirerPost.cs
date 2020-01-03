@@ -23,11 +23,11 @@ namespace Infrastructure.CustomStaticData
         public string UserId { get; set; }
 
         [JsonProperty("dateTime")]
-        public string PostDateTime { get; set; }
+        public string DateTime { get; set; }
 
         public DataAcquirerPost Freeze()
         {
-            var datetime = PostDateTime ?? DateTime.Now.ToString("s");
+            var datetime = DateTime ?? System.DateTime.Now.ToString("s");
             return DataAcquirerPost.FromValues(
                             OriginalPostId,
                             Text,

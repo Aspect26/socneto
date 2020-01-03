@@ -4,52 +4,6 @@ using Newtonsoft.Json;
 
 namespace Domain.Model
 {
-    public class DataAcquirerPost
-    {
-        private DataAcquirerPost(
-         string originalPostId,
-         string text,
-         string language,
-         string source,
-         string userId,
-         string postDateTime,
-         string query)
-        {
-            OriginalPostId = originalPostId;
-            Text = text;
-            Language = language;
-            UserId = userId;
-            Source = source;
-            PostDateTime = postDateTime;
-            Query = query;
-        }
-
-        public string OriginalPostId { get; }
-
-        public string Text { get; }
-
-        public string Source { get; }
-
-        public string UserId { get; }
-
-        public string PostDateTime { get; }
-        public string Query { get; }
-        public string Language { get; }
-
-        public static DataAcquirerPost FromValues(
-            string originalPostId,
-            string text,
-            string language,
-            string source,
-            string userId,
-            string dateTimeString,
-            string query = null)
-        {
-            return new DataAcquirerPost(originalPostId, text,language, source, userId, dateTimeString,query);
-        }
-    }
-
-
     public class UniPostModel
     {
         private UniPostModel(
@@ -73,6 +27,7 @@ namespace Domain.Model
             JobId = jobId;
             Query = query;
         }
+
         
         [JsonProperty("originalPostId")]
         public string OriginalPostId { get; }
@@ -112,12 +67,12 @@ namespace Domain.Model
         {
 
             return new UniPostModel(postId,
-                originalPostId, 
+                originalPostId,
                 text,
-                language, 
-                source, 
-                userId, 
-                dateTimeString, 
+                language,
+                source,
+                userId,
+                dateTimeString,
                 jobId,
                 query);
         }

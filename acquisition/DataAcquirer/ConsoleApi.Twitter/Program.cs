@@ -1,14 +1,11 @@
-using Application;
 using Domain;
 using Domain.Abstract;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
-using Domain.Model;
 using Domain.Registration;
 using Infrastructure.Kafka;
 using Infrastructure.Twitter;
-using LinqToTwitter;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,11 +13,9 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using Domain.JobManagement.Abstract;
 using Infrastructure.DataGenerator;
-using Infrastructure.StaticData;
 using System.Reflection;
 
 namespace ConsoleApi.Twitter
@@ -65,7 +60,7 @@ namespace ConsoleApi.Twitter
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
-            services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
+            services.AddTransient<IMessageBrokerProducer, FileProducer>();
 
             services.AddSingleton<IMessageBrokerConsumer, MockConsumer>();
 
@@ -100,9 +95,9 @@ namespace ConsoleApi.Twitter
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
 
-            //services.AddOptions<FileProducerOptions>()
-            //    .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
-            //    .ValidateDataAnnotations();
+            services.AddOptions<FileProducerOptions>()
+                .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
+                .ValidateDataAnnotations();
 
             services.AddOptions<TwitterCredentialsOptions>()
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
@@ -134,10 +129,20 @@ namespace ConsoleApi.Twitter
             var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
             var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
+            await StartJob(jobManager, twitterCredentialsOptions);
+
+
+
+            await Task.Delay(TimeSpan.FromHours(1));
+        }
+
+        private static async Task StartJob(IJobManager jobManager, IOptions<TwitterCredentialsOptions> twitterCredentialsOptions)
+        {
 
             // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
             // TODO add NOT cocktail NOT music
-            var query = "snake bite NOT cocktail NOT darts NOT piercing";
+            // var query = "snake bite NOT cocktail NOT darts NOT piercing";
+            var query = "iran";
             var jobConfig = new DataAcquirerJobConfig()
             {
                 Attributes = new Dictionary<string, string>
@@ -159,8 +164,6 @@ namespace ConsoleApi.Twitter
             {
 
             }
-
-            await Task.Delay(TimeSpan.FromHours(1));
         }
     }
 }

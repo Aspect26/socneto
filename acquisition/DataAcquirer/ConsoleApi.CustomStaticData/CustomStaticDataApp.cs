@@ -1,13 +1,8 @@
-using CsvHelper;
 using System;
 using System.Threading.Tasks;
-using Minio;
-using Minio.Exceptions;
-using System.IO;
 using Domain.Model;
 using Domain.Acquisition;
 using System.Collections.Generic;
-using Infrastructure.CustomStaticData.MappingAttributes;
 
 namespace ConsoleApi.CustomStaticData
 {
@@ -22,8 +17,6 @@ namespace ConsoleApi.CustomStaticData
         }
         public async Task DoAsync()
         {
-            //await DoStaticTest();
-
             var bucketName = "example-datasets";
             var objectName = "tweets_tiny_no_headers.csv";
             objectName = "tweets_tiny.csv";
