@@ -5,7 +5,7 @@
 
         <div header>
             <h1>Create new job</h1>
-            <material-button icon autoFocus (trigger)="onCloseDialog()">
+            <material-button icon autoFocus [disabled]="submitting" (trigger)="onCloseDialog()">
                 <material-icon icon="close"></material-icon>
             </material-button>
         </div>
@@ -24,6 +24,7 @@
                             label="Name of the job"
                             floatingLabel
                             [(ngModel)]="jobName"
+                            [disabled]="submitting"
                             class="labeled-input">
                     </material-input>
 
@@ -33,6 +34,7 @@
                                 label="The topic to be queried"
                                 floatingLabel
                                 [(ngModel)]="topic"
+                                [disabled]="submitting"
                                 class="labeled-input">
                         </material-input>
                     </div>
@@ -44,6 +46,7 @@
                             [(selection)]="languageSelection"
                             [itemRenderer]="languagesItemRenderer"
                             [buttonText]="languageSelection.selectedValue"
+                            [disabled]="submitting"
                             class="language-select">
                         </material-dropdown-select>
                     </div>
@@ -52,6 +55,7 @@
                     <components-select
                             [components]="availableSocialNetworks"
                             [loading]="loadingSocialNetworks"
+                            [disabled]="submitting"
                             (change)="onSocialNetworksSelectionChange($event)"
                             (refresh)="onSocialNetworksRefresh()">
                     </components-select>
@@ -60,6 +64,7 @@
                     <components-select
                             [components]="availableDataAnalyzers"
                             [loading]="loadingDataAnalyzers"
+                            [disabled]="submitting"
                             (change)="onDataAnalyzersSelectionChange($event)"
                             (refresh)="onDataAnalyzersRefresh()">
                     </components-select>
@@ -77,13 +82,13 @@
                         <material-tab class="tab" label="Twitter">
 
                             <div>
-                                <material-toggle [(ngModel)]="useCustomTwitterCredentials" label="Use custom"></material-toggle>
+                                <material-toggle [(ngModel)]="useCustomTwitterCredentials" [disabled]="submitting" label="Use custom"></material-toggle>
                             </div>
 
                             <material-input
                                     floatingLabel
                                     label="Api Key"
-                                    [disabled]="!useCustomTwitterCredentials"
+                                    [disabled]="!useCustomTwitterCredentials || submitting"
                                     [(ngModel)]="twitterCredentials.apiKey"
                                     class="labeled-input">
                             </material-input>
@@ -91,7 +96,7 @@
                             <material-input
                                     floatingLabel
                                     label="Api Secret Key"
-                                    [disabled]="!useCustomTwitterCredentials"
+                                    [disabled]="!useCustomTwitterCredentials || submitting"
                                     [(ngModel)]="twitterCredentials.apiSecretKey"
                                     class="labeled-input">
                             </material-input>
@@ -99,7 +104,7 @@
                             <material-input
                                     floatingLabel
                                     label="Access Token"
-                                    [disabled]="!useCustomTwitterCredentials"
+                                    [disabled]="!useCustomTwitterCredentials || submitting"
                                     [(ngModel)]="twitterCredentials.accessToken"
                                     class="labeled-input">
                             </material-input>
@@ -107,7 +112,7 @@
                             <material-input
                                     floatingLabel
                                     label="Access Token Secret"
-                                    [disabled]="!useCustomTwitterCredentials"
+                                    [disabled]="!useCustomTwitterCredentials || submitting"
                                     [(ngModel)]="twitterCredentials.accessTokenSecret"
                                     class="labeled-input">
                             </material-input>
@@ -117,13 +122,13 @@
                         <material-tab class="tab" label="Reddit">
 
                             <div>
-                                <material-toggle [(ngModel)]="useCustomRedditCredentials" label="Use custom"></material-toggle>
+                                <material-toggle [(ngModel)]="useCustomRedditCredentials" [disabled]="submitting" label="Use custom"></material-toggle>
                             </div>
 
                             <material-input
                                     floatingLabel
                                     label="Application ID"
-                                    [disabled]="!useCustomRedditCredentials"
+                                    [disabled]="!useCustomRedditCredentials || submitting"
                                     [(ngModel)]="redditCredentials.appId"
                                     class="labeled-input">
                             </material-input>
@@ -131,7 +136,7 @@
                             <material-input
                                     floatingLabel
                                     label="Application Secret Key"
-                                    [disabled]="!useCustomRedditCredentials"
+                                    [disabled]="!useCustomRedditCredentials || submitting"
                                     [(ngModel)]="redditCredentials.appSecret"
                                     class="labeled-input">
                             </material-input>
@@ -139,7 +144,7 @@
                             <material-input
                                     floatingLabel
                                     label="Refresh Token"
-                                    [disabled]="!useCustomRedditCredentials"
+                                    [disabled]="!useCustomRedditCredentials || submitting"
                                     [(ngModel)]="redditCredentials.refreshToken"
                                     class="labeled-input">
                             </material-input>
@@ -154,10 +159,9 @@
         </material-stepper>
 
         <div footer>
-            <material-button *ngIf="jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
-
-            <material-button *ngIf="isJobDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
-            <material-button *ngIf="!isJobDefinitionCorrect()" disabled class="close-button">Submit</material-button>
+            <material-button *ngIf="!submitting && jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
+            <material-button *ngIf="!submitting" [disabled]="!isJobDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
+            <material-spinner *ngIf="submitting"></material-spinner>
         </div>
 
     </material-dialog>

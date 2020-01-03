@@ -21,7 +21,8 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
     MaterialPaperTooltipComponent,
     MaterialTooltipTargetDirective,
 
-    NgIf
+    NgIf,
+    NgClass
   ],
   templateUrl: 'component_select_component.html',
   styleUrls: ['component_select_component.css'],
@@ -35,6 +36,7 @@ class ComponentSelectComponent implements AfterChanges {
   final String _iconsLocation = "packages/sw_project/static/images/components";
 
   @Input() SocnetoComponent component;
+  @Input() bool disabled = false;
 
   final _changeController = StreamController<bool>();
   @Output() Stream<bool> get change => _changeController.stream;
@@ -49,6 +51,8 @@ class ComponentSelectComponent implements AfterChanges {
   }
 
   void toggled() {
+    if (this.disabled) return;
+
     this.selected = !this.selected;
     this._changeController.add(this.selected);
   }
