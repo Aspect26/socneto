@@ -136,6 +136,15 @@ class CreateChartModalComponent {
     }
   }
 
+  List<AnalysisProperty> getAnalyserProperties(String analyserId) {
+    var analyser = this.analysers.firstWhere((analyser) => analyser.identifier == analyserId);
+    if (analyser != null) {
+      return analyser.properties;
+    } else {
+      return [];
+    }
+  }
+
   void onUseTimeAsXChange(bool checked) {
     this.useTimeAsX = checked;
   }
@@ -162,7 +171,7 @@ class CreateChartModalComponent {
   }
 
   void onDataPathAnalyserChanged(AnalysisDataPath dataPath, SocnetoAnalyser analyser) {
-    dataPath.analyser = analyser;
+    dataPath.analyserId = analyser.identifier;
     dataPath.property = analyser.properties[0];
   }
 
@@ -184,7 +193,7 @@ class CreateChartModalComponent {
     for (var i = 0; i < count; i++) {
       if (this.analysers.isNotEmpty) {
         final analyser = this.analysers[0];
-        this.dataPaths.add(AnalysisDataPath(analyser, analyser.properties[0]));
+        this.dataPaths.add(AnalysisDataPath(analyser.identifier, analyser.properties[0]));
       }
     }
   }
