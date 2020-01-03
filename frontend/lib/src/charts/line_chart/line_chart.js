@@ -175,7 +175,7 @@ class LineChart {
         for (let index = 0; index < currentValues.length; index++) {
             let label = currentValues[index]["label"];
             let currentValue = currentValues[index]["value"];
-            let currentValueHTML = currentValue? `<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>` : "";
+            let currentValueHTML = currentValue != null? `<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>` : "";
             tooltipHtml = tooltipHtml.concat(currentValueHTML);
         }
 
