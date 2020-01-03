@@ -80,7 +80,7 @@ class ChartComponent implements AfterChanges {
   }
 
   void _redrawChart() {
-    var domSelector = "#${this.chartId}";
+    var domSelector = "#${this.chartId} .chart-wrapper";
     this._chartStrategy.redrawChart(domSelector);
   }
 

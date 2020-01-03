@@ -16,8 +16,8 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class ChartsController : ControllerBase
     {
-        
-        private IStorageService _storageService;
+        // TODO: maybe create charts service
+        private readonly IStorageService _storageService;
         private ILogger<ComponentsController> _logger;
 
         public ChartsController(IStorageService storageService, ILogger<ComponentsController> logger)
@@ -27,7 +27,7 @@ namespace Socneto.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/job/{jobId:guid}/charts")]
+        [Route("api/charts/{jobId:guid}")]
         public async Task<ActionResult<List<ChartDefinitionDto>>> GetJobCharts([FromRoute]Guid jobId)
         {
             if (!IsAuthorizedToSeeJob(jobId))
@@ -35,7 +35,7 @@ namespace Socneto.Api.Controllers
 
             var jobView = await _storageService.GetJobView(jobId);
 
-            if (jobView == null)
+            if (jobView?.ViewConfiguration == null)
             {
                 return Ok(new ArrayList());
             }
@@ -48,21 +48,24 @@ namespace Socneto.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/job/{jobId:guid}/charts/create")]
+        [Route("api/charts/{jobId:guid}/create")]
         public async Task<ActionResult<SuccessResponse>> CreateJobChart([FromRoute] Guid jobId, [FromBody] CreateChartDefinitionRequest request)
         {
             if (!IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
 
-            if (!Enum.TryParse(request.ChartType, out ChartType chartType))
-            {
-                return BadRequest();
-            }
-
             var newChartDefinition = new ChartDefinition
             {
-                ChartType = chartType,
-                AnalysisDataPaths = request.AnalysisDataPaths,
+                ChartType = request.ChartType,
+                AnalysisDataPaths = request.AnalysisDataPaths.Select(x => new AnalysisDataPath
+                {
+                    AnalyserComponentId = x.AnalyserComponentId,
+                    Property = new AnalysisProperty
+                    {
+                        Identifier = x.Property.Identifier,
+                        Type = x.Property.Type
+                    }
+                }).ToList(),
                 IsXPostDatetime = request.IsXPostDateTime
             };
 

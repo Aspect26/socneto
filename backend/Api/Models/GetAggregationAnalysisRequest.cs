@@ -4,10 +4,10 @@ namespace Socneto.Api.Models
 {
     public class GetAggregationAnalysisRequest
     {
-        [JsonProperty("analyserId")]
+        [JsonProperty("analyser_id")]
         public string AnalyserId { get; set; }
         
-        [JsonProperty("analysisProperty")]
+        [JsonProperty("analysis_property")]
         public string AnalysisProperty { get; set; }
     }
 }
