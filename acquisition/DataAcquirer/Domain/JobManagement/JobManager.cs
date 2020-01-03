@@ -171,7 +171,7 @@ namespace Domain.JobManagement
                         dataPost.Language,
                         dataPost.Source,
                         dataPost.UserId,
-                        dataPost.PostDateTime,
+                        dataPost.DateTime,
                         dataAcquirerInputModel.JobId,
                         dataPost.Query) ;
 
