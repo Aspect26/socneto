@@ -24,11 +24,11 @@
                         {{ getDataPathLabel(i) }}:
                     </span>
                     <material-dropdown-select class="analyser-select"
-                                              buttonText="{{ dataPath.analyser.identifier }}"
+                                              buttonText="{{ dataPath.analyserId }}"
                                               [disabled]="useTimeAsX && first"
                                               [options]="analysers"
                                               [itemRenderer]="analyserItemRenderer"
-                                              [selection]="dataPath.analyser"
+                                              [selection]="dataPath.analyserId"
                                               (selectionChange)="onDataPathAnalyserChanged(dataPath, $event)">
                     </material-dropdown-select>
 
@@ -36,7 +36,7 @@
                                               buttonText="{{ dataPath.property.name }}"
                                               [disabled]="useTimeAsX && first"
                                               [(selection)]="dataPath.property"
-                                              [options]="dataPath.analyser.properties"
+                                              [options]="getAnalyserProperties(dataPath.analyserId)"
                                               [itemRenderer]="propertyItemRenderer">
                     </material-dropdown-select>
                 </div>

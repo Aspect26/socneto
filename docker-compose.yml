@@ -98,6 +98,14 @@ services:
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
 
+  backend:
+    build: './backend'
+    ports:
+      - '6010:6010'
+    container_name: backend
+    depends_on:
+      - storage
+
   sentiment-analyser:
     container_name: se
     build: './analysers/sentiment_analysis' 
