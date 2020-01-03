@@ -113,7 +113,7 @@ namespace Infrastructure.Twitter
                 await _metadataContext.UpdateAsync(metadata);
 
                 _logger.TrackInfo("QueryData", "Waiting few minutes for new posts");
-                await Task.Delay(TimeSpan.FromMinutes(5));
+                await Task.Delay(TimeSpan.FromMinutes(1));
             }
         }
 

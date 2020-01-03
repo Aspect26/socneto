@@ -6,7 +6,7 @@ namespace Infrastructure.CustomStaticData.StreamReaders
     public interface ICustomStreamReader
     {
         void StartPopulating(Stream stream);
-        bool ReadingEnded { get; }
+        bool IsCompleted { get; }
 
         bool TryGetPost(out DataAcquirerPost post);
     }

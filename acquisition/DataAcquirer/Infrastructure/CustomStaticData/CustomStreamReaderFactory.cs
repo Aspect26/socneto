@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Domain;
 using Infrastructure.CustomStaticData.MappingAttributes;
 using Infrastructure.CustomStaticData.StreamReaders;
@@ -8,19 +8,6 @@ namespace Infrastructure.CustomStaticData
 {
     public class CustomStreamReaderFactory
     {
-        private readonly IEventTracker<CustomStreamReaderFactory> _eventTracker;
-        private readonly IEventTracker<JsonStreamReader> _jsonEventTracker;
-        private readonly IEventTracker<CsvStreamReader> _csvEventTracker;
-
-        public CustomStreamReaderFactory(
-            IEventTracker<CustomStreamReaderFactory> eventTracker,
-            IEventTracker<JsonStreamReader> jsonEventTracker,
-            IEventTracker<CsvStreamReader> csvEventTracker)
-        {
-            _eventTracker = eventTracker;
-            _jsonEventTracker = jsonEventTracker;
-            _csvEventTracker = csvEventTracker;
-        }
         public ICustomStreamReader Create(MappingAttributesRoot attributes)
         {
             try
@@ -28,12 +15,12 @@ namespace Infrastructure.CustomStaticData
                 if (attributes.DataFormat == "csv")
                 {
                     var csvAttributes = attributes.MappingAttributes.ToObject<CsvMappingAttributes>();
-                    return new CsvStreamReader(csvAttributes, _csvEventTracker);
+                    return new CsvStreamReader(csvAttributes);
                 }
                 else if (attributes.DataFormat == "json")
                 {
                     var jsonAttributes = attributes.MappingAttributes.ToObject<JsonMappingAttributes>();
-                    return new JsonStreamReader(jsonAttributes, _jsonEventTracker);
+                    return new JsonStreamReader(jsonAttributes);
                 }
                 else
                 {
@@ -41,11 +28,10 @@ namespace Infrastructure.CustomStaticData
                     throw new InvalidOperationException(message);
                 }
             }
-            catch (JsonException)
+            catch (JsonException je)
             {
-                throw;
+                throw new InvalidOperationException($"Could not parse mapping", je);
             }
-
         }
 
     }

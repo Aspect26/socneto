@@ -34,9 +34,8 @@ namespace Infrastructure.DataGenerator
         private readonly ILogger<FileProducer> _logger;
         private long _postEncountered = 0;
 
-
-        private readonly ConcurrentDictionary<string, int> _queryResults
-            = new ConcurrentDictionary<string, int>();
+        //private readonly ConcurrentDictionary<string, int> _queryResults
+        //    = new ConcurrentDictionary<string, int>();
         public FileProducer(
             IOptions<FileProducerOptions> fileProducerOptionsAccessor,
             ILogger<FileProducer> logger)
@@ -47,20 +46,20 @@ namespace Infrastructure.DataGenerator
         public async Task ProduceAsync(string topic, MessageBrokerMessage message)
         {
             _postEncountered++;
-            _logger.LogTrace("Post saved. TS: {timestamp}, post {post}",
+            _logger.LogInformation("Post saved. TS: {timestamp}, post {post}",
                 DateTime.Now.ToString("s"),
                 message.JsonPayloadPayload);
 
-            var post = JsonConvert.DeserializeObject<MyPost>(message.JsonPayloadPayload);
+            //var post = JsonConvert.DeserializeObject<MyPost>(message.JsonPayloadPayload);
 
-            var lang = post.Query ?? "null";
-            _queryResults.AddOrUpdate(lang, 1, (key, value) => value + 1);
+            //var lang = post.Query ?? "null";
+            // _queryResults.AddOrUpdate(lang, 1, (key, value) => value + 1);
 
-            if (_postEncountered % 100 == 0)
-            {
-                var ser = _queryResults.ToDictionary(r => r.Key, r => r.Value);
-                _logger.LogInformation(JsonConvert.SerializeObject(ser));
-            }
+            //if (_postEncountered % 100 == 0)
+            //{
+            //    var ser = _queryResults.ToDictionary(r => r.Key, r => r.Value);
+            //    _logger.LogInformation(JsonConvert.SerializeObject(ser));
+            //}
 
             using (var writer = new StreamWriter(_filePath, append: true))
             {
