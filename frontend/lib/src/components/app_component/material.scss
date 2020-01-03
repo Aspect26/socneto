@@ -1,17 +1,11 @@
 @import "package:sw_project/src/style/theming/theming.scss";
 @import "package:sw_project/src/style/style.scss";
 
-// TODO: check if we can use these mixins somehow
-@import 'package:angular_components/material_progress/_mixins.scss';
-@import 'package:angular_components/app_layout/_mixins.scss';
-
-
 @mixin material-theme($theme) {
 
   $primary: map-get($theme, primary);
   $background: map-get($theme, background);
 
-  // TODO: create mixins from all of these
   material-input {
     .focused-underline {
       background-color: get-color($primary, A700);
