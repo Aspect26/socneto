@@ -2,13 +2,13 @@ import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 
 class AnalysisDataPath {
 
-  SocnetoAnalyser analyser;
+  String analyserId;
   AnalysisProperty property;
 
-  AnalysisDataPath(this.analyser, this.property);
+  AnalysisDataPath(this.analyserId, this.property);
 
-  String toJsonPath() {
-    return "${this.analyser}.${this.property.name}";
-  }
+  AnalysisDataPath.fromMap(Map data) :
+      analyserId = data["analyser_id"],
+      property = AnalysisProperty.fromMap(data["property"]);
 
 }

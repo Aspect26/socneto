@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/AnalysisDataPath.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
-import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -46,10 +44,10 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("polarity", AnalysisPropertyType.Number)), AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, true),
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("keywords", AnalysisPropertyType.Number)), AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, false),
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("wordCount", AnalysisPropertyType.Number))], ChartType.Pie, false),
-    ChartDefinition([AnalysisDataPath(SocnetoAnalyser("componentId", ComponentType.DATA_ANALYSER, []), AnalysisProperty("keywords", AnalysisPropertyType.Number))], ChartType.Scatter, false)
+    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("polarity", AnalysisPropertyType.Number)), AnalysisDataPath("componentId", AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, true),
+    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("keywords", AnalysisPropertyType.Number)), AnalysisDataPath("componentId", AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, false),
+    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("wordCount", AnalysisPropertyType.Number))], ChartType.Pie, false),
+    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("keywords", AnalysisPropertyType.Number))], ChartType.Scatter, false)
   ];
 
   Future<User> login(String username, String password) async =>
