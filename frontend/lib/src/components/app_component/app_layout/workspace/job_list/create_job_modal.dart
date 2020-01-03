@@ -41,6 +41,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialDialogComponent,
     MaterialFabComponent,
     MaterialTabComponent,
+    MaterialSpinnerComponent,
     ModalComponent,
     ComponentsSelectComponent,
     MaterialStepperComponent,
