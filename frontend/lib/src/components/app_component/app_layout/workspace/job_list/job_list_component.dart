@@ -44,7 +44,7 @@ import 'package:sw_project/src/utils.dart';
   ],
   encapsulation: ViewEncapsulation.None,
   exports: [RoutePaths, Routes],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 )
 class JobListComponent implements AfterChanges {
 

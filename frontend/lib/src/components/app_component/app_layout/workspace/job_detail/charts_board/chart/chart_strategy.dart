@@ -22,20 +22,18 @@ class LineChartStrategy implements ChartStrategy {
     for (var currentLineData in dataSet) {
       this._chartData.add([]);
       for (var dataPointValue in currentLineData) {
-        // TODO: what if 'x' axis is not date?
-        var timestamp = dataPointValue[0] as int;
-        var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-        this._chartData.last.add({'x': date.toIso8601String(), 'y': dataPointValue[1]});
+        var xValue = this._chartDefinition.isXDateTime ? DateTime.fromMillisecondsSinceEpoch(dataPointValue[0] as int).toIso8601String() : dataPointValue[0];
+        this._chartData.last.add({'x': xValue, 'y': dataPointValue[1]});
       }
 
-      this._chartData.last.sort((a, b) => (a['x'] as String).compareTo(b['x']));
+      this._chartData.last.sort((a, b) => (a['x']).compareTo(b['x']));
     }
   }
 
   @override
   redrawChart(String domSelector) {
     List<String> labels = this._getLineChartLabels();
-    SocnetoCharts.createLineChart(domSelector, this._chartData, labels);
+    SocnetoCharts.createLineChart(domSelector, this._chartData, labels, this._chartDefinition.isXDateTime);
   }
 
   List<String> _getLineChartLabels() {
