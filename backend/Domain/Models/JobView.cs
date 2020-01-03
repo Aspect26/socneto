@@ -9,6 +9,7 @@ namespace Socneto.Domain.Models
     {
         public Guid JobId { get; set; }
 
+        [JsonProperty("viewConfiguration")]
         public ViewConfiguration ViewConfiguration { get; set; }
     }
 

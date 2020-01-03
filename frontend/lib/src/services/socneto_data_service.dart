@@ -34,7 +34,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
+    var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
     var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
     if (chartDefinition.chartType == ChartType.Pie) {
       return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
@@ -83,7 +83,13 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
       "chart_type": chartDefinition.chartType.toString().split('.').last,
-      "analysis_data_paths": chartDefinition.analysisDataPaths,
+      "analysis_data_paths": chartDefinition.analysisDataPaths.map((analysisDataPath) => {
+        "analyser_component_id": analysisDataPath.analyserId,
+        "analyser_property": {
+          "identifier": analysisDataPath.property.name,
+          "type": analysisDataPath.property.type.toString().split('.').last
+        }
+      }).toList(),
       "is_x_post_datetime": chartDefinition.isXDateTime
     };
 
