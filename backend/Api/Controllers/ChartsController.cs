@@ -27,7 +27,7 @@ namespace Socneto.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/job/{jobId:guid}/charts")]
+        [Route("api/charts/{jobId:guid}")]
         public async Task<ActionResult<List<ChartDefinitionDto>>> GetJobCharts([FromRoute]Guid jobId)
         {
             if (!IsAuthorizedToSeeJob(jobId))
@@ -48,7 +48,7 @@ namespace Socneto.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/job/{jobId:guid}/charts/create")]
+        [Route("api/charts/{jobId:guid}/create")]
         public async Task<ActionResult<SuccessResponse>> CreateJobChart([FromRoute] Guid jobId, [FromBody] CreateChartDefinitionRequest request)
         {
             if (!IsAuthorizedToSeeJob(jobId))

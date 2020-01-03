@@ -28,7 +28,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
   Future<List<Job>> getUserJobs(String username) async =>
-      await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
+      await this.getList<Job>("job/$username/all", (result) => Job.fromMap(result));
 
   Future<List<Post>> getJobPosts(String jobId) async =>
       await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
@@ -78,7 +78,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       (await this.getList<SocnetoAnalyser>("components/analysers", (result) => SocnetoAnalyser.fromMap(result)));
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
-      await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
+      await this.getList<ChartDefinition>("charts/$jobId", (result) => ChartDefinition.fromMap(result));
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
@@ -87,7 +87,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       "is_x_post_datetime": chartDefinition.isXDateTime
     };
 
-    return this.post<Success>("job/$jobId/charts/create", body, (result) => Success.fromMap(result));
+    return this.post<Success>("charts/$jobId/create", body, (result) => Success.fromMap(result));
   }
 
 }

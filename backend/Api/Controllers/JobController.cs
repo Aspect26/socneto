@@ -18,8 +18,7 @@ namespace Socneto.Api.Controllers
         private readonly IStorageService _storageService;
         private readonly IGetAnalysisService _getAnalysisService;
         private readonly ILogger<JobController> _logger;
-
-
+        
         public JobController(IJobService jobService, IStorageService storageService, IGetAnalysisService getAnalysisService, 
             ILogger<JobController> logger)
         {
@@ -27,6 +26,22 @@ namespace Socneto.Api.Controllers
             _storageService = storageService;
             _getAnalysisService = getAnalysisService;
             _logger = logger;
+        }
+        
+        [HttpGet]
+        [Route("api/job/{username}/all")]
+        public async Task<ActionResult<List<JobDto>>> GetJobs([FromRoute]string username)
+        {
+            if (!IsAuthorizedToSeeUser(username))
+                return Unauthorized();
+            
+            var jobStatuses = await _jobService.GetJobsDetails(username);
+
+            var mappedJobStatuses = jobStatuses
+                .Select(JobDto.FromModel)
+                .ToList();
+            
+            return Ok(mappedJobStatuses);
         }
 
         [HttpGet]
@@ -42,6 +57,7 @@ namespace Socneto.Api.Controllers
             return Ok(jobStatusResponse);
         }
 
+        // TODO: is this working?
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts")]
         public async Task<ActionResult<List<PostDto>>> GetJobPosts([FromRoute] Guid jobId)
@@ -79,6 +95,14 @@ namespace Socneto.Api.Controllers
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
+        }
+        
+        private bool IsAuthorizedToSeeUser(string username)
+        {
+            if (!User.Identity.IsAuthenticated)
+                return false;
+            
+            return username == User.Identity.Name;
         }
 
         private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)

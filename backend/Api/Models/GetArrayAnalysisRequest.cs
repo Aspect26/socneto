@@ -1,14 +1,13 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Socneto.Api.Models
 {
     public class GetArrayAnalysisRequest
     {
-        [JsonProperty("analyserId")]
+        [JsonProperty("analyser_id")]
         public string AnalyserId { get; set; }
         
-        [JsonProperty("analysisProperties")]
+        [JsonProperty("analysis_properties")]
         public string[] AnalysisProperties { get; set; }
     }
     
