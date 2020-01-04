@@ -1,39 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Acquisition;
 using Domain.Model;
 using LinqToTwitter;
-using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Twitter
 {
-
-    public class TwitterBatchLoaderFactory
-    {
-        private readonly IDataAcquirerMetadataContextProvider _dataAcquirerMetadataContextProvider;
-        private readonly IEventTracker<TwitterBatchLoader> _childEventTracker;
-
-        public TwitterBatchLoaderFactory(
-            IEventTracker<TwitterBatchLoader> childEventTracker,
-            IDataAcquirerMetadataContextProvider dataAcquirerMetadataContextProvider)
-        {
-            _childEventTracker = childEventTracker;
-            _dataAcquirerMetadataContextProvider = dataAcquirerMetadataContextProvider;
-        }
-
-        public TwitterBatchLoader Create(Guid jobId)
-        {
-            var context = _dataAcquirerMetadataContextProvider.Get(jobId);
-            return new TwitterBatchLoader(
-                jobId,
-                context,
-                _childEventTracker);
-        }
-    }
     public class TwitterBatchLoader
     {
         private readonly Guid _jobId;
@@ -165,6 +140,12 @@ namespace Infrastructure.Twitter
                         ? Math.Min(search.Statuses.Min(status => status.StatusID) - 1, acquirerInputModel.MaxId)
                         : acquirerInputModel.MaxId;
                 }
+                catch(TwitterQueryException e) when (e.ErrorCode == 88)
+                {
+                    Console.WriteLine("Rate limit exceeded - waiting");
+                    await Task.Delay(TimeSpan.FromMinutes(5));
+                    continue;
+                }
                 catch (Exception e)
                 {
                     _logger.TrackError(
@@ -175,6 +156,8 @@ namespace Infrastructure.Twitter
                             exception = e,
                             jobId = _jobId
                         });
+                    await Task.Delay(TimeSpan.FromMinutes(1));
+                    continue;
                 }
 
                 if (batch.Count == 0)
