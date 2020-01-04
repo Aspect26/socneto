@@ -149,7 +149,9 @@ namespace Infrastructure.Twitter
         {
             return new TwitterMetadata
             {
-                MaxId = ulong.MaxValue,
+#warning hardcodedstuff here
+                MaxId = 1213343455193137152,
+
                 SinceId = 0,
                 Language = acquirerInputModel.QueryLanguage,
                 Query = query,

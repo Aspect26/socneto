@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Domain.JobManagement.Abstract;
 using Infrastructure.DataGenerator;
 using System.Reflection;
+using System.Threading;
 
 namespace ConsoleApi.Twitter
 {
@@ -72,7 +73,7 @@ namespace ConsoleApi.Twitter
               .AddSingleton<IDataAcquirerMetadataStorage, NullMetadataStorage>()
               .AddSingleton<IDataAcquirerMetadataContext, TwitterMetadataContext>()
                 .AddSingleton<TwitterBatchLoaderFactory>();
-            
+
             ConfigureCommonOptions(configuration, services);
             return services.BuildServiceProvider();
         }
@@ -103,6 +104,10 @@ namespace ConsoleApi.Twitter
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
                 .ValidateDataAnnotations();
 
+            services.AddOptions<TwitterConsoleOptions>()
+                .Bind(configuration)
+                .ValidateDataAnnotations();
+
             // TW
 
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
@@ -129,29 +134,35 @@ namespace ConsoleApi.Twitter
             var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
             var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
-            await StartJob(jobManager, twitterCredentialsOptions);
+            var twitterConsoleOptions = builtProvider.GetService<IOptions<TwitterConsoleOptions>>();
+            await StartJob(
+                jobManager,
+                twitterCredentialsOptions.Value,
+                twitterConsoleOptions.Value);
 
-
-
-            await Task.Delay(TimeSpan.FromHours(1));
+            await Task.Delay(Timeout.InfiniteTimeSpan);
         }
 
-        private static async Task StartJob(IJobManager jobManager, IOptions<TwitterCredentialsOptions> twitterCredentialsOptions)
+        private static async Task StartJob(
+            IJobManager jobManager,
+            TwitterCredentialsOptions twitterCredentialsOptions,
+            TwitterConsoleOptions consoleOptions
+            )
         {
 
             // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
             // TODO add NOT cocktail NOT music
             // var query = "snake bite NOT cocktail NOT darts NOT piercing";
-            var query = "iran";
+            var query = consoleOptions.Query;
             var jobConfig = new DataAcquirerJobConfig()
             {
                 Attributes = new Dictionary<string, string>
                 {
                     {"TopicQuery", query },
-                    {"AccessToken", twitterCredentialsOptions.Value.AccessToken},
-                    {"AccessTokenSecret" , twitterCredentialsOptions.Value.AccessTokenSecret},
-                    {"ApiKey",  twitterCredentialsOptions.Value.ApiKey},
-                    {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
+                    {"AccessToken", twitterCredentialsOptions.AccessToken},
+                    {"AccessTokenSecret" , twitterCredentialsOptions.AccessTokenSecret},
+                    {"ApiKey",  twitterCredentialsOptions.ApiKey},
+                    {"ApiSecretKey", twitterCredentialsOptions.ApiSecretKey},
                 },
                 JobId = Guid.NewGuid(),
                 OutputMessageBrokerChannels = new string[] { "job_management.component_data_input.DataAnalyser_sentiment" }

@@ -51,6 +51,9 @@ namespace Infrastructure.Twitter
             try
             {
                 var newContext = CreateContext(credentials);
+                try
+                {
+
                 await newContext
                     .Search
                     .Where(r => r.Query == "test query"
@@ -58,6 +61,11 @@ namespace Infrastructure.Twitter
                     && r.Count == 1)
                     .SingleOrDefaultAsync();
 
+                }
+                catch (TwitterQueryException e) when (e.ErrorCode == 88)
+                {
+                    // this is ok
+                }
                 _contextPerUser.TryAdd(key, newContext);
                 return newContext;
 
