@@ -23,23 +23,6 @@ namespace Infrastructure.Twitter
             ulong maxId = ulong.MaxValue,
             ulong sinceId = 1)
         {
-#warning hardcoded
-            return new Search()
-            {
-                Statuses = new List<Status>
-                {
-                    new Status
-            {
-                StatusID = 1,
-                FullText = $"test text {1}",
-                Lang = "en",
-                UserID = 0,
-                CreatedAt = DateTime.Now
-            }
-        }
-            };
-
-
             var combinedSearchResults = new List<Status>();
 
             // HOTFIX Null language results in exception saying that 
