@@ -17,12 +17,13 @@ namespace Infrastructure.Twitter
             _jobId = jobId;
             _jobMetadataStorage = jobMetadataStorage;
         }
+
         public async Task<T> GetOrCreateAsync<T>(T defaultMetadata) where T : class, IDataAcquirerMetadata
         {
             var metadata = await _jobMetadataStorage.GetAsync<T>(_jobId);
             if (metadata == null)
             {
-                await _jobMetadataStorage.SaveAsync(_jobId, defaultMetadata);
+                await _jobMetadataStorage.SaveAsync(_jobId,defaultMetadata);
                 return defaultMetadata;
             }
 
@@ -31,7 +32,7 @@ namespace Infrastructure.Twitter
 
         public async Task UpdateAsync<T>(T metadata) where T : class, IDataAcquirerMetadata
         {
-            await _jobMetadataStorage.SaveAsync(_jobId, metadata);
+            await _jobMetadataStorage.SaveAsync(_jobId,metadata);
         }
     }
 }
