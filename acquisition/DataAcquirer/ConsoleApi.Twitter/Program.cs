@@ -19,6 +19,7 @@ using Infrastructure.DataGenerator;
 using System.Reflection;
 using System.Threading;
 using Infrastructure.Twitter.Abstract;
+using Infrastructure.Metadata;
 
 namespace ConsoleApi.Twitter
 {
@@ -123,8 +124,8 @@ namespace ConsoleApi.Twitter
             Directory.CreateDirectory(twitterMetaDir);
             Directory.CreateDirectory(jobMetaDir);
 
-            services.AddOptions<TwitterJsonStorageOptions>()
-                .Bind(configuration.GetSection($"{rootName}:TwitterJsonStorageOptions"))
+            services.AddOptions<FileJsonStorageOptions>()
+                .Bind(configuration.GetSection($"{rootName}:FileJsonStorageOptions"))
                 .PostConfigure(o => o.Directory = twitterMetaDir);
 
             services.AddOptions<DataAcquirerJobFileStorageOptions>()

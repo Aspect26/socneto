@@ -12,54 +12,46 @@ namespace Tests.Integration
 {
     public class StorageApiTester
     {
-        private readonly IDataAcquirerMetadataStorage _dataAcquirerMetadataStorage;
         private readonly ILogger<StorageApiTester> _logger;
 
-        public StorageApiTester(
-            IDataAcquirerMetadataStorage dataAcquirerMetadataStorage,
-            ILogger<StorageApiTester> logger)
+        public StorageApiTester(ILogger<StorageApiTester> logger)
         {
-            _dataAcquirerMetadataStorage = dataAcquirerMetadataStorage;
             _logger = logger;
         }
 
-        // TODO add attributes
-
-
-        public async Task TestAsync()
+        public async Task TestAsync(IDataAcquirerMetadataStorage storage)
         {
-            IEnumerable<string> assert(TwitterMetadata a, TwitterMetadata b)
-            {
-
-                throw new NotImplementedException();
-            }
             var twitterMetadata = new TwitterMetadata()
             {
                 BatchSize = 1,
-                //Credentials = new TwitterCredentials
-                //{
-                //    AccessToken = "a",
-                //    AccessTokenSecret = "b",
-                //    ConsumerKey = "c",
-                //    ConsumerSecret = "d"
-                //},
                 Language = "en",
                 MaxId = 111,
                 Query = "q1",
                 SinceId = 2
             };
             var jobId = Guid.NewGuid();
-            await _dataAcquirerMetadataStorage.SaveAsync(jobId, twitterMetadata);
-            var retreived = await _dataAcquirerMetadataStorage
+            await storage.SaveAsync(jobId, twitterMetadata);
+            var retreived = await storage
                 .GetAsync<TwitterMetadata>(jobId);
 
-            var errors = assert(twitterMetadata, retreived);
-            AssertErrors("insert metadata" ,errors);
+            var errors = AssertObject(twitterMetadata, retreived);
+            AssertErrors("insert metadata", errors);
         }
 
+        private IEnumerable<string> AssertObject(TwitterMetadata a, TwitterMetadata b)
+        {
+            yield return AssertProperty("BatchSize", r => r.BatchSize, a, b);
 
+            yield return AssertProperty("Language", r => r.Language, a, b);
 
-        public string AssertProperty<TObj, TReturn>(
+            yield return AssertProperty("MaxId", r => r.MaxId, a, b);
+
+            yield return AssertProperty("Query", r => r.Query, a, b);
+
+            yield return AssertProperty("SinceId", r => r.SinceId, a, b);
+        }
+
+        private string AssertProperty<TObj, TReturn>(
             string propertyName,
             Func<TObj, TReturn> propertySelector,
             TObj a,

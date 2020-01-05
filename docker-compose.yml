@@ -87,44 +87,44 @@ services:
     environment:
       - ELASTICSEARCH_WAIT_MILLIS=40000
   
-  jms:
-    build: './job-management'
-    ports:
-      - '6009:6009'
-    container_name: jms
-    depends_on:
-      - storage
-      - kafka
-    environment:
-      - ELASTICSEARCH_WAIT_MILLIS=40000
+  # jms:
+  #   build: './job-management'
+  #   ports:
+  #     - '6009:6009'
+  #   container_name: jms
+  #   depends_on:
+  #     - storage
+  #     - kafka
+  #   environment:
+  #     - ELASTICSEARCH_WAIT_MILLIS=40000
 
-  backend:
-    build: './backend'
-    ports:
-      - '6010:6010'
-    container_name: backend
-    depends_on:
-      - storage
+  # backend:
+  #   build: './backend'
+  #   ports:
+  #     - '6010:6010'
+  #   container_name: backend
+  #   depends_on:
+  #     - storage
 
-  sentiment-analyser:
-    container_name: se
-    build: './analysers/sentiment_analysis' 
-    # build: 
-    #   shm_size: 2gb
-    #   context: './analysers/sentiment_analysis'
-    #   dockerfile: './analysers/sentiment_analysis/dockerfile'
-    restart: always
-    depends_on:
-      - kafka
-      - jms
+  # sentiment-analyser:
+  #   container_name: se
+  #   build: './analysers/sentiment_analysis' 
+  #   # build: 
+  #   #   shm_size: 2gb
+  #   #   context: './analysers/sentiment_analysis'
+  #   #   dockerfile: './analysers/sentiment_analysis/dockerfile'
+  #   restart: always
+  #   depends_on:
+  #     - kafka
+  #     - jms
   
-  twitter-acquirer:
-    container_name: tw-acquirer
-    build: './acquisition/DataAcquirer'
-    restart: always
-    depends_on:
-      - kafka
-      - jms
+  # twitter-acquirer:
+  #   container_name: tw-acquirer
+  #   build: './acquisition/DataAcquirer'
+  #   restart: always
+  #   depends_on:
+  #     - kafka
+  #     - jms
   
 volumes:
   data01:

@@ -26,7 +26,13 @@ namespace Tests.Integration
 
             var storageTest = services.GetRequiredService<StorageApiTester>();
 
-            await storageTest.TestAsync();
+            var fileStorage = services.GetRequiredService<FileMetadataStorage>();
+            var proxyStorage = services.GetRequiredService<MetadataStorageProxy>();
+
+            var d = services.GetRequiredService<IOptions<FileJsonStorageOptions>>();
+            Directory.CreateDirectory(d.Value.Directory);
+            await storageTest.TestAsync(proxyStorage);
+            await storageTest.TestAsync(fileStorage);
 
         }
 
@@ -48,17 +54,21 @@ namespace Tests.Integration
             services.AddLogging(
                 logging => logging
                 .AddConsole()
-                .AddConfiguration(configuration.GetSection("Logging"))
-                //.SetMinimumLevel(LogLevel.Information)
-                );
+                .AddConfiguration(configuration.GetSection("Logging")));
 
+            services.AddSingleton<MetadataStorageProxy>();
+            services.AddSingleton<FileMetadataStorage>();
 
-            services.AddSingleton<IDataAcquirerMetadataStorage,MetadataStorageProxy>();
             services.AddSingleton<StorageApiTester>();
-
             services.AddOptions<MetadataStorageProxyOptions>()
                 .Bind(configuration.GetSection("DataAcquisitionService:MetadataStorageProxyOptions"))
                 .ValidateDataAnnotations();
+
+            services.AddOptions<FileJsonStorageOptions>()
+                .Bind(configuration.GetSection("DataAcquisitionService:FileJsonStorageOptions"))
+                .ValidateDataAnnotations();
+
+            
 
             services.AddOptions<ComponentOptions>()
                 .Bind(configuration.GetSection("DataAcquisitionService:ComponentOptions"))
@@ -68,6 +78,6 @@ namespace Tests.Integration
         }
     }
 
-    
+
 
 }

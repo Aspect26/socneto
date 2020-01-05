@@ -15,7 +15,6 @@ using Newtonsoft.Json.Linq;
 namespace Infrastructure.Metadata
 {
     public class MetadataStorageProxy : IDataAcquirerMetadataStorage
-      
     {
         class MetadataWrapper
         {
@@ -44,7 +43,6 @@ namespace Infrastructure.Metadata
             _httpClient = httpClientFactory.CreateClient(nameof(MetadataStorageProxy));
             _logger = logger;
             _routes = options.Value;
-
         }
 
         public async Task<T> GetAsync<T>(Guid jobId)
@@ -86,7 +84,7 @@ namespace Infrastructure.Metadata
             {
                 ComponentId = _componentId,
                 JobId = jobId,
-                ComponentMetadata = JObject.FromObject( metadata)
+                ComponentMetadata = JObject.FromObject(metadata)
             };
 
             var jsonBody = JsonConvert.SerializeObject(metadataWrapper);
