@@ -1,4 +1,5 @@
 using Domain;
+using Infrastructure.Twitter.Abstract;
 using LinqToTwitter;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Twitter
 {
+
     public class TwitterContextProvider
     {
         private readonly ConcurrentDictionary<string, TwitterContext> _contextPerUser

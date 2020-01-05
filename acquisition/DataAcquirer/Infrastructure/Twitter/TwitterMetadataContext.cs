@@ -1,4 +1,4 @@
-﻿using Domain.Acquisition;
+using Domain.Acquisition;
 using Domain.JobManagement;
 using System;
 using System.Threading.Tasks;
@@ -10,7 +10,8 @@ namespace Infrastructure.Twitter
         private readonly Guid _jobId;
         private readonly IDataAcquirerMetadataStorage _jobMetadataStorage;
 
-        public TwitterMetadataContext(Guid jobId, IDataAcquirerMetadataStorage jobMetadataStorage)
+        public TwitterMetadataContext(Guid jobId, 
+            IDataAcquirerMetadataStorage jobMetadataStorage)
         {
             _jobId = jobId;
             _jobMetadataStorage = jobMetadataStorage;

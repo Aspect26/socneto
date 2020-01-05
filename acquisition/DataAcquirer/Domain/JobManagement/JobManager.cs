@@ -103,7 +103,8 @@ namespace Domain.JobManagement
             }
         }
 
-        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken)
+        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig, 
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -116,26 +117,6 @@ namespace Domain.JobManagement
                         new { jobId = jobConfig.JobId });
                     return;
                 }
-                //var queryLanguage = "en";
-                //var supported = new[] { "en", "cs" };
-                //if (jobConfig.Attributes.TryGetValue("Language", out var desiredLanguage))
-                //{
-                //    if (supported.Contains(desiredLanguage))
-                //    {
-                //        queryLanguage = desiredLanguage;
-                //    }
-                //    else
-                //    {
-                //        _logger.TrackError(
-                //            "StartNewJob",
-                //            "Unrecognized language",
-                //            new
-                //            {
-                //                language = desiredLanguage,
-                //                jobId = jobConfig.JobId
-                //            });
-                //    }
-                //}
                 string queryLanguage = null;
                 if (jobConfig.Attributes.TryGetValue("Language", out var desiredLanguage))
                 {
@@ -143,10 +124,7 @@ namespace Domain.JobManagement
                 }
 
                 await _dataAcquirerJobStorage.SaveAsync(jobConfig.JobId, jobConfig);
-
-                var earliestIdPagingParameter = ulong.MaxValue;
-                ulong latestIdPagingParameter = 0;
-
+                               
                 var batchSize = 100;
 
                 var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
@@ -154,8 +132,6 @@ namespace Domain.JobManagement
                    jobConfig.Attributes["TopicQuery"],
                    queryLanguage,
                    new DataAcquirerAttributes(jobConfig.Attributes),
-                   latestIdPagingParameter,
-                   earliestIdPagingParameter,
                    batchSize
                );
 
