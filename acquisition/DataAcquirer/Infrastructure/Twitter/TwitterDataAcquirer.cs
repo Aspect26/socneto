@@ -32,7 +32,6 @@ namespace Infrastructure.Twitter
             var credentials = ExtractCredentials(acquirerInputModel);
             var twitterContext = await _twitterContextProvider.GetContextAsync(credentials);
 
-
             var subqueries = ParseTwitterQuery(acquirerInputModel.Query);
 
             var asyncEnumerators = subqueries.Select(query =>

@@ -5,11 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Domain.JobManagement
 {
-
-    
-
     public class NullMetadataStorage : IDataAcquirerMetadataStorage
-        
     {
         public Task<T> GetAsync<T>(Guid jobId) where T : class, IDataAcquirerMetadata
         {
@@ -21,8 +17,4 @@ namespace Domain.JobManagement
             return Task.CompletedTask;
         }
     }
-
-
-
-
 }
