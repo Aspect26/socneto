@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Domain;
 using Domain.Acquisition;
 using Domain.Model;
+using Infrastructure.Twitter.Abstract;
 using LinqToTwitter;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Twitter
 {
@@ -14,21 +16,24 @@ namespace Infrastructure.Twitter
         private readonly Guid _jobId;
         private readonly IDataAcquirerMetadataContext _metadataContext;
         private readonly IEventTracker<TwitterBatchLoader> _logger;
+        private readonly TwitterBatchLoaderOptions _options;
         private int _foundPosts;
         private DateTime _mostRecentPost;
 
         public TwitterBatchLoader(
             Guid jobId,
             IDataAcquirerMetadataContext metadataContext,
+            IOptions<TwitterBatchLoaderOptions> optionsAccessor,
             IEventTracker<TwitterBatchLoader> logger)
         {
             _jobId = jobId;
             _metadataContext = metadataContext;
             _logger = logger;
+            _options = optionsAccessor.Value;
             _foundPosts = 0;
         }
         public async IAsyncEnumerable<DataAcquirerPost> CreateBatchPostEnumerator(
-            TwitterContext twitterContext,
+            ITwitterContext twitterContext,
             TwitterMetadata defaultMetadata)
         {
             var includeRetweets = false;
@@ -64,10 +69,14 @@ namespace Infrastructure.Twitter
                         {
                             _mostRecentPost = post.CreatedAt;
                         }
-                        if(!includeRetweets && post.RetweetedStatus.StatusID == 0)
+                        var isRetweet = post.RetweetedStatus?.StatusID > 0;
+                        if (isRetweet && !includeRetweets)
                         {
-                            yield return FromStatus(post, query);
+                            continue;
                         }
+
+                        yield return FromStatus(post, query);
+
                     }
                     _foundPosts += batch.Count;
 
@@ -87,8 +96,8 @@ namespace Infrastructure.Twitter
                 metadata.MaxId = ulong.MaxValue;
                 await _metadataContext.UpdateAsync(metadata);
 
-                _logger.TrackInfo("QueryData", "Waiting few minutes for new posts");
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                _logger.TrackInfo("QueryData", $"Waiting {_options.NoPostWaitDelay} for new posts");
+                await Task.Delay(_options.NoPostWaitDelay);
             }
         }
 
@@ -100,13 +109,13 @@ namespace Infrastructure.Twitter
                                 item.FullText,
                                 item.Lang,
                                 "Twitter",
-                                item.User.UserID.ToString(),
+                                item.UserID.ToString(),
                                 item.CreatedAt.ToString("s"),
                                 query);
         }
 
         private async IAsyncEnumerable<IList<Status>> QueryPastPostAsync(
-          TwitterContext context,
+          ITwitterContext context,
           TwitterQueryInput acquirerInputModel)
         {
             var searchTerm = acquirerInputModel.SearchTerm;
@@ -120,12 +129,11 @@ namespace Infrastructure.Twitter
                 var batch = new List<Status>();
                 try
                 {
-
                     _logger.TrackInfo(
                        "QueryData",
                        "Downloading data");
 
-                    var search = await GetStatusBatchAsync(context,
+                    var search = await context.GetStatusBatchAsync(
                         searchTerm,
                         batchSize,
                         language,
@@ -140,10 +148,10 @@ namespace Infrastructure.Twitter
                         ? Math.Min(search.Statuses.Min(status => status.StatusID) - 1, acquirerInputModel.MaxId)
                         : acquirerInputModel.MaxId;
                 }
-                catch(TwitterQueryException e) when (e.ErrorCode == 88)
+                catch (TwitterQueryException e) when (e.ErrorCode == 88)
                 {
                     Console.WriteLine("Rate limit exceeded - waiting");
-                    await Task.Delay(TimeSpan.FromMinutes(5));
+                    await Task.Delay(_options.RateLimitExceededWaitDelay);
                     continue;
                 }
                 catch (Exception e)
@@ -156,7 +164,7 @@ namespace Infrastructure.Twitter
                             exception = e,
                             jobId = _jobId
                         });
-                    await Task.Delay(TimeSpan.FromMinutes(1));
+                    await Task.Delay(_options.ErrorEncounteredWaitDelay);
                     continue;
                 }
 
@@ -170,43 +178,6 @@ namespace Infrastructure.Twitter
         }
 
 
-
-        private async Task<Search> GetStatusBatchAsync(TwitterContext context,
-            string searchTerm,
-            int batchSize,
-            string language,
-            ulong maxId = ulong.MaxValue,
-            ulong sinceId = 1)
-        {
-            var combinedSearchResults = new List<Status>();
-
-            // HOTFIX Null language results in exception saying that 
-            // "Authorization did not succeeded". 
-            if (string.IsNullOrEmpty(language))
-            {
-                return await context.Search
-                    .Where(search => search.Type == SearchType.Search &&
-                           search.Query == searchTerm &&
-                           search.Count == batchSize &&
-                           search.MaxID == maxId &&
-                           search.SinceID == sinceId &&
-                           search.TweetMode == TweetMode.Extended
-                           )
-                    .SingleOrDefaultAsync();
-            }
-            else
-            {
-                return await context.Search
-                 .Where(search => search.Type == SearchType.Search &&
-                        search.Query == searchTerm &&
-                        search.SearchLanguage == language &&
-                        search.Count == batchSize &&
-                        search.TweetMode == TweetMode.Extended &&
-                        search.MaxID == maxId &&
-                        search.SinceID == sinceId)
-                 .SingleOrDefaultAsync();
-            }
-        }
 
 
 
