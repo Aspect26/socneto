@@ -18,6 +18,7 @@ using Domain.JobManagement.Abstract;
 using Infrastructure.DataGenerator;
 using System.Reflection;
 using System.Threading;
+using Infrastructure.Twitter.Abstract;
 
 namespace ConsoleApi.Twitter
 {
@@ -98,6 +99,10 @@ namespace ConsoleApi.Twitter
 
             services.AddOptions<FileProducerOptions>()
                 .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
+                .ValidateDataAnnotations();
+            
+            services.AddOptions<TwitterBatchLoaderOptions>()
+                .Bind(configuration.GetSection($"{rootName}:TwitterBatchLoaderOptions"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<TwitterCredentialsOptions>()

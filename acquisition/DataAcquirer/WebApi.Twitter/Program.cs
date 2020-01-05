@@ -10,6 +10,7 @@ using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.Registration;
 using Infrastructure.Twitter;
+using Infrastructure.Twitter.Abstract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -44,6 +45,7 @@ namespace Api
                 .ConfigureSpecificOptions<TwitterJsonStorageOptions>("DataAcquisitionService:TwitterJsonStorageOptions")
                 .PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)
                 .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
+                .ConfigureSpecificOptions<TwitterBatchLoaderOptions>("DataAcquisitionService:TwitterBatchLoaderOptions")
             .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
             
             

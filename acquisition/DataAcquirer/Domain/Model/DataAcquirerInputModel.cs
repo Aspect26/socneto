@@ -9,8 +9,6 @@ namespace Domain.Model
             string query,
             string queryLanguage,
             DataAcquirerAttributes attributes,
-            ulong latestRecordId,
-            ulong earliestRecordId,
             int batchSize
             )
         {
@@ -19,8 +17,6 @@ namespace Domain.Model
             JobId = jobId;
             Query = query;
             QueryLanguage = queryLanguage;
-            LatestRecordId = latestRecordId;
-            EarliestRecordId = earliestRecordId;
             BatchSize = batchSize;
         }
         public DataAcquirerAttributes Attributes { get;  }
@@ -29,8 +25,6 @@ namespace Domain.Model
         public string QueryLanguage { get; }
         public Guid JobId { get;  }
         
-        public ulong EarliestRecordId { get; }
-        public ulong LatestRecordId { get; }
         public int BatchSize { get; }
 
         public static DataAcquirerInputModel FromValues(
@@ -38,8 +32,6 @@ namespace Domain.Model
             string query,
             string queryLanguage,
             DataAcquirerAttributes attributes,
-            ulong latestRecordId,
-            ulong earliestRecordId,
             int numberOfPostToRetreive)
         {
             return new DataAcquirerInputModel(
@@ -47,8 +39,6 @@ namespace Domain.Model
             query,
             queryLanguage,
             attributes,
-            latestRecordId,
-            earliestRecordId,
             numberOfPostToRetreive);
         }
     }
