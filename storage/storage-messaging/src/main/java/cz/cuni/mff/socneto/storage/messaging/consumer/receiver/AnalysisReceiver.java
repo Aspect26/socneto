@@ -1,12 +1,12 @@
 package cz.cuni.mff.socneto.storage.messaging.consumer.receiver;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cuni.mff.socneto.storage.analysis.results.api.dto.SearchAnalysisDto;
 import cz.cuni.mff.socneto.storage.analysis.results.api.dto.SearchAnalysisResultDto;
 import cz.cuni.mff.socneto.storage.analysis.results.api.service.SearchAnalysisDtoService;
 import cz.cuni.mff.socneto.storage.messaging.consumer.model.AnalysisMessage;
 import cz.cuni.mff.socneto.storage.messaging.consumer.model.AnalysisMessage.AnalysisMessageResult;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,13 +18,18 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class AnalysisReceiver {
 
     private final SearchAnalysisDtoService searchAnalysisDtoService;
 //    private final AnalyzedPostDtoService searchAnalysisDtoService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    public AnalysisReceiver(SearchAnalysisDtoService searchAnalysisDtoService) {
+        this.searchAnalysisDtoService = searchAnalysisDtoService;
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @KafkaListener(topics = "${app.topic.toDbAnalyzed}")
     public void listenAnalyzedPosts(@Payload String post) throws IOException {
