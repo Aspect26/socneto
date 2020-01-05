@@ -23,6 +23,7 @@ using Infrastructure.Metadata;
 
 namespace ConsoleApi.Twitter
 {
+
     public class Program
     {
         public static void Main(string[] args)
@@ -59,20 +60,21 @@ namespace ConsoleApi.Twitter
 
             services.AddTransient<IDataAcquirer, TwitterDataAcquirer>();
 
-            services.AddSingleton<TwitterContextProvider>();
+            services.AddSingleton<ITwitterContextProvider, TwitterContextProvider>();
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
             services.AddTransient<IMessageBrokerProducer, FileProducer>();
 
             services.AddSingleton<IMessageBrokerConsumer, MockConsumer>();
+            services.AddSingleton<IDataAcquirerMetadataStorage, TestingFileMetadataStorage>();
 
             services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
+
             services.AddSingleton(typeof(IEventTracker<>), typeof(NullEventTracker<>));
             // TW
             services.AddSingleton<IDataAcquirer, TwitterDataAcquirer>()
               .AddSingleton<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
-              .AddSingleton<IDataAcquirerMetadataStorage, NullMetadataStorage>()
               .AddSingleton<IDataAcquirerMetadataContext, TwitterMetadataContext>()
                 .AddSingleton<TwitterBatchLoaderFactory>();
 
@@ -97,21 +99,17 @@ namespace ConsoleApi.Twitter
             services.AddOptions<KafkaOptions>()
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
-
+            
             services.AddOptions<FileProducerOptions>()
                 .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
                 .ValidateDataAnnotations();
-            
+
             services.AddOptions<TwitterBatchLoaderOptions>()
                 .Bind(configuration.GetSection($"{rootName}:TwitterBatchLoaderOptions"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<TwitterCredentialsOptions>()
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
-                .ValidateDataAnnotations();
-
-            services.AddOptions<TwitterConsoleOptions>()
-                .Bind(configuration)
                 .ValidateDataAnnotations();
 
             // TW
@@ -131,20 +129,26 @@ namespace ConsoleApi.Twitter
             services.AddOptions<DataAcquirerJobFileStorageOptions>()
                 .Bind(configuration.GetSection($"{rootName}:DataAcquirerJobFileStorageOptions"))
                 .PostConfigure(o => o.Directory = jobMetaDir);
+
+            services.AddOptions<TwitterMetadata>()
+                .Bind(configuration.GetSection($"TestDefaultMetadata"));
         }
 
         public static async Task MainAsync(string[] args)
         {
             var builtProvider = Build();
 
+            var d = builtProvider.GetRequiredService<IOptions<TwitterMetadata>>();
+            
+
             var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
             var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
-            var twitterConsoleOptions = builtProvider.GetService<IOptions<TwitterConsoleOptions>>();
+            
             await StartJob(
                 jobManager,
                 twitterCredentialsOptions.Value,
-                twitterConsoleOptions.Value);
+                d.Value);
 
             await Task.Delay(Timeout.InfiniteTimeSpan);
         }
@@ -152,25 +156,26 @@ namespace ConsoleApi.Twitter
         private static async Task StartJob(
             IJobManager jobManager,
             TwitterCredentialsOptions twitterCredentialsOptions,
-            TwitterConsoleOptions consoleOptions
+            TwitterMetadata metadata
             )
         {
 
             // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
             // TODO add NOT cocktail NOT music
             // var query = "snake bite NOT cocktail NOT darts NOT piercing";
-            var query = consoleOptions.Query;
+            
+            var jobId = Guid.Parse("a43e8bb4-9c15-48a8-a0a3-7479b75eb6d0");
             var jobConfig = new DataAcquirerJobConfig()
             {
                 Attributes = new Dictionary<string, string>
                 {
-                    {"TopicQuery", query },
+                    {"TopicQuery", metadata.Query },
                     {"AccessToken", twitterCredentialsOptions.AccessToken},
                     {"AccessTokenSecret" , twitterCredentialsOptions.AccessTokenSecret},
                     {"ApiKey",  twitterCredentialsOptions.ApiKey},
                     {"ApiSecretKey", twitterCredentialsOptions.ApiSecretKey},
                 },
-                JobId = Guid.NewGuid(),
+                JobId = jobId,
                 OutputMessageBrokerChannels = new string[] { "job_management.component_data_input.DataAnalyser_sentiment" }
             };
             try

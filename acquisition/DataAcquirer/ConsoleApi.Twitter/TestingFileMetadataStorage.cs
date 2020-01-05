@@ -1,23 +1,26 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Domain.Acquisition;
 using Domain.JobManagement;
 using Infrastructure.Twitter;
 using Microsoft.Extensions.Options;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Infrastructure.Metadata;
 using Newtonsoft.Json;
 
-namespace Infrastructure.Metadata
+namespace ConsoleApi.Twitter
 {
-    
-    public class FileMetadataStorage : IDataAcquirerMetadataStorage
+    public class TestingFileMetadataStorage : IDataAcquirerMetadataStorage
     {
         private readonly FileJsonStorageOptions _options;
+        private readonly TwitterMetadata _metadata;
 
-        public FileMetadataStorage(
+        public TestingFileMetadataStorage(
+            IOptions<TwitterMetadata> metadata,
             IOptions<FileJsonStorageOptions> optionsAccessor)
         {
             _options = optionsAccessor.Value;
+            _metadata = metadata.Value;
         }
 
         public async Task<T> GetAsync<T>(Guid jobId)
@@ -34,6 +37,11 @@ namespace Infrastructure.Metadata
             }
             catch (IOException)
             {
+                if(_metadata is T twMeta)
+                {
+                    return twMeta;
+                }
+
                 return null;
             }
             return JsonConvert.DeserializeObject<T>(objJson);

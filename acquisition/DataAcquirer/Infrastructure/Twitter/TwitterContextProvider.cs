@@ -10,11 +10,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Twitter
 {
-
-    public class TwitterContextProvider
+    public class TwitterContextProvider : ITwitterContextProvider
     {
-        private readonly ConcurrentDictionary<string, TwitterContext> _contextPerUser
-            = new ConcurrentDictionary<string, TwitterContext>();
+        private readonly ConcurrentDictionary<string, ITwitterContext> _contextPerUser
+            = new ConcurrentDictionary<string, ITwitterContext>();
         private readonly IEventTracker<TwitterContextProvider> _eventTracker;
         private readonly ILogger<TwitterContextProvider> _logger;
 
@@ -26,7 +25,7 @@ namespace Infrastructure.Twitter
             _logger = logger;
         }
 
-        public async Task<TwitterContext> GetContextAsync(
+        public async Task<ITwitterContext> GetContextAsync(
             TwitterCredentials credentials)
         {
             credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
@@ -55,14 +54,10 @@ namespace Infrastructure.Twitter
                 var newContext = CreateContext(credentials);
                 try
                 {
-
-                await newContext
-                    .Search
-                    .Where(r => r.Query == "test query"
-                    && r.Type == SearchType.Search
-                    && r.Count == 1)
-                    .SingleOrDefaultAsync();
-
+                    await newContext.GetStatusBatchAsync(
+                        "test",
+                        1,
+                        null);
                 }
                 catch (TwitterQueryException e) when (e.ErrorCode == 88)
                 {
@@ -85,7 +80,7 @@ namespace Infrastructure.Twitter
             }
         }
 
-        private TwitterContext CreateContext(TwitterCredentials credentials)
+        private ITwitterContext CreateContext(TwitterCredentials credentials)
         {
             try
             {
@@ -99,7 +94,7 @@ namespace Infrastructure.Twitter
                         AccessTokenSecret = credentials.AccessTokenSecret
                     }
                 };
-                return new TwitterContext(auth);
+                return new TwitterContextWrapper( new TwitterContext(auth));
             }
             catch (Exception e)
             {
