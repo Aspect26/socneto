@@ -64,7 +64,7 @@ namespace ConsoleApi.Twitter
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
-            services.AddTransient<IMessageBrokerProducer, FileProducer>();
+            services.AddSingleton<IMessageBrokerProducer, FileProducer>();
 
             services.AddSingleton<IMessageBrokerConsumer, MockConsumer>();
             services.AddSingleton<IDataAcquirerMetadataStorage, TestingFileMetadataStorage>();
@@ -99,7 +99,7 @@ namespace ConsoleApi.Twitter
             services.AddOptions<KafkaOptions>()
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
-            
+
             services.AddOptions<FileProducerOptions>()
                 .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
                 .ValidateDataAnnotations();
@@ -139,12 +139,14 @@ namespace ConsoleApi.Twitter
             var builtProvider = Build();
 
             var d = builtProvider.GetRequiredService<IOptions<TwitterMetadata>>();
-            
+            var fileAccessor = builtProvider.GetRequiredService<IOptions<FileProducerOptions>>();
+            var fo = new FileInfo(fileAccessor.Value.DestinationFilePath);
+            Directory.CreateDirectory(fo.DirectoryName);
 
             var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
             var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
-            
+
             await StartJob(
                 jobManager,
                 twitterCredentialsOptions.Value,
@@ -163,7 +165,7 @@ namespace ConsoleApi.Twitter
             // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
             // TODO add NOT cocktail NOT music
             // var query = "snake bite NOT cocktail NOT darts NOT piercing";
-            
+
             var jobId = Guid.Parse("a43e8bb4-9c15-48a8-a0a3-7479b75eb6d0");
             var jobConfig = new DataAcquirerJobConfig()
             {
