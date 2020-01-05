@@ -10,6 +10,7 @@ using Domain.JobManagement.Abstract;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
+using Infrastructure.Metadata;
 using Infrastructure.Twitter;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -145,8 +146,8 @@ namespace Application
                 })
                 .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
                 {
-                //rootConfiguration = configurationBuilder.Build();
-                environment = hostingContext.HostingEnvironment;
+                    //rootConfiguration = configurationBuilder.Build();
+                    environment = hostingContext.HostingEnvironment;
                 })
                 .ConfigureServices(services =>
                     ConfigureServices(services, configuration, isDevelopment ?? false))
@@ -161,11 +162,11 @@ namespace Application
 
                     app.UseEndpoints(endpoints =>
                     {
-                    //endpoints.MapGet("/", async context =>
-                    //{
-                    //    await context.Response.WriteAsync("Hello World!");
-                    //});
-                });
+                        //endpoints.MapGet("/", async context =>
+                        //{
+                        //    await context.Response.WriteAsync("Hello World!");
+                        //});
+                    });
                 })
                 .Build();
 
@@ -205,11 +206,13 @@ namespace Application
                 services.AddOptions<MockConsumerOptions>()
                     .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
                     .ValidateDataAnnotations();
+                services.AddTransient<IDataAcquirerMetadataStorage, FileMetadataStorage>();
             }
             else
             {
                 services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
                 services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+                services.AddTransient<IDataAcquirerMetadataStorage, MetadataStorageProxy>();
             }
 
             _transientServices.ForEach(addTransMethod => addTransMethod(services));
