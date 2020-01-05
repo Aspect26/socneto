@@ -66,8 +66,6 @@ namespace ConsoleApi.Reddit
                 query,
                 null,
                 attributes,
-                0,
-                ulong.MaxValue,
                 3);
 
             var batch = redditAcquirer.GetPostsAsync(inputModel);

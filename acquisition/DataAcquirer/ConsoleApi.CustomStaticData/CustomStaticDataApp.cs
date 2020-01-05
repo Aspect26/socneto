@@ -38,8 +38,6 @@ namespace ConsoleApi.CustomStaticData
                 null,
                 null,
                 attributes,
-                0,
-                0,
                 0
                 );
             var posts = _dataAcquirer.GetPostsAsync(daInput);

@@ -28,6 +28,7 @@ namespace Infrastructure.Twitter
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
             DataAcquirerInputModel acquirerInputModel)
         {
+
             var credentials = ExtractCredentials(acquirerInputModel);
             var twitterContext = await _twitterContextProvider.GetContextAsync(credentials);
 
