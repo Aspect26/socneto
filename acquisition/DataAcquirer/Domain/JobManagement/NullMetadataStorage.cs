@@ -6,12 +6,13 @@ namespace Domain.JobManagement
 {
     public class NullMetadataStorage : IDataAcquirerMetadataStorage
     {
-        public Task<IDataAcquirerMetadata> GetAsync(Guid jobId)
+
+        Task<T> IDataAcquirerMetadataStorage.GetAsync<T>(Guid jobId)
         {
-            return Task.FromResult<IDataAcquirerMetadata>(null);
+            return Task.FromResult((T)(IDataAcquirerMetadata) new NullMetadata());
         }
 
-        public Task SaveAsync(Guid jobId, IDataAcquirerMetadata defaultMetadata)
+        Task IDataAcquirerMetadataStorage.SaveAsync<T>(T metadata)
         {
             return Task.CompletedTask;
         }
