@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
@@ -77,7 +78,9 @@ namespace Infrastructure.CustomStaticData
         }
 
 
-        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(DataAcquirerInputModel acquirerInputModel)
+        public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
+            DataAcquirerInputModel acquirerInputModel,
+            [EnumeratorCancellation]CancellationToken cancellationToken)
         {
             var minio = new MinioClient(
                 _endpoint,

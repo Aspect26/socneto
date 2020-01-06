@@ -135,7 +135,9 @@ namespace Domain.JobManagement
                    batchSize
                );
 
-                var batch = _acquirer.GetPostsAsync(dataAcquirerInputModel);
+                var batch = _acquirer.GetPostsAsync(
+                    dataAcquirerInputModel,
+                    cancellationToken);
 
                 await foreach (var dataPost in batch)
                 {

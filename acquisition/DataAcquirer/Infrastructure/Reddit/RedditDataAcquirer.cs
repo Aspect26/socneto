@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Acquisition;
@@ -29,7 +31,8 @@ namespace Infrastructure.Reddit
         }
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-            DataAcquirerInputModel acquirerInputModel)
+            DataAcquirerInputModel acquirerInputModel,
+            [EnumeratorCancellation]CancellationToken cancellationToken)
         {
             var credentials = ExtractCredentials(acquirerInputModel);
             var reddit = await _redditContextProvider.GetContextAsync(credentials);
@@ -61,7 +64,7 @@ namespace Infrastructure.Reddit
                         }
                         count++;
                         maxBefore = Max(item.Created, maxBefore);
-
+                        
                         yield return FromPost(item, query);
                         //var comments = item.Comments.GetTop(100);
                         //foreach (var (i, c) in indices.Zip(comments))
