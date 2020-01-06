@@ -6,6 +6,8 @@ using LinqToTwitter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Infrastructure.Twitter
 {
@@ -26,7 +28,8 @@ namespace Infrastructure.Twitter
         }
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-            DataAcquirerInputModel acquirerInputModel)
+            DataAcquirerInputModel acquirerInputModel,
+            [EnumeratorCancellation]CancellationToken cancellationToken = default)
         {
 
             var credentials = ExtractCredentials(acquirerInputModel);
@@ -41,9 +44,15 @@ namespace Infrastructure.Twitter
                 return batchLoader.CreateBatchPostEnumerator(twitterContext, defaultMetadata);
             });
 
-            var it = AsyncEnumeratorConfluctor.AggregateEnumerables(asyncEnumerators);
+            var it = AsyncEnumeratorConfluctor.AggregateEnumerables(
+                asyncEnumerators,
+                cancellationToken);
             await foreach (var item in it)
             {
+                if(cancellationToken.IsCancellationRequested)
+                {
+                    yield break;
+                }
                 yield return item;
             }
         }

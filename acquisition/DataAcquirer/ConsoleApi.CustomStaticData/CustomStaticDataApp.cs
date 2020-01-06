@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Domain.Model;
 using Domain.Acquisition;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace ConsoleApi.CustomStaticData
 {
@@ -40,7 +41,7 @@ namespace ConsoleApi.CustomStaticData
                 attributes,
                 0
                 );
-            var posts = _dataAcquirer.GetPostsAsync(daInput);
+            var posts = _dataAcquirer.GetPostsAsync(daInput,CancellationToken.None);
             await foreach (var item in posts)
             {
                 Console.WriteLine(item.Text);
