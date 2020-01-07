@@ -24,7 +24,13 @@ namespace Infrastructure.Twitter
             ulong sinceId = 1)
         {
             var combinedSearchResults = new List<Status>();
-
+            if(maxId <sinceId)
+            {
+                return new Search()
+                {
+                    Statuses = new List<Status>()
+                };
+            }
             // HOTFIX Null language results in exception saying that 
             // "Authorization did not succeeded". 
             if (string.IsNullOrEmpty(language))
