@@ -162,7 +162,8 @@ namespace Infrastructure.Twitter
                         new
                         {
                             exception = e,
-                            jobId = _jobId
+                            jobId = _jobId,
+                            input = acquirerInputModel
                         });
                     await Task.Delay(_options.ErrorEncounteredWaitDelay);
                     continue;

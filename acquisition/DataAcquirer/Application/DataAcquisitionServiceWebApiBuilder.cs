@@ -10,6 +10,7 @@ using Domain.JobManagement.Abstract;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
+using Infrastructure.Metadata;
 using Infrastructure.Twitter;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +35,7 @@ namespace Application
         private readonly List<Action<IServiceCollection>> _singletonServices =
             new List<Action<IServiceCollection>>();
 
-        private readonly List<Action<IServiceCollection>> _postConfigureActions = 
+        private readonly List<Action<IServiceCollection>> _postConfigureActions =
             new List<Action<IServiceCollection>>();
 
         private readonly string[] _args;
@@ -49,7 +50,7 @@ namespace Application
             void ConfigurationAction(IServiceCollection serviceCollectino, IConfiguration c)
             {
                 var sec = c.GetSection(sectionName);
-                
+
                 serviceCollectino.AddOptions<T>()
                     .Bind(sec)
                     .ValidateDataAnnotations();
@@ -74,6 +75,7 @@ namespace Application
             return this;
         }
 
+
         public DataAcquisitionServiceWebApiBuilder AddSingletonService<TConcrete>()
           where TConcrete : class
         {
@@ -81,10 +83,21 @@ namespace Application
             {
                 sp.AddSingleton<TConcrete>();
             }
-
             _singletonServices.Add(addSingletonServiceAction);
             return this;
         }
+        public DataAcquisitionServiceWebApiBuilder AddSingletonService(
+            Type abstractType,
+            Type concreteType)
+        {
+            void addSingletonServiceAction(IServiceCollection sp)
+            {
+                sp.AddSingleton(abstractType, concreteType);
+            }
+            _singletonServices.Add(addSingletonServiceAction);
+            return this;
+        }
+
 
         public DataAcquisitionServiceWebApiBuilder PostConfigure<TOptions>(Action<TOptions> action)
             where TOptions : class
@@ -179,10 +192,12 @@ namespace Application
 
             services.AddSingleton<IJobManager, JobManager>();
 
-            services.AddSingleton(typeof(IEventTracker<>),typeof( EventTracker<>));
+            services.AddSingleton(typeof(IEventTracker<>), typeof(EventTracker<>));
             services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobInMemoryStorage>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
+
+            services.AddHttpClient();
 
             if (isDevelopment)
             {
@@ -191,11 +206,13 @@ namespace Application
                 services.AddOptions<MockConsumerOptions>()
                     .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
                     .ValidateDataAnnotations();
+                services.AddTransient<IDataAcquirerMetadataStorage, FileMetadataStorage>();
             }
             else
             {
                 services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
                 services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+                services.AddTransient<IDataAcquirerMetadataStorage, MetadataStorageProxy>();
             }
 
             _transientServices.ForEach(addTransMethod => addTransMethod(services));
@@ -207,7 +224,7 @@ namespace Application
                 specificConfigActions(services, configuration));
 
             _postConfigureActions.ForEach(action =>
-                action(services));            
+                action(services));
         }
 
         private static void ConfigureCommonOptions(IConfiguration configuration, IServiceCollection services)
@@ -216,7 +233,7 @@ namespace Application
 
             services.AddOptions<ComponentOptions>()
                 .Bind(configuration.GetSection($"{rootName}:ComponentOptions"))
-                .ValidateDataAnnotations()                ;
+                .ValidateDataAnnotations();
 
             services.AddOptions<RegistrationRequestOptions>()
                 .Bind(configuration.GetSection($"{rootName}:RegistrationRequestOptions"))

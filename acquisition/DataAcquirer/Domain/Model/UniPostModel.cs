@@ -34,7 +34,7 @@ namespace Domain.Model
 
         [JsonProperty("postId")]
         public Guid PostId { get; }
-
+        
         [JsonProperty("jobId")]
         public Guid JobId { get; }
 
@@ -65,7 +65,6 @@ namespace Domain.Model
             Guid jobId,
             string query)
         {
-
             return new UniPostModel(postId,
                 originalPostId,
                 text,
@@ -75,8 +74,8 @@ namespace Domain.Model
                 dateTimeString,
                 jobId,
                 query);
-        }
 
+        }
 
     }
 }
