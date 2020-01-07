@@ -24,7 +24,7 @@ namespace Infrastructure.Twitter
             }
         }
         public static async IAsyncEnumerable<T> AggregateEnumerables<T>(
-            IEnumerable<IAsyncEnumerable<T>> enumerables, 
+            IEnumerable<IAsyncEnumerable<T>> enumerables,
             [EnumeratorCancellation]CancellationToken cancellationToken)
         {
             // TODO cancellation
@@ -36,17 +36,19 @@ namespace Infrastructure.Twitter
             var channel = Channel.CreateBounded<T>(options);
             var writter = channel.Writer;
             var fillingTasks = enumerables.Select(
-                async r =>
-                {
-                    await foreach (var post in r)
-                    {
-                        await writter.WriteAsync(post,cancellationToken);
-                    }
-                });
+                r => Task.Run(async () =>
+                 {
+                     await foreach (var post in r)
+                     {
+                         await writter.WriteAsync(post, cancellationToken);
+                     }
+                 }
+                ))
+                .ToList();
 
-            await foreach(var p in channel.Reader.ReadAllAsync(cancellationToken))
+            await foreach (var p in channel.Reader.ReadAllAsync(cancellationToken))
             {
-                if(cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                 {
                     yield break;
                 }

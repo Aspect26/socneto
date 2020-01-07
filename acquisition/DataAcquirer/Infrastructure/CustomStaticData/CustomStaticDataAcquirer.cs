@@ -80,7 +80,7 @@ namespace Infrastructure.CustomStaticData
 
         public async IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
             DataAcquirerInputModel acquirerInputModel,
-            [EnumeratorCancellation]CancellationToken cancellationToken)
+            [EnumeratorCancellation]CancellationToken cancellationToken = default)
         {
             var minio = new MinioClient(
                 _endpoint,
