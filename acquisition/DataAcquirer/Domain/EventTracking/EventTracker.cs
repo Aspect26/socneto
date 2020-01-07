@@ -74,13 +74,13 @@ namespace Domain
         private readonly EventQueue _eventQueue;
         private readonly ILogger<T> _logger;
         private readonly string _componentOptionsJson;
-
+        private readonly string _componentId;
         private readonly List<string> _levels = new List<string> {
-            "fatal",
-            "error",
-            "warning",
-            "info",
-            "metrics"
+            "FATAL",
+            "ERROR",
+            "WARNING",
+            "INFO",
+            "METRICS"
         };
         private readonly int _defaulLogLevelIndex;
 
@@ -93,6 +93,7 @@ namespace Domain
             _eventQueue = eventQueue;
             _logger = logger;
             _componentOptionsJson = JsonConvert.SerializeObject(componentOptionsAccessor.Value);
+            _componentId = componentOptionsAccessor.Value.ComponentId;
 
             var defaultLogLevel = logLevelOptionsAccessor.Value.Default ?? LogLevel.Information;
 
@@ -100,22 +101,22 @@ namespace Domain
             switch (defaultLogLevel)
             {
                 case LogLevel.Trace:
-                    _defaulLogLevelIndex = _levels.IndexOf("metrics");
+                    _defaulLogLevelIndex = _levels.IndexOf("METRICS");
                     break;
                 case LogLevel.Debug:
-                    _defaulLogLevelIndex = _levels.IndexOf("metrics");
+                    _defaulLogLevelIndex = _levels.IndexOf("METRICS");
                     break;
                 case LogLevel.Information:
-                    _defaulLogLevelIndex = _levels.IndexOf("info");
+                    _defaulLogLevelIndex = _levels.IndexOf("INFO");
                     break;
                 case LogLevel.Warning:
-                    _defaulLogLevelIndex = _levels.IndexOf("warning");
+                    _defaulLogLevelIndex = _levels.IndexOf("WARNING");
                     break;
                 case LogLevel.Error:
-                    _defaulLogLevelIndex = _levels.IndexOf("error");
+                    _defaulLogLevelIndex = _levels.IndexOf("ERROR");
                     break;
                 case LogLevel.Critical:
-                    _defaulLogLevelIndex = _levels.IndexOf("fatal");
+                    _defaulLogLevelIndex = _levels.IndexOf("FATAL");
                     break;
                 case LogLevel.None:
                     _defaulLogLevelIndex = int.MaxValue;
@@ -124,27 +125,27 @@ namespace Domain
         }
         public void TrackError(string eventName, string message, object serializableAttributes = null)
         {
-            Track("error", eventName, message, serializableAttributes);
+            Track("ERROR", eventName, message, serializableAttributes);
         }
 
         public void TrackFatal(string eventName, string message, object serializableAttributes = null)
         {
-            Track("fatal", eventName, message, serializableAttributes);
+            Track("FATAL", eventName, message, serializableAttributes);
         }
 
         public void TrackInfo(string eventName, string message, object serializableAttributes = null)
         {
-            Track("info", eventName, message, serializableAttributes);
+            Track("INFO", eventName, message, serializableAttributes);
         }
 
         public void TrackStatistics(string eventName, object serializableAttributes = null)
         {
-            Track("metrics", eventName, "statistics", serializableAttributes);
+            Track("METRICS", eventName, "statistics", serializableAttributes);
         }
 
         public void TrackWarning(string eventName, string message, object serializableAttributes = null)
         {
-            Track("warning", eventName, message, serializableAttributes);
+            Track("WARNING", eventName, message, serializableAttributes);
         }
 
         private void Track(
@@ -180,25 +181,26 @@ namespace Domain
 
             switch (eventType)
             {
-                case "fatal":
+                case "FATAL":
                     _logger.LogCritical(loggerMessage, paramsObjects);
                     break;
-                case "error":
+                case "ERROR":
                     _logger.LogError(loggerMessage, paramsObjects);
                     break;
-                case "warning":
+                case "WARN":
                     _logger.LogWarning(loggerMessage, paramsObjects);
                     break;
-                case "info":
+                case "INFO":
                     _logger.LogInformation(loggerMessage, paramsObjects);
                     break;
-                case "metrics":
+                case "METRIC":
                     _logger.LogTrace(loggerMessage, paramsObjects);
                     break;
             }
 
             var metric = new
             {
+                componentId = _componentId,
                 eventType,
                 eventName,
                 message,

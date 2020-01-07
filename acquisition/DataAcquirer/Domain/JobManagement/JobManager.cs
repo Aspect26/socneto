@@ -135,7 +135,9 @@ namespace Domain.JobManagement
                    batchSize
                );
 
-                var batch = _acquirer.GetPostsAsync(dataAcquirerInputModel);
+                var batch = _acquirer.GetPostsAsync(
+                    dataAcquirerInputModel,
+                    cancellationToken);
 
                 await foreach (var dataPost in batch)
                 {
@@ -149,7 +151,8 @@ namespace Domain.JobManagement
                         dataPost.UserId,
                         dataPost.DateTime,
                         dataAcquirerInputModel.JobId,
-                        dataPost.Query) ;
+                        dataPost.Query);
+
 
                     var jsonData = JsonConvert.SerializeObject(uniPost);
                     var messageBrokerMessage = new MessageBrokerMessage(

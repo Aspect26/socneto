@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Twitter
@@ -20,6 +24,40 @@ namespace Infrastructure.Twitter
             }
         }
         public static async IAsyncEnumerable<T> AggregateEnumerables<T>(
+            IEnumerable<IAsyncEnumerable<T>> enumerables,
+            [EnumeratorCancellation]CancellationToken cancellationToken)
+        {
+            // TODO cancellation
+            var options = new BoundedChannelOptions(1000)
+            {
+                SingleReader = true,
+                SingleWriter = false
+            };
+            var channel = Channel.CreateBounded<T>(options);
+            var writter = channel.Writer;
+            var fillingTasks = enumerables.Select(
+                r => Task.Run(async () =>
+                 {
+                     await foreach (var post in r)
+                     {
+                         await writter.WriteAsync(post, cancellationToken);
+                     }
+                 }
+                ))
+                .ToList();
+
+            await foreach (var p in channel.Reader.ReadAllAsync(cancellationToken))
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    yield break;
+                }
+                yield return p;
+            }
+        }
+
+        [Obsolete("Old version", true)]
+        private static async IAsyncEnumerable<T> AggregateEnumerablesOld<T>(
             IEnumerable<IAsyncEnumerable<T>> enumerables)
         {
             var taskDictionary = new Dictionary<int, Task<EnumeratorWrapper<T>>>();
