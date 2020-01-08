@@ -24,6 +24,7 @@ namespace Infrastructure.ComponentManagement
         private readonly StorageChannelNames _storageChannelNames;
         private readonly Uri _addComponentUri;
         private readonly Uri _getComponentUri;
+        private readonly Uri _getComponentsUri;
         private readonly string _getComponentJobConfigUriTemplate;
         private readonly string _insertComponentJobConfigUriTemplate;
         private readonly ComponentIdentifiers _componentIdentifier;
@@ -42,7 +43,7 @@ namespace Infrastructure.ComponentManagement
             var baseUri = new Uri(componentStorageOptionsAccessor.Value.BaseUri);
             _addComponentUri = new Uri(baseUri, componentStorageOptionsAccessor.Value.AddOrUpdateComponentRoute);
             _getComponentUri = new Uri(baseUri, componentStorageOptionsAccessor.Value.GetComponentRoute);
-
+            _getComponentsUri = new Uri(baseUri, componentStorageOptionsAccessor.Value.GetComponentsRoute);
             _getComponentJobConfigUriTemplate = baseUri.AbsoluteUri.TrimEnd('/') + componentStorageOptionsAccessor.Value.ComponentJobConfigRoute;
             _insertComponentJobConfigUriTemplate = baseUri.AbsoluteUri.TrimEnd('/') + componentStorageOptionsAccessor.Value.ComponentJobConfigRoute;
         }
@@ -118,6 +119,31 @@ namespace Infrastructure.ComponentManagement
             {
                 _logger.LogError("Get Job config error. {error} \n Could not parse: {json}", jre.Message, content);
                 throw new InvalidOperationException("Error while parsing job config");
+            }
+        }
+
+        public async Task<List<ComponentModel>> GetAllComponentsAsync()
+        {
+            var response = await _httpClient.GetAsync(_getComponentsUri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new InvalidOperationException($"Get components failed: {error}");
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var objects = JsonConvert.DeserializeObject
+                    <List<SubscribedComponentPayloadObject>>(content);
+                return objects.Select(r =>
+                new ComponentModel(r.ComponentId, r.ComponentType, r.InputChannelName, r.UpdateChannelName, r.Attributes)).ToList();
+            }
+            catch (JsonReaderException jre)
+            {
+                _logger.LogError("Get Components error. {error} \n Could not parse: {json}", jre.Message, content);
+                throw new InvalidOperationException("Error while parsing components", jre);
             }
         }
 
