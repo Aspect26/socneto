@@ -114,8 +114,8 @@ namespace Infrastructure.Twitter
                                 item.StatusID.ToString(),
                                 item.FullText,
                                 item.Lang,
-                                "Twitter",
-                                item.UserID.ToString(),
+                                "twitter",
+                                item.User.ScreenNameResponse,
                                 item.CreatedAt.ToString("s"),
                                 query);
         }
@@ -145,7 +145,7 @@ namespace Infrastructure.Twitter
                         language,
                         maxId: maxId,
                         sinceId: sinceId);
-
+                    
                     batch = statuses
                         .ToList();
 
