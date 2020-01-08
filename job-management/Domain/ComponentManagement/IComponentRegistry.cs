@@ -6,6 +6,8 @@ namespace Domain.ComponentManagement
 {
     public interface IComponentRegistry
     {
+
+        Task<List<ComponentModel>> GetAllComponentsAsync();
         Task AddOrUpdateAsync(ComponentModel componentRegistrationModel);
         Task<ComponentModel> GetComponentByIdAsync(string componentId);
         StorageComponent GetRegisteredStorage();

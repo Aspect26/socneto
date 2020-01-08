@@ -16,23 +16,41 @@ namespace Infrastructure.Twitter
             _context = context;
         }
 
-        public async Task<Search> GetStatusBatchAsync(
+        public async Task<List<Status>> 
+            GetStatusBatchAsync(
             string searchTerm,
             int batchSize,
             string language,
             ulong maxId = ulong.MaxValue,
             ulong sinceId = 1)
         {
-            var combinedSearchResults = new List<Status>();
-            if(maxId <sinceId)
+            if (maxId < sinceId)
             {
-                return new Search()
-                {
-                    Statuses = new List<Status>()
-                };
+                return new List<Status>();
             }
             // HOTFIX Null language results in exception saying that 
             // "Authorization did not succeeded". 
+
+            var search = await GetSearchAsync(
+                searchTerm,
+                batchSize,
+                language,
+                maxId,
+                sinceId);
+            if(search?.Statuses == null)
+            {
+                return new List<Status>();
+            }
+            return search.Statuses;
+        }
+
+        private async Task<Search> GetSearchAsync(
+            string searchTerm,
+            int batchSize,
+            string language,
+            ulong maxId ,
+            ulong sinceId)
+        {
             if (string.IsNullOrEmpty(language))
             {
                 return await _context.Search
@@ -41,8 +59,7 @@ namespace Infrastructure.Twitter
                            search.Count == batchSize &&
                            search.MaxID == maxId &&
                            search.SinceID == sinceId &&
-                           search.TweetMode == TweetMode.Extended
-                           )
+                           search.TweetMode == TweetMode.Extended)
                     .SingleOrDefaultAsync();
             }
             else
