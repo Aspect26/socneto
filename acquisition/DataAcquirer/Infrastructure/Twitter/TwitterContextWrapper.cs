@@ -16,8 +16,7 @@ namespace Infrastructure.Twitter
             _context = context;
         }
 
-        public async Task<List<Status>> 
-            GetStatusBatchAsync(
+        public async Task<List<Status>>             GetStatusBatchAsync(
             string searchTerm,
             int batchSize,
             string language,
@@ -59,7 +58,7 @@ namespace Infrastructure.Twitter
                            search.Count == batchSize &&
                            search.MaxID == maxId &&
                            search.SinceID == sinceId &&
-                           search.TweetMode == TweetMode.Extended)
+                           search.TweetMode == TweetMode.Extended )
                     .SingleOrDefaultAsync();
             }
             else
