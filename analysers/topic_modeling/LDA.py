@@ -44,13 +44,9 @@ class LDAAnalysis:
         return lda_model.show_topics(self.topic_num,self.topic_words)
 
 
-'''lda = LDAAnalysis()
+lda = LDAAnalysis()
 a = lda.get_topic_keywords("Python, like most many programming languages, has a huge amount of exceptional libraries and modules to choose from. Generally of course, this is absolutely brilliant, but it also means that sometimes the modules don’t always play nicely with each other. In this short tutorial, I’m going to show you how to link up spaCy with Gensim to create a coherent topic modeling pipeline.")
-'''
-'''
-import matplotlib.pyplot as plt
 
-plt.matshow(a)
-plt.show()
-print("end")
-'''
+for (topic, tt) in a:
+    print (topic)
+    print(tt)

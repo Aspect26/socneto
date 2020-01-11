@@ -1,0 +1,9 @@
+FROM python:3.8
+
+WORKDIR /usr/src/app
+
+COPY ./ ./
+
+RUN exec ./prepare.sh
+
+CMD [ "python", "./LDA.py"]
