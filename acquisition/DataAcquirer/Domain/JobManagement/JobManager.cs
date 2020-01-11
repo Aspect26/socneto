@@ -139,9 +139,23 @@ namespace Domain.JobManagement
                     dataAcquirerInputModel,
                     cancellationToken);
 
+
                 await foreach (var dataPost in batch)
                 {
-                    var postId = Guid.NewGuid();
+                    var bytes = new byte[16];
+
+
+                    var textHash = dataPost.Text.GetHashCode();
+                    var postIdHash = dataPost.OriginalPostId.GetHashCode();
+                    var userIdHash = dataPost.UserId.GetHashCode();
+                    var dateIdHash = dataPost.DateTime.GetHashCode();
+
+                    BitConverter.GetBytes(textHash).CopyTo(bytes,0);
+                    BitConverter.GetBytes(postIdHash).CopyTo(bytes, 3);
+                    BitConverter.GetBytes(userIdHash).CopyTo(bytes, 7);
+                    BitConverter.GetBytes(dateIdHash).CopyTo(bytes, 11);
+
+                    var postId = new Guid(bytes);
                     var uniPost = UniPostModel.FromValues(
                         postId,
                         dataPost.OriginalPostId,
