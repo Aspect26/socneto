@@ -34,7 +34,7 @@ namespace Infrastructure.DataGenerator
             _logger = logger;
             
         }
-        public async Task ProduceAsync(string topic, MessageBrokerMessage message)
+        public Task ProduceAsync(string topic, MessageBrokerMessage message)
         {
             _postEncountered++;
             _logger.LogInformation("Post saved. TS: {timestamp}, post {post}",
@@ -60,6 +60,7 @@ namespace Infrastructure.DataGenerator
                     writer.WriteLine(message.JsonPayloadPayload);
                 }
             }
+            return Task.CompletedTask;
         }
     }
 }

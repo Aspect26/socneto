@@ -38,6 +38,12 @@ namespace Infrastructure.Twitter
         {
             var includeRetweets = false;
             var metadata = await _metadataContext.GetOrCreateAsync(defaultMetadata);
+            _logger.TrackInfo("QueryData", "Twitter - using metadata",
+                new
+                {
+                    metadata,
+                    jobId = _jobId
+                });
             var query = defaultMetadata.Query;
 
             while (true)
@@ -108,8 +114,8 @@ namespace Infrastructure.Twitter
                                 item.StatusID.ToString(),
                                 item.FullText,
                                 item.Lang,
-                                "Twitter",
-                                item.UserID.ToString(),
+                                "twitter",
+                                item.User.ScreenNameResponse,
                                 item.CreatedAt.ToString("s"),
                                 query);
         }
@@ -133,19 +139,18 @@ namespace Infrastructure.Twitter
                        "QueryData",
                        "Downloading data");
 
-                    var search = await context.GetStatusBatchAsync(
+                    var statuses = await context.GetStatusBatchAsync(
                         searchTerm,
                         batchSize,
                         language,
                         maxId: maxId,
                         sinceId: sinceId);
-
-                    batch = search
-                        .Statuses
+                    
+                    batch = statuses
                         .ToList();
 
-                    maxId = search.Statuses.Any()
-                        ? Math.Min(search.Statuses.Min(status => status.StatusID) - 1, acquirerInputModel.MaxId)
+                    maxId = statuses.Any()
+                        ? Math.Min(statuses.Min(status => status.StatusID) - 1, acquirerInputModel.MaxId)
                         : acquirerInputModel.MaxId;
                 }
                 catch (TwitterQueryException e) when (e.ErrorCode == 88)
