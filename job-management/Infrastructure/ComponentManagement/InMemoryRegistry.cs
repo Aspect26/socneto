@@ -65,5 +65,10 @@ namespace Infrastructure.ComponentManagement
                 AcquiredDataInputChannel = _storageChannelNames.StoreRawDataChannelName
             };
         }
+
+        public Task<List<ComponentModel>> GetAllComponentsAsync()
+        {
+            return Task.FromResult(_components.Values.ToList());
+        }
     }
 }
