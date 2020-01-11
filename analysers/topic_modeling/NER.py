@@ -1,6 +1,6 @@
 import spacy
 import re
-#needed to install as python -m spacy download en_core_web_sm
+#needed to install as: python -m spacy download en_core_web_lg
 nlp = spacy.load("en_core_web_lg")
 
 
