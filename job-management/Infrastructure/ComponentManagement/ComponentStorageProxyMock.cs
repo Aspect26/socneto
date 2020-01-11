@@ -58,5 +58,10 @@ namespace Infrastructure.ComponentManagement
         {
             return Task.FromResult(new List<JobComponentConfig>());
         }
+
+        public Task<List<ComponentModel>> GetAllComponentsAsync()
+        {
+            return Task.FromResult(new List<ComponentModel>());
+        }
     }
 }

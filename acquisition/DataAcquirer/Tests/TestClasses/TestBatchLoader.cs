@@ -26,7 +26,7 @@ namespace Tests.Unit.TestClasses
 
         public ulong Count { get; set; }
 
-        public Task<Search> GetStatusBatchAsync(
+        public Task<List<Status>> GetStatusBatchAsync(
             string searchTerm,
             int batchSize,
             string language,
@@ -35,11 +35,7 @@ namespace Tests.Unit.TestClasses
         {
             if (Count >= _limitCount)
             {
-                var emptySearch = new Search()
-                {
-                    Statuses = new List<Status>() { New(ulong.MaxValue) }
-                };
-                return Task.FromResult(emptySearch);
+                return Task.FromResult(new List<Status>() { New(ulong.MaxValue) });
             }
             maxId = Math.Min(maxId, _maxTweetId);
             var count = (ulong) batchSize;
@@ -55,12 +51,7 @@ namespace Tests.Unit.TestClasses
                 .Select(r => New(r))
                 .ToList();
 
-            var search = new Search
-            {
-                Statuses = statuses
-            };
-
-            return Task.FromResult(search);
+            return Task.FromResult(statuses);
         }
 
         private static ulong SafeSubtract(ulong baseNumber, ulong subtractor)

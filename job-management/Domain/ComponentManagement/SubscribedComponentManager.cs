@@ -104,25 +104,19 @@ namespace Domain.ComponentManagement
                     JobId = jobId,
                     Command = JobCommand.Stop
                 };
-                return JobConfigUpdateResult.Successfull(jobId, JobStatus.Stopped);
-                //var acquirers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.DataAcquirerComponentTypeName);
-                //foreach (var dataAcquirer in acquirers)
-                //{
-                //    await NotifyComponent(dataAcquirer.ComponentId, notification);
-                //}
-                //var analysers = job.JobComponentConfigs.Where(r => r.ComponentType == _identifiers.AnalyserComponentTypeName);
-                //foreach (var dataAnalyser in analysers)
-                //{
-                //    await NotifyComponent(dataAnalyser.ComponentId, notification);
-                //}
+                
+                var components = await _componentRegistry.GetAllComponentsAsync();
 
-                //job.JobStatus = JobStatus.Stopped;
+                foreach (var item in components)
+                {
+                    await NotifyComponent(item.ComponentId, notification);
+                }
 
-                //await _jobStorage.UpdateJobAsync(job);
+                job.JobStatus = JobStatus.Stopped;
 
-                // return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
+                await _jobStorage.UpdateJobAsync(job);
 
-
+                return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
             }
             catch (Exception e)
             {
