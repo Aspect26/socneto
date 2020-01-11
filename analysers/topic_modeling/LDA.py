@@ -8,10 +8,12 @@ import many_stop_words
 
 
 class LDAAnalysis:
-    def __init__(self):
+    def __init__(self, topic_num = 5, topic_words = 10):
         self.nlp = spacy.load("en_core_web_lg")
         self.nlp.add_pipe(self.lemmatizer, name='lemmatizer', after='ner')
         self.nlp.add_pipe(self.remove_stopwords, name="stopwords", last=True)
+        self.topic_num = topic_num
+        self.topic_words = topic_words
 
     def lemmatizer(self,doc):
         # This takes in a doc of tokens from the NER and lemmatizes them.
@@ -39,12 +41,13 @@ class LDAAnalysis:
                                                     passes=10,
                                                     alpha='auto',
                                                     per_word_topics=True)
-        return lda_model.get_topic_keywords(), words
+        return lda_model.show_topics(self.topic_num,self.topic_words)
 
-'''
-lda = LDAAnalysis()
+
+'''lda = LDAAnalysis()
 a = lda.get_topic_keywords("Python, like most many programming languages, has a huge amount of exceptional libraries and modules to choose from. Generally of course, this is absolutely brilliant, but it also means that sometimes the modules don’t always play nicely with each other. In this short tutorial, I’m going to show you how to link up spaCy with Gensim to create a coherent topic modeling pipeline.")
-
+'''
+'''
 import matplotlib.pyplot as plt
 
 plt.matshow(a)
