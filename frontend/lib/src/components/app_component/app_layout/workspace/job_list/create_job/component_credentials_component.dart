@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus_item.dart';
@@ -56,6 +58,9 @@ class ComponentCredentialsComponent implements AfterChanges {
   @Input() List<SocnetoComponent> acquirers = [];
   @Input() bool disabled = false;
 
+  final _credentialsChangeController = StreamController<List<AcquirerWithCredentials>>();
+  @Output() Stream<List<AcquirerWithCredentials>> get onCredentialsChange => _credentialsChangeController.stream;
+
   List<AcquirerWithCredentials> acquirersWithCredentials = [];
   AcquirerWithCredentials selectedAcquirer;
   bool useCustomTwitterCredentials;
@@ -68,6 +73,51 @@ class ComponentCredentialsComponent implements AfterChanges {
     });
 
     this.selectedAcquirer = this.acquirersWithCredentials.isNotEmpty? this.acquirersWithCredentials[0] : null;
+  }
+
+  void onUseCustomTwitterCredentialsChanged(bool checked) {
+    this.selectedAcquirer.useCustomTwitterCredentials = checked;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onTwitterApiKeyChanged(String value) {
+    this.selectedAcquirer.twitterCredentials.apiKey = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onTwitterSecretKeyChanged(String value) {
+    this.selectedAcquirer.twitterCredentials.apiSecretKey = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onTwitterTokenChanged(String value) {
+    this.selectedAcquirer.twitterCredentials.accessToken = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onTwitterTokenSecretChanged(String value) {
+    this.selectedAcquirer.twitterCredentials.accessTokenSecret = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onUseCustomRedditCredentialsChanged(bool checked) {
+    this.selectedAcquirer.useCustomRedditCredentials = checked;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onRedditAppIdChanged(String value) {
+    this.selectedAcquirer.redditCredentials.appId = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onRedditSecretKeyChanged(String value) {
+    this.selectedAcquirer.redditCredentials.appSecret = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
+  }
+
+  void onRedditRefreshTokenChanged(String value) {
+    this.selectedAcquirer.redditCredentials.refreshToken = value;
+    this._credentialsChangeController.add(this.acquirersWithCredentials);
   }
 
 }
