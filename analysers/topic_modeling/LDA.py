@@ -29,22 +29,33 @@ class LDAAnalysis:
         doc = [token.text for token in doc if token.is_stop != True and token.is_punct != True]
         return doc
 
+    def format(self, model, words):
+        all_words = []
+        all_probabs = []
+        for i in range(self.topic_num):
+            indexy, pravdepod = map(list, zip(* model.get_topic_terms(i)))
+            slova = [words[ind] for ind in indexy]
+            all_words.append(slova)
+            all_probabs.append(pravdepod)
+        return all_words, all_probabs
+
+
     def get_topic_keywords(self,text):
         pr = [self.nlp(text)]
         words = corpora.Dictionary(pr)
         corpus = [words.doc2bow(d) for d in pr]
         lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                                     id2word=words,
-                                                    num_topics=5,
+                                                    num_topics=self.topic_num,
                                                     random_state=2,
                                                     update_every=1,
                                                     passes=10,
                                                     alpha='auto',
                                                     per_word_topics=True)
-        return lda_model.show_topics(self.topic_num,self.topic_words)
+        return self.format(lda_model, words)
 
-
-'''lda = LDAAnalysis()
+'''
+lda = LDAAnalysis()
 a = lda.get_topic_keywords("Python, like most many programming languages, has a huge amount of exceptional libraries and modules to choose from. Generally of course, this is absolutely brilliant, but it also means that sometimes the modules don’t always play nicely with each other. In this short tutorial, I’m going to show you how to link up spaCy with Gensim to create a coherent topic modeling pipeline.")
 '''
 '''
