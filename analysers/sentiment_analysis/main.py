@@ -50,19 +50,11 @@ def register_itself(topic, input_topic, componentId, producer):
 def analyse(text):
     polarity, confidence = analysis.get_text_sentiment(text)
     return {
-        "sentiment_analysis": {
-            "polarity": {
-                "value": polarity,
-                "type": "number"
-            },
-            # "strength":{
-            #     "value":0.1,
-            #     "type":"number"
-            # },
-            "confidence": {
-                "value": confidence,
-                "type": "number"
-            }
+        "polarity": {
+            "numberValue": polarity
+        },
+        "accuracy": {
+            "numberValue": confidence
         }
     }
 
@@ -149,6 +141,5 @@ default_config = {
 if args.sleep_on_startup:
     print("Waiting a minute")
     time.sleep(180)
-
 
 main(default_config)
