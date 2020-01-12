@@ -19,12 +19,12 @@ public class AnalyzerServiceImpl implements AnalyzerService {
     public AnalysisMessage analyze(PostMessage postMessage) {
         var results = analyzer.analyze(postMessage.getText());
 
-        var analysisMessage = new AnalysisMessage();
-        analysisMessage.setComponentId(componentProperties.getComponentId());
-        analysisMessage.setJobId(postMessage.getJobId());
-        analysisMessage.setPostId(postMessage.getPostId());
-        analysisMessage.setResults(results);
-        return analysisMessage;
+        return AnalysisMessage.builder()
+                .componentId(componentProperties.getComponentId())
+                .jobId(postMessage.getJobId())
+                .postId(postMessage.getPostId())
+                .results(results)
+                .build();
     }
 
     @Override
