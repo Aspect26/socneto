@@ -212,7 +212,8 @@ namespace Application
             {
                 services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
                 services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
-                services.AddTransient<IDataAcquirerMetadataStorage, MetadataStorageProxy>();
+                services.AddTransient<IDataAcquirerMetadataStorage, FileMetadataStorage>();
+                //services.AddTransient<IDataAcquirerMetadataStorage, MetadataStorageProxy>();
             }
 
             _transientServices.ForEach(addTransMethod => addTransMethod(services));
