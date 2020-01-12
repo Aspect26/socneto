@@ -37,7 +37,6 @@ namespace Domain.JobConfiguration
             _logger.TrackInfo("StartNewJob", "Starting listening",
                 new { channelName = _updateChannelName });
             while (true)
-
             {
                 return _messageBrokerConsumer.ConsumeAsync(
                     _updateChannelName,
