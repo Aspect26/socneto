@@ -1,6 +1,7 @@
 package cz.cuni.mff.socneto.storage.producer;
 
 import cz.cuni.mff.socneto.storage.ApplicationProperties;
+import cz.cuni.mff.socneto.storage.ComponentProperties;
 import cz.cuni.mff.socneto.storage.model.LogMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LogProducer {
 
+    private final ComponentProperties componentProperties;
     private final ApplicationProperties applicationProperties;
     private final KafkaTemplate<String, LogMessage> logTemplate;
 
     public void send(LogMessage logMessage) {
+        logMessage.setComponentId(componentProperties.getComponentId());
         log.info("ACTION='log' MESSAGE='{}'", logMessage);
         logTemplate.send(applicationProperties.getTopicLogging(), logMessage);
     }

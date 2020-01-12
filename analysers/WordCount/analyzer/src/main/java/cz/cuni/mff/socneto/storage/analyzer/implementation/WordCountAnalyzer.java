@@ -1,5 +1,6 @@
-package cz.cuni.mff.socneto.storage.analyzer;
+package cz.cuni.mff.socneto.storage.analyzer.implementation;
 
+import cz.cuni.mff.socneto.storage.analyzer.Analyzer;
 import cz.cuni.mff.socneto.storage.model.AnalysisMessage.AnalysisResult;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,7 @@ public class WordCountAnalyzer implements Analyzer {
         var frequency = Arrays.stream(words).collect(Collectors.groupingBy(Function.identity(),
                 Collectors.collectingAndThen(Collectors.counting(), Double::valueOf)));
 
-        var result = new AnalysisResult();
-        result.setNumberMapValue(frequency);
+        var result = AnalysisResult.builder().numberMapValue(frequency).build();
 
         return Map.of("wordCount", result);
     }
