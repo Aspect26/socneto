@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
@@ -159,6 +160,8 @@ namespace Domain.JobManagement
                     var postIdHash = dataPost.OriginalPostId.GetHashCode();
                     var userIdHash = dataPost.UserId.GetHashCode();
                     var dateIdHash = dataPost.DateTime.GetHashCode();
+                    var jobId = jobConfig.JobId.GetHashCode();
+                    dateIdHash += jobId;
 
                     BitConverter.GetBytes(textHash).CopyTo(bytes, 0);
                     BitConverter.GetBytes(postIdHash).CopyTo(bytes, 3);
@@ -166,10 +169,13 @@ namespace Domain.JobManagement
                     BitConverter.GetBytes(dateIdHash).CopyTo(bytes, 11);
 
                     var postId = new Guid(bytes);
+
+                    var text = ClearText(dataPost.Text);
+                    
                     var uniPost = UniPostModel.FromValues(
                         postId,
                         dataPost.OriginalPostId,
-                        dataPost.Text,
+                        text,
                         dataPost.Language,
                         dataPost.Source,
                         dataPost.UserId,
@@ -201,6 +207,11 @@ namespace Domain.JobManagement
                         exception = e
                     });
             }
+        }
+
+        private string ClearText(string text)
+        {
+            return Regex.Replace(text, @"\s+", " ").Trim();
         }
 
         private async Task SendRecordToOutputs(string[] outputChannels,
