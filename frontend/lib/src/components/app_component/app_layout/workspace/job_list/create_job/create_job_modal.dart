@@ -17,6 +17,7 @@ import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:tuple/tuple.dart';
 
 
 @Component(
@@ -81,10 +82,7 @@ class CreateJobModal {
   SingleSelectionModel languageSelection = SingleSelectionModel();
   List<SocnetoComponent> selectedSocialNetworks = [];
   List<SocnetoComponent> selectedDataAnalyzers = [];
-  bool useCustomTwitterCredentials = false;
-  TwitterCredentials twitterCredentials = TwitterCredentials();
-  bool useCustomRedditCredentials = false;
-  RedditCredentials redditCredentials = RedditCredentials();
+  List<AcquirerWithCredentials> acquirersWithCredentials;
 
   CreateJobModal(this._socnetoService);
 
@@ -105,10 +103,6 @@ class CreateJobModal {
     this.selectedSocialNetworks.clear();
     this.selectedDataAnalyzers.clear();
     this.errorMessage = null;
-    this.useCustomTwitterCredentials = false;
-    this.twitterCredentials = TwitterCredentials();
-    this.useCustomRedditCredentials = false;
-    this.redditCredentials = RedditCredentials();
 
     this._loadSocialNetworks();
     this._loadDataAnalyzers();
@@ -126,10 +120,11 @@ class CreateJobModal {
     if (this.isJobDefinitionCorrect()) {
       try {
         this.submitting = true;
-        final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
-        final redditCredentials = this.useCustomRedditCredentials? this.redditCredentials : null;
+        print(acquirersWithCredentials);
+        final twitterCredentials = this._getTwitterCredentials();
+        final redditCredentials = this._getRedditCredentials();
         final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks,
-            this.selectedDataAnalyzers, this.languageSelection.selectedValue, [], []);
+            this.selectedDataAnalyzers, this.languageSelection.selectedValue, twitterCredentials, redditCredentials);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
@@ -155,6 +150,10 @@ class CreateJobModal {
 
   onDataAnalyzersRefresh() {
     this._loadDataAnalyzers();
+  }
+
+  onCredentialsChange(List<AcquirerWithCredentials> credentials) {
+    this.acquirersWithCredentials = credentials;
   }
 
   bool isJobDefinitionCorrect() {
@@ -187,6 +186,31 @@ class CreateJobModal {
     } finally {
       this.loadingDataAnalyzers = false;
     }
+  }
+
+  // TODO: combine these two following functions
+  List<Tuple2<String, TwitterCredentials>> _getTwitterCredentials() {
+    List<Tuple2<String, TwitterCredentials>> twitterCredentials = [];
+
+    this.acquirersWithCredentials.forEach((credentials) => {
+      if (credentials.useCustomTwitterCredentials) {
+        twitterCredentials.add(Tuple2(credentials.acquirer.identifier, credentials.twitterCredentials))
+      }
+    });
+
+    return twitterCredentials;
+  }
+
+  List<Tuple2<String, RedditCredentials>> _getRedditCredentials() {
+    List<Tuple2<String, RedditCredentials>> redditCredentials = [];
+
+    this.acquirersWithCredentials.forEach((credentials) => {
+      if (credentials.useCustomRedditCredentials) {
+        redditCredentials.add(Tuple2(credentials.acquirer.identifier, credentials.redditCredentials))
+      }
+    });
+
+    return redditCredentials;
   }
 
 }

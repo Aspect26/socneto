@@ -20,7 +20,7 @@ class JobSubmitRequest {
     "selectedDataAnalysers": analyzers.map((analyzer) => analyzer.identifier).toList(),
     "selectedDataAcquirers": acquirers.map((acquirer) => acquirer.identifier).toList(),
     "language": language,
-    "properties": this._createPropertiesField()
+    "attributes": this._createPropertiesField()
   };
 
   Map<String, dynamic> _createPropertiesField() {
@@ -37,12 +37,14 @@ class JobSubmitRequest {
       var componentId = twitterCredentialsWithComponentId.item1;
       var twitterCredentials = twitterCredentialsWithComponentId.item2;
 
-      if (!properties.containsKey(componentId)) {
-        properties[componentId] = {};
-      }
+      // TODO: uncomment this when implemented in JMS
+//      if (!properties.containsKey(componentId)) {
+//        properties[componentId] = Map();
+//      }
 
       var twitterCredentialsFields =  this._createTwitterCredentialsFields(twitterCredentials);
-      properties[componentId].putAll(twitterCredentialsFields);
+      //properties[componentId].addAll(twitterCredentialsFields);
+      properties.addAll(twitterCredentialsFields);
     });
   }
 
@@ -61,10 +63,11 @@ class JobSubmitRequest {
   }
 
   Map<String, dynamic> _createTwitterCredentialsFields(TwitterCredentials twitterCredentials) => {
-    "TwitterApiKey": twitterCredentials.apiKey,
-    "TwitterApiKeySecret": twitterCredentials.apiSecretKey,
-    "TwitterAccessToken": twitterCredentials.accessToken,
-    "TwitterAccessTokenSecret": twitterCredentials.accessTokenSecret
+    // TODO: uncomment me
+    "ApiKey": "b0sXpwv0k4eJYmLaBZvSfNyxk",  //twitterCredentials.apiKey,
+    "ApiSecretKey": "KK7aRtfR8XGFqaz2Ua1vDgYftQ01AqlUYXKkqrpWoVxR8FC0p7", // twitterCredentials.apiSecretKey,
+    "AccessToken": "1178262834595209216-2TTiiia1yOVd2UHHH07dBd7KDBN7pZ", //twitterCredentials.accessToken,
+    "AccessTokenSecret": "fhAw5o5IeTTc33mGtpFnRKGMpbEA6xcsnkIrFZBNZXq4c", //twitterCredentials.accessTokenSecret
   };
 
   Map<String, dynamic> _createRedditCredentialsFields(RedditCredentials redditCredentials) => {
