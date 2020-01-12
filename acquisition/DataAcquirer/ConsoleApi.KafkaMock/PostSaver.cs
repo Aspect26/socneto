@@ -21,8 +21,7 @@ namespace ConsoleApi.KafkaMock
             ILogger<PostSaver> logger)
         {
             _kafkaConsumer = kafkaConsumer;
-            _logger = logger;
-            
+            _logger = logger;            
         }
 
 

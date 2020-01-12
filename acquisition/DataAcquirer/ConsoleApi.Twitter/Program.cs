@@ -1,14 +1,11 @@
-using Application;
 using Domain;
 using Domain.Abstract;
 using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
-using Domain.Model;
 using Domain.Registration;
 using Infrastructure.Kafka;
 using Infrastructure.Twitter;
-using LinqToTwitter;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,14 +13,17 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using Domain.JobManagement.Abstract;
 using Infrastructure.DataGenerator;
-using Infrastructure.StaticData;
+using System.Reflection;
+using System.Threading;
+using Infrastructure.Twitter.Abstract;
+using Infrastructure.Metadata;
 
 namespace ConsoleApi.Twitter
 {
+
     public class Program
     {
         public static void Main(string[] args)
@@ -50,27 +50,35 @@ namespace ConsoleApi.Twitter
                 logging => logging
                 .AddConsole()
                 .SetMinimumLevel(LogLevel.Information));
-            
+
             services.AddSingleton<JobConfigurationUpdateListener>();
             services.AddHostedService<JobConfigurationUpdateListenerHostedService>();
 
             services.AddTransient<IJobManager, JobManager>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
-            
+
             services.AddTransient<IDataAcquirer, TwitterDataAcquirer>();
+
+            services.AddSingleton<ITwitterContextProvider, TwitterContextProvider>();
 
             services.AddSingleton<JobConfigurationUpdateListenerHostedService>();
 
-            services.AddTransient<IMessageBrokerProducer, MockProducer>();
-            
-            services.AddSingleton<IMessageBrokerConsumer, InteractiveConsumer>();
-            services.AddSingleton<JobManipulationUseCase>();
+            services.AddSingleton<IMessageBrokerProducer, FileProducer>();
 
+            services.AddSingleton<IMessageBrokerConsumer, MockConsumer>();
+            services.AddSingleton<IDataAcquirerMetadataStorage, TestingFileMetadataStorage>();
+
+            services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
+
+            services.AddSingleton(typeof(IEventTracker<>), typeof(NullEventTracker<>));
+            // TW
+            services.AddSingleton<IDataAcquirer, TwitterDataAcquirer>()
+              .AddSingleton<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
+              .AddSingleton<IDataAcquirerMetadataContext, TwitterMetadataContext>()
+                .AddSingleton<TwitterBatchLoaderFactory>();
 
             ConfigureCommonOptions(configuration, services);
-
-
             return services.BuildServiceProvider();
         }
 
@@ -92,46 +100,94 @@ namespace ConsoleApi.Twitter
                 .Bind(configuration.GetSection($"{rootName}:KafkaOptions"))
                 .ValidateDataAnnotations();
 
+            services.AddOptions<FileProducerOptions>()
+                .Bind(configuration.GetSection($"{rootName}:FileProducerOptions"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<TwitterBatchLoaderOptions>()
+                .Bind(configuration.GetSection($"{rootName}:TwitterBatchLoaderOptions"))
+                .ValidateDataAnnotations();
+
             services.AddOptions<TwitterCredentialsOptions>()
                 .Bind(configuration.GetSection($"Twitter:Credentials"))
                 .ValidateDataAnnotations();
+
+            // TW
+
+            var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
+            var directory = new FileInfo(assemblyPath).Directory.FullName;
+            var twitterMetaDir = Path.Combine(directory, "metatw");
+            var jobMetaDir = Path.Combine(directory, "metajob");
+
+            Directory.CreateDirectory(twitterMetaDir);
+            Directory.CreateDirectory(jobMetaDir);
+
+            services.AddOptions<FileJsonStorageOptions>()
+                .Bind(configuration.GetSection($"{rootName}:FileJsonStorageOptions"))
+                .PostConfigure(o => o.Directory = twitterMetaDir);
+
+            services.AddOptions<DataAcquirerJobFileStorageOptions>()
+                .Bind(configuration.GetSection($"{rootName}:DataAcquirerJobFileStorageOptions"))
+                .PostConfigure(o => o.Directory = jobMetaDir);
+
+            services.AddOptions<TwitterMetadata>()
+                .Bind(configuration.GetSection($"TestDefaultMetadata"));
         }
 
         public static async Task MainAsync(string[] args)
         {
             var builtProvider = Build();
 
-            var uc = builtProvider.GetRequiredService<JobManipulationUseCase>();
+            var d = builtProvider.GetRequiredService<IOptions<TwitterMetadata>>();
+            var fileAccessor = builtProvider.GetRequiredService<IOptions<FileProducerOptions>>();
+            var fo = new FileInfo(fileAccessor.Value.DestinationFilePath);
+            Directory.CreateDirectory(fo.DirectoryName);
 
-            await uc.SimpleStartStop();
+            var jobManager = builtProvider.GetRequiredService<IJobManager>();
 
-            //var jobManager = builtProvider.GetRequiredService<IJobManager>();
+            var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
 
-            //var twitterCredentialsOptions = builtProvider.GetService<IOptions<TwitterCredentialsOptions>>();
+            await StartJob(
+                jobManager,
+                twitterCredentialsOptions.Value,
+                d.Value);
 
-            //var jobConfig = new DataAcquirerJobConfig()
-            //{
-            //    Attributes = new Dictionary<string, string>
-            //    {
-            //        {"TopicQuery", "capi hnizdo" },
-            //        {"AccessToken", twitterCredentialsOptions.Value.AccessToken},
-            //        {"AccessTokenSecret" , twitterCredentialsOptions.Value.AccessTokenSecret},
-            //        {"ApiKey",  twitterCredentialsOptions.Value.ApiKey},
-            //        {"ApiSecretKey", twitterCredentialsOptions.Value.ApiSecretKey},
-            //    },
-            //    JobId = Guid.NewGuid(),
-            //    OutputMessageBrokerChannels = new string[] { "MOCK-Post-output" }
-            //};
-            //try
-            //{
-            //    await jobManager.StartNewJobAsync(jobConfig);
-            //}
-            //catch
-            //{
+            await Task.Delay(Timeout.InfiniteTimeSpan);
+        }
 
-            //}
+        private static async Task StartJob(
+            IJobManager jobManager,
+            TwitterCredentialsOptions twitterCredentialsOptions,
+            TwitterMetadata metadata
+            )
+        {
 
-            await Task.Delay(TimeSpan.FromHours(1));
+            // var query = "snakebite;snakebites;\"morsure de serpent\";\"morsures de serpents\";\"لدغات الأفاعي\";\"لدغة الأفعى\";\"لدغات أفاعي\";\"لدغة أفعى\"";
+            // TODO add NOT cocktail NOT music
+            // var query = "snake bite NOT cocktail NOT darts NOT piercing";
+
+            var jobId = Guid.Parse("a43e8bb4-9c15-48a8-a0a3-7479b75eb6d0");
+            var jobConfig = new DataAcquirerJobConfig()
+            {
+                Attributes = new Dictionary<string, string>
+                {
+                    {"TopicQuery", metadata.Query },
+                    {"AccessToken", twitterCredentialsOptions.AccessToken},
+                    {"AccessTokenSecret" , twitterCredentialsOptions.AccessTokenSecret},
+                    {"ApiKey",  twitterCredentialsOptions.ApiKey},
+                    {"ApiSecretKey", twitterCredentialsOptions.ApiSecretKey},
+                },
+                JobId = jobId,
+                OutputMessageBrokerChannels = new string[] { "job_management.component_data_input.DataAnalyser_sentiment" }
+            };
+            try
+            {
+                await jobManager.StartNewJobAsync(jobConfig);
+            }
+            catch
+            {
+
+            }
         }
     }
 }

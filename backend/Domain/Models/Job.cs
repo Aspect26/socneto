@@ -6,14 +6,18 @@ namespace Socneto.Domain.Models
     public class Job
     {
         public Guid JobId { get; set; }
-        public string Username { get; set; }
         public string JobName { get; set; }
-        public bool IsRunning { get; set; }
-        
-        // TODO: remove these ignores when datetimes are sent as datetime, not longs
-        [JsonIgnore]
+        public string Username { get; set; }
+        public string TopicQuery { get; set; }
+        public JobStatus Status { get; set; }
+        public string Language { get; set; }
         public DateTime StartedAt { get; set; }
-        [JsonIgnore]
-        public DateTime? PausedAt { get; set; }
+        public DateTime? FinishedAt { get; set; }
+    }
+
+    public enum JobStatus
+    {
+        Stopped, 
+        Running
     }
 }

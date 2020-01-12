@@ -9,7 +9,9 @@ using Domain.Acquisition;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.Registration;
+using Infrastructure.Metadata;
 using Infrastructure.Twitter;
+using Infrastructure.Twitter.Abstract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,6 +23,11 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
+            if (args.Contains("--sleep_on_startup"))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(200));
+            }
+
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
             var directory = new FileInfo(assemblyPath).Directory.FullName; 
             var twitterMetaDir = Path.Combine(directory, "metatw");
@@ -32,16 +39,21 @@ namespace Api
             var builder = new DataAcquisitionServiceWebApiBuilder(args)
                 .AddSingletonService<IDataAcquirer, TwitterDataAcquirer>()
                 .AddSingletonService<IDataAcquirerMetadataContextProvider, TwitterMetadataContextProvider>()
-                .AddSingletonService<IDataAcquirerMetadataStorage, TwitterJsonFileMetadataStorage>()
+                .AddSingletonService<TwitterBatchLoaderFactory>()
+                .AddSingletonService<ITwitterContextProvider,TwitterContextProvider>()
                 .AddSingletonService<IDataAcquirerMetadataContext, TwitterMetadataContext>()
-                .ConfigureSpecificOptions<TwitterJsonStorageOptions>("DataAcquisitionService:TwitterJsonStorageOptions")
-                .PostConfigure<TwitterJsonStorageOptions>(o => o.Directory = twitterMetaDir)
+                .ConfigureSpecificOptions<MetadataStorageProxyOptions>("DataAcquisitionService:MetadataStorageProxyOptions")
+                .ConfigureSpecificOptions<FileJsonStorageOptions>("DataAcquisitionService:FileJsonStorageOptions")               
+                .PostConfigure<FileJsonStorageOptions>(o => o.Directory = twitterMetaDir)
                 .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")
-            .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
-            var app = builder.BuildWebHost();
+                .ConfigureSpecificOptions<TwitterBatchLoaderOptions>("DataAcquisitionService:TwitterBatchLoaderOptions")
+                .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
+            
+            
+            var app = builder.BuildWebHost(false);
             await InitializeApplication(app);
 
-            app.Run();
+            await app.RunAsync();
         }
 
         private static async Task InitializeApplication(IWebHost app)

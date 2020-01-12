@@ -8,7 +8,4 @@ public interface UserDtoService {
 
     UserDto save(UserDto user);
 
-    UserDto update(UserDto user);
-
-    void delete(String username);
 }

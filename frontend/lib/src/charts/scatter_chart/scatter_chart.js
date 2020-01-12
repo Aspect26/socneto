@@ -32,7 +32,7 @@ class ScatterChart {
     _createSvg(selector, width, height, paddingHorizontal) {
         return d3.select(selector)
             .append("svg")
-            .attr("width", width)
+            .attr("width", "100%")
             .attr("height", height)
             .attr("class", "scatter-chart")
             .append("g")

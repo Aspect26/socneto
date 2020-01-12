@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Domain.ComponentManagement;
@@ -9,7 +8,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Infrastructure.ComponentManagement
 {
-    public class ComponentStorageProxyMock : IComponentRegistry, IDisposable
+
+
+    public class ComponentStorageProxyMock : IComponentRegistry
     {
         private readonly HttpClient _client;
         private readonly ILogger<ComponentStorageProxyMock> _logger;
@@ -21,21 +22,21 @@ namespace Infrastructure.ComponentManagement
             _client = client;
             _logger = logger;
         }
-        public Task<bool> AddOrUpdateAsync(ComponentRegistrationModel componentRegistrationModel)
+        public Task AddOrUpdateAsync(ComponentModel componentRegistrationModel)
         {
             _logger.LogWarning($"Mock {nameof(AddOrUpdateAsync)} method was called");
             return Task.FromResult(true);
         }
 
-        public Task<SubscribedComponent> GetComponentById(string componentId)
+        public Task<ComponentModel> GetComponentByIdAsync(string componentId)
         {
-            _logger.LogWarning($"Mock {nameof(GetComponentById)} method was called");
-            var component =  new SubscribedComponent(
+            _logger.LogWarning($"Mock {nameof(GetComponentByIdAsync)} method was called");
+            var component =  new ComponentModel(
                 "mock_cmp",
                 "mock_type",
                 "inputChannel",
                 "updateChannel",
-                new Dictionary<string, JObject>());
+                new JObject());
             return Task.FromResult(component);
         }
 
@@ -47,10 +48,20 @@ namespace Infrastructure.ComponentManagement
                 AcquiredDataInputChannel = "acquiredData"
             };
         }
-
-        public void Dispose()
+        
+        public Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
         {
-            _client?.Dispose();
+            return Task.CompletedTask;
+        }
+
+        public Task<List<JobComponentConfig>> GetAllComponentJobConfigsAsync(string componentId)
+        {
+            return Task.FromResult(new List<JobComponentConfig>());
+        }
+
+        public Task<List<ComponentModel>> GetAllComponentsAsync()
+        {
+            return Task.FromResult(new List<ComponentModel>());
         }
     }
 }

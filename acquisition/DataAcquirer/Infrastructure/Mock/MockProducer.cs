@@ -1,6 +1,6 @@
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace Infrastructure.DataGenerator
 {
+
     public class MockProducer : IMessageBrokerProducer
     {
         private class Post

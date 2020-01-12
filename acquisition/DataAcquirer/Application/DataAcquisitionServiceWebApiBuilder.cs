@@ -10,6 +10,8 @@ using Domain.JobManagement.Abstract;
 using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
+using Infrastructure.Metadata;
+using Infrastructure.Twitter;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +35,7 @@ namespace Application
         private readonly List<Action<IServiceCollection>> _singletonServices =
             new List<Action<IServiceCollection>>();
 
-        private readonly List<Action<IServiceCollection>> _postConfigureActions = 
+        private readonly List<Action<IServiceCollection>> _postConfigureActions =
             new List<Action<IServiceCollection>>();
 
         private readonly string[] _args;
@@ -48,7 +50,7 @@ namespace Application
             void ConfigurationAction(IServiceCollection serviceCollectino, IConfiguration c)
             {
                 var sec = c.GetSection(sectionName);
-                
+
                 serviceCollectino.AddOptions<T>()
                     .Bind(sec)
                     .ValidateDataAnnotations();
@@ -73,6 +75,30 @@ namespace Application
             return this;
         }
 
+
+        public DataAcquisitionServiceWebApiBuilder AddSingletonService<TConcrete>()
+          where TConcrete : class
+        {
+            void addSingletonServiceAction(IServiceCollection sp)
+            {
+                sp.AddSingleton<TConcrete>();
+            }
+            _singletonServices.Add(addSingletonServiceAction);
+            return this;
+        }
+        public DataAcquisitionServiceWebApiBuilder AddSingletonService(
+            Type abstractType,
+            Type concreteType)
+        {
+            void addSingletonServiceAction(IServiceCollection sp)
+            {
+                sp.AddSingleton(abstractType, concreteType);
+            }
+            _singletonServices.Add(addSingletonServiceAction);
+            return this;
+        }
+
+
         public DataAcquisitionServiceWebApiBuilder PostConfigure<TOptions>(Action<TOptions> action)
             where TOptions : class
         {
@@ -96,9 +122,6 @@ namespace Application
             return this;
         }
 
-        
-
-
         public IWebHost BuildWebHost(bool? isDevelopment = default)
         {
             IWebHostEnvironment environment = null;
@@ -107,10 +130,8 @@ namespace Application
                            .SetBasePath(Directory.GetCurrentDirectory())
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            
-            var isDevelopmentBool = isDevelopment ?? aspNetCoreEnv == "Development";
 
-            if (isDevelopmentBool)
+            if (aspNetCoreEnv == "Development")
             {
                 builder.AddJsonFile($"appsettings.Development.json", true, true);
             }
@@ -118,7 +139,7 @@ namespace Application
             var configuration = builder.Build();
             var webHost = WebHost
                 .CreateDefaultBuilder(_args)
-                .ConfigureLogging(logging=>
+                .ConfigureLogging(logging =>
                 {
                     logging.AddFile("Logs/ts-{Date}.txt");
                     logging.AddConfiguration(configuration.GetSection("Logging"));
@@ -129,14 +150,14 @@ namespace Application
                     environment = hostingContext.HostingEnvironment;
                 })
                 .ConfigureServices(services =>
-                    ConfigureServices(services, configuration, isDevelopmentBool))
+                    ConfigureServices(services, configuration, isDevelopment ?? false))
                 .Configure(app =>
                 {
                     if (environment.IsDevelopment())
                     {
                         app.UseDeveloperExceptionPage();
                     }
-                    
+
                     app.UseRouting();
 
                     app.UseEndpoints(endpoints =>
@@ -151,21 +172,9 @@ namespace Application
 
             //test job replay
 
-            ReplayJobConfigsAsync(webHost).GetAwaiter().GetResult();
+            // ReplayJobConfigsAsync(webHost).GetAwaiter().GetResult();
 
             return webHost;
-        }
-
-        private static async Task ReplayJobConfigsAsync(IWebHost webHost)
-        {
-            var jm = webHost.Services.GetRequiredService<IJobManager>();
-            var js = webHost.Services.GetRequiredService<IDataAcquirerJobStorage>();
-
-            var jobs = await js.GetAllAsync();
-            foreach (var job in jobs)
-            {
-                await jm.StartNewJobAsync(job);
-            }
         }
 
         private void ConfigureServices(
@@ -183,10 +192,12 @@ namespace Application
 
             services.AddSingleton<IJobManager, JobManager>();
 
-            services.AddSingleton(typeof(IEventTracker<>),typeof( EventTracker<>));
-            services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobFileStorage>();
+            services.AddSingleton(typeof(IEventTracker<>), typeof(EventTracker<>));
+            services.AddSingleton<IDataAcquirerJobStorage, DataAcquirerJobInMemoryStorage>();
 
             services.AddTransient<IRegistrationService, RegistrationService>();
+
+            services.AddHttpClient();
 
             if (isDevelopment)
             {
@@ -195,11 +206,13 @@ namespace Application
                 services.AddOptions<MockConsumerOptions>()
                     .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
                     .ValidateDataAnnotations();
+                services.AddTransient<IDataAcquirerMetadataStorage, FileMetadataStorage>();
             }
             else
             {
                 services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
                 services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
+                services.AddTransient<IDataAcquirerMetadataStorage, MetadataStorageProxy>();
             }
 
             _transientServices.ForEach(addTransMethod => addTransMethod(services));
@@ -211,17 +224,16 @@ namespace Application
                 specificConfigActions(services, configuration));
 
             _postConfigureActions.ForEach(action =>
-                action(services));            
+                action(services));
         }
 
         private static void ConfigureCommonOptions(IConfiguration configuration, IServiceCollection services)
         {
             var rootName = "DataAcquisitionService";
 
-
             services.AddOptions<ComponentOptions>()
                 .Bind(configuration.GetSection($"{rootName}:ComponentOptions"))
-                .ValidateDataAnnotations()                ;
+                .ValidateDataAnnotations();
 
             services.AddOptions<RegistrationRequestOptions>()
                 .Bind(configuration.GetSection($"{rootName}:RegistrationRequestOptions"))
@@ -233,7 +245,7 @@ namespace Application
 
 
             services.AddOptions<MockConsumerOptions>()
-                .Bind(configuration.GetSection("DataAcquisitionService:MockConsumerOptions"))
+                .Bind(configuration.GetSection($"{rootName}:MockConsumerOptions"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<LogLevelOptions>()
@@ -241,8 +253,8 @@ namespace Application
                 .ValidateDataAnnotations();
 
             services.AddOptions<SystemMetricsOptions>()
-                    .Bind(configuration.GetSection("DataAcquisitionService:SystemMetricsOptions"))
-                    .ValidateDataAnnotations();
+                .Bind(configuration.GetSection($"{rootName}:SystemMetricsOptions"))
+                .ValidateDataAnnotations();
 
         }
 

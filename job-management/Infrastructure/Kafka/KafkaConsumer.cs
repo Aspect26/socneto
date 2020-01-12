@@ -33,7 +33,7 @@ namespace Infrastructure.Kafka
             var config = new ConsumerConfig
             {
                 BootstrapServers = _serverAddress,
-                GroupId = "my-consumer-group",
+                GroupId = "my-consumer-group" + Guid.NewGuid().ToString(),
                 EnableAutoCommit = false,
                 StatisticsIntervalMs = 5000,
                 SessionTimeoutMs = 6000,
@@ -81,8 +81,18 @@ namespace Infrastructure.Kafka
 
                             _logger.LogTrace(
                                 $"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Value}");
-                            
-                            await onRecieveAction(consumeResult.Value);
+
+                            try
+                            {
+                                await onRecieveAction(consumeResult.Value);
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.LogError(
+                                    "Processing message failed: {message} \n{exception}",
+                                    consumeResult.Value,
+                                    e);
+                            }
 
                             if (consumeResult.Offset % commitPeriod == 0)
                             {

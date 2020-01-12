@@ -22,7 +22,7 @@ namespace Domain.JobManagement
         private readonly IDataAcquirerJobStorage _dataAcquirerJobStorage;
         private readonly IDataAcquirer _acquirer;
         private readonly IMessageBrokerProducer _producer;
-        private readonly IDataAcquirerMetadataContextProvider _dataAcquirerMetadataContextProvider;
+
         private readonly IEventTracker<JobManager> _logger;
 
         // concurent dictionary does not suffice
@@ -36,14 +36,12 @@ namespace Domain.JobManagement
             IDataAcquirerJobStorage dataAcquirerJobStorage,
             IDataAcquirer acquirer,
             IMessageBrokerProducer producer,
-            IDataAcquirerMetadataContextProvider dataAcquirerMetadataContextProvider,
             IEventTracker<JobManager> logger)
         {
             _dataAcquirerJobStorage = dataAcquirerJobStorage;
             //   _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
             _producer = producer;
-            _dataAcquirerMetadataContextProvider = dataAcquirerMetadataContextProvider;
             _logger = logger;
         }
 
@@ -105,7 +103,8 @@ namespace Domain.JobManagement
             }
         }
 
-        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig, CancellationToken cancellationToken)
+        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig, 
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -118,32 +117,14 @@ namespace Domain.JobManagement
                         new { jobId = jobConfig.JobId });
                     return;
                 }
-                var queryLanguage = "en";
-                var supported = new[] { "en", "cs" };
+                string queryLanguage = null;
                 if (jobConfig.Attributes.TryGetValue("Language", out var desiredLanguage))
                 {
-                    if (supported.Contains(desiredLanguage))
-                    {
-                        queryLanguage = desiredLanguage;
-                    }
-                    else
-                    {
-                        _logger.TrackError(
-                            "StartNewJob",
-                            "Unrecognized language",
-                            new
-                            {
-                                language = desiredLanguage,
-                                jobId = jobConfig.JobId
-                            });
-                    }
+                    queryLanguage = desiredLanguage;
                 }
 
                 await _dataAcquirerJobStorage.SaveAsync(jobConfig.JobId, jobConfig);
-
-                var earliestIdPagingParameter = ulong.MaxValue;
-                ulong latestIdPagingParameter = 0;
-
+                               
                 var batchSize = 100;
 
                 var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
@@ -151,25 +132,43 @@ namespace Domain.JobManagement
                    jobConfig.Attributes["TopicQuery"],
                    queryLanguage,
                    new DataAcquirerAttributes(jobConfig.Attributes),
-                   latestIdPagingParameter,
-                   earliestIdPagingParameter,
                    batchSize
                );
 
-                var context = _dataAcquirerMetadataContextProvider.Get(jobConfig.JobId);
-                var batch = _acquirer.GetPostsAsync(context, dataAcquirerInputModel);
+                var batch = _acquirer.GetPostsAsync(
+                    dataAcquirerInputModel,
+                    cancellationToken);
+
 
                 await foreach (var dataPost in batch)
                 {
+                    var bytes = new byte[16];
+
+
+                    var textHash = dataPost.Text.GetHashCode();
+                    var postIdHash = dataPost.OriginalPostId.GetHashCode();
+                    var userIdHash = dataPost.UserId.GetHashCode();
+                    var dateIdHash = dataPost.DateTime.GetHashCode();
+
+                    BitConverter.GetBytes(textHash).CopyTo(bytes,0);
+                    BitConverter.GetBytes(postIdHash).CopyTo(bytes, 3);
+                    BitConverter.GetBytes(userIdHash).CopyTo(bytes, 7);
+                    BitConverter.GetBytes(dateIdHash).CopyTo(bytes, 11);
+
+                    var postId = new Guid(bytes);
                     var uniPost = UniPostModel.FromValues(
-                        dataPost.PostId,
+                        postId,
+                        dataPost.OriginalPostId,
                         dataPost.Text,
+                        dataPost.Language,
                         dataPost.Source,
                         dataPost.UserId,
-                        dataPost.PostDateTime,
-                        dataAcquirerInputModel.JobId);
+                        dataPost.DateTime,
+                        dataAcquirerInputModel.JobId,
+                        dataPost.Query);
 
-                    var jsonData = JsonConvert.SerializeObject(dataPost);
+
+                    var jsonData = JsonConvert.SerializeObject(uniPost);
                     var messageBrokerMessage = new MessageBrokerMessage(
                         "acquired-data-post",
                         jsonData);
@@ -185,11 +184,11 @@ namespace Domain.JobManagement
                 _runningJobsRecords.Remove(jobConfig.JobId);
                 _logger.TrackError(
                     "RunJob",
-                    "Job encountered an error and stopped.", 
+                    "Job encountered an error and stopped.",
                     new
                     {
-                        jobId=jobConfig.JobId,
-                        exception =e
+                        jobId = jobConfig.JobId,
+                        exception = e
                     });
             }
         }
@@ -197,9 +196,9 @@ namespace Domain.JobManagement
         private async Task SendRecordToOutputs(string[] outputChannels,
             MessageBrokerMessage messageBrokerMessage)
         {
-                _logger.TrackStatistics(
-                    "SendingData",
-                    new { channels = outputChannels });
+            _logger.TrackStatistics(
+                "SendingData",
+                new { channels = outputChannels });
 
             foreach (var outputChannel in outputChannels)
             {

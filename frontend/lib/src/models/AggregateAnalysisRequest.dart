@@ -5,8 +5,8 @@ class AggregateAnalysisRequest {
   AggregateAnalysisRequest(this.analyserId, this.analysisProperty);
 
   Map<String, dynamic> toMap() => {
-    'analyserId': this.analyserId,
-    'analysisProperty': this.analysisProperty
+    'analyser_id': this.analyserId,
+    'analysis_property': this.analysisProperty
   };
 
 }

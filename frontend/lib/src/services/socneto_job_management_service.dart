@@ -30,10 +30,4 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
   Future<JobStatus> stopJob(String jobId) async =>
       await this.get<JobStatus>("job/stop/$jobId", (result) => JobStatus.fromMap(result));
 
-  Future<JobStatus> pauseJob(String jobId) async =>
-      await this.get<JobStatus>("job/pause/$jobId", (result) => JobStatus.fromMap(result));
-
-  Future<JobStatus> resumeJob(String jobId) async =>
-      await this.get<JobStatus>("job/resume/$jobId", (result) => JobStatus.fromMap(result));
-
 }

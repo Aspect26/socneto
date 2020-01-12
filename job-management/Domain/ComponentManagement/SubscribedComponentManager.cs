@@ -2,59 +2,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Job;
+using Domain.JobStorage;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Domain.ComponentManagement
 {
     public class SubscribedComponentManager : ISubscribedComponentManager
     {
+        private readonly ComponentIdentifiers _identifiers;
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
-        private readonly IJobConfigStorage _jobConfigStorage;
         private readonly IJobStorage _jobStorage;
         private readonly ILogger<SubscribedComponentManager> _logger;
 
         public SubscribedComponentManager(
             IComponentRegistry componentRegistry,
             IComponentConfigUpdateNotifier componentConfigUpdateNotifier,
-            IJobConfigStorage jobConfigStorage,
+
             IJobStorage jobStorage,
+            IOptions<ComponentIdentifiers> options,
             ILogger<SubscribedComponentManager> logger
         )
         {
+            _identifiers = options.Value;
             _componentRegistry = componentRegistry;
             _componentConfigUpdateNotifier = componentConfigUpdateNotifier;
-            _jobConfigStorage = jobConfigStorage;
             _jobStorage = jobStorage;
 
             _logger = logger;
         }
 
         public async Task<SubscribedComponentResultModel> SubscribeComponentAsync(
-            ComponentRegistrationModel componentRegistrationModel)
+            ComponentModel componentRegistrationModel)
         {
             try
             {
-                var registered = await _componentRegistry
-                    .AddOrUpdateAsync(componentRegistrationModel);
-
-                if (!registered)
-                {
-                    return SubscribedComponentResultModel.AlreadyExists();
-                }
+                await _componentRegistry.AddOrUpdateAsync(componentRegistrationModel);
 
                 return SubscribedComponentResultModel.Successful();
             }
             catch (Exception e)
             {
-                const string error = "Subscription failed due to: {error}";
-                _logger.LogError(error, e.Message);
-                return SubscribedComponentResultModel.Failed(string.Format(error, e.Message));
+                string error = $"Subscription failed due to: {e.Message}";
+                _logger.LogError(error);
+                return SubscribedComponentResultModel.Failed(error);
             }
         }
 
@@ -68,9 +64,22 @@ namespace Domain.ComponentManagement
                 return JobConfigUpdateResult.Failed("No storage is present. Job can't be done");
             }
 
+
+            var job = new Job
+            {
+                FinishedAt = null,
+                JobName = jobConfigUpdateCommand.JobName,
+                JobStatus = JobStatus.Running,
+                JobId = jobConfigUpdateCommand.JobId,
+                Owner = "admin",
+                TopicQuery = jobConfigUpdateCommand.TopicQuery,
+                StartedAt = DateTime.Now,
+            };
+
             var analysers = await PushAnalyserJobConfig(
                 storage.AnalysedDataInputChannel,
                 jobConfigUpdateCommand);
+
 
             var analysersInputs = analysers.Select(r => r.InputChannelName).ToArray();
             await PushNetworkDataAcquisitionJobConfig(
@@ -78,27 +87,7 @@ namespace Domain.ComponentManagement
                 analysersInputs,
                 jobConfigUpdateCommand);
 
-            var jobConfig = new JobConfig
-            {
-                JobStatus = JobStatus.Running,
-                JobId = jobConfigUpdateCommand.JobId,
-                TopicQuery = jobConfigUpdateCommand.TopicQuery,
-                DataAnalysers = jobConfigUpdateCommand.DataAnalysers.ToList(),
-                DataAcquirers = jobConfigUpdateCommand.DataAcquirers.ToList()
-            };
-
-            // TODO: get the owner somehow
-            var job = new Models.Job
-            {
-                JobId = jobConfigUpdateCommand.JobId,
-                JobName = jobConfigUpdateCommand.JobName,
-                Owner = "admin",
-                HasFinished = false,
-                StartedAt = DateTime.Now
-            };
-
             await _jobStorage.InsertNewJobAsync(job);
-            await _jobConfigStorage.InsertNewJobConfigAsync(jobConfig);
 
             return JobConfigUpdateResult.Successfull(
                 jobConfigUpdateCommand.JobId,
@@ -109,67 +98,86 @@ namespace Domain.ComponentManagement
         {
             try
             {
-                var jobConfig = await _jobConfigStorage.GetJobConfigAsync(jobId);
+                var job = await _jobStorage.GetJobAsync(jobId);
                 var notification = new DataAcquisitionConfigUpdateNotification
                 {
                     JobId = jobId,
-                    Command = JobCommand.Stop.ToString()
+                    Command = JobCommand.Stop
                 };
-
-                foreach (var dataAcquirer in jobConfig.DataAcquirers)
-                {
-                    await NotifyComponent(dataAcquirer, notification);
-                }
-                foreach (var dataAnalyser in jobConfig.DataAnalysers)
-                {
-                    await NotifyComponent(dataAnalyser, notification);
-                }
                 
-                jobConfig.JobStatus = JobStatus.Stopped;
+                var components = await _componentRegistry.GetAllComponentsAsync();
 
-                await _jobConfigStorage.UpdateJobConfig(jobConfig);
+                foreach (var item in components)
+                {
+                    await NotifyComponent(item.ComponentId, notification);
+                }
 
-                return JobConfigUpdateResult.Successfull(jobId, jobConfig.JobStatus);
+                job.JobStatus = JobStatus.Stopped;
 
+                await _jobStorage.UpdateJobAsync(job);
+
+                return JobConfigUpdateResult.Successfull(jobId, job.JobStatus);
             }
             catch (Exception e)
             {
-                _logger.LogError("Could not stop the job {jobId}, due to error {error}", 
+                _logger.LogError("Could not stop the job {jobId}, due to error {error}",
                     jobId,
                     e.Message);
-                throw  new InvalidOperationException($"Could not stop the job {jobId}, due to error {e.Message}");
+                throw new InvalidOperationException($"Could not stop the job {jobId}, due to error {e.Message}");
             }
         }
-        
+
         private async Task PushNetworkDataAcquisitionJobConfig(
             string storageChannelName,
             IEnumerable<string> selectedAnalysersChannels,
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
-
             var outputChannels = selectedAnalysersChannels
                 .Concat(new[] { storageChannelName, })
                 .ToArray();
 
-            var notification = new DataAcquisitionConfigUpdateNotification
-            {
-                JobId = jobConfigUpdateCommand.JobId,
-                Attributes = new Dictionary<string, string>()
-                {
-                    {"TopicQuery", jobConfigUpdateCommand.TopicQuery }
-                },
-                OutputMessageBrokerChannels = outputChannels,
-            };
-
             foreach (var dataAcquirer in jobConfigUpdateCommand.DataAcquirers)
             {
+                var attributes = jobConfigUpdateCommand
+                    .Attributes ?? new JObject();
+                try
+                {
+                    var topicQuery = new JProperty("TopicQuery", jobConfigUpdateCommand.TopicQuery);
+                    attributes.Add(topicQuery);
+                    var languageProperty = new JProperty("Language", jobConfigUpdateCommand.Language);
+                    attributes.Add(languageProperty);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Error while adding attributes: {exception}", e);
+                    throw;
+                }
+
+                var notification = new DataAcquisitionConfigUpdateNotification
+                {
+                    JobId = jobConfigUpdateCommand.JobId,
+                    Attributes = attributes,
+                    OutputMessageBrokerChannels = outputChannels,
+                    Command = JobCommand.Start
+                };
+
                 await NotifyComponent(dataAcquirer, notification);
+
+                var componentConfig = new JobComponentConfig
+                {
+                    ComponentId = dataAcquirer,
+                    Attributes = attributes,
+                    JobId = jobConfigUpdateCommand.JobId,
+                    OutputMessageBrokerChannels = notification.OutputMessageBrokerChannels
+                };
+
+                await _componentRegistry.InsertJobComponentConfigAsync(componentConfig);
             }
         }
 
         private async Task NotifyComponent(string component, object notification)
         {
-            var dataSource = await _componentRegistry.GetComponentById(component);
+            var dataSource = await _componentRegistry.GetComponentByIdAsync(component);
 
             if (dataSource == null)
             {
@@ -188,21 +196,21 @@ namespace Domain.ComponentManagement
             }
         }
 
-        private async Task<List<SubscribedComponent>> PushAnalyserJobConfig(
+        private async Task<List<ComponentModel>> PushAnalyserJobConfig(
             string storageChannelName,
+
             JobConfigUpdateCommand jobConfigUpdateCommand)
         {
 
-            var analysers = new List<SubscribedComponent>();
+            var analysers = new List<ComponentModel>();
             foreach (var analyser in jobConfigUpdateCommand.DataAnalysers)
             {
                 var analyserComponent = await _componentRegistry
-                    .GetComponentById(analyser);
+                    .GetComponentByIdAsync(analyser);
 
                 if (analyserComponent == null)
                 {
                     _logger.LogWarning("Analyser {analyserName} was not registered", analyser);
-
                 }
                 else
                 {
@@ -218,21 +226,31 @@ namespace Domain.ComponentManagement
                 OutputMessageBrokerChannels = new[] { storageChannelName },
             };
 
-            var configUpdateTasks = analysers.Select(analyserCmp =>
+            var configUpdateTasks = analysers.Select(async analyserCmp =>
             {
-                _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
+                _logger.LogInformation("Config pushed to: {componentName}, updateChannelName: {ucn}, config: {config}",
                     analyserCmp,
+                    analyserCmp.UpdateChannelName,
                     JsonConvert.SerializeObject(notification));
-                var analyserTask = _componentConfigUpdateNotifier.NotifyComponentAsync(
+
+                await _componentConfigUpdateNotifier.NotifyComponentAsync(
                     analyserCmp.UpdateChannelName,
                     notification);
 
-                return analyserTask;
+                var componentConfig = new JobComponentConfig
+                {
+                    ComponentId = analyserCmp.ComponentId,
+                    Attributes = analyserCmp.Attributes,
+                    JobId = jobConfigUpdateCommand.JobId,
+                    OutputMessageBrokerChannels = notification.OutputMessageBrokerChannels
+                };
+
+                await _componentRegistry.InsertJobComponentConfigAsync(componentConfig);
+
             });
 
             await Task.WhenAll(configUpdateTasks);
             return analysers;
         }
     }
-
 }

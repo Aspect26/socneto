@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -7,7 +6,6 @@ using Domain;
 using Domain.Abstract;
 using Domain.JobConfiguration;
 using Domain.Model;
-using Domain.PostAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -153,7 +151,7 @@ namespace Infrastructure.Kafka
                 var config = new DataAnalyzerJobConfig()
                 {
                     JobId = _jobId,
-                    OutputChannelName = "Storage_output_channel"
+                    OutputChannelNames = new[] {"Storage_output_channel"}
                 };
                 var json = JsonConvert.SerializeObject(config);
                 await onRecieveAction(json);
@@ -166,7 +164,7 @@ namespace Infrastructure.Kafka
                     await Task.Delay(TimeSpan.FromSeconds(10));
 
                     var config = UniPost.FromValues(
-                        Guid.NewGuid().ToString(),
+                        Guid.NewGuid(),
                         "RANDOM text",
                     "test souirce",
                         DateTime.Now.ToString("s"),

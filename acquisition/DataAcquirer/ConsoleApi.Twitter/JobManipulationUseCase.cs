@@ -1,4 +1,4 @@
-﻿using Domain;
+using Domain;
 using Domain.Abstract;
 using Domain.JobConfiguration;
 using Domain.Registration;
@@ -68,7 +68,7 @@ namespace ConsoleApi.Twitter
             var dataAcquirerJobConfig = new DataAcquirerJobConfig()
             {
                 Attributes = attributes,
-                Command = "start",
+                Command = JobCommand.Start,
                 OutputMessageBrokerChannels = new[] { "c1" },
                 JobId = jobId,
             };
@@ -82,7 +82,7 @@ namespace ConsoleApi.Twitter
         {
             var dataAcquirerJobConfig = new DataAcquirerJobConfig()
             {
-                Command = "stop",
+                Command = JobCommand.Stop,
                 JobId = jobId,
             };
 
@@ -125,7 +125,7 @@ namespace ConsoleApi.Twitter
     public class InteractiveConsumer : IMessageBrokerConsumer
     {
         private readonly ILogger<InteractiveConsumer> _logger;
-        ConcurrentDictionary<string, Queue<string>> _channels
+        readonly ConcurrentDictionary<string, Queue<string>> _channels
             = new ConcurrentDictionary<string, Queue<string>>();
 
         public InteractiveConsumer(

@@ -13,7 +13,8 @@ using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.StaticData;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,10 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
+            var delay = TimeSpan.FromSeconds(80);
+            Console.WriteLine($"Waiting {delay}");
+            await Task.Delay(delay);
+        
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
             var directory = new FileInfo(assemblyPath).Directory.FullName;
             
@@ -35,7 +40,7 @@ namespace Api
                 .ConfigureSpecificOptions<StaticDataOptions>("DataAcquisitionService:StaticGeneratorOptions")
                 .AddSingletonService<IStaticDataProvider, MovieDataProvider>()
                 .AddSingletonService<IDataAcquirer,StaticDataEnumerator>()
-                .AddSingletonService<IDataAcquirerMetadataContextProvider, NullContextProvider>()
+                .AddSingletonService<IDataAcquirerMetadataContextProvider,NullContextProvider>()
                 .AddSingletonService<IDataAcquirerMetadataStorage, NullMetadataStorage>()
                 .AddSingletonService<IDataAcquirerMetadataContext, NullContext>()
                 .ConfigureSpecificOptions<DataAcquirerJobFileStorageOptions>("DataAcquisitionService:DataAcquirerJobFileStorageOptions")

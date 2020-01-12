@@ -1,16 +1,22 @@
+import 'package:sw_project/src/models/JmsJobResponse.dart';
+
+import '../utils.dart';
+
+
 class Job {
   final String id;
   final String name;
+  JobStatusCode status;
   final DateTime startedAt;
-  final DateTime pausedAt;
-  bool isRunning;
+  final DateTime finishedAt;
 
-  Job(this.id, this.name, this.startedAt, this.isRunning, this.pausedAt);
+  Job(this.id, this.name, this.status, this.startedAt, this.finishedAt);
 
   Job.fromMap(Map data) :
         id = data["jobId"] ?? "",
         name = data["jobName"] ?? "Unnamed",
-        pausedAt = data["pausedAt"] != null ? DateTime.parse(data["pausedAt"]) : null,
+        status = getEnumByString(JobStatusCode.values, data["status"], JobStatusCode.Running),
         startedAt = data["startedAt"] != null ? DateTime.parse(data["startedAt"]) : null,
-        isRunning = data["isRunning"] ?? true;
+        finishedAt = data["finishedAt"] != null ? DateTime.parse(data["finishedAt"]) : null;
+
 }

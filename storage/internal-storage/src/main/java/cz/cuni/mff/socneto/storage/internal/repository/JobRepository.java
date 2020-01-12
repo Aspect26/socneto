@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface JobRepository extends CrudRepository<Job, UUID> {
 
     Iterable<Job> findAllByUsername(String username);
-    
+
 }

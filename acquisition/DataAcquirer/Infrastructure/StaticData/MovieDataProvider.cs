@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataGenerator
 {
-    public class MovieDataProvider : IStaticDataProvider, IDisposable
+    public sealed class MovieDataProvider : IStaticDataProvider, IDisposable
     {
         private readonly string _staticDataPath;
         private StreamReader _streamReader;
@@ -27,12 +27,18 @@ namespace Infrastructure.DataGenerator
             _csvReader = new CsvReader(_streamReader);
 
             var enumerable = _csvReader.GetRecords<MovieSetEntity>()
-                    .Select(r => new UniPostStaticData(
-                        Guid.NewGuid().ToString(),
-                        r.Text,
-                        "MOVIE_DATASET",
-                        r.User,
-                        DateTime.Now.ToString("s")));
+                                        .Select(r =>
+                    {
+                        var id = Guid.NewGuid();
+                        return new UniPostStaticData(
+                            id,
+                            $"movie_{id}",
+                            r.Text,
+                            "MOVIE_DATASET",
+                            r.User,
+                            DateTime.Now.ToString("s"),
+                            "q");
+                    });
 
             return enumerable;
         }
