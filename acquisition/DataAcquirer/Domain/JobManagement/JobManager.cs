@@ -139,6 +139,7 @@ namespace Domain.JobManagement
                     dataAcquirerInputModel,
                     cancellationToken);
 
+                _logger.TrackInfo("MessageTracking", "Starting");
 
                 int count = 0;
                 await foreach (var dataPost in batch)
@@ -150,6 +151,7 @@ namespace Domain.JobManagement
                             jobId = jobConfig.JobId
                         });
                     }
+                    count++;
 
                     var bytes = new byte[16];
 
