@@ -1,4 +1,5 @@
 FROM docker.elastic.co/logstash/logstash:7.4.2
 RUN rm -f /usr/share/logstash/pipeline/logstash.conf
 COPY /logstash.conf /usr/share/logstash/pipeline/logstash.conf
+RUN bin/logstash-plugin install logstash-input-log4j
 #COPY ./pipeline/ /usr/share/logstash/pipeline/
