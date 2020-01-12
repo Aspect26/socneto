@@ -22,9 +22,9 @@ public class SearchService {
     private final ElasticsearchOperations elasticsearchOperations;
 
     @SuppressWarnings("unchecked")
-    public List<Object> queryList(UUID jobId, String componentName, String resultName, String valueName) {
+    public List<Object> queryList(UUID jobId, String componentId, String resultName, String valueName) {
 
-        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentName", componentName));
+        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentId", componentId));
         var query = new NativeSearchQueryBuilder().withQuery(filter);
 
         return elasticsearchOperations.query(query.build(),
@@ -40,11 +40,11 @@ public class SearchService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<List<Object>> queryListPair(UUID jobId, String componentName, String resultName1,
+    public List<List<Object>> queryListPair(UUID jobId, String componentId, String resultName1,
                                                     String valueName1, String resultName2,
                                                     String valueName2) {
 
-        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentName", componentName));
+        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentId", componentId));
         var query = new NativeSearchQueryBuilder().withQuery(filter);
 
         return elasticsearchOperations.query(query.build(),
@@ -62,10 +62,10 @@ public class SearchService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<List<Object>> queryListWithTime(UUID jobId, String componentName, String resultName,
+    public List<List<Object>> queryListWithTime(UUID jobId, String componentId, String resultName,
                                                      String valueName) {
 
-        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentName", componentName));
+        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentId", componentId));
         var query = new NativeSearchQueryBuilder().withQuery(filter);
 
         return elasticsearchOperations.query(query.build(),

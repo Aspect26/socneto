@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ComponentDto {
-    private String id;
+    private String componentId;
     private ComponentType type;
     private String inputChannelName;
     private String updateChannelName;

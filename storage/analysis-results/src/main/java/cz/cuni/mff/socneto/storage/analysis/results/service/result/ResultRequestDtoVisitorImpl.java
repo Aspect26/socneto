@@ -24,7 +24,7 @@ public class ResultRequestDtoVisitorImpl implements ResultRequestDtoVisitor {
     @Override
     public Result requestResults(ListResultRequest resultRequest) {
         // TODO
-//                var list = searchService.queryList(resultRequest.getJobId(), resultRequest.getComponentName(), resultRequest.getResultName(), resultRequest.getValueName());
+//                var list = searchService.queryList(resultRequest.getJobId(), resultRequest.getComponentId(), resultRequest.getResultName(), resultRequest.getValueName());
         switch (resultRequest.getResultRequestType()) {
             case LIST:
                 var list = searchService.queryListPair(resultRequest.getJobId(), resultRequest.getComponentId(),

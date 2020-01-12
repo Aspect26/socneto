@@ -9,11 +9,12 @@ public interface ComponentDtoService {
 
     ComponentDto find(String id);
 
-    List<ComponentDto> getAllByType(ComponentType type);
+    List<ComponentDto> findAll();
+
+    List<ComponentDto> findAllByType(ComponentType type);
 
     ComponentDto save(ComponentDto component);
 
     ComponentDto update(ComponentDto component);
 
-    void delete(String id);
 }

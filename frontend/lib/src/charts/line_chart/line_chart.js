@@ -16,8 +16,11 @@ class LineChart {
     _CHART_PADDING_BOTTOM = 20;
     _CHART_PADDING_RIGHT = 10;
 
-    create(selector, dataSets, dataLabels) {
+    _isXDate = false;
+
+    create(selector, dataSets, dataLabels, isXDate) {
         this._removeOld(selector);
+        this._isXDate = isXDate;
 
         let element = document.getElementsByClassName("tab-content")[0];
         if (element == null)
@@ -50,32 +53,33 @@ class LineChart {
     }
 
     _createXScale(dataSets, width) {
-        // TODO: what if this is not time?
-        return d3.scaleTime()
-            .domain(d3.extent(dataSets.flat(), function(datum) { return new Date(datum.x); }))
-            .range([0, width]);
+        if (this._isXDate) {
+            return d3.scaleTime()
+                .domain(d3.extent(dataSets.flat(), datum => new Date(datum.x)))
+                .range([0, width]);
+        } else {
+            return d3.scaleLinear()
+                .domain(d3.extent(dataSets.flat(), datum => datum.x))
+                .range([0, width])
+        }
     }
 
     _createYScale(dataSets, height) {
         return d3.scaleLinear()
-            .domain(d3.extent(dataSets.flat(), function(datum) { return datum.y; }))
+            .domain(d3.extent(dataSets.flat(), datum => datum.y))
             .range([height, 0]);
     }
 
     _createChartCurve(xScale, yScale) {
         return d3.line()
-            .x(function (datum, _) {
-                return xScale(new Date(datum.x));
-            })
-            .y(function (datum) {
-                return yScale(datum.y);
-            });
+            .x((datum, _) => xScale(this._isXDate? new Date(datum.x) : datum.x))
+            .y(datum => yScale(datum.y));
     }
 
     _createSvg(selector, width) {
         return d3.select(selector)
             .append("svg")
-            .attr("width", width)
+            .attr("width", "100%")
             .attr("height", this._ELEMENT_HEIGHT)
             .attr("class", "line-chart")
             .append("g")
@@ -132,7 +136,6 @@ class LineChart {
             .attr("class", "tooltip")
             .style("opacity", 0);
 
-
         let verticalMarker = d3.select(containerSelector).append("div")
             .attr("class", "position-marker vertical")
             .style("opacity", 0);
@@ -143,25 +146,28 @@ class LineChart {
 
         let self = this;
         d3.select(containerSelector)
-            .on('mouseover', function (d, i) {
-                mouseHoverDiv.transition().duration(100).style("opacity", 1);
-                verticalMarker.transition().duration(100).style("opacity", 1);
-                horizontalMarker.transition().duration(100).style("opacity", 1);
+            .on('mouseover', () => {
+                mouseHoverDiv.style("opacity", 1);
+                verticalMarker.style("opacity", 1);
+                horizontalMarker.style("opacity", 1);
             })
-            .on('mouseout', function (d, i) {
-                mouseHoverDiv.transition().duration(100).style("opacity", 0);
-                verticalMarker.transition().duration(100).style("opacity", 0);
-                horizontalMarker.transition().duration(100).style("opacity", 0);
+            .on('mouseout', () => {
+                mouseHoverDiv.style("opacity", 0);
+                verticalMarker.style("opacity", 0);
+                horizontalMarker.style("opacity", 0);
             })
             .on('mousemove', function (d, _) {
-                mouseHoverDiv.style("left", (d3.event.layerX) + "px").style("top", (d3.event.layerY) + "px");
+                mouseHoverDiv.style("left", (d3.event.layerX - mouseHoverDiv._groups[0][0].clientWidth) + "px").style("top", (d3.event.layerY) + "px");
                 verticalMarker.style("left", (d3.event.layerX) + "px");
-
                 horizontalMarker.style("top", (d3.event.layerY) + "px");
 
                 let mouseChartPosition = d3.mouse(this)[0] - self._LEGEND_WIDTH;
                 let tooltipHtml = self._createMouseHoverTooltipHtml(mouseChartPosition, xScale, dataSets, dataLabels);
-                mouseHoverDiv.html(tooltipHtml);
+                mouseHoverDiv.style("opacity", tooltipHtml === ""? 0 : 1);
+                console.log(tooltipHtml);
+                if (tooltipHtml !== "") {
+                    mouseHoverDiv.html(tooltipHtml);
+                }
             });
     }
 
@@ -172,7 +178,7 @@ class LineChart {
         for (let index = 0; index < currentValues.length; index++) {
             let label = currentValues[index]["label"];
             let currentValue = currentValues[index]["value"];
-            let currentValueHTML = currentValue? `<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>` : "";
+            let currentValueHTML = currentValue != null? `<span style="color: ${currentValues[index]["color"]}">${label}:</span> ${currentValue.toFixed(2)}<br>` : "";
             tooltipHtml = tooltipHtml.concat(currentValueHTML);
         }
 
@@ -188,7 +194,8 @@ class LineChart {
             let previousDatum = null;
             for (let j = 0; j < dataSet.length; j++) {
                 let datum = dataSet[j];
-                if (new Date(datum.x) > x) {
+                let currentX = this._isXDate? new Date(datum.x) : datum.x;
+                if (currentX > x) {
                     let currentValue = datum.value;
                     if (previousDatum != null) {
                         currentValue = this._interpolateValue(x, previousDatum, datum);
@@ -208,10 +215,10 @@ class LineChart {
     }
 
     _interpolateValue(currentX, previousDatum, nextDatum) {
-        let xTimeMillis = currentX.getTime();
-        let previousTimeMillis = new Date(previousDatum.x).getTime();
-        let nextTimeMillis = new Date(nextDatum.x).getTime();
-        let positionBetween = (xTimeMillis - previousTimeMillis) / (nextTimeMillis - previousTimeMillis);
+        let xValue = this._isXDate? currentX.getTime() : currentX;
+        let previousXValue = this._isXDate? new Date(previousDatum.x).getTime() : previousDatum.x;
+        let nextXValue = this._isXDate? new Date(nextDatum.x).getTime() : nextDatum.x;
+        let positionBetween = (xValue - previousXValue) / (nextXValue - previousXValue);
 
         let valuesDiff = nextDatum.y - previousDatum.y;
         let valueInterpolation = positionBetween * valuesDiff;

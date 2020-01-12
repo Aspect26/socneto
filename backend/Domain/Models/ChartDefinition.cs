@@ -1,16 +1,53 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Socneto.Domain.Models
 {
     public class ChartDefinition
     {
-        public List<string> JsonDataPaths { get; set; }
+        [JsonProperty("analysis_data_paths")]
+        public List<AnalysisDataPath> AnalysisDataPaths { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("chart_type")]
         public ChartType ChartType { get; set; }
+        
+        [JsonProperty("is_x_post_datetime")]
+        public bool IsXPostDatetime { get; set; }
+    }
+
+    public class AnalysisDataPath
+    {
+        [JsonProperty("property")]
+        public AnalysisProperty Property { get; set; }
+        
+        [JsonProperty("analyser_id")]
+        public string AnalyserComponentId { get; set; }
+    }
+
+    public class AnalysisProperty
+    {
+        [JsonProperty("identifier")]
+        public string Identifier { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("type")]
+        public AnalysisPropertyType Type { get; set; }    
     }
 
     public enum ChartType
     {
         Line,
-        Pie
+        Pie,
+        Scatter
+    }
+
+    public enum AnalysisPropertyType
+    {
+        Number,
+        String,
+        NumberList,
+        StringList
     }
 }

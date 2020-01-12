@@ -15,6 +15,5 @@ class JobStatus {
 
 enum JobStatusCode {
   Running,
-  Paused,
   Stopped
 }

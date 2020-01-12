@@ -28,13 +28,13 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
   Future<List<Job>> getUserJobs(String username) async =>
-      await this.getList<Job>("user/$username/jobs", (result) => Job.fromMap(result));
+      await this.getList<Job>("job/$username/all", (result) => Job.fromMap(result));
 
   Future<List<Post>> getJobPosts(String jobId) async =>
       await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
+    var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
     var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
     if (chartDefinition.chartType == ChartType.Pie) {
       return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
@@ -78,16 +78,22 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       (await this.getList<SocnetoAnalyser>("components/analysers", (result) => SocnetoAnalyser.fromMap(result)));
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
-      await this.getList<ChartDefinition>("job/$jobId/charts", (result) => ChartDefinition.fromMap(result));
+      await this.getList<ChartDefinition>("charts/$jobId", (result) => ChartDefinition.fromMap(result));
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
-      "ChartType": chartDefinition.chartType.toString().split('.').last,
-      // TODO: this is wrong now (JsonDataPaths)
-      "JsonDataPaths": chartDefinition.analysisDataPaths
+      "chart_type": chartDefinition.chartType.toString().split('.').last,
+      "analysis_data_paths": chartDefinition.analysisDataPaths.map((analysisDataPath) => {
+        "analyser_component_id": analysisDataPath.analyserId,
+        "analyser_property": {
+          "identifier": analysisDataPath.property.name,
+          "type": analysisDataPath.property.type.toString().split('.').last
+        }
+      }).toList(),
+      "is_x_post_datetime": chartDefinition.isXDateTime
     };
 
-    return this.post<Success>("job/$jobId/charts/create", body, (result) => Success.fromMap(result));
+    return this.post<Success>("charts/$jobId/create", body, (result) => Success.fromMap(result));
   }
 
 }

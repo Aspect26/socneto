@@ -1,4 +1,6 @@
 ﻿using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
@@ -6,10 +8,15 @@ namespace Socneto.Api.Models
     public class JobDto
     {
         public Guid JobId { get; set; }
+        
         public string JobName { get; set; }
-        public bool IsRunning { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        public  JobStatus Status { get; set; }
+        
         public DateTime StartedAt { get; set; }
-        public DateTime? PausedAt { get; set; }
+        
+        public DateTime? FinishedAt { get; set; }
 
         public static JobDto FromModel(Job job)
         {
@@ -17,9 +24,9 @@ namespace Socneto.Api.Models
             {
                 JobId = job.JobId,
                 JobName =  job.JobName,
-                IsRunning = job.IsRunning,
+                Status = job.Status,
                 StartedAt =  job.StartedAt,
-                PausedAt = job.PausedAt
+                FinishedAt = job.FinishedAt,
             };
         }
     }

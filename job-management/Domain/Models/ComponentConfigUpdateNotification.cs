@@ -6,13 +6,13 @@ namespace Domain.Models
 {
     public class AnalyserConfigUpdateNotification
     {
-        [JsonProperty("jsonId")]
+        [JsonProperty("jobId")]
         public Guid JobId { get; set; }
 
         [JsonProperty("attributes")]
         public Dictionary<string, string> Attributes { get; set; }
         
-        [JsonProperty("outputMessageBrokerChannels")]
+        [JsonProperty("outputChannelNames")]
         public string[] OutputMessageBrokerChannels { get; set; }
     }
 }

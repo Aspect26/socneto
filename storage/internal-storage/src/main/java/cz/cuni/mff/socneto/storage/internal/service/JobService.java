@@ -23,8 +23,8 @@ public class JobService {
         return repository.findAll();
     }
 
-    public Iterable<Job> findAllByUsername(String username) {
-        return repository.findAllByUsername(username);
+    public Iterable<Job> findAllByUser(String user) {
+        return repository.findAllByUsername(user);
     }
 
     public Job save(Job job) {

@@ -1,26 +1,31 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Domain.Model
 {
     public class Analysis
     {
-        public Dictionary<string, AnalysisValue> Data { get; set; }
+        public Dictionary<string, AnalysisResult> Data { get; set; }
     }
 
-    public class AnalysisValue
+    public class AnalysisResult
     {
-        // TODO: omg dynamic
-        public dynamic Value { get; set; }
+        [JsonProperty("numberValue")]
+        public double NumberValue { get; set; }
         
-        [JsonConverter(typeof(StringEnumConverter))]
-        public AnalysisValueType ValueType { get; set; }
+        [JsonProperty("textValue")]
+        public string TextValue { get; set; }
         
-    }
-
-    public enum AnalysisValueType
-    {
-        Number, String, NumberList, StringList
+        [JsonProperty("numberListValue")]
+        public double[] NumberListValue { get; set; }
+        
+        [JsonProperty("textListValue")]
+        public string[] TextListValue { get; set; }
+        
+        [JsonProperty("numberMapValue")]
+        public Dictionary<string, double> NumberMapValue { get; set; }
+        
+        [JsonProperty("textMapValue")]
+        public Dictionary<string, string> StringMapValue { get; set; }
     }
 }

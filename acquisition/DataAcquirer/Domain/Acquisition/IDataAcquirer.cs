@@ -8,7 +8,7 @@ namespace Domain.Acquisition
     public interface IDataAcquirer
     {
         IAsyncEnumerable<DataAcquirerPost> GetPostsAsync(
-           IDataAcquirerMetadataContext context,
-           DataAcquirerInputModel acquirerInputModel);
+           DataAcquirerInputModel acquirerInputModel,
+           CancellationToken cancellationToken = default);
     }
 }

@@ -5,7 +5,7 @@
 
         <div header>
             <h1>Create new job</h1>
-            <material-button icon autoFocus (trigger)="onCloseDialog()">
+            <material-button icon autoFocus [disabled]="submitting" (trigger)="onCloseDialog()">
                 <material-icon icon="close"></material-icon>
             </material-button>
         </div>
@@ -24,6 +24,7 @@
                             label="Name of the job"
                             floatingLabel
                             [(ngModel)]="jobName"
+                            [disabled]="submitting"
                             class="labeled-input">
                     </material-input>
 
@@ -33,6 +34,7 @@
                                 label="The topic to be queried"
                                 floatingLabel
                                 [(ngModel)]="topic"
+                                [disabled]="submitting"
                                 class="labeled-input">
                         </material-input>
                     </div>
@@ -44,6 +46,7 @@
                             [(selection)]="languageSelection"
                             [itemRenderer]="languagesItemRenderer"
                             [buttonText]="languageSelection.selectedValue"
+                            [disabled]="submitting"
                             class="language-select">
                         </material-dropdown-select>
                     </div>
@@ -52,6 +55,7 @@
                     <components-select
                             [components]="availableSocialNetworks"
                             [loading]="loadingSocialNetworks"
+                            [disabled]="submitting"
                             (change)="onSocialNetworksSelectionChange($event)"
                             (refresh)="onSocialNetworksRefresh()">
                     </components-select>
@@ -60,6 +64,7 @@
                     <components-select
                             [components]="availableDataAnalyzers"
                             [loading]="loadingDataAnalyzers"
+                            [disabled]="submitting"
                             (change)="onDataAnalyzersSelectionChange($event)"
                             (refresh)="onDataAnalyzersRefresh()">
                     </components-select>
@@ -71,17 +76,15 @@
                       [optional]="true"
                       [hideButtons]="true">
                 <div>
-                    <component-credentials [acquirers]="availableSocialNetworks"></component-credentials>
+                    <component-credentials [diabled]="disabled" [acquirers]="availableSocialNetworks"></component-credentials>
                 </div>
             </template>
 
         </material-stepper>
 
         <div footer>
-            <material-button *ngIf="jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
-
-            <material-button *ngIf="isJobDefinitionCorrect()" class="close-button" (trigger)="onSubmit()">Submit</material-button>
-            <material-button *ngIf="!isJobDefinitionCorrect()" disabled class="close-button">Submit</material-button>
+            <material-button *ngIf="!submitting && jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
+            <material-button *ngIf="!submitting" class="close-button" [disabled]="!isJobDefinitionCorrect()" (trigger)="onSubmit()">Submit</material-button>
         </div>
 
     </material-dialog>

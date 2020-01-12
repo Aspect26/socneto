@@ -14,29 +14,34 @@
 
         <br>
 
+        <div>
+            <material-checkbox *ngIf="chartType == lineChartType" (checkedChange)="onUseTimeAsXChange($event)" label="Use post time on X axis"></material-checkbox>
+        </div>
         <div *ngIf="analysers.isNotEmpty" class="data-paths">
-            <div *ngFor="let dataPath of dataPaths; let i = index" class="data-path-row">
+            <div *ngFor="let dataPath of dataPaths; let i = index; let first = first" class="data-path-row">
                 <div class="data-path">
-                    <span class="label">
+                    <span class="label" [ngClass]="{'disabled': useTimeAsX && first}">
                         {{ getDataPathLabel(i) }}:
                     </span>
                     <material-dropdown-select class="analyser-select"
-                                              buttonText="{{ dataPath.analyser.identifier }}"
+                                              buttonText="{{ dataPath.analyserId }}"
+                                              [disabled]="useTimeAsX && first"
                                               [options]="analysers"
                                               [itemRenderer]="analyserItemRenderer"
-                                              [selection]="dataPath.analyser"
+                                              [selection]="dataPath.analyserId"
                                               (selectionChange)="onDataPathAnalyserChanged(dataPath, $event)">
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
                                               buttonText="{{ dataPath.property.name }}"
+                                              [disabled]="useTimeAsX && first"
                                               [(selection)]="dataPath.property"
-                                              [options]="dataPath.analyser.properties"
+                                              [options]="getAnalyserProperties(dataPath.analyserId)"
                                               [itemRenderer]="propertyItemRenderer">
                     </material-dropdown-select>
                 </div>
 
-                <material-button *ngIf="dataPaths.length > requiredNumberOfDataPaths" icon (trigger)="onRemoveDataPath(dataPath)">
+                <material-button *ngIf="dataPaths.length > requiredNumberOfDataPaths" icon (trigger)="onRemoveDataPath(dataPath)" [disabled]="useTimeAsX && first">
                     <material-icon icon="remove"></material-icon>
                 </material-button>
                 <div *ngIf="dataPaths.length <= requiredNumberOfDataPaths" class="datapath-spacer"></div>

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+// TODO
 @RestController
 @RequiredArgsConstructor
 public class PostController {
@@ -52,6 +53,8 @@ public class PostController {
             throw new RuntimeException(e);
         }
     }
+
+    // Poslat presnou strukturu Juliusovi
 
     @Value
     @Builder

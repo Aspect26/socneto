@@ -17,7 +17,6 @@ import java.util.UUID;
 public class JobView {
     @Id
     private UUID jobId;
-
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private ObjectNode viewConfiguration;

@@ -13,13 +13,13 @@ namespace Socneto.Domain.Models
     public class SocnetoComponent
     {
         
-        public string Id { get; set; }
+        public string ComponentId { get; set; }
         
-        public SocnetoComponentType Type { get; set; }
+        public SocnetoComponentType ComponentType { get; set; }
         
-        public string InputChannelName { get; set; }
+        // public string InputChannelName { get; set; }
         
-        public string UpdateChannelName { get; set; }
+        // public string UpdateChannelName { get; set; }
 
         public JObject Attributes { get; set; }
         

@@ -54,6 +54,7 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
 class ComponentCredentialsComponent implements AfterChanges {
 
   @Input() List<SocnetoComponent> acquirers = [];
+  @Input() bool disabled = false;
 
   List<AcquirerWithCredentials> acquirersWithCredentials = [];
   AcquirerWithCredentials selectedAcquirer;

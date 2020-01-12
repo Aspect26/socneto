@@ -1,0 +1,16 @@
+{
+    "dataFormat":"csv",
+    "mappingAttributes":{
+        "hasHeaders":true,
+        "dateTimeFormatString":"ddd MMM dd HH:mm:ss PDT yyyy",
+        "fixedValues":{
+            "language":"en"
+        },
+        "indices":{
+            "originalPostId":1,
+            "text":5,
+            "authorId":4,
+            "dateTime":2
+        }
+    }
+}

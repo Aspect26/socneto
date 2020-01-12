@@ -2,12 +2,12 @@
 
 namespace Infrastructure
 {
-    public class JobConfigStorageOptions
+    public class JobStorageOptions
     {
-        public string BaseUri { get; set; }
+        public Uri BaseUri { get; set; }
 
-        public string AddJobConfigRoute { get; set; }
-        public string UpdateJobConfigRoute { get; set; }
-        public string GetJobConfigRoute { get; set; }
+        public string AddJobRoute { get; set; }
+        public string UpdateJobRoute { get; set; }
+        public string GetJobRoute { get; set; }
     }
 }

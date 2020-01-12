@@ -1,12 +1,17 @@
 package cz.cuni.mff.socneto.storage.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import cz.cuni.mff.socneto.storage.internal.api.dto.JobDto;
+import cz.cuni.mff.socneto.storage.internal.api.dto.JobViewDto;
 import cz.cuni.mff.socneto.storage.internal.api.service.JobDtoService;
+import cz.cuni.mff.socneto.storage.internal.api.service.JobViewDtoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,10 +20,15 @@ import java.util.UUID;
 public class JobController {
 
     private final JobDtoService jobDtoService;
+    private final JobViewDtoService jobViewDtoService;
 
     @GetMapping("/jobs")
-    public List<JobDto> getJobsByUser(@RequestParam("userId") String username) {
-        return jobDtoService.findAllByUsername(username);
+    public List<JobDto> getJobsByUsername(@RequestParam(value = "username", required = false) String username) {
+        if (username == null) {
+            return jobDtoService.findAll();
+        } else {
+            return jobDtoService.findAllByUser(username);
+        }
     }
 
     @GetMapping("/jobs/{id}")
@@ -28,11 +38,21 @@ public class JobController {
 
     @PostMapping("/jobs")
     public JobDto saveJob(@Valid @RequestBody JobDto job) {
+        JobViewDto jobViewDto = new JobViewDto();
+        jobViewDto.setJobId(job.getJobId());
+        try {
+            jobViewDto.setViewConfiguration((ObjectNode) new ObjectMapper().readTree("{ \"chartDefinitions\": []}"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        jobViewDtoService.save(jobViewDto);
+
         return jobDtoService.save(job);
     }
 
     @PutMapping("/jobs/{id}")
-    public JobDto updateJob(@PathVariable("id") UUID id, @RequestBody JobDto job) {
+    public JobDto updateJob(@PathVariable UUID id, @RequestBody JobDto job) {
+        job.setJobId(id);
         return jobDtoService.update(job);
     }
 

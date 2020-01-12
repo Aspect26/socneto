@@ -16,8 +16,8 @@ import 'package:tuple/tuple.dart';
 
 class SocnetoService {
 
-  final _dataService = SocnetoMockDataService();
-  // final _dataService = SocnetoDataService();
+//  final _dataService = SocnetoMockDataService();
+  final _dataService = SocnetoDataService();
   final _job_management_service = SocnetoJobManagementService();
   final _local_storage_service = LocalStorageService();
 
@@ -68,9 +68,5 @@ class SocnetoService {
       await this._job_management_service.submitNewJob(jobName, query, networks, analyzers, language, twitterCredentials, redditCredentials);
   Future<JobStatus> stopJob(String jobId) async =>
       await this._job_management_service.stopJob(jobId);
-  Future<JobStatus> pauseJob(String jobId) async =>
-      await this._job_management_service.pauseJob(jobId);
-  Future<JobStatus> resumeJob(String jobId) async =>
-      await this._job_management_service.resumeJob(jobId);
 
 }

@@ -12,8 +12,12 @@ namespace Domain.ComponentManagement
     public class ComponentStorageOptions
     {
         public string BaseUri { get; set; }
+        public string GetComponentsRoute { get; set; }
         public string AddOrUpdateComponentRoute { get; set; }
         public string GetComponentRoute { get; set; }
+
+        public string ComponentJobConfigRoute { get; set; }
+
     }
     
 }

@@ -57,20 +57,18 @@ namespace Domain.PostAnalysis
 
         private async Task ProcessNewPostAsync(string postJson)
         {
-            _logger.LogInformation("ROJ: {roj}",postJson);
-            string outputChannelName = null;
+            _logger.LogInformation("ROJ: {roj}", postJson);
+            string[] outputChannelNames = null;
             string sendObjectJson = null;
             try
 
             {
-
-
                 var post = JsonConvert.DeserializeObject<UniPost>(postJson);
                 var analysis = await _analyser.AnalyzePost(post);
                 var sendObject = AnalysisResponse.FromData(_componentId, post, analysis);
                 sendObjectJson = JsonConvert.SerializeObject(sendObject);
 
-                outputChannelName = "job_management.component_data_analyzed_input.storage_db";
+                outputChannelNames = _jobManager.GetJobConfigOutput(post.JobId);
             }
             catch (Exception e)
             {
@@ -78,11 +76,16 @@ namespace Domain.PostAnalysis
                 return;
             }
 
-            _logger.LogInformation("SOJ: {soj}",sendObjectJson);
+            _logger.LogInformation("SOJ: {soj}", sendObjectJson);
             var messageBrokerMessage = new MessageBrokerMessage(
                 "analyzed-post",
                 sendObjectJson);
-            await _producer.ProduceAsync(outputChannelName, messageBrokerMessage);
+
+            foreach (string outputChannelName in outputChannelNames)
+            {
+                _logger.LogInformation("Sending to: {ocn}", outputChannelName);
+                await _producer.ProduceAsync(outputChannelName, messageBrokerMessage);    
+            }
         }
     }
 }

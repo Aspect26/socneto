@@ -39,6 +39,7 @@ class ComponentsSelectComponent implements AfterChanges {
 
   @Input() List<SocnetoComponent> components;
   @Input() bool loading = false;
+  @Input() bool disabled = false;
 
   final _changeController = StreamController<List<SocnetoComponent>>();
   @Output() Stream<List<SocnetoComponent>> get change => _changeController.stream;
@@ -56,6 +57,8 @@ class ComponentsSelectComponent implements AfterChanges {
   }
 
   void componentToggled(SocnetoComponent component, bool checked) {
+    if (this.disabled) return;
+
     if (checked) {
       this.selectedComponents.add(component);
     } else {
@@ -66,6 +69,8 @@ class ComponentsSelectComponent implements AfterChanges {
   }
 
   void onRefreshClick() {
+    if (this.disabled) return;
+
     this._refreshController.add(true);
   }
 
