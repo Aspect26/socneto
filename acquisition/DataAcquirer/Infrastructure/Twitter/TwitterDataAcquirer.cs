@@ -69,6 +69,7 @@ namespace Infrastructure.Twitter
 
         private static TwitterCredentials ExtractCredentials(DataAcquirerInputModel acquirerInputModel)
         {
+            // TODO validate credentials
             return new TwitterCredentials
             {
                 ConsumerKey = acquirerInputModel.Attributes.GetValue("ApiKey"),
