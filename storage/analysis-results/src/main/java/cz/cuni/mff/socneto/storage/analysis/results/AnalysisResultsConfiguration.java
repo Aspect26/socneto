@@ -67,7 +67,7 @@ public class AnalysisResultsConfiguration {
 
     @PostConstruct
     void init() throws IOException, InterruptedException {
-//        Thread.sleep(wait);
+        Thread.sleep(wait);
 
         log.info("Loading scripts");
 

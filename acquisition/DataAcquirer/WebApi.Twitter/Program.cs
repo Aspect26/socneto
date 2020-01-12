@@ -25,7 +25,7 @@ namespace Api
         {
             if (args.Contains("--sleep_on_startup"))
             {
-                await Task.Delay(TimeSpan.FromSeconds(180));
+                await Task.Delay(TimeSpan.FromSeconds(200));
             }
 
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
@@ -50,7 +50,7 @@ namespace Api
                 .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
             
             
-            var app = builder.BuildWebHost(true);
+            var app = builder.BuildWebHost(false);
             await InitializeApplication(app);
 
             await app.RunAsync();

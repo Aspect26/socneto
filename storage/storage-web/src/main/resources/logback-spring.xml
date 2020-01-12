@@ -20,7 +20,7 @@
         <topic>log_collector.system_metrics</topic>
         <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
         <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
-        <producerConfig>bootstrap.servers=localhost:9094</producerConfig>
+        <producerConfig>bootstrap.servers=kafka:9092</producerConfig>
     </appender>
 
     <root level="INFO">

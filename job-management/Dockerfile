@@ -18,4 +18,4 @@ RUN dotnet publish "Api.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Api.dll", "--urls", "http://*:6009" ]
+ENTRYPOINT ["dotnet", "Api.dll", "--urls", "http://*:6009", "--sleep_on_startup" ]
