@@ -14,8 +14,13 @@ namespace Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            if (args.Contains("--sleep_on_startup"))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(180));
+            }
+            
             var app = CreateWebHostBuilder(args).Build();
             app.Run();
         }
