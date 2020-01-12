@@ -103,7 +103,7 @@ namespace Domain.JobManagement
             }
         }
 
-        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig, 
+        private async Task RunJobAsync(DataAcquirerJobConfig jobConfig,
             CancellationToken cancellationToken)
         {
             try
@@ -124,7 +124,7 @@ namespace Domain.JobManagement
                 }
 
                 await _dataAcquirerJobStorage.SaveAsync(jobConfig.JobId, jobConfig);
-                               
+
                 var batchSize = 100;
 
                 var dataAcquirerInputModel = DataAcquirerInputModel.FromValues(
@@ -140,17 +140,25 @@ namespace Domain.JobManagement
                     cancellationToken);
 
 
+                int count = 0;
                 await foreach (var dataPost in batch)
                 {
-                    var bytes = new byte[16];
+                    if (count % 1000 == 0)
+                    {
+                        _logger.TrackInfo("MessageTracking", $"Downloaded: {count}", new
+                        {
+                            jobId = jobConfig.JobId
+                        });
+                    }
 
+                    var bytes = new byte[16];
 
                     var textHash = dataPost.Text.GetHashCode();
                     var postIdHash = dataPost.OriginalPostId.GetHashCode();
                     var userIdHash = dataPost.UserId.GetHashCode();
                     var dateIdHash = dataPost.DateTime.GetHashCode();
 
-                    BitConverter.GetBytes(textHash).CopyTo(bytes,0);
+                    BitConverter.GetBytes(textHash).CopyTo(bytes, 0);
                     BitConverter.GetBytes(postIdHash).CopyTo(bytes, 3);
                     BitConverter.GetBytes(userIdHash).CopyTo(bytes, 7);
                     BitConverter.GetBytes(dateIdHash).CopyTo(bytes, 11);
