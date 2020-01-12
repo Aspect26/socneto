@@ -15,6 +15,7 @@ import 'package:sw_project/src/components/shared/paginator/paginator_component.d
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/JobStatusCode.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
