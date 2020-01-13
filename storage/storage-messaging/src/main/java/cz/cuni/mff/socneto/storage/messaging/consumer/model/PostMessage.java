@@ -13,5 +13,6 @@ public class PostMessage {
     private String text;
     private String source;
     private String authorId;
+    private String query;
     private Date dateTime;
 }
