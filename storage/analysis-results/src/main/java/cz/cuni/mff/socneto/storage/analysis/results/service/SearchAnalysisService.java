@@ -12,7 +12,6 @@ public class SearchAnalysisService {
     private final SearchAnalysisRepository searchAnalysisRepository;
 
     public SearchAnalysis create(SearchAnalysis searchAnalysis) {
-        searchAnalysis.setComponentId("componentId");
         return searchAnalysisRepository.save(searchAnalysis);
     }
 

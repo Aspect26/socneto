@@ -1,5 +1,6 @@
 package cz.cuni.mff.socneto.storage.messaging.consumer.receiver;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cuni.mff.socneto.storage.analysis.storage.api.dto.AnalyzedObjectDto;
 import cz.cuni.mff.socneto.storage.analysis.storage.api.dto.PostDto;
@@ -16,15 +17,21 @@ import java.io.IOException;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class PostReceiver {
 
     private final AnalyzedPostDtoService analyzedPostDtoService;
+    private final ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    public PostReceiver(AnalyzedPostDtoService analyzedPostDtoService) {
+        this.analyzedPostDtoService = analyzedPostDtoService;
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @KafkaListener(topics = "${app.topic.toDbRaw}")
     public void listenPosts(@Payload String post) throws IOException {
+
+        log.info("Post:" + post);
 
         PostMessage postMessage = objectMapper.readValue(post, PostMessage.class);
 
