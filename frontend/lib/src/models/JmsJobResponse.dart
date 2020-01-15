@@ -1,4 +1,5 @@
 import '../utils.dart';
+import 'JobStatusCode.dart';
 
 class JobStatus {
 
@@ -13,7 +14,4 @@ class JobStatus {
 
 }
 
-enum JobStatusCode {
-  Running,
-  Stopped
-}
+
