@@ -82,7 +82,7 @@ class CreateJobModal {
   SingleSelectionModel languageSelection = SingleSelectionModel();
   List<SocnetoComponent> selectedSocialNetworks = [];
   List<SocnetoComponent> selectedDataAnalyzers = [];
-  List<AcquirerWithCredentials> acquirersWithCredentials;
+  List<AcquirerWithCredentials> acquirersWithCredentials = [];
 
   CreateJobModal(this._socnetoService);
 

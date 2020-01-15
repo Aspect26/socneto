@@ -33,17 +33,17 @@ class JobSubmitRequest {
   }
 
   void _addTwitterCredentialsFields(Map<String, dynamic> properties) {
-    this.twitterCredentials.forEach((twitterCredentialsWithComponentId) {
-      var componentId = twitterCredentialsWithComponentId.item1;
-      var twitterCredentials = twitterCredentialsWithComponentId.item2;
+    this.acquirers.forEach((dataAcquirer) {
+      var dataAcquirerId = dataAcquirer.identifier;
 
-      // TODO: uncomment this when implemented in JMS
+//      TODO: uncomment this when implemented in JMS
 //      if (!properties.containsKey(componentId)) {
 //        properties[componentId] = Map();
 //      }
 
-      var twitterCredentialsFields =  this._createTwitterCredentialsFields(twitterCredentials);
-      //properties[componentId].addAll(twitterCredentialsFields);
+      var acquirerTwitterCredentials = this.twitterCredentials.firstWhere((credentialsWithComponentId) => credentialsWithComponentId.item1 == dataAcquirerId, orElse: () => null);
+      var twitterCredentialsFields =  this._createTwitterCredentialsFields(acquirerTwitterCredentials?.item2);
+//      properties[componentId].addAll(twitterCredentialsFields);
       properties.addAll(twitterCredentialsFields);
     });
   }
@@ -63,11 +63,11 @@ class JobSubmitRequest {
   }
 
   Map<String, dynamic> _createTwitterCredentialsFields(TwitterCredentials twitterCredentials) => {
-    // TODO: uncomment me
-    "ApiKey": "b0sXpwv0k4eJYmLaBZvSfNyxk",  //twitterCredentials.apiKey,
-    "ApiSecretKey": "KK7aRtfR8XGFqaz2Ua1vDgYftQ01AqlUYXKkqrpWoVxR8FC0p7", // twitterCredentials.apiSecretKey,
-    "AccessToken": "1178262834595209216-2TTiiia1yOVd2UHHH07dBd7KDBN7pZ", //twitterCredentials.accessToken,
-    "AccessTokenSecret": "fhAw5o5IeTTc33mGtpFnRKGMpbEA6xcsnkIrFZBNZXq4c", //twitterCredentials.accessTokenSecret
+    // TODO: this should be done on backend
+    "ApiKey": twitterCredentials == null? "b0sXpwv0k4eJYmLaBZvSfNyxk" : twitterCredentials.apiKey,
+    "ApiSecretKey": twitterCredentials == null? "KK7aRtfR8XGFqaz2Ua1vDgYftQ01AqlUYXKkqrpWoVxR8FC0p7" : twitterCredentials.apiSecretKey,
+    "AccessToken": twitterCredentials == null? "1178262834595209216-2TTiiia1yOVd2UHHH07dBd7KDBN7pZ" : twitterCredentials.accessToken,
+    "AccessTokenSecret": twitterCredentials == null? "fhAw5o5IeTTc33mGtpFnRKGMpbEA6xcsnkIrFZBNZXq4c" : twitterCredentials.accessTokenSecret
   };
 
   Map<String, dynamic> _createRedditCredentialsFields(RedditCredentials redditCredentials) => {
