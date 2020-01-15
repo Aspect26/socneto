@@ -121,10 +121,9 @@ class CreateJobModal {
       try {
         this.submitting = true;
         print(acquirersWithCredentials);
-        final twitterCredentials = this._getTwitterCredentials();
-        final redditCredentials = this._getRedditCredentials();
+        final credentials = this._getAllCredentials();
         final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks,
-            this.selectedDataAnalyzers, this.languageSelection.selectedValue, twitterCredentials, redditCredentials);
+            this.selectedDataAnalyzers, this.languageSelection.selectedValue, credentials);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
@@ -188,29 +187,22 @@ class CreateJobModal {
     }
   }
 
-  // TODO: combine these two following functions
-  List<Tuple2<String, TwitterCredentials>> _getTwitterCredentials() {
-    List<Tuple2<String, TwitterCredentials>> twitterCredentials = [];
+  List<Tuple3<String, TwitterCredentials, RedditCredentials>> _getAllCredentials() {
+    List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentialsWithAcquirerId = [];
 
-    this.acquirersWithCredentials.forEach((credentials) => {
-      if (credentials.useCustomTwitterCredentials) {
-        twitterCredentials.add(Tuple2(credentials.acquirer.identifier, credentials.twitterCredentials))
+    this.acquirersWithCredentials.forEach((credentials) {
+      if (credentials.useCustomTwitterCredentials || credentials.useCustomRedditCredentials) {
+        final credentialsTuple = Tuple3<String, TwitterCredentials, RedditCredentials>(
+            credentials.acquirer.identifier,
+            credentials.useCustomTwitterCredentials? credentials.twitterCredentials : null,
+            credentials.useCustomRedditCredentials? credentials.redditCredentials : null,
+        );
+
+        credentialsWithAcquirerId.add(credentialsTuple);
       }
     });
 
-    return twitterCredentials;
-  }
-
-  List<Tuple2<String, RedditCredentials>> _getRedditCredentials() {
-    List<Tuple2<String, RedditCredentials>> redditCredentials = [];
-
-    this.acquirersWithCredentials.forEach((credentials) => {
-      if (credentials.useCustomRedditCredentials) {
-        redditCredentials.add(Tuple2(credentials.acquirer.identifier, credentials.redditCredentials))
-      }
-    });
-
-    return redditCredentials;
+    return credentialsWithAcquirerId;
   }
 
 }

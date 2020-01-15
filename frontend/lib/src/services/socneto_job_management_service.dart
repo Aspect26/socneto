@@ -20,10 +20,9 @@ class SocnetoJobManagementService extends HttpServiceBasicAuthBase {
       List<SocnetoComponent> acquirers,
       List<SocnetoComponent> analyzers,
       String language,
-      List<Tuple2<String, TwitterCredentials>> twitterCredentials,
-      List<Tuple2<String, RedditCredentials>> redditCredentials)
+      List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentials)
   async {
-    var request = JobSubmitRequest(jobName, query, acquirers, analyzers, language, twitterCredentials, redditCredentials);
+    var request = JobSubmitRequest(jobName, query, acquirers, analyzers, language, credentials);
     return (await this.post<JobStatus>("job/submit", request.toMap(), (result) => JobStatus.fromMap(result)));
   }
 
