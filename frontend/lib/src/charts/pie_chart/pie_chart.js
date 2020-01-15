@@ -27,7 +27,7 @@ class PieChart {
         let chartWidth = elementWidth - this._CHART_PADDING_HORIZONTAL;
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_VERTICAL;
         let radius = Math.min(chartWidth, chartHeight) / 2;
-        let totalSum = Object.values(dataSet).reduce((t, n) => t + n);
+        let totalSum = Object.values(dataSet).reduce((t, n) => t + n, 0);
 
         let svg = this._createSvg(selector, chartWidth, this._ELEMENT_HEIGHT);
         let color = this._createColorScale(dataSet, this._PIE_COLORS);

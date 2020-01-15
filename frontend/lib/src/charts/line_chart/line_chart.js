@@ -164,7 +164,6 @@ class LineChart {
                 let mouseChartPosition = d3.mouse(this)[0] - self._LEGEND_WIDTH;
                 let tooltipHtml = self._createMouseHoverTooltipHtml(mouseChartPosition, xScale, dataSets, dataLabels);
                 mouseHoverDiv.style("opacity", tooltipHtml === ""? 0 : 1);
-                console.log(tooltipHtml);
                 if (tooltipHtml !== "") {
                     mouseHoverDiv.html(tooltipHtml);
                 }
