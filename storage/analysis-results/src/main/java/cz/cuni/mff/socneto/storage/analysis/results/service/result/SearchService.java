@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,7 +66,7 @@ public class SearchService {
     public List<List<Object>> queryListWithTime(UUID jobId, String componentId, String resultName,
                                                      String valueName) {
 
-        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentId", componentId));
+        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("componentId", componentId));
         var query = new NativeSearchQueryBuilder().withQuery(filter);
 
         return elasticsearchOperations.query(query.build(),
@@ -81,7 +82,7 @@ public class SearchService {
 
                             }
                             return List.of(
-                                    System.currentTimeMillis(),
+                                    new Date(System.currentTimeMillis()),
                                     ((Map<String, Object>) map.get(resultName)).get(valueName));
                         })
 
