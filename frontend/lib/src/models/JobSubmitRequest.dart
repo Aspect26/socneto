@@ -9,10 +9,9 @@ class JobSubmitRequest {
   final List<SocnetoComponent> acquirers;
   final List<SocnetoComponent> analyzers;
   final String language;
-  final List<Tuple2<String, TwitterCredentials>> twitterCredentials;
-  final List<Tuple2<String, RedditCredentials>> redditCredentials;
+  final List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentials;
 
-  JobSubmitRequest(this.jobName, this.query, this.acquirers, this.analyzers, this.language, this.twitterCredentials, this.redditCredentials);
+  JobSubmitRequest(this.jobName, this.query, this.acquirers, this.analyzers, this.language, this.credentials);
 
   Map<String, dynamic> toMap() => {
     "jobName": jobName,
@@ -26,13 +25,12 @@ class JobSubmitRequest {
   Map<String, dynamic> _createPropertiesField() {
     Map<String, dynamic> properties = {};
 
-    this._addTwitterCredentialsFields(properties);
-    this._addRedditCredentialsFields(properties);
+    this._addCredentialsFields(properties);
 
     return properties;
   }
 
-  void _addTwitterCredentialsFields(Map<String, dynamic> properties) {
+  void _addCredentialsFields(Map<String, dynamic> properties) {
     this.acquirers.forEach((dataAcquirer) {
       var dataAcquirerId = dataAcquirer.identifier;
 
@@ -41,24 +39,13 @@ class JobSubmitRequest {
 //        properties[componentId] = Map();
 //      }
 
-      var acquirerTwitterCredentials = this.twitterCredentials.firstWhere((credentialsWithComponentId) => credentialsWithComponentId.item1 == dataAcquirerId, orElse: () => null);
-      var twitterCredentialsFields =  this._createTwitterCredentialsFields(acquirerTwitterCredentials?.item2);
+      var acquirerCredentials = this.credentials.firstWhere((credentialsWithComponentId) => credentialsWithComponentId.item1 == dataAcquirerId, orElse: () => null);
+      var twitterCredentialsFields =  this._createTwitterCredentialsFields(acquirerCredentials?.item2);
+      var redditCredentialsFields = this._createRedditCredentialsFields(acquirerCredentials?.item3);
 //      properties[componentId].addAll(twitterCredentialsFields);
+//      properties[componentId].addAll(redditCredentialsFields);
       properties.addAll(twitterCredentialsFields);
-    });
-  }
-
-  void _addRedditCredentialsFields(Map<String, dynamic> properties) {
-    this.redditCredentials.forEach((redditCredentialsWithComponentId) {
-      var componentId = redditCredentialsWithComponentId.item1;
-      var redditCredentials = redditCredentialsWithComponentId.item2;
-
-      if (!properties.containsKey(componentId)) {
-        properties[componentId] = {};
-      }
-
-      var redditCredentialsFields = this._createRedditCredentialsFields(redditCredentials);
-      properties[componentId].putAll(redditCredentialsFields);
+      properties.addAll(redditCredentialsFields);
     });
   }
 
@@ -71,9 +58,9 @@ class JobSubmitRequest {
   };
 
   Map<String, dynamic> _createRedditCredentialsFields(RedditCredentials redditCredentials) => {
-    "RedditAppId": redditCredentials.appId,
-    "RedditAppSecret": redditCredentials.appSecret,
-    "RedditRefreshToken": redditCredentials.refreshToken
+    "RedditAppId": redditCredentials == null? "" : redditCredentials.appId,
+    "RedditAppSecret": redditCredentials == null? "" : redditCredentials.appSecret,
+    "RedditRefreshToken": redditCredentials == null? "" : redditCredentials.refreshToken
   };
 
 }
