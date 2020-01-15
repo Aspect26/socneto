@@ -22,7 +22,7 @@ class LineChartStrategy implements ChartStrategy {
     for (var currentLineData in dataSet) {
       this._chartData.add([]);
       for (var dataPointValue in currentLineData) {
-        var xValue = this._chartDefinition.isXDateTime ? DateTime.fromMillisecondsSinceEpoch(dataPointValue[0] as int).toIso8601String() : dataPointValue[0];
+        var xValue = this._chartDefinition.isXDateTime ? DateTime.parse(dataPointValue[0] as String).toIso8601String() : dataPointValue[0];
         this._chartData.last.add({'x': xValue, 'y': dataPointValue[1]});
       }
 

@@ -1,6 +1,7 @@
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 
 import '../utils.dart';
+import 'JobStatusCode.dart';
 
 
 class Job {

@@ -24,7 +24,7 @@ class AnalysisProperty {
   AnalysisProperty(this.name, this.type);
 
   AnalysisProperty.fromMap(Map data) :
-      name = data["name"],
+      name = data["identifier"],
       type = getEnumByString(AnalysisPropertyType.values, data["type"], AnalysisPropertyType.Number);
 }
 

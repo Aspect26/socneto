@@ -1,0 +1,4 @@
+enum JobStatusCode {
+  Running,
+  Stopped
+}

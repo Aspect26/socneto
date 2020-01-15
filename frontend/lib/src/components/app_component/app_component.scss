@@ -3,7 +3,8 @@
 @import "package:sw_project/src/components/app_component/app_layout/login/login_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/workspace_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/job_list_component.scss";
-@import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job_modal.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/create_job_modal.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/create_chart_button_component.scss";
@@ -25,6 +26,7 @@
   @include job-detail-component($theme);
   @include posts-list-component($theme);
   @include create-job-modal($theme);
+  @include component-credentials-component($theme);
   @include login-component($theme);
   @include components-select-component($theme);
   @include component-select-component($theme);

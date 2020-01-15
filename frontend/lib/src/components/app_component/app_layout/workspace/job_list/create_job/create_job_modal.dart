@@ -9,6 +9,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_components/utils/angular/scroll_host/angular_2.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/Credentials.dart';
@@ -16,6 +17,7 @@ import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:tuple/tuple.dart';
 
 
 @Component(
@@ -44,6 +46,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialSpinnerComponent,
     ModalComponent,
     ComponentsSelectComponent,
+    ComponentCredentialsComponent,
     MaterialStepperComponent,
     StepDirective,
     SummaryDirective,
@@ -79,10 +82,7 @@ class CreateJobModal {
   SingleSelectionModel languageSelection = SingleSelectionModel();
   List<SocnetoComponent> selectedSocialNetworks = [];
   List<SocnetoComponent> selectedDataAnalyzers = [];
-  bool useCustomTwitterCredentials = false;
-  TwitterCredentials twitterCredentials = TwitterCredentials();
-  bool useCustomRedditCredentials = false;
-  RedditCredentials redditCredentials = RedditCredentials();
+  List<AcquirerWithCredentials> acquirersWithCredentials = [];
 
   CreateJobModal(this._socnetoService);
 
@@ -103,10 +103,6 @@ class CreateJobModal {
     this.selectedSocialNetworks.clear();
     this.selectedDataAnalyzers.clear();
     this.errorMessage = null;
-    this.useCustomTwitterCredentials = false;
-    this.twitterCredentials = TwitterCredentials();
-    this.useCustomRedditCredentials = false;
-    this.redditCredentials = RedditCredentials();
 
     this._loadSocialNetworks();
     this._loadDataAnalyzers();
@@ -124,10 +120,10 @@ class CreateJobModal {
     if (this.isJobDefinitionCorrect()) {
       try {
         this.submitting = true;
-        final twitterCredentials = this.useCustomTwitterCredentials? this.twitterCredentials : null;
-        final redditCredentials = this.useCustomRedditCredentials? this.redditCredentials : null;
+        print(acquirersWithCredentials);
+        final credentials = this._getAllCredentials();
         final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks,
-            this.selectedDataAnalyzers, this.languageSelection.selectedValue, twitterCredentials, redditCredentials);
+            this.selectedDataAnalyzers, this.languageSelection.selectedValue, credentials);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
@@ -153,6 +149,10 @@ class CreateJobModal {
 
   onDataAnalyzersRefresh() {
     this._loadDataAnalyzers();
+  }
+
+  onCredentialsChange(List<AcquirerWithCredentials> credentials) {
+    this.acquirersWithCredentials = credentials;
   }
 
   bool isJobDefinitionCorrect() {
@@ -185,6 +185,24 @@ class CreateJobModal {
     } finally {
       this.loadingDataAnalyzers = false;
     }
+  }
+
+  List<Tuple3<String, TwitterCredentials, RedditCredentials>> _getAllCredentials() {
+    List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentialsWithAcquirerId = [];
+
+    this.acquirersWithCredentials.forEach((credentials) {
+      if (credentials.useCustomTwitterCredentials || credentials.useCustomRedditCredentials) {
+        final credentialsTuple = Tuple3<String, TwitterCredentials, RedditCredentials>(
+            credentials.acquirer.identifier,
+            credentials.useCustomTwitterCredentials? credentials.twitterCredentials : null,
+            credentials.useCustomRedditCredentials? credentials.redditCredentials : null,
+        );
+
+        credentialsWithAcquirerId.add(credentialsTuple);
+      }
+    });
+
+    return credentialsWithAcquirerId;
   }
 
 }
