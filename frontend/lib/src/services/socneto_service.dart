@@ -17,7 +17,6 @@ import 'package:tuple/tuple.dart';
 class SocnetoService {
 
 //  final _dataService = SocnetoMockDataService();
-
   final _dataService = SocnetoDataService();
   final _job_management_service = SocnetoJobManagementService();
   final _local_storage_service = LocalStorageService();
