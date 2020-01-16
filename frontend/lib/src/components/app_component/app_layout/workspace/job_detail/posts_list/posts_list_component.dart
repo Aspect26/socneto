@@ -18,7 +18,9 @@ import 'package:angular_components/material_yes_no_buttons/material_yes_no_butto
 import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
-import 'package:sw_project/src/models/Post.dart';
+import 'package:sw_project/src/models/AnalyzedPost.dart';
+import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/services/socneto_service.dart';
 
 @Component(
   selector: 'posts-list',
@@ -52,35 +54,33 @@ import 'package:sw_project/src/models/Post.dart';
   styleUrls: ['posts_list_component.css'],
   encapsulation: ViewEncapsulation.None
 )
-class PostsListComponent implements OnChanges {
+class PostsListComponent implements AfterChanges {
 
     static const int PAGE_SIZE = 20;
 
-    @Input() List<Post> posts = [];
-    List<Post> displayedPosts = [];
+    @Input() Job job;
+    List<AnalyzedPost> posts = [];
 
-    Paginator paginator = Paginator(0, 0, PAGE_SIZE);
+    final SocnetoService _socnetoService;
+
+    Paginator paginator = Paginator(0, 1, PAGE_SIZE);
+
+    PostsListComponent(this._socnetoService);
 
     @override
-    void ngOnChanges(Map<String, SimpleChange> changes) {
-        this.paginator = Paginator(this.posts.length, this.paginator.currentPage, PAGE_SIZE);
-        this._updateDisplayedPosts();
+    void ngAfterChanges() async {
+        await this._updateDisplayedPosts();
     }
 
-    void onPageChange(int page) {
+    void onPageChange(int page) async {
         this.paginator.currentPage = page;
-        this._updateDisplayedPosts();
+        await this._updateDisplayedPosts();
     }
 
-    void _updateDisplayedPosts() {
-        final start = this.paginator.currentPage * this.paginator.pageSize;
-        var end = (this.paginator.currentPage + 1) * this.paginator.pageSize;
+    void _updateDisplayedPosts() async {
+        var paginatedPosts = await this._socnetoService.getJobPosts(job.id, paginator.currentPage, paginator.pageSize);
 
-        if (end > this.posts.length) {
-            end = this.posts.length;
-        }
-
-        this.displayedPosts = this.posts.sublist(start, end);
+        this.posts = paginatedPosts.posts;
+        this.paginator = Paginator(paginatedPosts.paging.totalSize, paginatedPosts.paging.page, paginatedPosts.paging.pageSize);
     }
-
 }

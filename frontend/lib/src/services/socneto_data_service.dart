@@ -4,7 +4,7 @@ import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
-import 'package:sw_project/src/models/Post.dart';
+import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
@@ -30,8 +30,8 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<List<Job>> getUserJobs(String username) async =>
       await this.getList<Job>("job/$username/all", (result) => Job.fromMap(result));
 
-  Future<List<Post>> getJobPosts(String jobId) async =>
-      await this.getList<Post>("job/$jobId/posts", (result) => Post.fromMap(result));
+  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
+      await this.get<PaginatedAnalyzedPosts>("job/$jobId/posts?page=$page&pageSize=$pageSize", (result) => PaginatedAnalyzedPosts.fromMap(result));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;

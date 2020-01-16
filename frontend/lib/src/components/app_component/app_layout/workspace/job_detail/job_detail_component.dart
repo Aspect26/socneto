@@ -10,7 +10,6 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/models/Job.dart';
-import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
@@ -45,7 +44,6 @@ class JobDetailComponent implements OnActivate {
   final SocnetoService _socnetoService;
 
   Job job;
-  List<Post> posts = [];
 
   JobDetailComponent(this._socnetoService, this._router);
 
@@ -59,7 +57,6 @@ class JobDetailComponent implements OnActivate {
   void _setJob(String jobId) async {
     try {
       this.job = await this._socnetoService.getJob(jobId);
-      this.posts = await this._socnetoService.getJobPosts(jobId);
     } on NotAuthorizedException {
       await this._router.navigate(RoutePaths.notAuthorized.toUrl());
     }

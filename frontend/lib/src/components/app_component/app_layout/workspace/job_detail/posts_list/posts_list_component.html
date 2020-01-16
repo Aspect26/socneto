@@ -1,15 +1,15 @@
-<paginator *ngIf="posts.length > PAGE_SIZE" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+<paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
-<material-expansionpanel *ngFor="let post of displayedPosts"
+<material-expansionpanel *ngFor="let post of posts"
                          expandIcon="comment"
                          [showSaveCancel]="false">
     <div name>
         <div class="name">
             <span class="title">Post:</span>
-            {{post.text}}
+            {{ post.post.text }}
         </div>
     </div>
 
 </material-expansionpanel>
 
-<paginator *ngIf="posts.length > PAGE_SIZE" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+<paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
