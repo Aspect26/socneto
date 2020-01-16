@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,9 +77,9 @@ namespace Socneto.Domain.Services
             return await response.Content.ReadAsAsync<JobView>();
         }
 
-        public async Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId)
+        public async Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId, int offset, int size)
         {
-            var response = await Get($"analyzedPosts?jobId={jobId}");
+            var response = await Get($"analyzedPosts?jobId={jobId}&offset={offset}&size={size}");
             response.EnsureSuccessStatusCode();
             
             return await response.Content.ReadAsAsync<List<AnalyzedPost>>();
