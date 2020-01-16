@@ -81,6 +81,7 @@ services:
       - '8888:8888'
     container_name: storageservice
     depends_on:
+      - kafka
       - mongo_db
       - db
       - elasticsearch
