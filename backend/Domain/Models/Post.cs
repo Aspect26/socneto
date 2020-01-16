@@ -1,16 +1,17 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Socneto.Domain.Helpers;
 
 namespace Socneto.Domain.Models
 {
     public class Post
     {
+        [JsonProperty("authorId")]
         public string AuthorId { get; set; }
         
+        [JsonProperty("text")]
         public string Text { get; set; }
 
-        [JsonConverter(typeof(JsonMillisecondsToDateTimeConverter))]
-        public DateTime PostedAt { get; set; }
+        [JsonProperty("postedAt")]
+        public DateTime? PostedAt { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
@@ -10,7 +9,7 @@ namespace Socneto.Api.Models
         
         public string Text { get; set; }
 
-        public DateTime PostedAt { get; set; }
+        public DateTime? PostedAt { get; set; }
 
         public static PostDto FromValue(Post post)
         {
