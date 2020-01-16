@@ -1,15 +1,21 @@
 <paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
-<material-expansionpanel *ngFor="let post of posts"
-                         expandIcon="comment"
-                         [showSaveCancel]="false">
-    <div name>
-        <div class="name">
-            <span class="title">Post:</span>
-            {{ post.post.text }}
+<ng-template *ngIf="!loading">
+    <material-expansionpanel *ngFor="let post of posts"
+                             expandIcon="comment"
+                             [showSaveCancel]="false">
+        <div name>
+            <div class="name">
+                <span class="title">Post:</span>
+                {{ post.post.text }}
+            </div>
         </div>
-    </div>
 
-</material-expansionpanel>
+    </material-expansionpanel>
+</ng-template>
+
+<div *ngIf="loading" class="loading-wrapper">
+    <material-progress [indeterminate]="true"></material-progress>
+</div>
 
 <paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
