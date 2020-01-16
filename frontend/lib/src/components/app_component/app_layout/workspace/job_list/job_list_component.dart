@@ -56,7 +56,7 @@ class JobListComponent implements AfterChanges {
   final SocnetoService _socnetoService;
   final Router _router;
 
-  Paginator paginator = Paginator(0, 0, PAGE_SIZE);
+  Paginator paginator = Paginator(0, 1, PAGE_SIZE);
   List<Job> jobs = [];
   List<Job> displayedJobs = [];
   Job selectedJob;
@@ -124,7 +124,7 @@ class JobListComponent implements AfterChanges {
       this.paginator = Paginator(this.jobs.length, this.paginator.currentPage, PAGE_SIZE);
     } on HttpException catch (e) {
       this.jobs = [];
-      this.paginator = Paginator(0, 0, PAGE_SIZE);
+      this.paginator = Paginator(0, 1, PAGE_SIZE);
       this._onLoadDataError(e);
     }
 
@@ -151,8 +151,8 @@ class JobListComponent implements AfterChanges {
   }
 
   void _updateDisplayedJobs() {
-    final start = this.paginator.currentPage * this.paginator.pageSize;
-    var end = (this.paginator.currentPage + 1) * this.paginator.pageSize;
+    final start = (this.paginator.currentPage - 1) * this.paginator.pageSize;
+    var end = (this.paginator.currentPage) * this.paginator.pageSize;
 
     if (end > this.jobs.length) {
       end = this.jobs.length;

@@ -1,42 +1,37 @@
-<ng-container *ngIf="paginator.currentPage - pages > 0">
-
-    <a class="page-link" (click)="onPreviousPageClick()">
-        <div>
-            ‹‹
-        </div>
-    </a>
-    <a class="page-link" (click)="onPageClick(0)">
-        <div>
-            1
-        </div>
-    </a>
-    <a href="javascript:void(0)" class="divider">
-        …
-    </a>
-
-</ng-container>
-
-<a *ngFor="let pageNumber of pageLinks()" class="page-link" [ngClass]="{'current': pageNumber == paginator.currentPage }" (click)="onPageClick(pageNumber)" href="javascript:void(0)">
+<a *ngIf="paginator.currentPage - pages > 0" class="page-link" (click)="onPreviousPageClick()">
     <div>
-        {{ pageNumber + 1 }}
+        ‹‹
     </div>
 </a>
 
-<ng-container *ngIf="paginator.currentPage + pages < paginator.maxPage()">
+<a *ngIf="paginator.currentPage - pages > 1" class="page-link" (click)="onPageClick(1)">
+    <div>
+        1
+    </div>
+</a>
 
-    <a href="javascript:void(0)" class="divider">
-        …
-    </a>
-    <a class="page-link" (click)="onPageClick(paginator.maxPage())">
-        <div>
-            {{ paginator.maxPage() + 1 }}
-        </div>
-    </a>
-    <a class="page-link" (click)="onNextPageClick()">
-        <div>
-            ››
-        </div>
-    </a>
+<a *ngIf="paginator.currentPage - pages > 2" href="javascript:void(0)" class="divider">
+    …
+</a>
 
+<a *ngFor="let pageNumber of pageLinks()" class="page-link" [ngClass]="{'current': pageNumber == paginator.currentPage }" (click)="onPageClick(pageNumber)" href="javascript:void(0)">
+    <div>
+        {{ pageNumber }}
+    </div>
+</a>
 
-</ng-container>
+<a *ngIf="paginator.currentPage + pages <= paginator.maxPage() - 2" href="javascript:void(0)" class="divider">
+    …
+</a>
+
+<a *ngIf="paginator.currentPage + pages <= paginator.maxPage() - 1" class="page-link" (click)="onPageClick(paginator.maxPage())">
+    <div>
+        {{ paginator.maxPage() }}
+    </div>
+</a>
+
+<a *ngIf="paginator.currentPage + pages <= paginator.maxPage()" class="page-link" (click)="onNextPageClick()">
+    <div>
+        ››
+    </div>
+</a>
