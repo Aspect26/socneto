@@ -9,7 +9,6 @@ namespace Socneto.Domain.Services
     {
         Task<IList<Job>> GetJobsDetails(string username);
         Task<Job> GetJobDetail(Guid jobId);
-        Task<IList<Post>> GetJobPosts(Guid guid);
-        Task<IList<AnalyzedPost>> GetJobAnalysis(Guid guid);
+        Task<Tuple<IList<AnalyzedPost>, int>> GetJobPosts(Guid guid, int offset, int pageSize);
     }
 }

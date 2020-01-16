@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
-using System.Linq;
 
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
@@ -29,16 +28,14 @@ namespace Socneto.Domain.Services
             return await _storageService.GetUserJobs(username);
         }
 
-        public async Task<IList<Post>> GetJobPosts(Guid jobId)
+        public async Task<Tuple<IList<AnalyzedPost>, int>> GetJobPosts(Guid jobId, int offset, int size)
         {
-            // TODO: better ask for new storage call specifically for posts only
-            var analyzedPosts = await _storageService.GetAnalyzedPosts(jobId);
-            return analyzedPosts.Select(analyzedPost => analyzedPost.Post).ToList();
-        }
+            var posts = await _storageService.GetAnalyzedPosts(jobId, offset, size);
+            // TODO: storage service should support paginating
+            var actualSize = Math.Min(size, posts.Count - offset);
+            var pagePosts = ((List<AnalyzedPost>) posts).GetRange(offset, actualSize);
 
-        public async Task<IList<AnalyzedPost>> GetJobAnalysis(Guid jobId)
-        {
-            return await _storageService.GetAnalyzedPosts(jobId);
+            return new Tuple<IList<AnalyzedPost>, int>(pagePosts, posts.Count);
         }
     }
 }

@@ -15,15 +15,13 @@ namespace Socneto.Api.Controllers
     public class JobController : ControllerBase
     {
         private readonly IJobService _jobService;
-        private readonly IStorageService _storageService;
         private readonly IGetAnalysisService _getAnalysisService;
         private readonly ILogger<JobController> _logger;
         
-        public JobController(IJobService jobService, IStorageService storageService, IGetAnalysisService getAnalysisService, 
+        public JobController(IJobService jobService, IGetAnalysisService getAnalysisService, 
             ILogger<JobController> logger)
         {
             _jobService = jobService;
-            _storageService = storageService;
             _getAnalysisService = getAnalysisService;
             _logger = logger;
         }
@@ -57,18 +55,29 @@ namespace Socneto.Api.Controllers
             return Ok(jobStatusResponse);
         }
 
-        // TODO: is this working?
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts")]
-        public async Task<ActionResult<List<PostDto>>> GetJobPosts([FromRoute] Guid jobId)
+        public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, [FromQuery] int page = 1, [FromQuery] int size = 20)
         {
             if (! await  IsAuthorizedToSeeJob(jobId))
                 return Unauthorized();
-            
-            var posts = await _jobService.GetJobPosts(jobId);
 
-            var mappedPosts = posts.Select(PostDto.FromValue).ToList();
-            return Ok(mappedPosts);
+            var offset = (page - 1) * size;
+            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, offset, size);
+
+            var postDtos = posts.Select(AnalyzedPostDto.FromModel).ToList();
+            var paginatedPosts = new Paginated<AnalyzedPostDto>
+            {
+                Pagination = new Pagination
+                {
+                    TotalSize = postsCount,
+                    Page = Math.Clamp(page, 1, ((postsCount - 1) / size) + 1),
+                    PageSize = size
+                },
+                Data = postDtos
+            };
+            
+            return Ok(paginatedPosts);
         }
         
         [HttpPost]
