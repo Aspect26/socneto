@@ -29,8 +29,8 @@ class PaginatorComponent {
     var firstPage = this.paginator.currentPage - this.pages;
     var lastPage = this.paginator.currentPage + this.pages;
 
-    if (firstPage < 0) {
-      firstPage = 0;
+    if (firstPage < 1) {
+      firstPage = 1;
     }
 
     if (lastPage > this.paginator.maxPage()) {

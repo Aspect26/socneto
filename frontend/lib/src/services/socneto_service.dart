@@ -1,7 +1,9 @@
+import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -50,8 +52,8 @@ class SocnetoService {
       await this._dataService.getJob(jobId);
   Future<List<Job>> getUserJobs(String username) async =>
       await this._dataService.getUserJobs(username);
-  Future<List<Post>> getJobPosts(String jobId) async =>
-      await this._dataService.getJobPosts(jobId);
+  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
+      await this._dataService.getJobPosts(jobId, page, pageSize);
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chart) async =>
       await this._dataService.getChartData(jobId, chart);
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>

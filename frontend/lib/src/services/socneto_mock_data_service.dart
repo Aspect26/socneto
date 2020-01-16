@@ -5,6 +5,8 @@ import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobStatusCode.dart';
+import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/Paging.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -59,8 +61,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<List<Job>> getUserJobs(String username) async =>
     Future.value(mockJobs);
 
-  Future<List<Post>> getJobPosts(String jobId) async =>
-    Future.value([]);
+  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
+    Future.value(PaginatedAnalyzedPosts([], Paging(0, 1, 20)));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     if (chartDefinition.chartType == ChartType.Line && chartDefinition.isXDateTime) {

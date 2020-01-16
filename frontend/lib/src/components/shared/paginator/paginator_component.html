@@ -18,7 +18,7 @@
 
 <a *ngFor="let pageNumber of pageLinks()" class="page-link" [ngClass]="{'current': pageNumber == paginator.currentPage }" (click)="onPageClick(pageNumber)" href="javascript:void(0)">
     <div>
-        {{ pageNumber + 1 }}
+        {{ pageNumber }}
     </div>
 </a>
 
@@ -29,7 +29,7 @@
     </a>
     <a class="page-link" (click)="onPageClick(paginator.maxPage())">
         <div>
-            {{ paginator.maxPage() + 1 }}
+            {{ paginator.maxPage() }}
         </div>
     </a>
     <a class="page-link" (click)="onNextPageClick()">
