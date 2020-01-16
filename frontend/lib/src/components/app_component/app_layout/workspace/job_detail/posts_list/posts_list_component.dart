@@ -1,4 +1,5 @@
 import 'package:angular/angular.dart';
+import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus.dart';
 import 'package:angular_components/focus/focus_item.dart';
 import 'package:angular_components/focus/focus_list.dart';
@@ -18,8 +19,10 @@ import 'package:angular_components/material_yes_no_buttons/material_yes_no_butto
 import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
+import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 @Component(
@@ -32,6 +35,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialExpansionPanelSet,
     MaterialDialogComponent,
     MaterialInputComponent,
+    MaterialProgressComponent,
     materialInputDirectives,
     MaterialYesNoButtonsComponent,
     ModalComponent,
@@ -60,10 +64,10 @@ class PostsListComponent implements AfterChanges {
 
     @Input() Job job;
     List<AnalyzedPost> posts = [];
+    Paginator paginator = Paginator(0, 1, PAGE_SIZE);
+    bool loading = false;
 
     final SocnetoService _socnetoService;
-
-    Paginator paginator = Paginator(0, 1, PAGE_SIZE);
 
     PostsListComponent(this._socnetoService);
 
@@ -78,9 +82,18 @@ class PostsListComponent implements AfterChanges {
     }
 
     void _updateDisplayedPosts() async {
-        var paginatedPosts = await this._socnetoService.getJobPosts(job.id, paginator.currentPage, paginator.pageSize);
-
-        this.posts = paginatedPosts.posts;
-        this.paginator = Paginator(paginatedPosts.paging.totalSize, paginatedPosts.paging.page, paginatedPosts.paging.pageSize);
+        this.loading = true;
+        try {
+            var paginatedPosts = await this._socnetoService.getJobPosts(job.id, paginator.currentPage, paginator.pageSize);
+            this.posts = paginatedPosts.posts;
+            this.paginator = Paginator(paginatedPosts.paging.totalSize, paginatedPosts.paging.page, paginatedPosts.paging.pageSize);
+        } on HttpException catch (e) {
+            Toastr.error("Posts", "Unable to load posts on given page");
+            print(e);
+            this.posts = [];
+            this.paginator = Paginator(0, 1, PAGE_SIZE);
+        } finally {
+            this.loading = false;
+        }
     }
 }
