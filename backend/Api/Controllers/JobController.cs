@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Services;
+using IAuthorizationService = Socneto.Domain.Services.IAuthorizationService;
 
 namespace Socneto.Api.Controllers
 {
@@ -14,13 +15,15 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
+        private readonly IAuthorizationService _authorizationService;
         private readonly IJobService _jobService;
         private readonly IGetAnalysisService _getAnalysisService;
         private readonly ILogger<JobController> _logger;
         
-        public JobController(IJobService jobService, IGetAnalysisService getAnalysisService, 
-            ILogger<JobController> logger)
+        public JobController(IAuthorizationService authorizationService, IJobService jobService, 
+            IGetAnalysisService getAnalysisService, ILogger<JobController> logger)
         {
+            _authorizationService = authorizationService;
             _jobService = jobService;
             _getAnalysisService = getAnalysisService;
             _logger = logger;
@@ -30,7 +33,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{username}/all")]
         public async Task<ActionResult<List<JobDto>>> GetJobs([FromRoute]string username)
         {
-            if (!IsAuthorizedToSeeUser(username))
+            if (!IsAuthenticatedTo(username))
                 return Unauthorized();
             
             var jobStatuses = await _jobService.GetJobsDetails(username);
@@ -46,7 +49,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/status")]
         public async Task<ActionResult<JobDto>> GetJobDetail([FromRoute]Guid jobId)
         {
-            if (! await IsAuthorizedToSeeJob(jobId))
+            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
             
             var jobDetail = await _jobService.GetJobDetail(jobId);
@@ -59,7 +62,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/posts")]
         public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, [FromQuery] int page = 1, [FromQuery] int size = 20)
         {
-            if (! await  IsAuthorizedToSeeJob(jobId))
+            if (! await  _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
 
             var offset = (page - 1) * size;
@@ -84,7 +87,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/aggregation_analysis")]
         public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisRequest analysisRequest)
         {
-            if (! await  IsAuthorizedToSeeJob(jobId))
+            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
 
             var analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperty);
@@ -97,7 +100,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/array_analysis")]
         public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisRequest analysisRequest)
         {
-            if (! await  IsAuthorizedToSeeJob(jobId))
+            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
             
             var analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperties);
@@ -106,21 +109,12 @@ namespace Socneto.Api.Controllers
             return Ok(analysisResponse);
         }
         
-        private bool IsAuthorizedToSeeUser(string username)
+        private bool IsAuthenticatedTo(string username)
         {
             if (!User.Identity.IsAuthenticated)
                 return false;
             
             return username == User.Identity.Name;
-        }
-
-        private async Task<bool> IsAuthorizedToSeeJob(Guid jobId)
-        {
-            /*  TODO: uncomment this
-            var job = await _storageService.GetJob(jobId);
-            return job.Username == User.Identity.Name;
-            */
-            return await Task.FromResult(true);
         }
     }
 }

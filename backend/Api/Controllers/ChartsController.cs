@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Models;
 using Socneto.Domain.Services;
+using IAuthorizationService = Socneto.Domain.Services.IAuthorizationService;
 
 namespace Socneto.Api.Controllers
 {
@@ -16,13 +16,14 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class ChartsController : ControllerBase
     {
-        // TODO: maybe create charts service
-        private readonly IStorageService _storageService;
-        private ILogger<ComponentsController> _logger;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IChartsService _chartsService;
+        private readonly ILogger<ComponentsController> _logger;
 
-        public ChartsController(IStorageService storageService, ILogger<ComponentsController> logger)
+        public ChartsController(IAuthorizationService authorizationService, IChartsService chartsService, ILogger<ComponentsController> logger)
         {
-            _storageService = storageService;
+            _authorizationService = authorizationService;
+            _chartsService = chartsService;
             _logger = logger;
         }
 
@@ -30,17 +31,11 @@ namespace Socneto.Api.Controllers
         [Route("api/charts/{jobId:guid}")]
         public async Task<ActionResult<List<ChartDefinitionDto>>> GetJobCharts([FromRoute]Guid jobId)
         {
-            if (!IsAuthorizedToSeeJob(jobId))
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
 
-            var jobView = await _storageService.GetJobView(jobId);
-
-            if (jobView?.ViewConfiguration == null)
-            {
-                return Ok(new ArrayList());
-            }
-
-            var mappedChartDefinitions = jobView.ViewConfiguration.ChartDefinitions
+            var jobCharts = await _chartsService.GetJobCharts(jobId);
+            var mappedChartDefinitions = jobCharts
                 .Select(ChartDefinitionDto.FromModel)
                 .ToList();
             
@@ -51,47 +46,21 @@ namespace Socneto.Api.Controllers
         [Route("api/charts/{jobId:guid}/create")]
         public async Task<ActionResult<SuccessResponse>> CreateJobChart([FromRoute] Guid jobId, [FromBody] CreateChartDefinitionRequest request)
         {
-            if (!IsAuthorizedToSeeJob(jobId))
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
 
-            var newChartDefinition = new ChartDefinition
+            var analysisDataPaths = request.AnalysisDataPaths.Select(x => new AnalysisDataPath
             {
-                ChartType = request.ChartType,
-                AnalysisDataPaths = request.AnalysisDataPaths.Select(x => new AnalysisDataPath
+                AnalyserComponentId = x.AnalyserComponentId,
+                Property = new AnalysisProperty
                 {
-                    AnalyserComponentId = x.AnalyserComponentId,
-                    Property = new AnalysisProperty
-                    {
-                        Identifier = x.Property.Identifier,
-                        Type = x.Property.Type
-                    }
-                }).ToList(),
-                IsXPostDatetime = request.IsXPostDateTime
-            };
-
-            var jobView = await _storageService.GetJobView(jobId);
-
-            if (jobView.ViewConfiguration == null)
-            {
-                jobView.ViewConfiguration = new ViewConfiguration {ChartDefinitions = new List<ChartDefinition>() };
-            }
-
-            if (jobView.ViewConfiguration.ChartDefinitions == null)
-            {
-                jobView.ViewConfiguration.ChartDefinitions = new List<ChartDefinition>();
-            }
+                    Identifier = x.Property.Identifier,
+                    Type = x.Property.Type
+                }
+            }).ToList();
             
-            jobView.ViewConfiguration.ChartDefinitions.Add(newChartDefinition);
-
-            await _storageService.UpdateJobView(jobId, jobView);
-            
+            await _chartsService.CreateJobChart(jobId, request.ChartType, analysisDataPaths, request.IsXPostDateTime);
             return Ok(SuccessResponse.True());
-        }
-        
-        private bool IsAuthorizedToSeeJob(Guid jobId)
-        {
-            // TODO: check if the job belongs to the authorized user
-            return true;
         }
     }
 }
