@@ -6,7 +6,6 @@ using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
 {
-    // [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {

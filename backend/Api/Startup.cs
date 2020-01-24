@@ -57,9 +57,11 @@ namespace Socneto.Api
 #else
                 .AddTransient<IResultProducer, KafkaProducer>()
 #endif
+                .AddTransient<IAuthorizationService, AuthorizationService>()
                 .AddTransient<IJobService, JobService>()
                 .AddTransient<IUserService, UserService>()
                 .AddTransient<IGetAnalysisService, GetAnalysisService>()
+                .AddTransient<IChartsService, ChartsService>()
                 .AddTransient<IStorageService, StorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"))
