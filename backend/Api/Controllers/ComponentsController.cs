@@ -14,9 +14,9 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class ComponentsController : ControllerBase
     {
-        
-        private IStorageService _storageService;
-        private ILogger<ComponentsController> _logger;
+
+        private readonly IStorageService _storageService;
+        private readonly ILogger<ComponentsController> _logger;
 
         public ComponentsController(IStorageService storageService, ILogger<ComponentsController> logger)
         {
