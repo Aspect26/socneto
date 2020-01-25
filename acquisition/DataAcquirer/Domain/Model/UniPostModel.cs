@@ -10,6 +10,7 @@ namespace Domain.Model
             Guid postId,
             string originalPostId,
             string text,
+            string originalText,
             string language,
             string source,
             string userId,
@@ -43,6 +44,9 @@ namespace Domain.Model
         [JsonProperty("text")]
         public string Text { get; }
 
+        [JsonProperty("originalText")]
+        public string OriginalText { get; }
+
         [JsonProperty("language")]
         public string Language { get; }
         [JsonProperty("source")]
@@ -58,6 +62,7 @@ namespace Domain.Model
             Guid postId,
             string originalPostId,
             string text,
+            string originalText,
             string language,
             string source,
             string userId,
@@ -68,6 +73,7 @@ namespace Domain.Model
             return new UniPostModel(postId,
                 originalPostId,
                 text,
+                originalText,
                 language,
                 source,
                 userId,

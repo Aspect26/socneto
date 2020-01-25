@@ -11,6 +11,7 @@ using Domain.Registration;
 using Infrastructure.DataGenerator;
 using Infrastructure.Kafka;
 using Infrastructure.Metadata;
+using Infrastructure.Translation;
 using Infrastructure.Twitter;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -197,6 +198,9 @@ namespace Application
 
             services.AddTransient<IRegistrationService, RegistrationService>();
 
+#warning Null tranlsation service used
+            services.AddHttpClient<ITranslationService, NullTranslationService>();
+
             services.AddHttpClient();
 
             if (isDevelopment)
@@ -257,9 +261,9 @@ namespace Application
                 .Bind(configuration.GetSection($"{rootName}:SystemMetricsOptions"))
                 .ValidateDataAnnotations();
 
+            services.AddOptions<TranslationServiceOptions>()
+                .Bind(configuration.GetSection($"{rootName}:TranslatorOptions"))
+                .ValidateDataAnnotations();
         }
-
-
-
     }
 }

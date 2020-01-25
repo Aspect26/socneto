@@ -50,7 +50,7 @@ namespace Api
                 .PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
             
             
-            var app = builder.BuildWebHost(false);
+            var app = builder.BuildWebHost(true);
             await InitializeApplication(app);
 
             await app.RunAsync();
