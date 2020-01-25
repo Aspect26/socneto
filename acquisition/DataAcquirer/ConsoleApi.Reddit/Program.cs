@@ -35,10 +35,11 @@ namespace ConsoleApi.Reddit
 
     class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             //MainAsync_2(args)
-            TestRedditAsync().GetAwaiter().GetResult();
+            //TestRedditAsync().GetAwaiter().GetResult();
+            await MainAsync(args);
         }
 
         static async Task MainAsync(string[] args)
@@ -71,7 +72,7 @@ namespace ConsoleApi.Reddit
             var batch = redditAcquirer.GetPostsAsync(inputModel);
             await foreach (var item in batch)
             {
-                //Console.WriteLine(JsonConvert.SerializeObject(item, Formatting.Indented));
+                Console.WriteLine(JsonConvert.SerializeObject(item, Formatting.Indented));
             }
             Console.WriteLine("Search ended");
             Console.ReadLine();

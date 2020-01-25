@@ -38,11 +38,8 @@ namespace Infrastructure.Reddit
             var reddit = await _redditContextProvider.GetContextAsync(credentials);
 
             var query = acquirerInputModel.Query;
-            // ei33zr
-            // ei37wh
-            
+
             var limit = 50;
-            //var before = "ei2mja";
             DateTime? before = null;
 
             while (true)
@@ -64,13 +61,21 @@ namespace Infrastructure.Reddit
                         }
                         count++;
                         maxBefore = Max(item.Created, maxBefore);
-                        
+
                         yield return FromPost(item, query);
-                        //var comments = item.Comments.GetTop(100);
-                        //foreach (var (i, c) in indices.Zip(comments))
-                        //{
-                        //    Console.WriteLine($"C-{$"{i:00}"}:\t{c.Body}");
-                        //}
+                        var comments = item.Comments.GetTop(100);
+                        foreach (var c in comments)
+                        {
+                            var listingPost = item.Listing;
+                            yield return DataAcquirerPost.FromValues(
+                                listingPost.Id,
+                                "(title:" + listingPost.Title + ",comment)" + c.Body,
+                                "en",
+                                "reddit",
+                                c.Author ?? "n/a",
+                                listingPost.CreatedUTC.ToString("s"),
+                                query);
+                        }
                     }
 
                     if (outDated)
@@ -78,11 +83,11 @@ namespace Infrastructure.Reddit
                         break;
                     }
                     after = postListing.Count > 0 ? postListing.Last().Fullname : after;
-                    
+
                     postListing = GetPosts(reddit, after, limit, query, count);
                 }
                 before = maxBefore;
-                
+
                 await Task.Delay(TimeSpan.FromMinutes(10));
             }
         }
@@ -122,7 +127,7 @@ namespace Infrastructure.Reddit
                 "(title:" + listingPost.Title + ")" + listingPost.SelfText,
                 "en",
                 "reddit",
-                "n/a",
+                r.Author ?? "n/a",
                 listingPost.CreatedUTC.ToString("s"),
                 query);
         }
