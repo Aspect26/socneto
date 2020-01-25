@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
 using Domain.Acquisition;
+using Domain.Exceptions;
 using Domain.JobConfiguration;
 using Domain.JobManagement.Abstract;
 using Domain.Model;
@@ -17,11 +18,11 @@ using Newtonsoft.Json;
 
 namespace Domain.JobManagement
 {
-
     public class JobManager : IJobManager, IDisposable
     {
         private readonly IDataAcquirerJobStorage _dataAcquirerJobStorage;
         private readonly IDataAcquirer _acquirer;
+        private readonly ITranslationService _translationService;
         private readonly IMessageBrokerProducer _producer;
 
         private readonly IEventTracker<JobManager> _logger;
@@ -36,12 +37,14 @@ namespace Domain.JobManagement
         public JobManager(
             IDataAcquirerJobStorage dataAcquirerJobStorage,
             IDataAcquirer acquirer,
+            ITranslationService translationService,
             IMessageBrokerProducer producer,
             IEventTracker<JobManager> logger)
         {
             _dataAcquirerJobStorage = dataAcquirerJobStorage;
             //   _jobMetadataStorage = jobMetadataStorage;
             _acquirer = acquirer;
+            _translationService = translationService;
             _producer = producer;
             _logger = logger;
         }
@@ -109,6 +112,8 @@ namespace Domain.JobManagement
         {
             try
             {
+                var translate = jobConfig.Attributes.TryGetValue("Translate",out string value) 
+                    && value.ToLower() == "true";
                 // TODO validate job config
                 if (!jobConfig.Attributes.ContainsKey("TopicQuery"))
                 {
@@ -142,56 +147,7 @@ namespace Domain.JobManagement
 
                 _logger.TrackInfo("MessageTracking", "Starting");
 
-                int count = 0;
-                await foreach (var dataPost in batch)
-                {
-                    if (count % 1000 == 0)
-                    {
-                        _logger.TrackInfo("MessageTracking", $"Downloaded: {count}", new
-                        {
-                            jobId = jobConfig.JobId
-                        });
-                    }
-                    count++;
-
-                    var bytes = new byte[16];
-
-                    var textHash = dataPost.Text.GetHashCode();
-                    var postIdHash = dataPost.OriginalPostId.GetHashCode();
-                    var userIdHash = dataPost.UserId.GetHashCode();
-                    var dateIdHash = dataPost.DateTime.GetHashCode();
-                    var jobId = jobConfig.JobId.GetHashCode();
-                    dateIdHash += jobId;
-
-                    BitConverter.GetBytes(textHash).CopyTo(bytes, 0);
-                    BitConverter.GetBytes(postIdHash).CopyTo(bytes, 3);
-                    BitConverter.GetBytes(userIdHash).CopyTo(bytes, 7);
-                    BitConverter.GetBytes(dateIdHash).CopyTo(bytes, 11);
-
-                    var postId = new Guid(bytes);
-
-                    var text = ClearText(dataPost.Text);
-                    
-                    var uniPost = UniPostModel.FromValues(
-                        postId,
-                        dataPost.OriginalPostId,
-                        text,
-                        dataPost.Language,
-                        dataPost.Source,
-                        dataPost.UserId,
-                        dataPost.DateTime,
-                        dataAcquirerInputModel.JobId,
-                        dataPost.Query);
-
-
-                    var jsonData = JsonConvert.SerializeObject(uniPost);
-                    var messageBrokerMessage = new MessageBrokerMessage(
-                        "acquired-data-post",
-                        jsonData);
-
-                    await SendRecordToOutputs(jobConfig.OutputMessageBrokerChannels,
-                        messageBrokerMessage);
-                }
+                await ProcessBatch(jobConfig, dataAcquirerInputModel, batch,translate);
 
             }
             catch (TaskCanceledException) { }
@@ -207,6 +163,99 @@ namespace Domain.JobManagement
                         exception = e
                     });
             }
+        }
+
+        private async Task ProcessBatch(
+            DataAcquirerJobConfig jobConfig, 
+            DataAcquirerInputModel dataAcquirerInputModel, 
+            IAsyncEnumerable<DataAcquirerPost> batch,
+            bool translate)
+        {
+            int count = 0;
+            await foreach (var dataPost in batch)
+            {
+                LogProgress(jobConfig, count);
+                count++;
+
+                var postId = CalculatePostId(jobConfig, dataPost);
+
+                var text = ClearText(dataPost.Text);
+                string originalText = null;
+                
+                if (translate && dataPost.Language != "en")
+                {
+                    try
+                    {
+                        var translatedText = await _translationService
+                                .TranslateToEnglishAsync(dataPost.Language, text);
+
+                        originalText = text;
+                        text = translatedText;
+                    }
+                    catch (DataAcquirerException ex)
+                    {
+                        _logger.TrackWarning("TranslationError", "Could not translate",
+                            new
+                            {
+                                jobId = dataAcquirerInputModel.JobId,
+                                exception = ex,
+                                text
+                            });
+                    }
+                }
+
+                var uniPost = UniPostModel.FromValues(
+                    postId,
+                    dataPost.OriginalPostId,
+                    text,
+                    originalText,
+                    dataPost.Language,
+                    dataPost.Source,
+                    dataPost.UserId,
+                    dataPost.DateTime,
+                    dataAcquirerInputModel.JobId,
+                    dataPost.Query);
+
+
+                var jsonData = JsonConvert.SerializeObject(uniPost);
+                var messageBrokerMessage = new MessageBrokerMessage(
+                    "acquired-data-post",
+                    jsonData);
+
+                await SendRecordToOutputs(jobConfig.OutputMessageBrokerChannels,
+                    messageBrokerMessage);
+            }
+        }
+
+        private void LogProgress(DataAcquirerJobConfig jobConfig, int count)
+        {
+            if (count % 1000 == 0)
+            {
+                _logger.TrackInfo("MessageTracking", $"Downloaded: {count}", new
+                {
+                    jobId = jobConfig.JobId
+                });
+            }
+        }
+
+        private static Guid CalculatePostId(DataAcquirerJobConfig jobConfig, DataAcquirerPost dataPost)
+        {
+            var bytes = new byte[16];
+
+            var textHash = dataPost.Text.GetHashCode();
+            var postIdHash = dataPost.OriginalPostId.GetHashCode();
+            var userIdHash = dataPost.UserId.GetHashCode();
+            var dateIdHash = dataPost.DateTime.GetHashCode();
+            var jobId = jobConfig.JobId.GetHashCode();
+            dateIdHash += jobId;
+
+            BitConverter.GetBytes(textHash).CopyTo(bytes, 0);
+            BitConverter.GetBytes(postIdHash).CopyTo(bytes, 3);
+            BitConverter.GetBytes(userIdHash).CopyTo(bytes, 7);
+            BitConverter.GetBytes(dateIdHash).CopyTo(bytes, 11);
+
+            var postId = new Guid(bytes);
+            return postId;
         }
 
         private string ClearText(string text)
