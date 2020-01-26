@@ -21,6 +21,7 @@ namespace Domain.Model
             PostId = postId;
             OriginalPostId = originalPostId;
             Text = text;
+            OriginalText = originalText;
             Language = language;
             UserId = userId;
             Source = source;
