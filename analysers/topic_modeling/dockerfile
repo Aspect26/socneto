@@ -6,4 +6,4 @@ COPY ./ ./
 
 RUN exec ./prepare.sh
 
-CMD [ "python", "./LDA.py"]
+CMD [ "python", "./main.py", "--server_address","kafka:9092" , "--sleep_on_startup"]
