@@ -354,3 +354,5 @@ en_core_web_lg-2.0.0.tar.gz
 en_core_web_lg-2.2.5.tar.gz
 **/.ipynb_checkpoints/*
 **/.editorconfig
+
+**/cred.json
