@@ -2,9 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
-using Domain.JobManagement;
 using Domain.JobManagement.Abstract;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -24,7 +22,6 @@ namespace Domain.JobConfiguration
             IOptions<ComponentOptions> componentOptionsAccessor,
             IEventTracker<JobConfigurationUpdateListener> logger)
         {
-
             _messageBrokerConsumer = messageBrokerConsumer;
             _jobManager = jobManager;
             _logger = logger;
@@ -60,7 +57,7 @@ namespace Domain.JobConfiguration
                        "Could not parse job config",
                        new
                        {
-                           config=configJson,
+                           config = configJson,
                            exception = jre
                        });
                 throw new InvalidOperationException($"Could not parse job config {jre.Message}");
