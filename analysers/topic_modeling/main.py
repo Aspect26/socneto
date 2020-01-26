@@ -1,8 +1,29 @@
-import LDA
-import pandas as pd
+#!/usr/bin/python
+import argparse
+from LDA import LDAAnalysis
+import logging
+from kafka import KafkaConsumer, KafkaProducer
+import json
+import time
+from datetime import datetime
 import os.path
 import matplotlib.pyplot as plt
 import numpy as np
+
+logger = logging.getLogger('topic_modelling')
+
+logger.setLevel(logging.INFO)
+ts = datetime.now().strftime('%Y-%m-%dT%H%M%S')
+fh = logging.FileHandler('topic_modelling' + ts + '.log')
+fh.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 def analyse_text(lda, text):
     a = lda.get_topic_keywords(text)
@@ -14,40 +35,122 @@ def analyse_text(lda, text):
     for topic,prob in zipped:
         if topic not in dic:
             dic[topic]=prob
-        else:
-            dic[topic] = dic[topic] + prob
+        # else:
+        #     dic[topic] = dic[topic] + prob
 
-    return list(dic.items())
+    return list(dic.keys())
 
-def read_data(data_path):
-    limit = 1000
-    english_only = True
-    df = pd.read_json(data_path, lines = True,convert_dates=False,encoding='utf8')
-    hd = df.head(limit)
-    if english_only:
-        hd = hd[(hd['language'] == 'en')]
-    return hd
+def register_itself(topic, input_topic, componentId, producer):
+    request = {
+        "ComponentId": componentId,
+        "ComponentType": "DATA_ANALYSER",
+        "UpdateChannelName": "job_management.job_configuration.DataAnalyser_topics",
+        "InputChannelName": input_topic,
+        "attributes": {
+            "outputFormat": {
+                "topics": "stringArray"
+            }
+        }
+    }
 
-def analyse_dataframe_text(df):
-    dic = {}
-    for index, row in df.iterrows():
-        text = row['text']
-        topics = analyse_text(lda,text)
-        for t,p in topics:
-            if t not in dic:
-                dic[t]=1
-            else:
-                dic[t] = dic[t] + 1
-    return list(dic.items())
+    json_request = json.dumps(request)
+    post_bytes = json_request.encode('utf-8')
+    future = producer.send(topic, post_bytes)
+    future.get(timeout=60)
+    logger.info("Registration request sent: " + json_request)
 
-lda = LDA.LDAAnalysis()
-data_path = "D:/data_tw/ces.data"
 
-df = read_data(data_path)
-data = analyse_dataframe_text(df)
+def analyse(lda, text):
+    array = analyse_text(lda,text)
+    return {
+        "polarity": {
+            "stringArrayValue": array
+        },
+    }
 
-#topics = ['iot','iiot', 'industry','smart','car']
-not_topics = ['las', 'vegas', 'amp','ces2020', 'ces', '2020']
-filtered = filter(lambda x: x[0].lower() not in not_topics  ,data )
-ss =list(sorted(filtered, key=lambda v: v[1], reverse=True))[:100]
-print(ss)
+def process_acquired_data(config, producer):
+    consumer = KafkaConsumer(
+        config['input_topic'], bootstrap_servers=config['kafka_server'])
+
+    lda = LDAAnalysis()
+    while True:
+        try:
+            for msg in consumer:
+                try:
+                    # validate that message is unipost
+                    payload = msg.value
+                    logger.info("received {}".format(payload))
+                    post = json.loads(payload)
+                    text = post["text"]
+                    analysis = analyse(lda,text)
+                    result = {
+                        "postId": post["postId"],
+                        "jobId": post["jobId"],
+                        "componentId": config["componentId"],
+                        "results": analysis
+                    }
+                    
+                    json_result = json.dumps(result)
+                    bytes_analysis = json_result.encode('utf-8')
+                    future = producer.send(
+                        config['output_topic'], bytes_analysis)
+                    future.get(timeout=60)
+                    logger.info("Analysis produced Text:{} results:{}".format(
+                        text, json_result))
+                except Exception as e:
+                    logger.error(e)
+
+        except Exception as e:
+            print(e)
+            time.sleep(5)
+
+
+def main(config):
+    logger.info("input config: {}".format(config))
+
+    producer = None
+    while True:
+        try:
+            producer = KafkaProducer(bootstrap_servers=config['kafka_server'])
+            logger.info("producer connected")
+            break
+        except Exception as e:
+            print(e)
+
+    register_itself(config['registration_topic'],
+                    config['input_topic'],
+                    config['componentId'],
+                    producer)
+
+    process_acquired_data(config, producer)
+
+
+parser = argparse.ArgumentParser(description='Configure kafka options')
+parser.add_argument('--server_address', type=str, required=False,
+                    help='address of the kafka server', default="localhost:9094")
+parser.add_argument('--input_topic', type=str, required=False, help='name of the input topic',
+                    default="job_management.component_data_input.DataAnalyser_topics")
+parser.add_argument('--output_topic', type=str, required=False, help='address of the kafka server',
+                    default="job_management.component_data_analyzed_input.storage_db")
+parser.add_argument('--registration_topic', type=str, required=False,
+                    help='address of the kafka server', default="job_management.registration.request")
+parser.add_argument('--component_id', type=str, required=False,
+                    help='id of the component', default="DataAnalyser_topics")
+parser.add_argument('--sleep_on_startup', action='store_true', required=False,
+                    help='id of the component', default=False)
+
+args = parser.parse_args()
+
+default_config = {
+    "input_topic": args.input_topic,
+    "output_topic": args.output_topic,
+    "kafka_server": args.server_address,
+    "registration_topic": args.registration_topic,
+    "componentId": args.component_id
+}
+
+if args.sleep_on_startup:
+    print("Waiting a while before registering")
+    time.sleep(180)
+
+main(default_config)
