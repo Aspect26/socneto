@@ -49,14 +49,10 @@ namespace Socneto.Api.Controllers
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
 
-            var analysisDataPaths = request.AnalysisDataPaths.Select(x => new AnalysisDataPath
+            var analysisDataPaths = request.AnalysisDataPaths.Select(analysisProperty => new AnalysisDataPath
             {
-                AnalyserComponentId = x.AnalyserComponentId,
-                Property = new AnalysisProperty
-                {
-                    Identifier = x.Property.Identifier,
-                    Type = x.Property.Type
-                }
+                AnalyserComponentId = analysisProperty.AnalyserComponentId,
+                Property = analysisProperty.Property
             }).ToList();
             
             await _chartsService.CreateJobChart(jobId, request.ChartType, analysisDataPaths, request.IsXPostDateTime);

@@ -25,16 +25,6 @@ namespace Socneto.Api.Models
         public string AnalyserComponentId { get; set; }
 
         [JsonProperty("analyser_property")]
-        public AnalysisPropertyRequest Property { get; set; }
-    }
-
-    public class AnalysisPropertyRequest
-    {
-        [JsonProperty("identifier")]
-        public string Identifier { get; set; }
-        
-        [JsonProperty("type")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Socneto.Domain.Models.AnalysisPropertyType Type { get; set; }
+        public string Property { get; set; }
     }
 }
