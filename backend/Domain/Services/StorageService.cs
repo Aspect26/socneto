@@ -173,7 +173,6 @@ namespace Socneto.Domain.Services
         private HttpContent CreateHttpContent(object data)
         {
             var json = JsonConvert.SerializeObject(data);
-            _logger.LogInformation($"STORAGE REQUEST BODY: {json}");
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
     }
