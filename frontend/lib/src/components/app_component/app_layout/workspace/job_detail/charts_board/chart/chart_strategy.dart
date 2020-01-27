@@ -37,7 +37,7 @@ class LineChartStrategy implements ChartStrategy {
   }
 
   List<String> _getLineChartLabels() {
-    return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property.name).toList();
+    return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property).toList();
   }
 
 }

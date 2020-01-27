@@ -11,16 +11,16 @@ namespace Socneto.Domain.Models
         public AnalysisType Type { get; set; }
         
         [JsonProperty("resultRequestType")]
-        public AnalysisResultType ResultRequestType { get; set; }
+        public AnalysisResultType ResultType { get; set; }
         
         [JsonProperty("componentId")]
         public string ComponentId { get; set; }
         
         [JsonProperty("resultName")]
-        public string AnalysisProperty { get; set; }
+        public string AnalysisPropertyName { get; set; }
         
         [JsonProperty("valueName")]
-        public AnalysisResultValue AnalysisResultValue { get; set; }
+        public AnalysisPropertyType AnalysisPropertyType { get; set; }
     }
 
     public class GetArrayAnalysisStorageRequest
@@ -31,7 +31,7 @@ namespace Socneto.Domain.Models
         
         [JsonProperty("resultRequestType")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public AnalysisResultType ResultRequestType { get; set; }
+        public AnalysisResultType ResultType { get; set; }
         
         [JsonProperty("componentId")]
         public string ComponentId { get; set; }
@@ -43,11 +43,11 @@ namespace Socneto.Domain.Models
     public class ArrayAnalysisRequestProperty
     {
         [JsonProperty("resultName")]
-        public string AnalysisProperty { get; set; }
+        public string AnalysisPropertyName { get; set; }
         
         [JsonProperty("valueName")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public AnalysisResultValue AnalysisResultValue { get; set; }
+        public AnalysisPropertyType AnalysisPropertyType { get; set; }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -66,35 +66,13 @@ namespace Socneto.Domain.Models
         [EnumMember(Value = "MAP_SUM")]
         MapSum,
         
-        [EnumMember(Value = "LIST_SUM")]
-        ListSum,
+        [EnumMember(Value = "LIST_COUNT")]
+        ListCount,
         
         [EnumMember(Value = "LIST_WITH_TIME")]
         ListWithTime,
         
         [EnumMember(Value = "LIST")]
         List
-    }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum AnalysisResultValue
-    {
-        [EnumMember(Value = "numberValue")]
-        NumberValue,
-        
-        [EnumMember(Value = "textValue")]
-        TextValue,
-        
-        [EnumMember(Value = "numberListValue")]
-        NumberListValue,
-        
-        [EnumMember(Value = "testListValue")]
-        TestListValue,
-        
-        [EnumMember(Value = "numberMapValue")]
-        NumberMapValue,
-        
-        [EnumMember(Value = "textMapValue")]
-        TextMapValue
     }
 }

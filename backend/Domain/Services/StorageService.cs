@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace Socneto.Domain.Services
         private readonly string _host;
         private readonly HttpClient _client = new HttpClient();
         private readonly ILogger<StorageService> _logger;
+        
+        private IList<SocnetoComponent> _cachedAnalysers = new List<SocnetoComponent>();  
 
         public StorageService(ILogger<StorageService> logger, IOptions<StorageOptions> storageOptionsObject)
         {
@@ -91,7 +94,21 @@ namespace Socneto.Domain.Services
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             
-            return JsonConvert.DeserializeObject<List<SocnetoComponent>>(responseString);
+            var analysers = JsonConvert.DeserializeObject<List<SocnetoComponent>>(responseString);
+            _cachedAnalysers = analysers;
+            return analysers;
+        }
+        
+        public async Task<SocnetoComponent> GetAnalyser(string identifier)
+        {
+            var cachedAnalyser = _cachedAnalysers.FirstOrDefault(analyser => analyser.ComponentId == identifier);
+            if (cachedAnalyser != null)
+            {
+                return cachedAnalyser;
+            }
+
+            _cachedAnalysers = await GetAnalysers();
+            return _cachedAnalysers.FirstOrDefault(analyser => analyser.ComponentId == identifier);
         }
 
         public async Task<IList<SocnetoComponent>> GetAcquirers()
@@ -156,6 +173,7 @@ namespace Socneto.Domain.Services
         private HttpContent CreateHttpContent(object data)
         {
             var json = JsonConvert.SerializeObject(data);
+            _logger.LogInformation($"STORAGE REQUEST BODY: {json}");
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
     }

@@ -9,6 +9,9 @@ namespace Socneto.Api.Models
         
         [JsonProperty("analysis_properties")]
         public string[] AnalysisProperties { get; set; }
+        
+        [JsonProperty("is_x_post_date")]
+        public bool IsXPostDate { get; set; }
     }
     
 }

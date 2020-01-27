@@ -103,7 +103,7 @@ namespace Socneto.Api.Controllers
             if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
             
-            var analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperties);
+            var analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);

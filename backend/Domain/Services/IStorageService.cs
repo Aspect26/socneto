@@ -26,6 +26,8 @@ namespace Socneto.Domain.Services
 
         Task<IList<SocnetoComponent>> GetAnalysers();
 
+        Task<SocnetoComponent> GetAnalyser(string identifier);
+
         Task<IList<SocnetoComponent>> GetAcquirers();
 
         Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest);
