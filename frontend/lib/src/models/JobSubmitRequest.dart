@@ -34,18 +34,15 @@ class JobSubmitRequest {
     this.acquirers.forEach((dataAcquirer) {
       var dataAcquirerId = dataAcquirer.identifier;
 
-//      TODO: uncomment this when implemented in JMS
-//      if (!properties.containsKey(componentId)) {
-//        properties[componentId] = Map();
-//      }
+      if (!properties.containsKey(dataAcquirerId)) {
+        properties[dataAcquirerId] = Map();
+      }
 
       var acquirerCredentials = this.credentials.firstWhere((credentialsWithComponentId) => credentialsWithComponentId.item1 == dataAcquirerId, orElse: () => null);
       var twitterCredentialsFields =  this._createTwitterCredentialsFields(acquirerCredentials?.item2);
       var redditCredentialsFields = this._createRedditCredentialsFields(acquirerCredentials?.item3);
-//      properties[componentId].addAll(twitterCredentialsFields);
-//      properties[componentId].addAll(redditCredentialsFields);
-      properties.addAll(twitterCredentialsFields);
-      properties.addAll(redditCredentialsFields);
+      properties[dataAcquirerId].addAll(twitterCredentialsFields);
+      properties[dataAcquirerId].addAll(redditCredentialsFields);
     });
   }
 
