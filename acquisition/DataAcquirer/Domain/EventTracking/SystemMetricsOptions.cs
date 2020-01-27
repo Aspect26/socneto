@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain
+namespace Domain.EventTracking
 {
     public class SystemMetricsOptions
     {

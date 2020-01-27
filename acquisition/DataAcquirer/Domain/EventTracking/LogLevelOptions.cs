@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Domain
+namespace Domain.EventTracking
 {
     public class LogLevelOptions
     {
