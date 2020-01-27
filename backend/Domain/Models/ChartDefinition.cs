@@ -20,20 +20,10 @@ namespace Socneto.Domain.Models
     public class AnalysisDataPath
     {
         [JsonProperty("property")]
-        public AnalysisProperty Property { get; set; }
+        public string Property { get; set; }
         
         [JsonProperty("analyser_id")]
         public string AnalyserComponentId { get; set; }
-    }
-
-    public class AnalysisProperty
-    {
-        [JsonProperty("identifier")]
-        public string Identifier { get; set; }
-        
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty("type")]
-        public AnalysisPropertyType Type { get; set; }    
     }
 
     public enum ChartType
@@ -41,13 +31,5 @@ namespace Socneto.Domain.Models
         Line,
         Pie,
         Scatter
-    }
-
-    public enum AnalysisPropertyType
-    {
-        Number,
-        String,
-        NumberList,
-        StringList
     }
 }
