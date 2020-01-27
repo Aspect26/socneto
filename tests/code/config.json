@@ -1,0 +1,9 @@
+{
+    "kafka": {
+        "kafka_server": "localhost:9094"
+    },
+    "topics": {
+        "sentiment": "job_management.component_data_input.DataAnalyser_topics",
+        "data_acquirer_update_topic": "job_management.job_configuration.DataAcquirer_Twitter"
+    }
+}
