@@ -1,3 +1,4 @@
+import sys
 import json
 import kafka_client
 import utils
@@ -33,9 +34,15 @@ def test(config, kafka,credentials):
     #  TODO other tests
 
 if __name__ == "__main__": 
-    config=utils.load_config("config.json")
-    kafka = kafka_client.KafkaClient(config['kafka']['kafka_server'])
+    
+    config_path = "./config.json"
     cred_path = "./cred.json"
+    if(len(sys.argv)==3):
+        config_path = sys.argv[1]
+        cred_path = sys.argv[2]
+    
+    config=utils.load_config(config_path)
+    kafka = kafka_client.KafkaClient(config['kafka']['kafka_server'])
     credentials=utils.resolve_credentials(cred_path)
     test(config, kafka, credentials)
 
