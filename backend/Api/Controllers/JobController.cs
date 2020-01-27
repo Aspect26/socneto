@@ -31,7 +31,7 @@ namespace Socneto.Api.Controllers
         
         [HttpGet]
         [Route("api/job/{username}/all")]
-        public async Task<ActionResult<List<JobDto>>> GetJobs([FromRoute]string username)
+        public async Task<ActionResult<List<JobDto>>> GetJobs([FromRoute] string username)
         {
             if (!IsAuthenticatedTo(username))
                 return Unauthorized();
@@ -45,9 +45,19 @@ namespace Socneto.Api.Controllers
             return Ok(mappedJobStatuses);
         }
 
+        [HttpPost]
+        [Route("api/job/{username}/create")]
+        public async Task<ActionResult<JobDto>> SubmitJob([FromRoute] string username, [FromBody] JobSubmitRequest request)
+        {
+            if (!IsAuthenticatedTo(username))
+                return Unauthorized();
+            
+            throw new NotImplementedException();
+        }
+
         [HttpGet]
         [Route("api/job/{jobId:guid}/status")]
-        public async Task<ActionResult<JobDto>> GetJobDetail([FromRoute]Guid jobId)
+        public async Task<ActionResult<JobDto>> GetJobDetail([FromRoute] Guid jobId)
         {
             if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
