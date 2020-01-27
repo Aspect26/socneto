@@ -1,8 +1,0 @@
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/RepositoryConfiguration.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/services/PostServiceImpl.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/controllers/PostController.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/model/Post.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/services/PostService.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/RepositoryApplication.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/validation/ValidationUtils.java
-/mnt/c/Data/SWProject/swproject-repository/src/main/java/cz/cuni/mff/swproject/repositories/PostRepository.java
