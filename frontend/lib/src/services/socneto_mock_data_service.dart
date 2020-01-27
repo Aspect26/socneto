@@ -117,10 +117,10 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("polarity", AnalysisPropertyType.Number)), AnalysisDataPath("componentId", AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, true),
-    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("keywords", AnalysisPropertyType.Number)), AnalysisDataPath("componentId", AnalysisProperty("accuracy", AnalysisPropertyType.Number))], ChartType.Line, false),
-    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("wordCount", AnalysisPropertyType.Number))], ChartType.Pie, false),
-    ChartDefinition([AnalysisDataPath("componentId", AnalysisProperty("keywords", AnalysisPropertyType.Number))], ChartType.Scatter, false)
+    ChartDefinition([AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true),
+    ChartDefinition([AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
+    ChartDefinition([AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
+    ChartDefinition([AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
   ];
 
   Future<User> login(String username, String password) async =>

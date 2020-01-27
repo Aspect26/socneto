@@ -35,11 +35,11 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
-    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
+    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property).toList();
     if (chartDefinition.chartType == ChartType.Pie) {
       return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
     } else {
-      return await this._getArrayChartData(jobId, analyserId, propertyNames);
+      return await this._getArrayChartData(jobId, analyserId, propertyNames, chartDefinition.isXDateTime);
     }
   }
 
@@ -57,8 +57,8 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     return returnValue;
   }
 
-  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames) async {
-    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames);
+  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames, bool isXPostDate) async {
+    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames, isXPostDate);
     Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
 
     List<List<dynamic>> values = [];
@@ -85,10 +85,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       "chart_type": chartDefinition.chartType.toString().split('.').last,
       "analysis_data_paths": chartDefinition.analysisDataPaths.map((analysisDataPath) => {
         "analyser_component_id": analysisDataPath.analyserId,
-        "analyser_property": {
-          "identifier": analysisDataPath.property.name,
-          "type": analysisDataPath.property.type.toString().split('.').last
-        }
+        "analyser_property": analysisDataPath.property,
       }).toList(),
       "is_x_post_datetime": chartDefinition.isXDateTime
     };
