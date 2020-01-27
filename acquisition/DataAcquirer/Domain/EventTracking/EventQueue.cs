@@ -1,35 +1,40 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
-public class EventQueue
+namespace Domain.EventTracking
 {
-    private readonly ConcurrentQueue<object> _eventQueue;
 
-    public EventQueue()
+    public class EventQueue
     {
-        _eventQueue = new ConcurrentQueue<object>();
-    }
+        private readonly ConcurrentQueue<object> _eventQueue;
 
-    public void Enqueue(object data)
-    {
-        _eventQueue.Enqueue(data);
-    }
-
-    public object Dequeue(CancellationToken cancellationToken)
-    {
-        if (_eventQueue.Count == 0)
+        public EventQueue()
         {
-            return null;
+            _eventQueue = new ConcurrentQueue<object>();
         }
 
-        while (!cancellationToken.IsCancellationRequested)
+        public void Enqueue(object data)
         {
-            if (_eventQueue.TryDequeue(out object objEvent))
+            _eventQueue.Enqueue(data);
+        }
+
+        public object Dequeue(CancellationToken cancellationToken)
+        {
+            if (_eventQueue.Count == 0)
             {
-                return objEvent;
+                return null;
             }
-        }
-        return null;
 
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                if (_eventQueue.TryDequeue(out object objEvent))
+                {
+                    return objEvent;
+                }
+            }
+            return null;
+
+        }
     }
+
 }

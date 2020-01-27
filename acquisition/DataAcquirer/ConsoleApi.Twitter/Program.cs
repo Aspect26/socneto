@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Threading;
 using Infrastructure.Twitter.Abstract;
 using Infrastructure.Metadata;
+using Domain.EventTracking;
 
 namespace ConsoleApi.Twitter
 {
