@@ -42,7 +42,7 @@ namespace Api
                     });
             });
 
-            
+
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
 
@@ -65,8 +65,8 @@ namespace Api
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
             services.AddHttpClient<IComponentRegistry, ComponentStorageProxy>();
-            //#warning using in memory storage
-            //            services.AddSingleton<IComponentRegistry, InMemoryRegistry>();
+//#warning Should be removed
+            //services.AddSingleton<IComponentRegistry, InMemoryRegistry>();
 #endif
             services.AddSingleton<IMessageBrokerApi, KafkaApi>();
 
