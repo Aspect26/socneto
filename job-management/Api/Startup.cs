@@ -1,5 +1,7 @@
-﻿using Domain.Abstract;
+﻿using Domain;
+using Domain.Abstract;
 using Domain.ComponentManagement;
+using Domain.EventTracking;
 using Domain.JobStorage;
 using Domain.Models;
 using Domain.Registration;
@@ -44,17 +46,22 @@ namespace Api
             services.AddHostedService<RegistrationRequestListenerHostedService>();
             services.AddTransient<RegistrationRequestListener>();
 
-//#warning using in memory storage
+            services.AddHostedService<EventSendingHostedService>();
+            services.AddSingleton<EventQueue>();
+
+            //#warning using in memory storage
             //services.AddSingleton<IJobStorage, InMemoryJobStorage>();
             services.AddHttpClient<IJobStorage, JobStorageProxy>();
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
 #if DEBUGx
+            services.AddSingleton(typeof(IEventTracker<>), typeof(NullEventTracker<>));
             services.AddSingleton<IMessageBrokerConsumer, MockKafka>();
             services.AddTransient<IMessageBrokerProducer, MockKafka>();
             services.AddHttpClient<IComponentRegistry, ComponentStorageProxyMock>();
 #else
+            services.AddSingleton(typeof(IEventTracker<>), typeof(EventTracker<>));
             services.AddTransient<IMessageBrokerConsumer, KafkaConsumer>();
             services.AddTransient<IMessageBrokerProducer, KafkaProducer>();
             services.AddHttpClient<IComponentRegistry, ComponentStorageProxy>();
@@ -90,7 +97,11 @@ namespace Api
             services.AddOptions<JobStorageOptions>()
                 .Bind(Configuration.GetSection($"{optionRootName}:JobStorageOptions"))
                 .ValidateDataAnnotations();
-            
+
+            services.AddOptions<ComponentOptions>()
+                            .Bind(Configuration.GetSection($"{optionRootName}:ComponentOptions"))
+                            .ValidateDataAnnotations();
+
             services.AddOptions<JobStorageOptions>()
                 .Bind(Configuration.GetSection($"{optionRootName}:JobStorageOptions"))
                 .ValidateDataAnnotations();
