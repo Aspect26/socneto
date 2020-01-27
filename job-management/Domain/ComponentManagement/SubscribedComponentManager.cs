@@ -139,7 +139,8 @@ namespace Domain.ComponentManagement
             foreach (var dataAcquirer in jobConfigUpdateCommand.DataAcquirers)
             {
                 var attributes = jobConfigUpdateCommand
-                    .Attributes ?? new JObject();
+                    .Attributes.GetValue(dataAcquirer)?.ToObject<JObject>() ?? new JObject();
+
                 try
                 {
                     var topicQuery = new JProperty("TopicQuery", jobConfigUpdateCommand.TopicQuery);
@@ -217,7 +218,6 @@ namespace Domain.ComponentManagement
                     analysers.Add(analyserComponent);
                 }
             }
-
 
             var notification = new AnalyserConfigUpdateNotification()
             {
