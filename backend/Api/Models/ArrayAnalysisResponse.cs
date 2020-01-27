@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
 {
     public class ArrayAnalysisResponse
     {
-        // TODO: object :(
         [JsonProperty("data")]
-        public List<List<object>> Result { get; set; }  
+        public List<JArray> Result { get; set; }  
         
         public static ArrayAnalysisResponse FromModel(ArrayAnalysisResult analysisResult)
         {

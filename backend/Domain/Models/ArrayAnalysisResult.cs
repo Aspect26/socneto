@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Socneto.Domain.Models
 {
@@ -8,8 +9,7 @@ namespace Socneto.Domain.Models
         [JsonProperty("resultName")]
         public string ResultName { get; set; }
         
-        // TODO: object? :(
         [JsonProperty("list")]
-        public List<List<object>> Result { get; set; }
+        public List<JArray> Result { get; set; }
     }
 }
