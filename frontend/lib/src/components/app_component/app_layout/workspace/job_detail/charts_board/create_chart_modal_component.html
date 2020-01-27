@@ -33,11 +33,10 @@
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
-                                              buttonText="{{ dataPath.property.name }}"
+                                              buttonText="{{ dataPath.property }}"
                                               [disabled]="useTimeAsX && first"
                                               [(selection)]="dataPath.property"
-                                              [options]="getAnalyserProperties(dataPath.analyserId)"
-                                              [itemRenderer]="propertyItemRenderer">
+                                              [options]="getAnalyserProperties(dataPath.analyserId)">
                     </material-dropdown-select>
                 </div>
 
