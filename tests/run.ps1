@@ -21,7 +21,7 @@ Start-Sleep -s 15
 # act & assert
 echo "start testing"
 
-python code/main.py ./code/config.json ./code/cred.json
+python code/test_da.py ./code/config.json ./code/cred.json
 
 # clean
 echo "cleaning"
