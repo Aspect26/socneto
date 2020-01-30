@@ -106,6 +106,7 @@ services:
     container_name: backend
     depends_on:
       - storage
+      - jms
 
   sentiment-analyser:
     container_name: se
