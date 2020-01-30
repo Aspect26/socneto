@@ -6,4 +6,8 @@
        chartId="i{{ i }}">
 </chart>
 
-<create-chart-button [ngClass]="{ 'highlight': chartDefinitions.length % 2 == 0 }" [job]="job"></create-chart-button>
+<create-chart-button
+        [ngClass]="{ 'highlight': chartDefinitions.length % 2 == 0 }"
+        [job]="job"
+        (onChartCreated)="onNewChartCreated($event)">
+</create-chart-button>

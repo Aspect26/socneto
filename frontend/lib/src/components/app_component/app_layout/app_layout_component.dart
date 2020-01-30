@@ -74,7 +74,7 @@ class AppLayoutComponent {
     try {
       this.currentPlatformStatus = await this._socnetoService.getPlatformStatus();
       this.backendStatus = SocnetoComponentStatus.RUNNING;
-    } catch (HttpException) {
+    } on HttpException {
       this.currentPlatformStatus = null;
       this.backendStatus = SocnetoComponentStatus.STOPPED;
     }
