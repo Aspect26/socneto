@@ -53,9 +53,13 @@ class ChartsBoardComponent implements AfterChanges {
   void ngAfterChanges() async {
     try {
       this.chartDefinitions = await this._socnetoService.getJobChartDefinitions(this.job.id);
-    } on HttpException catch(e) {
+    } on HttpException {
       Toastr.error("Charts", "Could not fetch charts for this job");
     }
+  }
+
+  void onNewChartCreated(ChartDefinition chartDefinition) async {
+    this.chartDefinitions.add(chartDefinition);
   }
 
 }
