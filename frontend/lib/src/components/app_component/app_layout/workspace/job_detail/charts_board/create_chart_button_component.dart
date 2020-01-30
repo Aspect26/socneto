@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus_item.dart';
@@ -50,8 +52,11 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class CreateChartButtonComponent {
 
-  @Input() Job job;
   @ViewChild(CreateChartModalComponent) CreateChartModalComponent createChartModal;
+  @Input() Job job;
+
+  final _chartCreatedController = StreamController<ChartDefinition>();
+  @Output() Stream<ChartDefinition> get onChartCreated => _chartCreatedController.stream;
 
   final SocnetoService _socnetoService;
 
@@ -76,6 +81,7 @@ class CreateChartButtonComponent {
 
     if (response.success) {
       Toastr.success("Success", "The chart was successfully created!");
+      this._chartCreatedController.add(chartDefinition);
     } else {
       Toastr.success("Error", "Could not create the chart :(");
     }
