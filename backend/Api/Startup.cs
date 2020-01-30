@@ -67,7 +67,8 @@ namespace Socneto.Api
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"))
                 .Configure<JMSOptions>(Configuration.GetSection("Socneto:JobManagementServiceOptions"))
-                .Configure<StorageOptions>(Configuration.GetSection("Socneto:StorageOptions"));
+                .Configure<StorageOptions>(Configuration.GetSection("Socneto:StorageOptions"))
+                .Configure<DefaultAcquirersCredentialsOptions>(Configuration.GetSection("Socneto:DefaultAcquirersCredentials"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
