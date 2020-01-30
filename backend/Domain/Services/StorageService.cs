@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -40,7 +41,15 @@ namespace Socneto.Domain.Services
 
         public async Task<User> GetUser(string username)
         {
-            return await _httpService.Get<User>($"users?username={username}");
+            try
+            {
+                return await _httpService.Get<User>($"users?username={username}");
+            }
+            catch (HttpRequestException)
+            {
+                // TODO: this is here only because storage returns 500 if the user is not found :(
+                return null;
+            }
         }
 
         public async Task<IList<Job>> GetUserJobs(string username)

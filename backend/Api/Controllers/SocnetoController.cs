@@ -9,16 +9,11 @@ namespace Socneto.Api.Controllers
     {
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            var responseCode = Response.StatusCode;
-            var exception = context.Exception;
-
-            if (exception is ServiceUnavailableException)
+            if (context.Exception is ServiceUnavailableException)
             {
-                responseCode = StatusCodes.Status503ServiceUnavailable;
                 context.ExceptionHandled = true;
+                Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
             }
-
-            Response.StatusCode = responseCode;
 
             base.OnActionExecuted(context);
         }

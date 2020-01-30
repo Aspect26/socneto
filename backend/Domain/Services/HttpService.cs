@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -32,7 +33,7 @@ namespace Socneto.Domain.Services
             }
             catch (HttpRequestException e)
             {
-                throw new ServiceUnavailableException(_host, e);
+                throw WrapHttpException(e);
             }
         }
         
@@ -51,7 +52,7 @@ namespace Socneto.Domain.Services
             }
             catch (HttpRequestException e)
             {
-                throw new ServiceUnavailableException(_host, e);
+                throw WrapHttpException(e);
             }
         }
         
@@ -70,8 +71,18 @@ namespace Socneto.Domain.Services
             }
             catch (HttpRequestException e)
             {
-                throw new ServiceUnavailableException(_host, e);
+                throw WrapHttpException(e);
             }
+        }
+
+        private Exception WrapHttpException(HttpRequestException exception)
+        {
+            if (exception.InnerException is SocketException)
+            {
+                return new ServiceUnavailableException(_host, exception);
+            }
+
+            return exception;
         }
         
         private string GetFullPath(string path)
