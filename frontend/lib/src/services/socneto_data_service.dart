@@ -8,6 +8,7 @@ import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobSubmitRequest.dart';
 import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
@@ -22,6 +23,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   static const String API_PREFIX = "api";
 
   SocnetoDataService() : super(API_URL, API_PREFIX);
+
+  Future<PlatformStatus> getPlatformStatus() async =>
+      await this.get<PlatformStatus>("platform_status", (result) => PlatformStatus.fromMap(result));
 
   Future<User> login(String username, String password) async {
     var data = { "username": username, "password": password };

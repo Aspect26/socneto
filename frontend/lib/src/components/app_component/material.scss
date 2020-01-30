@@ -215,4 +215,10 @@
     color: get-color($primary, 400);
   }
 
+  material-drawer {
+    .drawer-content {
+      background-color: get-color($background, 200) !important;
+    }
+  }
+
 }
