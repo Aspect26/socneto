@@ -65,6 +65,7 @@ class HttpServiceBase {
       case 403: throw ForbiddenException(); break;
       case 404: throw NotFoundException(); break;
       case 500: throw InternalServerErrorException(); break;
+      case 503: throw  ServiceUnavailableException(); break;
       default: throw HttpException(response.statusCode, "No description"); break;
     }
   }
