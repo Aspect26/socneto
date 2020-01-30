@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,7 +33,7 @@ namespace Socneto.Domain.Services
             {
                 return (await _httpService.Get<User>("users?username=admin")) != null;
             }
-            catch (SocketException)
+            catch (HttpRequestException)
             {
                 return false;
             }
