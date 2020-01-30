@@ -3,13 +3,17 @@ import 'dart:async';
 import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
+import 'package:sw_project/src/models/Credentials.dart';
+import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/JobSubmitRequest.dart';
 import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
+import 'package:tuple/tuple.dart';
 
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
@@ -24,11 +28,22 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     return await this.post<User>("user/login", data, (result) => User.fromMap(result));
   }
 
+  Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> acquirers,
+      List<SocnetoComponent> analyzers, String language,
+      List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentials)
+  async {
+    var request = JobSubmitRequest(jobName, query, acquirers, analyzers, language, credentials);
+    return (await this.post<JobStatus>("job/create", request.toMap(), (result) => JobStatus.fromMap(result)));
+  }
+
+  Future<JobStatus> stopJob(String jobId) async =>
+      await this.get<JobStatus>("job/$jobId/stop", (result) => JobStatus.fromMap(result));
+
   Future<Job> getJob(String jobId) async =>
       await this.get<Job>("job/$jobId/status", (result) => Job.fromMap(result));
 
-  Future<List<Job>> getUserJobs(String username) async =>
-      await this.getList<Job>("job/$username/all", (result) => Job.fromMap(result));
+  Future<List<Job>> getUserJobs() async =>
+      await this.getList<Job>("job/all", (result) => Job.fromMap(result));
 
   Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
       await this.get<PaginatedAnalyzedPosts>("job/$jobId/posts?page=$page&pageSize=$pageSize", (result) => PaginatedAnalyzedPosts.fromMap(result));
