@@ -5,7 +5,7 @@ namespace Socneto.Domain.Models
 {
     public class JobStatus
     {
-        [JsonProperty("job_id")]
+        [JsonProperty("jobId")]
         public Guid JobId { get; set; }
         
         [JsonProperty("status")]
