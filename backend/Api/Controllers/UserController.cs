@@ -7,7 +7,7 @@ using Socneto.Domain.Services;
 namespace Socneto.Api.Controllers
 {
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : SocnetoController
     {
         private readonly IUserService _userService;
 
