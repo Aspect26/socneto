@@ -127,7 +127,97 @@ Basic authorization
 }
 ```
 
-TODO: job submit and job stop 
+### Submit new job
+
+Creates a new job for the authenticated user
+
+`POST api/job/create`
+
+#### Authorization
+
+Basic authorization
+
+#### Request parameters
+
+**Body**:
+
+```json
+{
+  "job_name": "<string>",
+  "topic_query": "<string>",
+  "selected_acquirers": "<string[]>",
+  "selected_analysers": "<string[]>",
+  "language": "<enum>",
+  "credentials": {
+    "<string:acquirerId>": {
+      "twitter": {
+        "api_key": "<string>",
+        "api_secret_key": "<string>",
+        "access_token": "<string>",
+        "access_token_secret": "<string>"
+      },
+      "reddit": {
+        "app_id": "<string>",
+        "app_secret": "<string>",
+        "refresh_token": "<string>"
+      }
+    }
+  }
+}
+```
+
+#### Response
+
+**Codes**
+
+| Status code | Description                                                            |
+| :---------- | :--------------------------------------------------------------------- |
+| `200`       | Request was successful. The new job status can be found in the body |
+| `401`       | No user or unknown user in authorization header |
+
+**Example**
+```json
+{
+  "job_id": "<guid>",
+  "status": "<enum>"
+}
+```
+
+### Stop a job
+
+Stops a given job
+
+`GET api/job/{jobId}/stop}`
+
+#### Authorization
+
+Basic authorization
+
+#### Request parameters
+
+**Query parameters**
+
+| Name | Description                    | Example |
+| :--- | :----------------------        |:--- |
+| `jobId` | GUID of the job to be stopped | `09cb74d9-1fad-47ed-9af8-5f90f01a1a34` |
+
+#### Response
+
+**Codes**
+
+| Status code | Description                                                            |
+| :---------- | :--------------------------------------------------------------------- |
+| `200`       | Request was successful. The new job status can be found in the body |
+| `401`       | The user is not authorized to stop the given job. |
+
+**Example**
+```json
+{
+  "job_id": "<guid>",
+  "status": "<enum>"
+}
+```
+
 TODO: components_status 
 
 ### Job posts
