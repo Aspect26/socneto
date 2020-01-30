@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,7 +32,7 @@ namespace Socneto.Domain.Services
             {
                 return (await _httpService.Get<User>("users?username=admin")) != null;
             }
-            catch (HttpRequestException)
+            catch (ServiceUnavailableException)
             {
                 return false;
             }

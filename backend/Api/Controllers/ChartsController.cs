@@ -14,7 +14,7 @@ namespace Socneto.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    public class ChartsController : ControllerBase
+    public class ChartsController : SocnetoController
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IChartsService _chartsService;

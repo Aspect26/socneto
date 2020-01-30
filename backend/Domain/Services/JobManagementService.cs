@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -28,7 +27,7 @@ namespace Socneto.Domain.Services
                 var hello = await _httpService.Get<JMSHello>("api/test/say-hello");
                 return hello.Message == "hello";
             }
-            catch (HttpRequestException)
+            catch (ServiceUnavailableException)
             {
                 return false;
             }

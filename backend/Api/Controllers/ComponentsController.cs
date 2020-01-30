@@ -12,7 +12,7 @@ namespace Socneto.Api.Controllers
     
     [Authorize]
     [ApiController]
-    public class ComponentsController : ControllerBase
+    public class ComponentsController : SocnetoController
     {
 
         private readonly IStorageService _storageService;
