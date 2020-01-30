@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,7 +25,20 @@ namespace Socneto.Domain.Services
             var host = storageOptionsObject.Value.ServerAddress;
             _httpService = new HttpService<StorageService>(host, logger);
         }
-        
+
+        public async Task<bool> ComponentRunning()
+        {
+            // TODO: this is a hack
+            try
+            {
+                return (await _httpService.Get<User>("users?username=admin")) != null;
+            }
+            catch (SocketException)
+            {
+                return false;
+            }
+        }
+
         public async Task<User> GetUser(string username)
         {
             return await _httpService.Get<User>($"users?username={username}");

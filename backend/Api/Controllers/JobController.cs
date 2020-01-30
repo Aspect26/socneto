@@ -65,13 +65,16 @@ namespace Socneto.Api.Controllers
             AppSecret = _defaultAcquirersCredentials.Reddit.AppSecret,
             RefreshToken = _defaultAcquirersCredentials.Reddit.RefreshToken
         };
-        
+
         [HttpGet]
-        [Route("api/job/{username}/all")]
-        public async Task<ActionResult<List<JobDto>>> GetJobs([FromRoute] string username)
+        [Route("api/job/all")]
+        public async Task<ActionResult<List<JobDto>>> GetJobs()
         {
-            if (!IsAuthenticatedTo(username))
+            var username = User.Identity.Name;
+            if (username == null)
+            {
                 return Unauthorized();
+            }
             
             var jobStatuses = await _jobService.GetJobsDetails(username);
 
@@ -83,12 +86,14 @@ namespace Socneto.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/job/{username}/create")]
-        public async Task<ActionResult<JobStatus>> SubmitJob([FromRoute] string username, [FromBody] JobSubmitRequest request)
+        [Route("api/job/create")]
+        public async Task<ActionResult<JobStatus>> SubmitJob([FromBody] JobSubmitRequest request)
         {
-            if (!IsAuthenticatedTo(username))
+            if (User.Identity.Name == null)
+            {
                 return Unauthorized();
-
+            }
+            
             if (request.Credentials == null)
             {
                 request.Credentials = new Dictionary<string, AcquirerCredentials>();
@@ -125,7 +130,7 @@ namespace Socneto.Api.Controllers
             };
             return Ok(await _jobManagementService.SubmitJob(jobSubmit));
         }
-        
+
         [HttpGet]
         [Route("api/job/{jobId:guid}/stop")]
         public async Task<ActionResult<JobStatus>> StopJob([FromRoute] Guid jobId)
@@ -198,14 +203,6 @@ namespace Socneto.Api.Controllers
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
-        }
-        
-        private bool IsAuthenticatedTo(string username)
-        {
-            if (!User.Identity.IsAuthenticated)
-                return false;
-            
-            return username == User.Identity.Name;
         }
     }
 }
