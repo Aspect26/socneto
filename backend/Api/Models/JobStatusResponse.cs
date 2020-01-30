@@ -1,11 +1,12 @@
 using System;
 using Newtonsoft.Json;
+using Socneto.Domain.Models;
 
-namespace Socneto.Domain.Models
+namespace Socneto.Api.Models
 {
-    public class JobStatus
+    public class JobStatusResponse
     {
-        [JsonProperty("jobId")]
+        [JsonProperty("job_id")]
         public Guid JobId { get; set; }
         
         [JsonProperty("status")]

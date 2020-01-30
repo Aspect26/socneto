@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Socneto.Domain.Models;
-using Socneto.Infrastructure;
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
 

@@ -20,14 +20,14 @@ namespace Socneto.Domain.Services
             _httpService = new HttpService<JobManagementService>(host, logger);
         }
 
-        public async Task<JobStatus> SubmitJob()
+        public async Task<JobStatus> SubmitJob(JobSubmit jobSubmit)
         {
-            throw new System.NotImplementedException();
+            return await _httpService.Post<JobStatus>($"api/job/submit", jobSubmit);
         }
 
-        public async Task<JobStatus> StopJob(string jobId)
+        public async Task<JobStatus> StopJob(Guid jobId)
         {
-            return await _httpService.Get<JobStatus>($"job/stop/{jobId}");
+            return await _httpService.Get<JobStatus>($"api/job/stop/{jobId}");
         }
     }
 }
