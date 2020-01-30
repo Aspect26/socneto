@@ -38,7 +38,6 @@ namespace Domain.Registration
 
         private async Task ProcessRegistrationRequest(string registrationRequest)
         {
-
             _logger.LogInformation("Registration request accepted: {registrationRequestJson}",
                 registrationRequest);
 
@@ -54,7 +53,6 @@ namespace Domain.Registration
             }
             try
             {
-
                 await _registrationRequestProcessor.ProcessRequestAsync(registrationRequestMessage);
             }
             catch (ArgumentException ae)
