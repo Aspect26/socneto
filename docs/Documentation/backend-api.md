@@ -43,9 +43,9 @@ Verifies whether given username and password are valid
 
 ### Get All
 
-Retrieves all jobs created by user
+Retrieves all jobs created by user authenticated from the authorization header
 
-`GET /api/job/{username}/all`
+`GET /api/job/all`
 
 #### Authorization
 
@@ -126,6 +126,9 @@ Basic authorization
   "finishedAt": "<datetime>"
 }
 ```
+
+TODO: job submit and job stop 
+TODO: components_status 
 
 ### Job posts
 
