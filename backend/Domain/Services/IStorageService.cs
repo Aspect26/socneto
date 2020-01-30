@@ -10,6 +10,8 @@ namespace Socneto.Domain.Services
 {
     public interface IStorageService
     {
+        Task<bool> ComponentRunning();
+        
         Task<User> GetUser(string username);
 
         Task<IList<Job>> GetUserJobs(string username);
@@ -33,6 +35,5 @@ namespace Socneto.Domain.Services
         Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest);
 
         Task<ArrayAnalysisResult> GetAnalysisArray(GetArrayAnalysisStorageRequest getAnalysisStorageRequest);
-
     }
 }
