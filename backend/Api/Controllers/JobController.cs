@@ -87,7 +87,7 @@ namespace Socneto.Api.Controllers
 
         [HttpPost]
         [Route("api/job/create")]
-        public async Task<ActionResult<JobStatus>> SubmitJob([FromBody] JobSubmitRequest request)
+        public async Task<ActionResult<JobStatusResponse>> SubmitJob([FromBody] JobSubmitRequest request)
         {
             if (User.Identity.Name == null)
             {
@@ -128,17 +128,30 @@ namespace Socneto.Api.Controllers
                 Language = request.Language,
                 Attributes = attributes
             };
-            return Ok(await _jobManagementService.SubmitJob(jobSubmit));
+
+            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit);
+            var response = new JobStatusResponse
+            {
+                JobId = jobStatus.JobId,
+                Status = jobStatus.Status,
+            };
+            return Ok(response);
         }
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/stop")]
-        public async Task<ActionResult<JobStatus>> StopJob([FromRoute] Guid jobId)
+        public async Task<ActionResult<JobStatusResponse>> StopJob([FromRoute] Guid jobId)
         {
             if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
                 return Unauthorized();
 
-            return Ok(await _jobManagementService.StopJob(jobId));
+            var jobStatus = await _jobManagementService.StopJob(jobId);
+            var response = new JobStatusResponse
+            {
+                JobId = jobStatus.JobId,
+                Status = jobStatus.Status,
+            };
+            return Ok(response);
         }
 
         [HttpGet]

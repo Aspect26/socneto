@@ -150,6 +150,7 @@ namespace Application
                     //rootConfiguration = configurationBuilder.Build();
                     environment = hostingContext.HostingEnvironment;
                 })
+                
                 .ConfigureServices(services =>
                     ConfigureServices(services, configuration, isDevelopment ?? false))
                 .Configure(app =>
