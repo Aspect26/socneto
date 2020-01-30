@@ -1,4 +1,4 @@
-namespace Socneto.Infrastructure
+namespace Socneto.Domain
 {
     public class StorageOptions
     {
