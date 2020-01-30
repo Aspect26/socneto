@@ -120,7 +120,7 @@ class JobListComponent implements AfterChanges {
 
   void _loadData() async {
     try {
-      this.jobs = await this._socnetoService.getUserJobs(this.username);
+      this.jobs = await this._socnetoService.getUserJobs();
       this.paginator = Paginator(this.jobs.length, this.paginator.currentPage, PAGE_SIZE);
     } on HttpException catch (e) {
       this.jobs = [];

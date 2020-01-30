@@ -129,7 +129,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<Job> getJob(String jobId) async =>
     Future.value(mockJobs.firstWhere((job) => job.id == jobId));
 
-  Future<List<Job>> getUserJobs(String username) async =>
+  Future<List<Job>> getUserJobs() async =>
     Future.value(mockJobs);
 
   Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
