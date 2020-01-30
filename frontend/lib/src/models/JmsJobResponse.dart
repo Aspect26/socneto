@@ -9,7 +9,7 @@ class JobStatus {
   JobStatus(this.status, this.jobId);
 
   JobStatus.fromMap(Map data) :
-        jobId = data["jobId"],
+        jobId = data["job_id"],
         status = getEnumByString(JobStatusCode.values, data["status"], JobStatusCode.Running);
 
 }
