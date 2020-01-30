@@ -2,8 +2,12 @@
     "kafka": {
         "kafka_server": "localhost:9094"
     },
+    "uris":{
+        "jms_submit_uri":"http://localhost:5100/api/job/submit"
+    },
     "topics": {
         "sentiment": "job_management.component_data_input.DataAnalyser_topics",
-        "data_acquirer_update_topic": "job_management.job_configuration.DataAcquirer_Twitter"
+        "data_acquirer_update_topic": "job_management.job_configuration.DataAcquirer_Twitter",
+        "registration_channel_name":"job_management.registration.request"
     }
 }

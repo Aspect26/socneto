@@ -13,17 +13,28 @@ class KafkaClient:
         future = self.producer.send(topic, post_bytes)
         future.get(timeout=60)
 
-    def consume_topic(self, topic):
-        consumer = KafkaConsumer( topic, bootstrap_servers=self._server_address)
-        while True:
+    def get_message_from_topic(self, topic, repeat_times = 10):
+        consumer = KafkaConsumer(
+            bootstrap_servers=self._server_address, 
+            auto_offset_reset='earliest',
+            group_id = 'tester_consumer_'+topic,
+            consumer_timeout_ms=1000)
+
+        consumer.subscribe([topic])
+        i =0
+        
+        while repeat_times==0 or i < repeat_times:
             for msg in consumer:
                 try:
                     payload = msg.value
-                    yield json.loads(payload)                    
+                    return json.loads(payload)    
                 except Exception as ex:
                     print(ex)
+                    return None
+                finally:
+                    consumer.close()                    
+            i+=1
             
-
 
     def produce_start_job(self,
                         topic,
@@ -39,7 +50,7 @@ class KafkaClient:
             'jobId':jobId,
             'command':'Start',
             'attributes':attributes,
-            'outputMessageBrokerChannels':outputMessageBrokerChannels
+            'outputChannelNames':outputMessageBrokerChannels
         }
         self.produce_request(request,topic)
 
@@ -78,3 +89,6 @@ class KafkaClient:
             "dateTime":dateTime
         }
         self.produce_request(request,topic)
+
+    def __del__(self):
+        self.producer.close()  

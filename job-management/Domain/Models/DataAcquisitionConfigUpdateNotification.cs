@@ -18,7 +18,7 @@ namespace Domain.Models
         [JsonProperty("attributes")]
         public JObject Attributes { get; set; }
 
-        [JsonProperty("outputMessageBrokerChannels")]
+        [JsonProperty("outputChannelNames")]
         public string[]  OutputMessageBrokerChannels { get; set; }
     }
 }

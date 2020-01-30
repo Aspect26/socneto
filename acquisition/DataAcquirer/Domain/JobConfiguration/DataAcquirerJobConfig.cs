@@ -9,7 +9,7 @@ namespace Domain.JobConfiguration
     public enum JobCommand
     {
         Start, Stop
-    }
+    }   
     public class DataAcquirerJobConfig
     {
         [JsonProperty("jobId")]
@@ -22,7 +22,7 @@ namespace Domain.JobConfiguration
         [JsonProperty("attributes")]
         public Dictionary<string, string> Attributes { get; set; }
 
-        [JsonProperty("outputMessageBrokerChannels")]
+        [JsonProperty("outputChannelNames")]
         public string[] OutputMessageBrokerChannels { get; set; }
     }
 

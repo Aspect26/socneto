@@ -143,7 +143,6 @@ namespace Domain.Registration
             string componentType,
             JObject attributes)
         {
-
             if (componentType == _componentIdentifiers.AnalyserComponentTypeName)
             {
                 ValidateDataAnalyser(attributes);

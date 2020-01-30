@@ -15,8 +15,8 @@ namespace Infrastructure.ComponentManagement
         private readonly ConcurrentDictionary<string, ComponentModel> _components
             = new ConcurrentDictionary<string, ComponentModel>();
 
-        private readonly ConcurrentDictionary<Guid, JobComponentConfig> _jobComponentConfigs
-            = new ConcurrentDictionary<Guid, JobComponentConfig>();
+        private readonly ConcurrentDictionary<string, List<JobComponentConfig>> _jobComponentConfigs
+            = new ConcurrentDictionary<string, List<JobComponentConfig>>();
 
         private readonly StorageChannelNames _storageChannelNames;
         private readonly ILogger<InMemoryRegistry> _logger;
@@ -47,13 +47,23 @@ namespace Infrastructure.ComponentManagement
 
         public Task<List<JobComponentConfig>> GetAllComponentJobConfigsAsync(string componentId)
         {
-            var configs = _jobComponentConfigs.Values.ToList();
-            return Task.FromResult(configs);
+            if (_jobComponentConfigs.TryGetValue(componentId, out var configs))
+            {
+                return Task.FromResult(configs.ToList());
+            }
+            return Task.FromResult(new List<JobComponentConfig>());
         }
 
         public Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
         {
-            _jobComponentConfigs.TryAdd(jobConfig.JobId, jobConfig);
+            _jobComponentConfigs.AddOrUpdate(
+                jobConfig.ComponentId,
+                new List<JobComponentConfig> { jobConfig },
+                (key, list) =>
+                {
+                    list.Add(jobConfig);
+                    return list;
+                });
             return Task.CompletedTask;
         }
 
