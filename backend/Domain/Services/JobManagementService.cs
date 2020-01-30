@@ -1,4 +1,5 @@
 using System;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,19 @@ namespace Socneto.Domain.Services
             
             var host = jmsOptionsObject.Value.ServerAddress;
             _httpService = new HttpService<JobManagementService>(host, logger);
+        }
+
+        public async Task<bool> ComponentRunning()
+        {
+            try
+            {
+                var hello = await _httpService.Get<JMSHello>("api/test/say-hello");
+                return hello.Message == "hello";
+            }
+            catch (SocketException)
+            {
+                return false;
+            }
         }
 
         public async Task<JobStatus> SubmitJob(JobSubmit jobSubmit)
