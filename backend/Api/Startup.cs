@@ -62,9 +62,11 @@ namespace Socneto.Api
                 .AddTransient<IUserService, UserService>()
                 .AddTransient<IGetAnalysisService, GetAnalysisService>()
                 .AddTransient<IChartsService, ChartsService>()
+                .AddTransient<IJobManagementService, JobManagementService>()
                 .AddTransient<IStorageService, StorageService>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"))
+                .Configure<JMSOptions>(Configuration.GetSection("Socneto:JobManagementServiceOptions"))
                 .Configure<StorageOptions>(Configuration.GetSection("Socneto:StorageOptions"));
         }
 
