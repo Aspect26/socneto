@@ -3,6 +3,7 @@ library toastr_interop;
 
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
+import 'package:sw_project/src/services/base/exceptions.dart';
 
 typedef ToastrNotificationFn = Function(String message, [String title, dynamic options]);
 
@@ -22,6 +23,7 @@ external ToastrInterface get toastr;
 class Toastr {
   static void success(String title, String message) => toastr.success(message, title, defaultOptions);
   static void error(String title, String message) => toastr.error(message, title, defaultOptions);
+  static void httpError(HttpException exception) => toastr.error("${exception.statusCode} - ${exception.description}", "Communication error", defaultOptions);
   static void info(String title, String message) => toastr.info(message, title, defaultOptions);
   static void warning(String title, String message) => toastr.warning(message, title, defaultOptions);
 }
