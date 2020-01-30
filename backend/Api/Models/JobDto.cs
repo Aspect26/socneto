@@ -12,7 +12,7 @@ namespace Socneto.Api.Models
         public string JobName { get; set; }
         
         [JsonConverter(typeof(StringEnumConverter))]
-        public  JobStatus Status { get; set; }
+        public  JobStatusCode Status { get; set; }
         
         public DateTime StartedAt { get; set; }
         
