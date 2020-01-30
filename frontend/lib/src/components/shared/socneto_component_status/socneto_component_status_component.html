@@ -1,0 +1,11 @@
+<ng-template *ngIf="componentStatus != null">
+    <img *ngIf="componentStatus == stoppedStatus"
+         src="/packages/sw_project/static/images/icons/status_stop.png" alt="Status - stopped" height="16">
+    <img *ngIf="componentStatus == startingStatus"
+         src="/packages/sw_project/static/images/icons/status_starting.png" alt="Status - starting" height="16">
+    <img *ngIf="componentStatus == runningStatus"
+         src="/packages/sw_project/static/images/icons/status_running.png" alt="Status - running" height="16">
+</ng-template>
+<ng-template *ngIf="componentStatus == null">
+    <img src="/packages/sw_project/static/images/icons/status_unknown.png" alt="Status unknown" height="16">
+</ng-template>

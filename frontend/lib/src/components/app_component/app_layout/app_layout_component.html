@@ -1,16 +1,21 @@
-<material-drawer temporary #drawer="drawer">
+<material-drawer temporary #drawer="drawer" (visibleChange)="onDrawerToggled($event)">
     <material-list *deferredContent>
         <div group class="mat-drawer-spacer"></div>
+        <h2>Platform status</h2>
 
         <div group>
-            <div label>Actions</div>
+            <div label>Core components</div>
 
             <material-list-item>
-                <material-icon icon="settings"></material-icon>Settings
+                <socneto-component-status [componentStatus]="backendStatus"></socneto-component-status> Backend
             </material-list-item>
 
             <material-list-item>
-                <material-icon icon="send"></material-icon>Logout
+                <socneto-component-status [componentStatus]="currentPlatformStatus?.jmsStatus"></socneto-component-status> JMS
+            </material-list-item>
+
+            <material-list-item>
+                <socneto-component-status [componentStatus]="currentPlatformStatus?.storageStatus"></socneto-component-status> Storage
             </material-list-item>
 
         </div>
@@ -21,13 +26,11 @@
 
     <header class="material-header shadow dense-header">
         <div class="material-header-row">
-            <!--
             <material-button icon
                              class="material-drawer-button"
                              (trigger)="drawer.toggle()">
                 <material-icon icon="menu"></material-icon>
             </material-button>
-            -->
             <span class="material-header-title"><b>SOCNETO</b> v0.8-beta</span>
             <div class="material-spacer"></div>
         </div>

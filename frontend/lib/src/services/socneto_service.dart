@@ -3,6 +3,7 @@ import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
@@ -41,6 +42,8 @@ class SocnetoService {
     return result;
   }
 
+  Future<PlatformStatus> getPlatformStatus() async =>
+      await this._dataService.getPlatformStatus();
   Future<Job> getJob(String jobId) async =>
       await this._dataService.getJob(jobId);
   Future<List<Job>> getUserJobs() async =>
@@ -58,7 +61,7 @@ class SocnetoService {
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       await this._dataService.getAvailableAnalyzers();
   Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers,
-        String language, List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentials) async =>
+      String language, List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentials) async =>
       await this._dataService.submitNewJob(jobName, query, networks, analyzers, language, credentials);
   Future<JobStatus> stopJob(String jobId) async =>
       await this._dataService.stopJob(jobId);
