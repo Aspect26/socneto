@@ -8,6 +8,7 @@
         <material-input
                 floatingLabel
                 [(ngModel)]="username"
+                [disabled]="!platformStarted"
                 class="labeled-input">
         </material-input>
 
@@ -16,11 +17,17 @@
                 type="password"
                 floatingLabel
                 [(ngModel)]="password"
+                [disabled]="!platformStarted"
                 class="labeled-input">
         </material-input>
 
-        <material-button *ngIf="isInputValid()"  raised (trigger)="onLogin($event)">Login</material-button>
-        <material-button *ngIf="!isInputValid()" raised disabled>Login</material-button>
+        <platform-startup-info (onPlatformStarted)="platformStarted = true"></platform-startup-info>
 
+        <material-button
+                raised
+                [disabled]="!isInputValid() || !platformStarted"
+                (trigger)="onLogin($event)">
+            Login
+        </material-button>
     </div>
 </div>

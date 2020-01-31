@@ -12,6 +12,7 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/create_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
+import 'package:sw_project/src/components/shared/platform_startup_info/platform_startup_info_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -33,6 +34,7 @@ import 'package:sw_project/src/utils.dart';
     MaterialListItemComponent,
     MaterialSelectItemComponent,
     MaterialButtonComponent,
+    PlatformStartupInfoComponent,
     PaginatorComponent,
     CreateJobModal,
     NgFor,
@@ -60,6 +62,7 @@ class JobListComponent implements AfterChanges {
   List<Job> jobs = [];
   List<Job> displayedJobs = [];
   Job selectedJob;
+  bool isPlatformRunning;
 
   JobListComponent(this._socnetoService, this._router);
 
@@ -73,6 +76,11 @@ class JobListComponent implements AfterChanges {
   JobStatusCode get runningJobStatus => JobStatusCode.Running;
   JobStatusCode get stoppedJobStatus => JobStatusCode.Stopped;
   String jobUrl(String jobId) => RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId));
+
+  void onPlatformStarted() {
+    this.isPlatformRunning = true;
+    this._loadData();
+  }
 
   void selectJob(String jobId) {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));
