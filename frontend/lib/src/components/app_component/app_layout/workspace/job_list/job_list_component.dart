@@ -164,6 +164,9 @@ class JobListComponent implements AfterChanges {
   void _onLoadDataError(HttpException error) {
     if (error.statusCode == 401) {
       this._router.navigate(RoutePaths.notAuthorized.toUrl());
+    } else {
+      Toastr.httpError(error);
+      return;
     }
 
     throw error;

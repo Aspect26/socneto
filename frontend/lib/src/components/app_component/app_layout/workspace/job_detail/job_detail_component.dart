@@ -9,6 +9,7 @@ import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
+import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -59,6 +60,8 @@ class JobDetailComponent implements OnActivate {
       this.job = await this._socnetoService.getJob(jobId);
     } on NotAuthorizedException {
       await this._router.navigate(RoutePaths.notAuthorized.toUrl());
+    } on HttpException catch (e) {
+      Toastr.httpError(e);
     }
   }
 
