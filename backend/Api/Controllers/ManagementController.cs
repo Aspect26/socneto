@@ -12,7 +12,7 @@ using Socneto.Infrastructure.Kafka;
 namespace Socneto.Api.Controllers
 {
     [ApiController]
-    public class ManagementController : ControllerBase
+    public class ManagementController : SocnetoController
     {
 
         private readonly IJobManagementService _jobManagementService;

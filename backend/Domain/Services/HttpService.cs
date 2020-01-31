@@ -1,4 +1,6 @@
+using System;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -22,11 +24,17 @@ namespace Socneto.Domain.Services
         {
             var fullPath = GetFullPath(path);
             _logger.LogDebug($"GET /{path}");
-            
-            var response = await _client.GetAsync(fullPath);
-            response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsAsync<TResult>();
+            try
+            {
+                var response = await _client.GetAsync(fullPath);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsAsync<TResult>();
+            }
+            catch (HttpRequestException e)
+            {
+                throw WrapHttpException(e);
+            }
         }
         
         public async Task<TResult> Post<TResult>(string path, object data)
@@ -34,11 +42,18 @@ namespace Socneto.Domain.Services
             var fullPath = GetFullPath(path);
             var content = CreateHttpContent(data);
             _logger.LogDebug($"POST /{path} {content}");
-            
-            var response = await _client.PostAsync(fullPath, content);
-            response.EnsureSuccessStatusCode();
-            
-            return await response.Content.ReadAsAsync<TResult>();
+
+            try
+            {
+                var response = await _client.PostAsync(fullPath, content);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsAsync<TResult>();
+            }
+            catch (HttpRequestException e)
+            {
+                throw WrapHttpException(e);
+            }
         }
         
         public async Task<TResult> Put<TResult>(string path, object data)
@@ -46,11 +61,28 @@ namespace Socneto.Domain.Services
             var fullPath = GetFullPath(path);
             var content = CreateHttpContent(data);
             _logger.LogDebug($"PUT /{path} {content}");
-            
-            var response = await _client.PutAsync(fullPath, content);
-            response.EnsureSuccessStatusCode();
-            
-            return await response.Content.ReadAsAsync<TResult>();
+
+            try
+            {
+                var response = await _client.PutAsync(fullPath, content);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsAsync<TResult>();
+            }
+            catch (HttpRequestException e)
+            {
+                throw WrapHttpException(e);
+            }
+        }
+
+        private Exception WrapHttpException(HttpRequestException exception)
+        {
+            if (exception.InnerException is SocketException)
+            {
+                return new ServiceUnavailableException(_host, exception);
+            }
+
+            return exception;
         }
         
         private string GetFullPath(string path)
@@ -64,5 +96,13 @@ namespace Socneto.Domain.Services
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
 
+    }
+
+    public class ServiceUnavailableException : Exception
+    {
+        public ServiceUnavailableException(string host, Exception innerException) : base($"Service '{host}' unavailable", innerException)
+        {
+            
+        }
     }
 }

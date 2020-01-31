@@ -17,7 +17,7 @@ namespace Socneto.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    public class JobController : ControllerBase
+    public class JobController : SocnetoController
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IJobService _jobService;
