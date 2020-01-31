@@ -40,7 +40,7 @@ namespace Socneto.Domain.Services
 
         public async Task<JobStatus> StopJob(Guid jobId)
         {
-            return await _httpService.Get<JobStatus>($"api/job/stop/{jobId}");
+            return await _httpService.Post<JobStatus>($"api/job/stop/{jobId}");
         }
     }
 }

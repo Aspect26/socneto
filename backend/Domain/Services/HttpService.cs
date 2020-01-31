@@ -37,10 +37,10 @@ namespace Socneto.Domain.Services
             }
         }
         
-        public async Task<TResult> Post<TResult>(string path, object data)
+        public async Task<TResult> Post<TResult>(string path, object data = null)
         {
             var fullPath = GetFullPath(path);
-            var content = CreateHttpContent(data);
+            var content = CreateHttpContent(data ?? new object());
             _logger.LogDebug($"POST /{path} {content}");
 
             try
