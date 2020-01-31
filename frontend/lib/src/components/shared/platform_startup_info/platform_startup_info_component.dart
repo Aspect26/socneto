@@ -40,8 +40,9 @@ class PlatformStartupInfoComponent implements OnInit {
   final PlatformStatusService _platformStatusService;
 
   bool isSubscribedToPlatformChanges = false;
-  bool isBackendRunning;
-  bool isStorageRunning;
+  bool isBackendRunning = false;
+  bool isStorageRunning = false;
+  bool isJMSRunning = false;
 
   PlatformStartupInfoComponent(this._platformStatusService);
 
@@ -54,14 +55,15 @@ class PlatformStartupInfoComponent implements OnInit {
   void _updatePlatformStatus(SocnetoComponentStatusChangedEvent changedEvent, PlatformStatus platformStatus) {
     this.isBackendRunning = platformStatus.backendStatus == SocnetoComponentStatus.RUNNING;
     this.isStorageRunning = platformStatus.storageStatus == SocnetoComponentStatus.RUNNING;
+    this.isJMSRunning = platformStatus.jmsStatus == SocnetoComponentStatus.RUNNING;
 
-    if (this.isBackendRunning && this.isStorageRunning && this.isSubscribedToPlatformChanges) {
+    if (this.isBackendRunning && this.isStorageRunning && this.isJMSRunning && this.isSubscribedToPlatformChanges) {
       this._platformStatusService.unsubscribeFromChanges(this);
       this.isSubscribedToPlatformChanges = false;
       this._platformStartedController.add(true);
     }
 
-    if ((!this.isBackendRunning || !this.isStorageRunning) && !this.isSubscribedToPlatformChanges) {
+    if ((!this.isBackendRunning || !this.isStorageRunning || !this.isJMSRunning) && !this.isSubscribedToPlatformChanges) {
       this._platformStatusService.subscribeToChanges(this, this._updatePlatformStatus);
       this.isSubscribedToPlatformChanges = true;
     }

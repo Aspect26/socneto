@@ -7,3 +7,8 @@
     <material-icon icon="warning"></material-icon>
     Storage is not running
 </div>
+
+<div class="status-line" *ngIf="!isJMSRunning">
+    <material-icon icon="warning"></material-icon>
+    JMS is not running
+</div>
