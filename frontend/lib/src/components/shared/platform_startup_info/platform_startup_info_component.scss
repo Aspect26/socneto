@@ -1,0 +1,27 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin platform-startup-info-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  platform-startup-info {
+
+    .status-line {
+      display: table;
+      padding: 20px;
+
+      material-icon {
+        display: table-cell;
+        vertical-align: middle;
+        padding-right: 10px;
+        color: get-color($primary, 400)
+      }
+
+    }
+
+  }
+
+}

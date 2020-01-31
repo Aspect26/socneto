@@ -9,10 +9,9 @@
         </div>
     </div>
 
-    <div *ngIf="!isBackendRunning">Backend is not running :(</div>
-    <div *ngIf="!isStorageRunning">Storage is not running :(</div>
+    <platform-startup-info (onPlatformStarted)="onPlatformStarted()"></platform-startup-info>
 
-    <material-list *ngIf="isBackendRunning && isStorageRunning" focusList class="dark">
+    <material-list *ngIf="isPlatformRunning" focusList class="dark">
 
         <material-select-item *ngFor="let job of displayedJobs" [routerLink]="jobUrl(job.id)" focusItem [selected]="job == selectedJob">
 

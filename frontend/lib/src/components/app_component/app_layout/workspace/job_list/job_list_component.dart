@@ -12,14 +12,13 @@ import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/create_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
+import 'package:sw_project/src/components/shared/platform_startup_info/platform_startup_info_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobStatusCode.dart';
-import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
-import 'package:sw_project/src/services/platform_status_service.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 import 'package:sw_project/src/utils.dart';
 
@@ -35,6 +34,7 @@ import 'package:sw_project/src/utils.dart';
     MaterialListItemComponent,
     MaterialSelectItemComponent,
     MaterialButtonComponent,
+    PlatformStartupInfoComponent,
     PaginatorComponent,
     CreateJobModal,
     NgFor,
@@ -49,49 +49,22 @@ import 'package:sw_project/src/utils.dart';
   exports: [RoutePaths, Routes],
   // changeDetection: ChangeDetectionStrategy.OnPush
 )
-class JobListComponent implements OnInit, AfterChanges {
+class JobListComponent implements AfterChanges {
 
   @ViewChild(CreateJobModal) CreateJobModal createJobModal;
   @Input() String username;
 
   static final int PAGE_SIZE = 10;
   final SocnetoService _socnetoService;
-  final PlatformStatusService _platformStatusService;
   final Router _router;
 
   Paginator paginator = Paginator(0, 1, PAGE_SIZE);
   List<Job> jobs = [];
   List<Job> displayedJobs = [];
   Job selectedJob;
-  bool isSubscribedToPlatformChanges = false;
-  bool isBackendRunning;
-  bool isStorageRunning;
+  bool isPlatformRunning;
 
-  JobListComponent(this._socnetoService, this._platformStatusService, this._router);
-
-  @override
-  void ngOnInit() {
-    var platformStatus = this._platformStatusService.getCurrentStatus();
-    this._updatePlatformStatus(null, platformStatus);
-  }
-
-  void _updatePlatformStatus(SocnetoComponentStatusChangedEvent changedEvent, PlatformStatus platformStatus) {
-    this.isBackendRunning = platformStatus.backendStatus == SocnetoComponentStatus.RUNNING;
-    this.isStorageRunning = platformStatus.storageStatus == SocnetoComponentStatus.RUNNING;
-
-    print(platformStatus.backendStatus);
-
-    if (this.isBackendRunning && this.isStorageRunning && this.isSubscribedToPlatformChanges) {
-      this._platformStatusService.unsubscribeFromChanges(this);
-      this.isSubscribedToPlatformChanges = false;
-      this._loadData();
-    }
-
-    if ((!this.isBackendRunning || !this.isStorageRunning) && !this.isSubscribedToPlatformChanges) {
-      this._platformStatusService.subscribeToChanges(this, this._updatePlatformStatus);
-      this.isSubscribedToPlatformChanges = true;
-    }
-  }
+  JobListComponent(this._socnetoService, this._router);
 
   @override
   void ngAfterChanges() async {
@@ -103,6 +76,11 @@ class JobListComponent implements OnInit, AfterChanges {
   JobStatusCode get runningJobStatus => JobStatusCode.Running;
   JobStatusCode get stoppedJobStatus => JobStatusCode.Stopped;
   String jobUrl(String jobId) => RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId));
+
+  void onPlatformStarted() {
+    this.isPlatformRunning = true;
+    this._loadData();
+  }
 
   void selectJob(String jobId) {
     this._router.navigate(RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId)));

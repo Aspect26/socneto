@@ -16,6 +16,7 @@
 @import "package:sw_project/src/components/shared/component_select/components_select_component.scss";
 @import "package:sw_project/src/components/shared/paginator/paginator_component.scss";
 @import "package:sw_project/src/components/shared/socneto_component_status/socneto_component_status_component.scss";
+@import "package:sw_project/src/components/shared/platform_startup_info/platform_startup_info_component.scss";
 @import "package:sw_project/src/components/app_component/material.scss";
 
 
@@ -38,6 +39,7 @@
   @include chart-component($theme);
   @include paginator-component($theme);
   @include socneto-component-status-component($theme);
+  @include platform-startup-info-component($theme);
 }
 
 .theme-red-light {
