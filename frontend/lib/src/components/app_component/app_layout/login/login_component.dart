@@ -4,6 +4,7 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:sw_project/src/components/shared/platform_startup_info/platform_startup_info_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/routes.dart';
@@ -21,6 +22,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
   directives: [
     routerDirectives,
     formDirectives,
+    PlatformStartupInfoComponent,
     AutoFocusDirective,
     MaterialButtonComponent,
     MaterialIconComponent,
@@ -54,6 +56,7 @@ class LoginComponent {
   String username;
   String password;
   bool wrongCredentials = false;
+  bool platformStarted = false;
 
   LoginComponent(this._socnetoService, this._router);
 

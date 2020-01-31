@@ -33,6 +33,7 @@ class SocnetoComponentStatusComponent {
 
   @Input() SocnetoComponentStatus componentStatus;
 
+  SocnetoComponentStatus get unknownStatus => SocnetoComponentStatus.UNKNOWN;
   SocnetoComponentStatus get stoppedStatus => SocnetoComponentStatus.STOPPED;
   SocnetoComponentStatus get startingStatus => SocnetoComponentStatus.STARTING;
   SocnetoComponentStatus get runningStatus => SocnetoComponentStatus.RUNNING;

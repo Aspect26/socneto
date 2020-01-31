@@ -1,5 +1,6 @@
 import 'package:angular/angular.dart';
 import 'package:sw_project/src/components/app_component/app_layout/app_layout_component.dart';
+import 'package:sw_project/src/services/platform_status_service.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
 
@@ -10,6 +11,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
   directives: [AppLayoutComponent],
   providers: [
     ClassProvider(SocnetoService),
+    ClassProvider(PlatformStatusService)
   ],
   encapsulation: ViewEncapsulation.None
 )

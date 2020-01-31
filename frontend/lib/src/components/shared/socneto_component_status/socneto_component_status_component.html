@@ -6,6 +6,6 @@
     <img *ngIf="componentStatus == runningStatus"
          src="/packages/sw_project/static/images/icons/status_running.png" alt="Status - running" height="16">
 </ng-template>
-<ng-template *ngIf="componentStatus == null">
+<ng-template *ngIf="componentStatus == null || componentStatus == unknownStatus">
     <img src="/packages/sw_project/static/images/icons/status_unknown.png" alt="Status unknown" height="16">
 </ng-template>
