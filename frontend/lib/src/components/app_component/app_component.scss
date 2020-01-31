@@ -2,6 +2,7 @@
 @import "package:sw_project/src/components/app_component/app_layout/app_layout_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/login/login_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/workspace_component.scss";
+@import "package:sw_project/src/components/app_component/app_layout/workspace/quick_guide/quick_guide_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/job_list_component.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/create_job_modal.scss";
 @import "package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.scss";
@@ -40,6 +41,7 @@
   @include paginator-component($theme);
   @include socneto-component-status-component($theme);
   @include platform-startup-info-component($theme);
+  @include quick-guide-component($theme);
 }
 
 .theme-red-light {

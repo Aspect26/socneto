@@ -5,7 +5,7 @@ import 'package:sw_project/src/components/app_component/app_layout/login/login_c
 import 'package:sw_project/src/components/app_component/app_layout/not_authorized/not_authorized_component.template.dart' as not_authorized_template;
 
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_detail_component.template.dart' as job_detail_template;
-import 'package:sw_project/src/components/app_component/app_layout/workspace/welcome/welcome_component.template.dart' as welcome_template;
+import 'package:sw_project/src/components/app_component/app_layout/workspace/quick_guide/quick_guide_component.template.dart' as quick_guide_template;
 
 
 class RoutePaths {
@@ -52,7 +52,7 @@ class Routes {
 
   static final workspaceHome = RouteDefinition(
     routePath: RoutePaths.workspaceHome,
-    component: welcome_template.WelcomeComponentNgFactory,
+    component: quick_guide_template.QuickGuideComponentNgFactory,
     useAsDefault: true,
   );
 
