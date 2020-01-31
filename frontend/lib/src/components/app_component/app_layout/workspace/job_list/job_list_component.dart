@@ -62,7 +62,7 @@ class JobListComponent implements AfterChanges {
   List<Job> jobs = [];
   List<Job> displayedJobs = [];
   Job selectedJob;
-  bool isPlatformRunning;
+  bool isPlatformRunning = false;
 
   JobListComponent(this._socnetoService, this._router);
 

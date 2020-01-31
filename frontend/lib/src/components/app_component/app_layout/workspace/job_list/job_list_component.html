@@ -11,7 +11,7 @@
 
     <platform-startup-info (onPlatformStarted)="onPlatformStarted()"></platform-startup-info>
 
-    <material-list *ngIf="isPlatformRunning" focusList class="dark">
+    <material-list focusList class="dark">
 
         <material-select-item *ngFor="let job of displayedJobs" [routerLink]="jobUrl(job.id)" focusItem [selected]="job == selectedJob">
 
@@ -38,7 +38,7 @@
         </div>
 
         <div class="create-job-button-wrapper">
-            <material-button (trigger)="onCreateNewJob($event)">
+            <material-button [disabled]="!isPlatformRunning" (trigger)="onCreateNewJob($event)">
                 <material-icon icon="add" class="material-list-item-primary" aria-hidden="true"></material-icon>
                 Create Job
             </material-button>
