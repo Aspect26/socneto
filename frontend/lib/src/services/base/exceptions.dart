@@ -28,3 +28,7 @@ class NotFoundException extends HttpException {
 class InternalServerErrorException extends HttpException {
   InternalServerErrorException() : super(500, "Internal server error");
 }
+
+class ServiceUnavailableException extends HttpException {
+  ServiceUnavailableException() : super(503, "Service unavailable");
+}

@@ -61,21 +61,17 @@ class LoginComponent {
     return username != null && username.isNotEmpty && password != null && password.isNotEmpty;
   }
 
-  onLogin(UIEvent event) {
+  onLogin(UIEvent event) async {
     if (this.isInputValid()) {
       this.wrongCredentials = false;
-      this._socnetoService.login(username, password).then((User user) {
-        this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.username)));
-      }, onError: (error) => this._onCantLogin(error));
+      try {
+        var user = await this._socnetoService.login(username, password);
+        await this._router.navigate(RoutePaths.workspace.toUrl(parameters: RouteParams.workspaceParams(user.username)));
+      } on NotAuthorizedException {
+        Toastr.error("Login", "The provided credentials are wrong");
+      } on HttpException catch (e) {
+        Toastr.httpError(e);
+      }
     }
   }
-  
-  _onCantLogin(HttpException error) {
-    if (error.statusCode == 400) {
-      Toastr.error("Login", "The provided credentials are wrong");
-    } else {
-      Toastr.error("Login", "Unknown error occured - can't login");
-    }
-  }
-
 }
