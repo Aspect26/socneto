@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:sw_project/src/models/PlatformStatus.dart';
-import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 import 'package:tuple/tuple.dart';
 
@@ -41,7 +40,7 @@ class PlatformStatusService {
 
     try {
       newPlatformStatus = await this._socnetoService.getPlatformStatus();
-    } on HttpException {
+    } catch (e) {
       newPlatformStatus = PlatformStatus(SocnetoComponentStatus.UNKNOWN, SocnetoComponentStatus.UNKNOWN, SocnetoComponentStatus.STOPPED);
     }
 
