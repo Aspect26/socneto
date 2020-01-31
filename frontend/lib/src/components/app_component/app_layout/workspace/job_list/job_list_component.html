@@ -9,7 +9,10 @@
         </div>
     </div>
 
-    <material-list focusList class="dark">
+    <div *ngIf="!isBackendRunning">Backend is not running :(</div>
+    <div *ngIf="!isStorageRunning">Storage is not running :(</div>
+
+    <material-list *ngIf="isBackendRunning && isStorageRunning" focusList class="dark">
 
         <material-select-item *ngFor="let job of displayedJobs" [routerLink]="jobUrl(job.id)" focusItem [selected]="job == selectedJob">
 

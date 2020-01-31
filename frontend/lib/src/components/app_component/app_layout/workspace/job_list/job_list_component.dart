@@ -16,8 +16,10 @@ import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobStatusCode.dart';
+import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/routes.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
+import 'package:sw_project/src/services/platform_status_service.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 import 'package:sw_project/src/utils.dart';
 
@@ -47,21 +49,49 @@ import 'package:sw_project/src/utils.dart';
   exports: [RoutePaths, Routes],
   // changeDetection: ChangeDetectionStrategy.OnPush
 )
-class JobListComponent implements AfterChanges {
+class JobListComponent implements OnInit, AfterChanges {
 
   @ViewChild(CreateJobModal) CreateJobModal createJobModal;
   @Input() String username;
 
   static final int PAGE_SIZE = 10;
   final SocnetoService _socnetoService;
+  final PlatformStatusService _platformStatusService;
   final Router _router;
 
   Paginator paginator = Paginator(0, 1, PAGE_SIZE);
   List<Job> jobs = [];
   List<Job> displayedJobs = [];
   Job selectedJob;
+  bool isSubscribedToPlatformChanges = false;
+  bool isBackendRunning;
+  bool isStorageRunning;
 
-  JobListComponent(this._socnetoService, this._router);
+  JobListComponent(this._socnetoService, this._platformStatusService, this._router);
+
+  @override
+  void ngOnInit() {
+    var platformStatus = this._platformStatusService.getCurrentStatus();
+    this._updatePlatformStatus(null, platformStatus);
+  }
+
+  void _updatePlatformStatus(SocnetoComponentStatusChangedEvent changedEvent, PlatformStatus platformStatus) {
+    this.isBackendRunning = platformStatus.backendStatus == SocnetoComponentStatus.RUNNING;
+    this.isStorageRunning = platformStatus.storageStatus == SocnetoComponentStatus.RUNNING;
+
+    print(platformStatus.backendStatus);
+
+    if (this.isBackendRunning && this.isStorageRunning && this.isSubscribedToPlatformChanges) {
+      this._platformStatusService.unsubscribeFromChanges(this);
+      this.isSubscribedToPlatformChanges = false;
+      this._loadData();
+    }
+
+    if ((!this.isBackendRunning || !this.isStorageRunning) && !this.isSubscribedToPlatformChanges) {
+      this._platformStatusService.subscribeToChanges(this, this._updatePlatformStatus);
+      this.isSubscribedToPlatformChanges = true;
+    }
+  }
 
   @override
   void ngAfterChanges() async {
