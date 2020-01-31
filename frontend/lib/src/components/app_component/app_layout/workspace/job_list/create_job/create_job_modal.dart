@@ -120,7 +120,6 @@ class CreateJobModal {
     if (this.isJobDefinitionCorrect()) {
       try {
         this.submitting = true;
-        print(acquirersWithCredentials);
         final credentials = this._getAllCredentials();
         final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks,
             this.selectedDataAnalyzers, this.languageSelection.selectedValue, credentials);

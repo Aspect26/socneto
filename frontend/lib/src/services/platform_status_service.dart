@@ -30,7 +30,7 @@ class PlatformStatusService {
 
   void unsubscribeFromChanges(Object listener) {
     this._pollers.removeWhere((poller) => poller.item1 == listener);
-    if (this._pollers.isEmpty) {
+    if (this._pollers.isEmpty && this._currentPollingTimer != null) {
       this._currentPollingTimer.cancel();
       this._currentPollingTimer = null;
     }
