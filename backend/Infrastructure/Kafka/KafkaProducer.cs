@@ -8,14 +8,12 @@ using Socneto.Domain.Models;
 
 namespace Socneto.Infrastructure.Kafka
 {
-    public class KafkaProducer:IResultProducer
+    public class KafkaProducer : IMessageBrokerProducer
     {
         private readonly ILogger<KafkaProducer> _logger;
         private readonly string _serverAddress;
-        
-        private readonly string _produceTopic;
 
-        public KafkaProducer(IOptions<KafkaOptions> kafkaOptionsObject, IOptions<TaskOptions> taskOptionObject, ILogger<KafkaProducer> logger)
+        public KafkaProducer(IOptions<KafkaOptions> kafkaOptionsObject, ILogger<KafkaProducer> logger)
         {
 
             if (string.IsNullOrEmpty(kafkaOptionsObject.Value.ServerAddress))
@@ -23,31 +21,36 @@ namespace Socneto.Infrastructure.Kafka
             _logger = logger;
             _serverAddress = kafkaOptionsObject.Value.ServerAddress;
 
-
-
-            if (string.IsNullOrEmpty(taskOptionObject.Value.ProduceTopic))
-                throw new ArgumentNullException(nameof(taskOptionObject.Value.ProduceTopic));
-
-            _produceTopic = taskOptionObject.Value.ProduceTopic;
-
-
         }
-        public async Task ProduceAsync(Message message)
+        public async Task ProduceAsync(string channelName, Message message)
         {
             var config = new ProducerConfig { BootstrapServers = _serverAddress };
 
-            using (var producer = new ProducerBuilder<string, string>(config).Build())
+            var producerBuilder = new ProducerBuilder<string, string>(config);
+            producerBuilder.SetErrorHandler(
+                (producer, error) => { _logger.LogError(error.Reason); }
+            );
+
+
+            using (var producer = producerBuilder.Build())
             {
+
                 try
                 {
                     // Note: Awaiting the asynchronous produce request below prevents flow of execution
                     // from proceeding until the acknowledgement from the broker is received (at the 
                     // expense of low throughput).
+
                     var deliveryReport = await producer.ProduceAsync(
-                        _produceTopic, KafkaMessage.ToKafka(message)
+                        channelName, KafkaMessage.ToKafka(message)
                         );
 
-                    _logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                    //producer.Produce(
+                    //    channelName, KafkaMessage.FromMessageBrokerMessage(message)
+                    //);
+
+
+                    //_logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
                 }
                 catch (ProduceException<string, string> e)
                 {
@@ -56,5 +59,4 @@ namespace Socneto.Infrastructure.Kafka
             }
         }
     }
-
 }
