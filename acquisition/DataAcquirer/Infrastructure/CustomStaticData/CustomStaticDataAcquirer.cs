@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Acquisition;
+using Domain.EventTracking;
 using Domain.Model;
 using Infrastructure.CustomStaticData.MappingAttributes;
 using Microsoft.Extensions.Options;

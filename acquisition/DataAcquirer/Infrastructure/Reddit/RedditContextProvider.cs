@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
+using Domain.EventTracking;
 using Reddit;
 using Reddit.Inputs.Search;
 
