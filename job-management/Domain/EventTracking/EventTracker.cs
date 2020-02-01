@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;

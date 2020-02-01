@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.EventTracking;
 using Domain.JobStorage;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
@@ -18,7 +19,7 @@ namespace Domain.ComponentManagement
         private readonly IComponentRegistry _componentRegistry;
         private readonly IComponentConfigUpdateNotifier _componentConfigUpdateNotifier;
         private readonly IJobStorage _jobStorage;
-        private readonly ILogger<SubscribedComponentManager> _logger;
+        private readonly IEventTracker<SubscribedComponentManager> _logger;
 
         public SubscribedComponentManager(
             IComponentRegistry componentRegistry,
@@ -26,8 +27,7 @@ namespace Domain.ComponentManagement
 
             IJobStorage jobStorage,
             IOptions<ComponentIdentifiers> options,
-            ILogger<SubscribedComponentManager> logger
-        )
+            IEventTracker<SubscribedComponentManager> logger)
         {
             _identifiers = options.Value;
             _componentRegistry = componentRegistry;
@@ -49,7 +49,7 @@ namespace Domain.ComponentManagement
             catch (Exception e)
             {
                 string error = $"Subscription failed due to: {e.Message}";
-                _logger.LogError(error);
+                _logger.TrackError("SubscribeComponent", error, new { componentRegistrationModel, exception = e });
                 return SubscribedComponentResultModel.Failed(error);
             }
         }
@@ -60,7 +60,9 @@ namespace Domain.ComponentManagement
             var storage = _componentRegistry.GetRegisteredStorage();
             if (storage == null)
             {
-                _logger.LogError("No storage component was registered");
+                _logger.TrackError(
+                    "StartJob",
+                    "No storage component was registered");
                 return JobConfigUpdateResult.Failed("No storage is present. Job can't be done");
             }
 
@@ -104,12 +106,12 @@ namespace Domain.ComponentManagement
                     JobId = jobId,
                     Command = JobCommand.Stop
                 };
-                
+
                 var components = await _componentRegistry.GetAllComponentsAsync();
 
                 foreach (var item in components)
                 {
-                    await NotifyComponent(item.ComponentId, notification);
+                    await NotifyComponent(jobId, item.ComponentId, notification);
                 }
 
                 job.JobStatus = JobStatus.Stopped;
@@ -120,10 +122,18 @@ namespace Domain.ComponentManagement
             }
             catch (Exception e)
             {
-                _logger.LogError("Could not stop the job {jobId}, due to error {error}",
-                    jobId,
-                    e.Message);
-                throw new InvalidOperationException($"Could not stop the job {jobId}, due to error {e.Message}");
+                var message = $"Could not stop the job {jobId}, due to error {e.Message}";
+
+                _logger.TrackError(
+                    "StopJob",
+                    message,
+                    new
+                    {
+                        jobId,
+                        exception = e
+                    });
+
+                throw new InvalidOperationException(message);
             }
         }
 
@@ -150,7 +160,15 @@ namespace Domain.ComponentManagement
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Error while adding attributes: {exception}", e);
+                    _logger.TrackError(
+                   "PushNetworkJobConfig",
+                   "Error while adding attributes",
+                   new
+                   {
+                       jobId = jobConfigUpdateCommand.JobId,
+                       exception = e
+                   });
+
                     throw;
                 }
 
@@ -162,7 +180,10 @@ namespace Domain.ComponentManagement
                     Command = JobCommand.Start
                 };
 
-                await NotifyComponent(dataAcquirer, notification);
+                await NotifyComponent(
+                    jobConfigUpdateCommand.JobId,
+                    dataAcquirer,
+                    notification);
 
                 var componentConfig = new JobComponentConfig
                 {
@@ -176,21 +197,30 @@ namespace Domain.ComponentManagement
             }
         }
 
-        private async Task NotifyComponent(string component, object notification)
+        private async Task NotifyComponent(Guid jobId, string component, object notification)
         {
             var dataSource = await _componentRegistry.GetComponentByIdAsync(component);
 
             if (dataSource == null)
             {
-                const string errorMessage =
-                    "Data acquisition component '{componentName}' was not registered";
-                _logger.LogError(errorMessage, component);
+                var errorMessage =
+                    $"Data acquisition component '{component}' was not registered";
+
+                _logger.TrackError(
+                  "NotifyComponent",
+                  errorMessage);
             }
             else
             {
-                _logger.LogInformation("Config pushed to: {componentName}, config: {config}",
-                    component,
-                    JsonConvert.SerializeObject(notification));
+                var metrics = $"Config pushed to: {component}";
+                _logger.TrackInfo(
+                  "NotifyComponent",
+                  metrics,
+                  new
+                  {
+                      jobId,
+                      config = notification
+                  });
                 await _componentConfigUpdateNotifier.NotifyComponentAsync(
                     dataSource.UpdateChannelName,
                     notification);
@@ -211,7 +241,9 @@ namespace Domain.ComponentManagement
 
                 if (analyserComponent == null)
                 {
-                    _logger.LogWarning("Analyser {analyserName} was not registered", analyser);
+                    _logger.TrackWarning(
+                        "ComponentConfig",
+                        $"Analyser {analyser} was not registered");
                 }
                 else
                 {
@@ -228,10 +260,13 @@ namespace Domain.ComponentManagement
 
             var configUpdateTasks = analysers.Select(async analyserCmp =>
             {
-                _logger.LogInformation("Config pushed to: {componentName}, updateChannelName: {ucn}, config: {config}",
-                    analyserCmp,
-                    analyserCmp.UpdateChannelName,
-                    JsonConvert.SerializeObject(notification));
+                _logger.TrackInfo(
+                    "ComponentConfig",
+                    $"Config pushed to: {analyserCmp}, updateChannelName: {analyserCmp.UpdateChannelName}",
+                    new
+                    {
+                        config = notification
+                    });
 
                 await _componentConfigUpdateNotifier.NotifyComponentAsync(
                     analyserCmp.UpdateChannelName,
