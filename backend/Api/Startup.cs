@@ -1,4 +1,5 @@
 ﻿using Bazinga.AspNetCore.Authentication.Basic;
+using Domain.EventTracking;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -51,23 +52,40 @@ namespace Socneto.Api
             services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
                 .AddBasicAuthentication<SimpleBasicCredentialVerifier>();
 
-            services
+            var noKafka = false;
+            // TODO use arguments instead of symbol
 #if DEBUG
-                .AddTransient<IResultProducer, MockKafka>()
-#else
-                .AddTransient<IResultProducer, KafkaProducer>()
+            // noKafka = true;
 #endif
-                .AddTransient<IAuthorizationService, AuthorizationService>()
+            if (noKafka)
+            {
+                services
+                    .AddTransient<IResultProducer, MockResultProducer>()
+                    .AddTransient<IMessageBrokerProducer, MockKafka>()
+                    .AddSingleton(typeof(IEventTracker<>), typeof(ConsoleEventTracker<>));
+            }
+            else
+            {
+                services
+                    .AddTransient<IResultProducer, KafkaResultProducer>()
+                    .AddTransient<IMessageBrokerProducer, KafkaProducer>()
+                    .AddSingleton(typeof(IEventTracker<>), typeof(EventTracker<>));
+}
+            services.AddTransient<IAuthorizationService, AuthorizationService>()
                 .AddTransient<IJobService, JobService>()
                 .AddTransient<IUserService, UserService>()
                 .AddTransient<IGetAnalysisService, GetAnalysisService>()
                 .AddTransient<IChartsService, ChartsService>()
                 .AddTransient<IJobManagementService, JobManagementService>()
                 .AddTransient<IStorageService, StorageService>()
+                .AddHostedService<EventSendingHostedService>()
+                .AddSingleton<EventQueue>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))
                 .Configure<KafkaOptions>(Configuration.GetSection("Socneto:KafkaOptions"))
                 .Configure<JMSOptions>(Configuration.GetSection("Socneto:JobManagementServiceOptions"))
                 .Configure<StorageOptions>(Configuration.GetSection("Socneto:StorageOptions"))
+                .Configure<ComponentOptions>(Configuration.GetSection("Socneto:ComponentOptions"))
+                .Configure<SystemMetricsOptions>(Configuration.GetSection("Socneto:SystemMetricsOptions"))
                 .Configure<DefaultAcquirersCredentialsOptions>(Configuration.GetSection("Socneto:DefaultAcquirersCredentials"));
         }
 

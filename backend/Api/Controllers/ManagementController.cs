@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Domain.EventTracking;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,16 +19,19 @@ namespace Socneto.Api.Controllers
         private readonly IJobManagementService _jobManagementService;
         private readonly IStorageService _storageService;
         
-        private readonly ILogger<KafkaProducer> _kafkaLogger;
-        private readonly ILogger<ManagementController> _logger;
+        private readonly ILogger<KafkaResultProducer> _kafkaLogger;
+        private readonly IEventTracker<ManagementController> _eventTracker;
 
-        public ManagementController(IJobManagementService jobManagementService, IStorageService storageService, 
-            ILogger<KafkaProducer> kafkaLogger, ILogger<ManagementController> logger)
+        public ManagementController(
+            IJobManagementService jobManagementService, 
+            IStorageService storageService, 
+            ILogger<KafkaResultProducer> kafkaLogger,
+            IEventTracker<ManagementController> logger)
         {
             _jobManagementService = jobManagementService;
             _storageService = storageService;
             _kafkaLogger = kafkaLogger;
-            _logger = logger;
+            _eventTracker = logger;
         }
 
         [HttpGet]
@@ -46,13 +50,13 @@ namespace Socneto.Api.Controllers
         [Route("api/produce")]
         public async Task<ActionResult> Produce([FromBody] ProduceRequest request)
         {
-            _logger.LogInformation("Producing");
+            _eventTracker.TrackInfo("JmsDebugProducing","produced message");
             try
             {
                 var kafkaOptions = Options.Create(new KafkaOptions {ServerAddress = request.ServerAddress});
                 var taskOptions =
                     Options.Create(new TaskOptions {ConsumeTaskTopic = "n/a", ProduceTopic = request.KafkaTopic});
-                var kafka = new KafkaProducer(kafkaOptions, taskOptions, _kafkaLogger);
+                var kafka = new KafkaResultProducer(kafkaOptions, taskOptions, _kafkaLogger);
 
                 var message = new Message()
                 {
@@ -63,7 +67,10 @@ namespace Socneto.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("error :{message}",e.Message);
+                _eventTracker.TrackError(
+                    "JmsDebugProducing",
+                    $"Error while producing: {e.Message}", 
+                    new { exception = e });
             }
 
             return Ok();
