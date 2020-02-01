@@ -55,7 +55,7 @@ namespace Socneto.Api
             var noKafka = false;
             // TODO use arguments instead of symbol
 #if DEBUG
-            // noKafka = true;
+            noKafka = true;
 #endif
             if (noKafka)
             {
