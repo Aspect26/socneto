@@ -9,11 +9,11 @@ namespace Domain.EventTracking
 
     public interface IEventTracker<T>
     {
-        public void TrackStatistics(string eventName, object serializableAttributes = null);
-        public void TrackInfo(string eventName, string message, object serializableAttributes = null);
-        public void TrackWarning(string eventName, string message, object serializableAttributes=null);
-        public void TrackError(string eventName, string message, object serializableAttributes = null);
-        public void TrackFatal(string eventName, string message, object serializableAttributes = null);
+        void TrackStatistics(string eventName, object serializableAttributes = null);
+        void TrackInfo(string eventName, string message, object serializableAttributes = null);
+        void TrackWarning(string eventName, string message, object serializableAttributes=null);
+        void TrackError(string eventName, string message, object serializableAttributes = null);
+        void TrackFatal(string eventName, string message, object serializableAttributes = null);
     }
 
 }

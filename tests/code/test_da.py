@@ -59,7 +59,9 @@ class DataAcquirerTestCases:
         (result,message) = self.test_data_acquisition(output_topic,attributes = attributes)
 
         if not result:
-            print("test {} failed: {}".format( 'test_data_acquisition', message))
+            error ="test {} failed: {}".format( 'test_data_acquisition', message)
+            print(error)
+            raise Exception(error)
         else:
             print("success")
 
