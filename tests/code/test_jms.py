@@ -150,7 +150,9 @@ def start_test(config_path = "../config.json"):
     jms_submit_uri = config['uris']['jms_submit_uri']
     success,message = jms_tests.test(jms_submit_uri)
     if not success:
-        print("FAIL", message)
+        error ="test {} failed: {}".format( 'jms_test', message)
+        print(error)
+        raise Exception(error)
     else :
         print("SUCCESS")
     
