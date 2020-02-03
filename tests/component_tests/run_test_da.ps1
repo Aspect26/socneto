@@ -10,8 +10,8 @@ function Test-Da {
     echo "Build images"
     BuildRun-Docker $component_name $dockerfile $context
     
-    echo "wait 15s for acquirer"
-    Start-Sleep -s 15
+    echo "wait 180s for acquirer to start"
+    Start-Sleep -s 180
 
     # act & assert
     echo "start testing"
