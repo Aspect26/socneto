@@ -7,7 +7,6 @@ import json
 import time
 from datetime import datetime
 import os.path
-import matplotlib.pyplot as plt
 import numpy as np
 
 logger = logging.getLogger('topic_modelling')
@@ -50,7 +49,7 @@ def register_itself(topic, input_topic, componentId, producer):
         "InputChannelName": input_topic,
         "attributes": {
             "outputFormat": {
-                "topics": "stringArray"
+                "topics": "textListValue"
             }
         }
     }
@@ -65,8 +64,8 @@ def register_itself(topic, input_topic, componentId, producer):
 def analyse(lda, text):
     array = analyse_text(lda,text)
     return {
-        "polarity": {
-            "stringArrayValue": array
+        "topics": {
+            "textListValue": array
         },
     }
 
