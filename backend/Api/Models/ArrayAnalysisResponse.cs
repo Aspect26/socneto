@@ -12,9 +12,17 @@ namespace Socneto.Api.Models
         
         public static ArrayAnalysisResponse FromModel(ArrayAnalysisResult analysisResult)
         {
-            return new ArrayAnalysisResponse()
+            return new ArrayAnalysisResponse
             {
                 Result = analysisResult.Result
+            };
+        }
+
+        public static ArrayAnalysisResponse Empty()
+        {
+            return new ArrayAnalysisResponse
+            {
+                Result = new List<JArray>()
             };
         }
     }

@@ -4,8 +4,10 @@ using Domain.EventTracking;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Socneto.Api.Models;
 using Socneto.Domain;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 using Socneto.Domain.Services;
 using Socneto.Infrastructure.Kafka;
@@ -38,6 +40,7 @@ namespace Socneto.Api.Controllers
         [Route("api/heart-beat")]
         public ActionResult<string> HeartBeat()
         {
+            _eventTracker.TrackInfo("HeartBeat", "Heart beat requested");
             var status = new
             {
                 TimeStamp = DateTime.Now.ToString("s")
@@ -80,19 +83,23 @@ namespace Socneto.Api.Controllers
         [Route("api/platform_status")]
         public async Task<ActionResult<SocnetoComponentsStatus>> PlatformStatus()
         {
-            var jmsStatus = await _jobManagementService.ComponentRunning()
+            var jmsStatus = await _jobManagementService.IsComponentRunning()
                 ? SocnetoComponentStatus.Running
                 : SocnetoComponentStatus.Stopped;
 
-            var storageStatus = await _storageService.ComponentRunning()
+            var storageStatus = await _storageService.IsComponentRunning()
                 ? SocnetoComponentStatus.Running
                 : SocnetoComponentStatus.Stopped;
-
-            return new SocnetoComponentsStatus
+            
+            var response = new SocnetoComponentsStatus
             {
                 JmsStatus = jmsStatus,
                 StorageStatus = storageStatus
             };
+            
+            _eventTracker.TrackInfo("PlatformStatus", "Platform status requested", JsonConvert.SerializeObject(response));
+
+            return Ok(response);
         }
     }
 }

@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.EventTracking
+namespace Socneto.Domain.EventTracking
 {
 
     public interface IEventTracker<T>

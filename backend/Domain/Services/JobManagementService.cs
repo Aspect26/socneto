@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 
 namespace Socneto.Domain.Services
@@ -11,16 +11,16 @@ namespace Socneto.Domain.Services
         
         private readonly HttpService<JobManagementService> _httpService;
         
-        public JobManagementService(ILogger<JobManagementService> logger, IOptions<JMSOptions> jmsOptionsObject)
+        public JobManagementService(IEventTracker<JobManagementService> eventTracker, IOptions<JMSOptions> jmsOptionsObject)
         {
             if (string.IsNullOrEmpty(jmsOptionsObject.Value.ServerAddress))
                 throw new ArgumentNullException(nameof(jmsOptionsObject.Value.ServerAddress));
             
             var host = jmsOptionsObject.Value.ServerAddress;
-            _httpService = new HttpService<JobManagementService>(host, logger);
+            _httpService = new HttpService<JobManagementService>(host, eventTracker);
         }
 
-        public async Task<bool> ComponentRunning()
+        public async Task<bool> IsComponentRunning()
         {
             try
             {

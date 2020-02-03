@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Socneto.Domain.EventTracking;
 
 namespace Domain.EventTracking
 {

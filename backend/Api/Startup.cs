@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Socneto.Api.Authentication;
 using Socneto.Domain;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Services;
-using Socneto.Infrastructure;
 using Socneto.Infrastructure.Kafka;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -70,7 +70,7 @@ namespace Socneto.Api
                     .AddTransient<IResultProducer, KafkaResultProducer>()
                     .AddTransient<IMessageBrokerProducer, KafkaProducer>()
                     .AddSingleton(typeof(IEventTracker<>), typeof(EventTracker<>));
-}
+            }
             services.AddTransient<IAuthorizationService, AuthorizationService>()
                 .AddTransient<IJobService, JobService>()
                 .AddTransient<IUserService, UserService>()

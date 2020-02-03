@@ -5,7 +5,7 @@ namespace Socneto.Domain.Services
 {
     public class UserService : IUserService
     {
-        private IStorageService _storageService;
+        private readonly IStorageService _storageService;
 
         public UserService(IStorageService storageService)
         {

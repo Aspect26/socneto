@@ -1,15 +1,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain;
+using Domain.EventTracking;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Socneto.Domain;
 using Socneto.Domain.Models;
 
-namespace Domain.EventTracking
+namespace Socneto.Domain.EventTracking
 {
     public class EventSendingHostedService : IHostedService
     {
