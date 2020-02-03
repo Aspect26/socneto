@@ -3,8 +3,8 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Socneto.Domain.EventTracking;
 
 namespace Socneto.Domain.Services
 {
@@ -12,18 +12,20 @@ namespace Socneto.Domain.Services
     {
         private readonly string _host;
         private readonly HttpClient _client = new HttpClient();
-        private readonly ILogger<T> _logger;
-        
-        public HttpService(string host, ILogger<T> logger)
+        private readonly IEventTracker<T> _eventTracker;
+
+        private string EventTrackerEventName => $"Backend HTTP request on to {_host}";
+
+        public HttpService(string host, IEventTracker<T> eventTracker)
         {
             _host = host;
-            _logger = logger;
+            _eventTracker = eventTracker;
         }
         
         public async Task<TResult> Get<TResult>(string path)
         {
             var fullPath = GetFullPath(path);
-            _logger.LogDebug($"GET /{path}");
+            _eventTracker.TrackInfo(EventTrackerEventName,$"GET /{path}");
 
             try
             {
@@ -41,7 +43,7 @@ namespace Socneto.Domain.Services
         {
             var fullPath = GetFullPath(path);
             var content = CreateHttpContent(data ?? new object());
-            _logger.LogDebug($"POST /{path} {content}");
+            _eventTracker.TrackInfo(EventTrackerEventName,$"POST /{path} {content}");
 
             try
             {
@@ -60,7 +62,7 @@ namespace Socneto.Domain.Services
         {
             var fullPath = GetFullPath(path);
             var content = CreateHttpContent(data);
-            _logger.LogDebug($"PUT /{path} {content}");
+            _eventTracker.TrackInfo(EventTrackerEventName,$"PUT /{path} {content}");
 
             try
             {
