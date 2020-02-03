@@ -28,15 +28,17 @@ logger.addHandler(ch)
 def analyse_text(lda, text):
     a = lda.get_topic_keywords(text)
 
-    topics =np.array( a[0])
-    probs = np.array(a[1])
-    zipped = zip(topics.flatten(), probs.flatten())
     dic = {}
-    for topic,prob in zipped:
+    for topic,prob in a:
         if topic not in dic:
             dic[topic]=prob
         # else:
         #     dic[topic] = dic[topic] + prob
+
+    # topics =np.array(a[0])
+    # probs = np.array(a[1])
+    # zipped = zip(topics.flatten(), probs.flatten())
+
 
     return list(dic.keys())
 
