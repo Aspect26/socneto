@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Domain.EventTracking;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Socneto.Api.Models;
 using Socneto.Domain;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 using Socneto.Domain.Services;
 using Socneto.Infrastructure.Kafka;
@@ -18,22 +21,26 @@ namespace Socneto.Api.Controllers
         private readonly IJobManagementService _jobManagementService;
         private readonly IStorageService _storageService;
         
-        private readonly ILogger<KafkaProducer> _kafkaLogger;
-        private readonly ILogger<ManagementController> _logger;
+        private readonly ILogger<KafkaResultProducer> _kafkaLogger;
+        private readonly IEventTracker<ManagementController> _eventTracker;
 
-        public ManagementController(IJobManagementService jobManagementService, IStorageService storageService, 
-            ILogger<KafkaProducer> kafkaLogger, ILogger<ManagementController> logger)
+        public ManagementController(
+            IJobManagementService jobManagementService, 
+            IStorageService storageService, 
+            ILogger<KafkaResultProducer> kafkaLogger,
+            IEventTracker<ManagementController> logger)
         {
             _jobManagementService = jobManagementService;
             _storageService = storageService;
             _kafkaLogger = kafkaLogger;
-            _logger = logger;
+            _eventTracker = logger;
         }
 
         [HttpGet]
         [Route("api/heart-beat")]
         public ActionResult<string> HeartBeat()
         {
+            _eventTracker.TrackInfo("HeartBeat", "Heart beat requested");
             var status = new
             {
                 TimeStamp = DateTime.Now.ToString("s")
@@ -46,13 +53,13 @@ namespace Socneto.Api.Controllers
         [Route("api/produce")]
         public async Task<ActionResult> Produce([FromBody] ProduceRequest request)
         {
-            _logger.LogInformation("Producing");
+            _eventTracker.TrackInfo("JmsDebugProducing","produced message");
             try
             {
                 var kafkaOptions = Options.Create(new KafkaOptions {ServerAddress = request.ServerAddress});
                 var taskOptions =
                     Options.Create(new TaskOptions {ConsumeTaskTopic = "n/a", ProduceTopic = request.KafkaTopic});
-                var kafka = new KafkaProducer(kafkaOptions, taskOptions, _kafkaLogger);
+                var kafka = new KafkaResultProducer(kafkaOptions, taskOptions, _kafkaLogger);
 
                 var message = new Message()
                 {
@@ -63,7 +70,10 @@ namespace Socneto.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("error :{message}",e.Message);
+                _eventTracker.TrackError(
+                    "JmsDebugProducing",
+                    $"Error while producing: {e.Message}", 
+                    new { exception = e });
             }
 
             return Ok();
@@ -73,19 +83,23 @@ namespace Socneto.Api.Controllers
         [Route("api/platform_status")]
         public async Task<ActionResult<SocnetoComponentsStatus>> PlatformStatus()
         {
-            var jmsStatus = await _jobManagementService.ComponentRunning()
+            var jmsStatus = await _jobManagementService.IsComponentRunning()
                 ? SocnetoComponentStatus.Running
                 : SocnetoComponentStatus.Stopped;
 
-            var storageStatus = await _storageService.ComponentRunning()
+            var storageStatus = await _storageService.IsComponentRunning()
                 ? SocnetoComponentStatus.Running
                 : SocnetoComponentStatus.Stopped;
-
-            return new SocnetoComponentsStatus
+            
+            var response = new SocnetoComponentsStatus
             {
                 JmsStatus = jmsStatus,
                 StorageStatus = storageStatus
             };
+            
+            _eventTracker.TrackInfo("PlatformStatus", "Platform status requested", JsonConvert.SerializeObject(response));
+
+            return Ok(response);
         }
     }
 }

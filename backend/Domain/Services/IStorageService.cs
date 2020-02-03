@@ -10,7 +10,7 @@ namespace Socneto.Domain.Services
 {
     public interface IStorageService
     {
-        Task<bool> ComponentRunning();
+        Task<bool> IsComponentRunning();
         
         Task<User> GetUser(string username);
 

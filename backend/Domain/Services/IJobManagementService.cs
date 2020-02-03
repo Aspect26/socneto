@@ -7,7 +7,7 @@ namespace Socneto.Domain.Services
     public interface IJobManagementService
     {
 
-        Task<bool> ComponentRunning();
+        Task<bool> IsComponentRunning();
         
         Task<JobStatus> SubmitJob(JobSubmit jobSubmit);
 
