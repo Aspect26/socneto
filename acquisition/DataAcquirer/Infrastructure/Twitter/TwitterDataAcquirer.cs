@@ -1,5 +1,6 @@
 using Domain;
 using Domain.Acquisition;
+using Domain.EventTracking;
 using Domain.Model;
 using Infrastructure.Twitter.Abstract;
 using LinqToTwitter;

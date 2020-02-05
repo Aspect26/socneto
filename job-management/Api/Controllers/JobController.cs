@@ -11,11 +11,11 @@ using Newtonsoft.Json;
 namespace Api.Controllers
 {
     [ApiController]
-    public class ComponentController : ControllerBase
+    public class JobController : ControllerBase
     {
         private readonly ISubscribedComponentManager _subscribedComponentManager;
 
-        public ComponentController(ISubscribedComponentManager subscribedComponentManager)
+        public JobController(ISubscribedComponentManager subscribedComponentManager)
         {
             _subscribedComponentManager = subscribedComponentManager;
         }

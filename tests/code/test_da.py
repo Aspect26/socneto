@@ -26,23 +26,26 @@ class DataAcquirerTestCases:
                             jobId=jobId,
                             attributes = attributes)
 
-            print("Waits for acquired posts")        
-            for post in self.kafka.consume_topic(posts_output_topic):
-                keys = [
-                    'originalPostId', 
-                    'postId', 
-                    'jobId', 
-                    'text', 
-                    'originalText', 
-                    'language', 
-                    'source', 
-                    'authorId','dateTime'
-                ]
-                print("Check that the message is in the correct format")            
-                for k in keys:
-                    if k not in post:
-                        raise Exception("Element {} not found in post {}".format(k,post))
-                return (True,None)
+            print("Waits for acquired posts")  
+
+            post =self.kafka.get_message_from_topic(posts_output_topic)
+            if post is None:
+                return (False, "No post found")
+            keys = [
+                'originalPostId', 
+                'postId', 
+                'jobId', 
+                'text', 
+                'originalText', 
+                'language', 
+                'source', 
+                'authorId','dateTime'
+            ]
+            print("Check that the message is in the correct format")            
+            for k in keys:
+                if k not in post:
+                    raise Exception("Element {} not found in post {}".format(k,post))
+            return (True,None)
             
         except Exception as e:
             return (False, "Testing data acquirer failed: {}".format(e))
@@ -61,13 +64,7 @@ class DataAcquirerTestCases:
             print("success")
 
 
-def start_test():
-    config_path = "./config.json"
-    cred_path = "./cred.json"
-    if(len(sys.argv)==3):
-        config_path = sys.argv[1]
-        cred_path = sys.argv[2]
-
+def start_test(config_path = "./config.json", cred_path = "./twitter.cred"):
     config=utils.load_config(config_path)
     kafka = kafka_client.KafkaClient(config['kafka']['kafka_server'])
     credentials=utils.resolve_credentials(cred_path)
@@ -76,8 +73,13 @@ def start_test():
 
     testcases.test()
 
-start_test();
-
+if __name__ == "__main__":
+    if(len(sys.argv)==3):
+        config_path = sys.argv[1]
+        cred_path = sys.argv[2]
+        start_test(config_path,cred_path);
+    else:
+        start_test();
 
 
 

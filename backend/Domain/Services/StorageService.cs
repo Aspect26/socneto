@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
@@ -17,16 +17,16 @@ namespace Socneto.Domain.Services
         
         private IList<SocnetoComponent> _cachedAnalysers = new List<SocnetoComponent>();  
 
-        public StorageService(ILogger<StorageService> logger, IOptions<StorageOptions> storageOptionsObject)
+        public StorageService(IEventTracker<StorageService> eventTracker, IOptions<StorageOptions> storageOptionsObject)
         {
             if (string.IsNullOrEmpty(storageOptionsObject.Value.ServerAddress))
                 throw new ArgumentNullException(nameof(storageOptionsObject.Value.ServerAddress));
             
             var host = storageOptionsObject.Value.ServerAddress;
-            _httpService = new HttpService<StorageService>(host, logger);
+            _httpService = new HttpService<StorageService>(host, eventTracker);
         }
 
-        public async Task<bool> ComponentRunning()
+        public async Task<bool> IsComponentRunning()
         {
             // TODO: this is a hack
             try

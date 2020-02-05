@@ -17,6 +17,18 @@
       background-color: get-color($primary, A200);
     }
 
-  }
+    section {
+      height: 150px;
+      line-height: 150px;
+    }
 
+    .no-data {
+      border: 10px solid get-color($primary, 300);
+      border-radius: 27px;
+      color: get-color($primary, 300);
+
+      font-size: 30px;
+      text-align: center;
+    }
+  }
 }

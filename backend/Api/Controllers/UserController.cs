@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Socneto.Api.Models;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
@@ -9,12 +11,15 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class UserController : SocnetoController
     {
+        
         private readonly IUserService _userService;
+        private readonly IEventTracker<UserController> _eventTracker;
 
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IEventTracker<UserController> eventTracker)
         {
             _userService = userService;
+            _eventTracker = eventTracker;
         }
 
         [AllowAnonymous]
@@ -22,10 +27,14 @@ namespace Socneto.Api.Controllers
         [Route("api/user/login")]
         public async Task<ActionResult<LoginResponse>> Login([FromBody]LoginRequest login)
         {
+            _eventTracker.TrackInfo("Login", "A user tried to login", JsonConvert.SerializeObject(new { User = login.Username }));
             var authenticatedUser = await _userService.Authenticate(login.Username, login.Password);
-            
+
             if (authenticatedUser == null)
-                return Unauthorized(new { message = "Username or password is incorrect" });
+            {
+                _eventTracker.TrackInfo("Login", "Wrong credentials when trying to login");
+                return Unauthorized(new {message = "Username or password is incorrect"});
+            }
 
             var loginResponse = LoginResponse.FromModel(authenticatedUser);
             return Ok(loginResponse);

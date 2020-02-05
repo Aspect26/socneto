@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Socneto.Api.Models;
 using Socneto.Domain;
+using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 using Socneto.Domain.Services;
 using IAuthorizationService = Socneto.Domain.Services.IAuthorizationService;
@@ -23,13 +24,13 @@ namespace Socneto.Api.Controllers
         private readonly IJobService _jobService;
         private readonly IJobManagementService _jobManagementService;
         private readonly IGetAnalysisService _getAnalysisService;
+        private readonly IEventTracker<JobController> _eventTracker;
         private readonly DefaultAcquirersCredentialsOptions _defaultAcquirersCredentials;
-        private readonly ILogger<JobController> _logger;
         
         public JobController(IAuthorizationService authorizationService, IJobService jobService, 
             IJobManagementService jobManagementService, IGetAnalysisService getAnalysisService, 
             IOptions<DefaultAcquirersCredentialsOptions> defaultAcquirersCredentialsOptionsObject, 
-            ILogger<JobController> logger)
+            IEventTracker<JobController> eventTracker)
         {
             if (defaultAcquirersCredentialsOptionsObject.Value?.Twitter == null)
                 throw new ArgumentNullException(nameof(defaultAcquirersCredentialsOptionsObject.Value.Twitter));
@@ -41,8 +42,8 @@ namespace Socneto.Api.Controllers
             _jobService = jobService;
             _jobManagementService = jobManagementService;
             _getAnalysisService = getAnalysisService;
+            _eventTracker = eventTracker;
             _defaultAcquirersCredentials = defaultAcquirersCredentialsOptionsObject.Value;
-            _logger = logger;
         }
 
         private AcquirerCredentials DefaultCredentials => new AcquirerCredentials
@@ -73,6 +74,7 @@ namespace Socneto.Api.Controllers
             var username = User.Identity.Name;
             if (username == null)
             {
+                _eventTracker.TrackInfo("GetJobs", "Unauthorized attempt to list all jobs");
                 return Unauthorized();
             }
             
@@ -89,8 +91,10 @@ namespace Socneto.Api.Controllers
         [Route("api/job/create")]
         public async Task<ActionResult<JobStatusResponse>> SubmitJob([FromBody] JobSubmitRequest request)
         {
+            _eventTracker.TrackInfo("SubmitJob", "Submitting a new job", JsonConvert.SerializeObject(request));
             if (User.Identity.Name == null)
             {
+                _eventTracker.TrackInfo("SubmitJob", "Unauthorized attempt to list all jobs");
                 return Unauthorized();
             }
             
@@ -135,6 +139,7 @@ namespace Socneto.Api.Controllers
                 JobId = jobStatus.JobId,
                 Status = jobStatus.Status,
             };
+            _eventTracker.TrackInfo("SubmitJob", "New job submitted", JsonConvert.SerializeObject(response));
             return Ok(response);
         }
 
@@ -142,8 +147,11 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/stop")]
         public async Task<ActionResult<JobStatusResponse>> StopJob([FromRoute] Guid jobId)
         {
-            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("StopJob", $"User '{User.Identity.Name}' is not authorized to stop job '{jobId}'");
                 return Unauthorized();
+            }
 
             var jobStatus = await _jobManagementService.StopJob(jobId);
             var response = new JobStatusResponse
@@ -158,9 +166,12 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/status")]
         public async Task<ActionResult<JobDto>> GetJobDetail([FromRoute] Guid jobId)
         {
-            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetJobDetail", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
-            
+            }
+
             var jobDetail = await _jobService.GetJobDetail(jobId);
 
             var jobStatusResponse = JobDto.FromModel(jobDetail);
@@ -171,8 +182,11 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/posts")]
         public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, [FromQuery] int page = 1, [FromQuery] int size = 20)
         {
-            if (! await  _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetJobPosts", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
+            }
 
             var offset = (page - 1) * size;
             var (posts, postsCount) = await _jobService.GetJobPosts(jobId, offset, size);
@@ -196,10 +210,25 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/aggregation_analysis")]
         public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisRequest analysisRequest)
         {
-            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' requested aggregation analysis", 
+                JsonConvert.SerializeObject(analysisRequest));
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
+            }
 
-            var analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperty);
+            AggregationAnalysisResult analysisResult;
+            try
+            {
+                analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId,
+                    analysisRequest.AnalysisProperty);
+            }
+            catch (GetAnalysisService.GetAnalysisException)
+            {
+                return AggregationAnalysisResponse.Empty();
+            }
+
             var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);
@@ -209,10 +238,25 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/array_analysis")]
         public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisRequest analysisRequest)
         {
-            if (! await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' requested array analysis", 
+                JsonConvert.SerializeObject(analysisRequest));
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
-            
-            var analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId, analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
+            }
+
+            ArrayAnalysisResult analysisResult;
+            try
+            {
+                analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId,
+                    analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
+            }
+            catch (GetAnalysisService.GetAnalysisException)
+            {
+                return ArrayAnalysisResponse.Empty();
+            }
+
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);
             
             return Ok(analysisResponse);

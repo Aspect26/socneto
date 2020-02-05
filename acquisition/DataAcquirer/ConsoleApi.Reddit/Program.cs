@@ -2,6 +2,7 @@ using Application;
 using Domain;
 using Domain.Abstract;
 using Domain.Acquisition;
+using Domain.EventTracking;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.JobManagement.Abstract;

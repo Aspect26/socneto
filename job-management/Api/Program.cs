@@ -13,19 +13,21 @@ namespace Api
     {
         public static async Task Main(string[] args)
         {
+#if DEBUG
+            args = new[]
+            {
+                //"--no_kafka",
+                "--use_file_storage"
+            };
+#endif
             if (args.Contains("--sleep_on_startup"))
             {
                 await Task.Delay(TimeSpan.FromSeconds(180));
             }
             
-            var app = CreateWebHostBuilder(args).Build();
+            var builder = JobManagementServiceBuilder.GetBuilder(args);
+            var app = builder.Build();
             app.Run();
-        }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
-        {
-            return WebHost.CreateDefaultBuilder(args)
-               .UseStartup<Startup>();
         }
     }
 }

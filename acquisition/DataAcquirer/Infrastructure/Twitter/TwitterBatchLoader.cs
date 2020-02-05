@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Acquisition;
+using Domain.EventTracking;
 using Domain.Model;
 using Infrastructure.Twitter.Abstract;
 using LinqToTwitter;

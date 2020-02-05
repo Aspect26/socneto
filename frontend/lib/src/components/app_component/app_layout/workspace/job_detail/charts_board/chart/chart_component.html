@@ -1,3 +1,13 @@
-<div class="chart-wrapper">
+<section *ngIf="loadingData">
+    <material-progress [indeterminate]="true"></material-progress>
+</section>
 
+<section *ngIf="chartData.isEmpty && !loadingData" class="no-data">
+    NO DATA
+</section>
+
+<div class="chart-wrapper">
+    <section *ngIf="chartData.isNotEmpty">
+        <material-progress [indeterminate]="true"></material-progress>
+    </section>
 </div>

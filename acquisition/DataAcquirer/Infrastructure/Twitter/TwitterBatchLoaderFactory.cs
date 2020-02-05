@@ -1,6 +1,7 @@
 using System;
 using Domain;
 using Domain.Acquisition;
+using Domain.EventTracking;
 using Infrastructure.Twitter.Abstract;
 using Microsoft.Extensions.Options;
 
