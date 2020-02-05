@@ -1,14 +1,14 @@
-<div class="status-line" *ngIf="!isBackendRunning">
+<div class="status-line" *ngIf="isBackendStopped">
     <material-icon icon="warning"></material-icon>
     Backend is not running
 </div>
 
-<div class="status-line" *ngIf="!isStorageRunning">
+<div class="status-line" *ngIf="isStorageStopped">
     <material-icon icon="warning"></material-icon>
     Storage is not running
 </div>
 
-<div class="status-line" *ngIf="!isJMSRunning">
+<div class="status-line" *ngIf="isJMSStopped">
     <material-icon icon="warning"></material-icon>
     JMS is not running
 </div>
