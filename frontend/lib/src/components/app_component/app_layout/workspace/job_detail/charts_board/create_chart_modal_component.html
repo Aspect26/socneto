@@ -26,10 +26,8 @@
                     <material-dropdown-select class="analyser-select"
                                               buttonText="{{ dataPath.analyserId }}"
                                               [disabled]="useTimeAsX && first"
-                                              [options]="analysers"
-                                              [itemRenderer]="analyserItemRenderer"
-                                              [selection]="dataPath.analyserId"
-                                              (selectionChange)="onDataPathAnalyserChanged(dataPath, $event)">
+                                              [options]="analyserIds"
+                                              [(selection)]="dataPath.analyserId">
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
