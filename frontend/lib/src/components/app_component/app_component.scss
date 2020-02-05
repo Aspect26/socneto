@@ -19,7 +19,7 @@
 @import "package:sw_project/src/components/shared/socneto_component_status/socneto_component_status_component.scss";
 @import "package:sw_project/src/components/shared/platform_startup_info/platform_startup_info_component.scss";
 @import "package:sw_project/src/components/app_component/material.scss";
-
+@import "package:sw_project/src/components/app_component/mixins.scss";
 
 @mixin apply-theme($theme) {
   @include material-theme($theme);
@@ -42,6 +42,8 @@
   @include socneto-component-status-component($theme);
   @include platform-startup-info-component($theme);
   @include quick-guide-component($theme);
+
+  @include scrollbar-themed($theme);
 }
 
 .theme-red-light {
