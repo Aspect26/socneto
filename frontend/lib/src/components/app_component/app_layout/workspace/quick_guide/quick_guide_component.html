@@ -1,0 +1,69 @@
+<div class="container">
+    <h2>Quick guide</h2>
+    <div class="stepper-wrapper">
+        <material-button raised buttonDecorator
+                         class="step-button back"
+                         [disabled]="guideStepper.activeStep?.index == 0"
+                         (trigger)="guideStepper.jumpStep(guideStepper.activeStep.index - 1)">
+            &lt;
+        </material-button>
+
+        <div class="stepper">
+
+            <material-stepper #guideStepper
+                              legalJumps="all"
+                              orientation="horizontal">
+
+                <template step name="Platform startup"
+                          [hideButtons]="true">
+                    <div class="text-info">Wait until all of the core component of the platform are running</div>
+                    <img src="/packages/sw_project/static/images/guide/01_startup.png" alt="Startup">
+                </template>
+
+                <template step name="Create job"
+                          [hideButtons]="true">
+                    <div class="text-info">When the platform is up and running, start by creating a new job</div>
+                    <img src="/packages/sw_project/static/images/guide/02_create_job.png" alt="Create job">
+                </template>
+
+                <template step name="Set job attributes"
+                          [hideButtons]="true">
+                    <div class="text-info">When creating a job, you can specify its name, the topic you want to be queried from social networks, language ??? and which acquirers and analysers should be used to process the given topic</div>
+                    <img src="/packages/sw_project/static/images/guide/03_job_properties.png" alt="Specify job">
+                </template>
+
+                <template step name="Set credentials (optional)"
+                          [hideButtons]="true">
+                    <div class="text-info">For each selected acquirer, you can specify, what credentials it should use. This step is optional, and by not specifying any, it will use default credentials</div>
+                    <img src="/packages/sw_project/static/images/guide/04_job_credentials.png" alt="Job credentials">
+                </template>
+
+                <template step name="Create chart"
+                          [hideButtons]="true">
+                    <div class="text-info">After creating a new job, the acquirers automatically start acquiring the data and analysers start to analyse them. To see some statistics about the analyzed data, start creating charts</div>
+                    <img src="/packages/sw_project/static/images/guide/05_create_chart.png" alt="Create chart button">
+                </template>
+
+                <template step name="Specify chart properties"
+                          [hideButtons]="true">
+                    <div class="text-info">When creating a chart, firstly specify the chart's type (line, pie or scatter), then which analyzed properties should be displayed in the chart</div>
+                    <img src="/packages/sw_project/static/images/guide/06_chart_properties.png" alt="Chart properties">
+                </template>
+
+                <template step name="Watch the charts"
+                          [hideButtons]="true">
+                    <div class="text-info">WHen the charts are created, select a job from you job list and look at the charts!</div>
+                    <img src="/packages/sw_project/static/images/guide/07_charts_data.png" alt="Chart properties">
+                </template>
+
+            </material-stepper>
+        </div>
+
+        <material-button raised buttonDecorator
+                         class="step-button forward"
+                         [disabled]="guideStepper.activeStep?.index == (guideStepper.steps?.length ?? 0) - 1"
+                         (trigger)="guideStepper.jumpStep(guideStepper.activeStep.index + 1)">
+            &gt;
+        </material-button>
+    </div>
+</div>

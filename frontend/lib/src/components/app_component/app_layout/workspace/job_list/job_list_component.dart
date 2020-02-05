@@ -76,6 +76,7 @@ class JobListComponent implements AfterChanges {
   JobStatusCode get runningJobStatus => JobStatusCode.Running;
   JobStatusCode get stoppedJobStatus => JobStatusCode.Stopped;
   String jobUrl(String jobId) => RoutePaths.jobDetail.toUrl(parameters: RouteParams.jobDetailParams(this.username, jobId));
+  String guideUrl() => RoutePaths.workspaceHome.toUrl(parameters: RouteParams.workspaceParams(this.username));
 
   void onPlatformStarted() {
     this.isPlatformRunning = true;

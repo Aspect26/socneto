@@ -28,6 +28,7 @@ doc/api/
 
 # CUSTOM
 dev_scripts/
+guide_images/
 
 # Built files
 /web/static/css/
