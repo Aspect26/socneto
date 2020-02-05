@@ -16,16 +16,54 @@
     .container {
       padding: 0 50px;
 
-      .stepper {
-        width: 85%;
-        height: 85%;
+      .step-button {
+        width: 100px;
+        height: 100px;
 
-        img {
-          max-width:100%;
-          max-height:100%;
+        border: 7px solid;
+        border-radius: 100px;
+
+        background-color: get-color($background, 100);
+        color: get-color($primary, 500);
+        font-weight: bold;
+
+        line-height: 100px - 2*7px;
+
+        .content {
+          padding: 0 !important
+        }
+
+        &[disabled] {
+          color: #9b9b9b;
+        }
+      }
+
+      .stepper-wrapper {
+        display: flex;
+        height: 750px;
+        align-items: center;
+
+        .stepper {
+          width: 85%;
+          height: 85%;
+
+          .stepper-content {
+            display: flex;
+            flex-direction: column;
+
+            padding: 20px;
+
+            .text-info {
+              text-align: center;
+            }
+
+            img {
+              max-width: 100%;
+              margin: 30px auto;
+            }
+          }
         }
       }
     }
   }
-
 }
