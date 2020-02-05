@@ -85,8 +85,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       values.add(datum)
     });
 
-    var returnValue = [values];
-    return returnValue;
+    return values.isEmpty? [] : [values];
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
