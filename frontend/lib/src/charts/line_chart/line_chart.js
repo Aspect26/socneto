@@ -49,7 +49,8 @@ class LineChart {
     }
 
     _removeOld(selector) {
-        d3.select(selector).select("svg").remove();
+        d3.select(selector).selectAll("*").remove();
+        d3.select(selector).html("");
     }
 
     _createXScale(dataSets, width) {

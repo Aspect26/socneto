@@ -72,8 +72,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       values.add([key, value])
     });
 
-    var returnValue = [values];
-    return returnValue;
+    return values.isEmpty? [] : [values];
   }
 
   Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames, bool isXPostDate) async {
