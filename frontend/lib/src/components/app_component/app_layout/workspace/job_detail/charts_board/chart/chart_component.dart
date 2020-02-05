@@ -18,6 +18,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialButtonComponent,
     MaterialIconComponent,
     MaterialCheckboxComponent,
+    MaterialProgressComponent,
     materialInputDirectives,
 
     MaterialMultilineInputComponent,
@@ -44,6 +45,8 @@ class ChartComponent implements AfterChanges {
   @Input() String chartId;
 
   ChartStrategy _chartStrategy;
+  List<List<List<dynamic>>> chartData = [];
+  bool loadingData = true;
   
   ChartComponent(this._socnetoService);
 
@@ -65,18 +68,20 @@ class ChartComponent implements AfterChanges {
   }
 
   void _refreshChart() async {
-    var chartDataPoints;
-
     try {
-      chartDataPoints = await this._socnetoService.getChartData(this.jobId, this.chartDefinition);
+      this.chartData = await this._socnetoService.getChartData(this.jobId, this.chartDefinition);
     } on HttpException {
       Toastr.error("Analysis", "Could not fetch analyses for chart");
       return;
+    } finally {
+      this.loadingData = false;
     }
 
-    this._chartStrategy.setData(this.chartDefinition, chartDataPoints);
-    // TODO: The charts needs to be created after this element was already created
-    Timer(Duration(milliseconds: 500), this._redrawChart);
+    if (this.chartData.isNotEmpty) {
+      this._chartStrategy.setData(this.chartDefinition, this.chartData);
+      // TODO: HACK HERE ! The charts needs to be created after this element was already created
+      Timer(Duration(milliseconds: 500), this._redrawChart);
+    }
   }
 
   void _redrawChart() {
