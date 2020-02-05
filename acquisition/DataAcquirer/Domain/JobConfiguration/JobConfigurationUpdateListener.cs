@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
+using Domain.EventTracking;
 using Domain.JobManagement.Abstract;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;

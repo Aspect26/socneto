@@ -1,4 +1,5 @@
 using Domain;
+using Domain.EventTracking;
 using Infrastructure.Twitter.Abstract;
 using LinqToTwitter;
 using Microsoft.Extensions.Logging;

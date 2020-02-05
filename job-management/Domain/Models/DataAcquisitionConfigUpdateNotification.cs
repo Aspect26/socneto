@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Domain.SubmittedJobConfiguration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -19,7 +18,7 @@ namespace Domain.Models
         [JsonProperty("attributes")]
         public JObject Attributes { get; set; }
 
-        [JsonProperty("outputMessageBrokerChannels")]
+        [JsonProperty("outputChannelNames")]
         public string[]  OutputMessageBrokerChannels { get; set; }
     }
 }

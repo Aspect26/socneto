@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:tuple/tuple.dart';
 
 typedef StatusChangeCallback = Function(SocnetoComponentStatusChangedEvent changeEvent, PlatformStatus currentPlatformStatus);
@@ -10,6 +11,7 @@ class PlatformStatusService {
 
   final Duration repeatInterval = const Duration(seconds:5);
   final SocnetoService _socnetoService;
+  final Lock _lock = Lock();
 
   PlatformStatus _platformStatus = PlatformStatus(SocnetoComponentStatus.UNKNOWN, SocnetoComponentStatus.UNKNOWN, SocnetoComponentStatus.UNKNOWN);
   Timer _currentPollingTimer;
@@ -20,7 +22,10 @@ class PlatformStatusService {
   PlatformStatus getCurrentStatus() => this._platformStatus;
 
   void subscribeToChanges(Object listener, StatusChangeCallback callback) {
-    this._pollers.add(Tuple2(listener, callback));
+    this._lock.synchronized(() {
+      this._pollers.add(Tuple2(listener, callback));
+    });
+
     this._pollStatus();
     if (this._currentPollingTimer == null) {
       this._currentPollingTimer = Timer.periodic(repeatInterval, (Timer t) => this._pollStatus());
@@ -28,11 +33,13 @@ class PlatformStatusService {
   }
 
   void unsubscribeFromChanges(Object listener) {
-    this._pollers.removeWhere((poller) => poller.item1 == listener);
-    if (this._pollers.isEmpty && this._currentPollingTimer != null) {
-      this._currentPollingTimer.cancel();
-      this._currentPollingTimer = null;
-    }
+    this._lock.synchronized(() {
+      this._pollers.removeWhere((poller) => poller.item1 == listener);
+      if (this._pollers.isEmpty && this._currentPollingTimer != null) {
+        this._currentPollingTimer.cancel();
+        this._currentPollingTimer = null;
+      }
+    });
   }
 
   void _pollStatus() async {
@@ -44,8 +51,11 @@ class PlatformStatusService {
       newPlatformStatus = PlatformStatus(SocnetoComponentStatus.UNKNOWN, SocnetoComponentStatus.UNKNOWN, SocnetoComponentStatus.STOPPED);
     }
 
-    this._checkPlatformStatusChanges(newPlatformStatus);
-    this._platformStatus = newPlatformStatus;
+    try {
+      this._checkPlatformStatusChanges(newPlatformStatus);
+    } finally {
+      this._platformStatus = newPlatformStatus;
+    }
   }
 
   void _checkPlatformStatusChanges(PlatformStatus newPlatformStatus) {
@@ -76,8 +86,10 @@ class PlatformStatusService {
 
     var changeEvent = SocnetoComponentStatusChangedEvent(component, previousBackendStatus, newStatus);
 
-    this._pollers.forEach((poller) {
-      poller.item2(changeEvent, newPlatformStatus);
+    this._lock.synchronized(() {
+      this._pollers.forEach((poller) {
+        poller.item2(changeEvent, newPlatformStatus);
+      });
     });
   }
 }

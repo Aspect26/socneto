@@ -40,9 +40,9 @@ class PlatformStartupInfoComponent implements OnInit {
   final PlatformStatusService _platformStatusService;
 
   bool isSubscribedToPlatformChanges = false;
-  bool isBackendRunning = false;
-  bool isStorageRunning = false;
-  bool isJMSRunning = false;
+  bool isBackendStopped = false;
+  bool isStorageStopped = false;
+  bool isJMSStopped = false;
 
   PlatformStartupInfoComponent(this._platformStatusService);
 
@@ -53,19 +53,47 @@ class PlatformStartupInfoComponent implements OnInit {
   }
 
   void _updatePlatformStatus(SocnetoComponentStatusChangedEvent changedEvent, PlatformStatus platformStatus) {
-    this.isBackendRunning = platformStatus.backendStatus == SocnetoComponentStatus.RUNNING;
-    this.isStorageRunning = platformStatus.storageStatus == SocnetoComponentStatus.RUNNING;
-    this.isJMSRunning = platformStatus.jmsStatus == SocnetoComponentStatus.RUNNING;
+    this.isBackendStopped = platformStatus.backendStatus == SocnetoComponentStatus.STOPPED;
+    this.isStorageStopped = platformStatus.storageStatus == SocnetoComponentStatus.STOPPED;
+    this.isJMSStopped = platformStatus.jmsStatus == SocnetoComponentStatus.STOPPED;
 
-    if (this.isBackendRunning && this.isStorageRunning && this.isJMSRunning && this.isSubscribedToPlatformChanges) {
-      this._platformStatusService.unsubscribeFromChanges(this);
-      this.isSubscribedToPlatformChanges = false;
-      this._platformStartedController.add(true);
+    if (platformStatus.backendStatus == SocnetoComponentStatus.UNKNOWN ||
+        platformStatus.storageStatus == SocnetoComponentStatus.UNKNOWN ||
+        platformStatus.jmsStatus == SocnetoComponentStatus.UNKNOWN) {
+      this._onUnknownStatusUpdate();
+    } else if (this._isEverythingRunning()) {
+      this._onEverythingRunningUpdate();
+    } else {
+      this._onSomethingNotRunningUpdate();
     }
+  }
 
-    if ((!this.isBackendRunning || !this.isStorageRunning || !this.isJMSRunning) && !this.isSubscribedToPlatformChanges) {
+  bool _isEverythingRunning() => !this.isBackendStopped && !this.isStorageStopped && !this.isJMSStopped;
+
+  void _onEverythingRunningUpdate() {
+    this._unsubscribeFromPlatformChanges();
+    this._platformStartedController.add(true);
+  }
+
+  void _onSomethingNotRunningUpdate() {
+    this._subscribeToPlatformChanges();
+  }
+
+  void _onUnknownStatusUpdate() {
+    this._subscribeToPlatformChanges();
+  }
+
+  void _subscribeToPlatformChanges() {
+    if (!this.isSubscribedToPlatformChanges) {
       this._platformStatusService.subscribeToChanges(this, this._updatePlatformStatus);
       this.isSubscribedToPlatformChanges = true;
+    }
+  }
+
+  void _unsubscribeFromPlatformChanges() {
+    if (this.isSubscribedToPlatformChanges) {
+      this._platformStatusService.unsubscribeFromChanges(this);
+      this.isSubscribedToPlatformChanges = false;
     }
   }
 

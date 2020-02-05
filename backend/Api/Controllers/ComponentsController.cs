@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Socneto.Api.Models;
 using Socneto.Domain.Services;
 
@@ -16,12 +15,10 @@ namespace Socneto.Api.Controllers
     {
 
         private readonly IStorageService _storageService;
-        private readonly ILogger<ComponentsController> _logger;
 
-        public ComponentsController(IStorageService storageService, ILogger<ComponentsController> logger)
+        public ComponentsController(IStorageService storageService)
         {
             _storageService = storageService;
-            _logger = logger;
         }
         
         [HttpGet]

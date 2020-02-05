@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
+using Domain.EventTracking;
 using Domain.JobConfiguration;
 using Domain.JobManagement;
 using Domain.JobManagement.Abstract;

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Abstract;
 using Domain.Acquisition;
+using Domain.EventTracking;
 using Domain.Exceptions;
 using Domain.JobConfiguration;
 using Domain.JobManagement.Abstract;

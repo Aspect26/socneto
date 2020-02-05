@@ -11,7 +11,7 @@ namespace Socneto.Domain.Services
     public class JobService : IJobService
     {
 
-        private IStorageService _storageService;
+        private readonly IStorageService _storageService;
         
         public JobService(IStorageService storageService)
         {

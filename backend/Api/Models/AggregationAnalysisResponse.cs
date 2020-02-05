@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Socneto.Domain.Models;
@@ -12,9 +11,17 @@ namespace Socneto.Api.Models
         
         public static AggregationAnalysisResponse FromModel(AggregationAnalysisResult analysisResult)
         {
-            return new AggregationAnalysisResponse()
+            return new AggregationAnalysisResponse
             {
                 Result = analysisResult.MapResult
+            };
+        }
+
+        public static AggregationAnalysisResponse Empty()
+        {
+            return new AggregationAnalysisResponse
+            {
+                Result = new Dictionary<string, double>()
             };
         }
     }
