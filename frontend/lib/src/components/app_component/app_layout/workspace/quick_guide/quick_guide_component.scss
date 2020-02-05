@@ -1,0 +1,79 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
+
+
+@mixin quick-guide-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  quick-guide {
+    .container {
+      padding: 0 50px;
+
+      h2 {
+        text-align: center;
+      }
+
+      .step-button {
+        width: 100px;
+        height: 100px;
+
+        border: 7px solid;
+        border-radius: 100px;
+
+        background-color: get-color($background, 100);
+        color: get-color($primary, 500);
+        opacity: 0.8;
+        font-weight: bold;
+
+        line-height: 100px - 2*7px;
+
+        .content {
+          padding: 0 !important
+        }
+
+        &[disabled] {
+          color: #9b9b9b;
+        }
+      }
+
+      .stepper-wrapper {
+        display: flex;
+        height: 750px;
+        align-items: center;
+
+        .stepper {
+          width: 85%;
+          height: 85%;
+
+          .stepper-content {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+
+            padding: 20px;
+
+            .text-info {
+              text-align: center;
+            }
+
+            img {
+              width: 100%;
+              height: 100%;
+
+              margin: 30px auto;
+
+              object-fit: contain;
+            }
+          }
+        }
+      }
+    }
+  }
+}

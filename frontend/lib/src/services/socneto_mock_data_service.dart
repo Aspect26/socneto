@@ -24,7 +24,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<Job> mockJobs = [
-    Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "First job", JobStatusCode.Running, DateTime.now(), null),
+    Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Star Wars - sentiment", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
@@ -96,7 +96,7 @@ class SocnetoMockDataService extends SocnetoDataService {
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
-    Job("480cd21c-deb9-4e3b-8aca-083154aac90b", "Finished job", JobStatusCode.Stopped, DateTime.fromMicrosecondsSinceEpoch(1540000000000000), DateTime.fromMicrosecondsSinceEpoch(1550000000000000))
+    Job("480cd21c-deb9-4e3b-8aca-083154aac90b", "Lord of the Rings", JobStatusCode.Stopped, DateTime.fromMicrosecondsSinceEpoch(1540000000000000), DateTime.fromMicrosecondsSinceEpoch(1550000000000000))
   ];
 
   static final List<SocnetoComponent> mockAcquirers = [
@@ -188,44 +188,6 @@ class SocnetoMockDataService extends SocnetoDataService {
       return null;
     }
   }
-
-//  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
-//    var analyserId = chartDefinition.analysisDataPaths[0].analyser.identifier;
-//    var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property.name).toList();
-//    if (chartDefinition.chartType == ChartType.Pie) {
-//      return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
-//    } else {
-//      return await this._getArrayChartData(jobId, analyserId, propertyNames);
-//    }
-//  }
-//
-//  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
-//    AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
-//    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
-//
-//    List<List<dynamic>> values = [];
-//    var aggregations = result["aggregations"];
-//    aggregations.forEach((key, value) => {
-//      values.add([key, value])
-//    });
-//
-//    var returnValue = [values];
-//    return returnValue;
-//  }
-//
-//  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames) async {
-//    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames);
-//    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
-//
-//    List<List<dynamic>> values = [];
-//    var dataPoints = result["data"];
-//    dataPoints.forEach((datum) => {
-//      values.add(datum)
-//    });
-//
-//    var returnValue = [values];
-//    return returnValue;
-//  }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
     Future.value(mockAcquirers);

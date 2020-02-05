@@ -28,7 +28,7 @@ String getDurationString(Duration duration) {
   } else if (minutes != 0) {
     return "$minutes ${_plural(minutes, "minute", "minutes")}, ${seconds.abs()} ${_plural(seconds, "second", "seconds")}";
   } else {
-    return "$seconds ${_plural(seconds, "second", "seconds")}";
+    return "less than a minute";
   }
 }
 
