@@ -25,6 +25,7 @@
 
         background-color: get-color($background, 100);
         color: get-color($primary, 500);
+        opacity: 0.8;
         font-weight: bold;
 
         line-height: 100px - 2*7px;
@@ -48,6 +49,7 @@
           height: 85%;
 
           .stepper-content {
+            height: 500px;
             display: flex;
             flex-direction: column;
 
@@ -58,8 +60,12 @@
             }
 
             img {
-              max-width: 100%;
+              width: 100%;
+              height: 100%;
+
               margin: 30px auto;
+
+              object-fit: contain;
             }
           }
         }
