@@ -167,7 +167,6 @@ class JobListComponent implements AfterChanges {
     }
 
     this.displayedJobs = this.jobs.sublist(start, end);
-    this.displayedJobs = [Job("id", "Star Wars - Sentiment", JobStatusCode.Running, DateTime.now(), null)];
   }
 
   void _onLoadDataError(HttpException error) {
