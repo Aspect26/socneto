@@ -69,8 +69,7 @@ class CreateChartModalComponent {
     this.loadAnalyzers();
   }
 
-  static final ItemRenderer analyserItemRenderer = newCachingItemRenderer<dynamic>(
-          (analyser) => "${analyser.identifier}");
+  List<String> get analyserIds => this.analysers?.map((analyser) => analyser.identifier)?.toList() ?? [];
 
   void loadAnalyzers() async {
     // TODO: this should ask for analyzers of the selected job
@@ -134,12 +133,8 @@ class CreateChartModalComponent {
   }
 
   List<String> getAnalyserProperties(String analyserId) {
-    var analyser = this.analysers.firstWhere((analyser) => analyser.identifier == analyserId);
-    if (analyser != null) {
-      return analyser.properties.map((analyserProperty) => analyserProperty.name).toList();
-    } else {
-      return [];
-    }
+    var analyser = this.analysers.firstWhere((analyser) => analyser.identifier == analyserId, orElse: () => null);
+    return analyser?.properties?.map((analyserProperty) => analyserProperty.name)?.toList() ?? [];
   }
 
   void onUseTimeAsXChange(bool checked) {
