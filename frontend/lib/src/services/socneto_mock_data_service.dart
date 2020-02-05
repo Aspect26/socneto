@@ -25,7 +25,6 @@ class SocnetoMockDataService extends SocnetoDataService {
 
   static final List<Job> mockJobs = [
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Star Wars - sentiment", JobStatusCode.Running, DateTime.now(), null),
-    /*
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
@@ -97,7 +96,6 @@ class SocnetoMockDataService extends SocnetoDataService {
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
     Job("480cd21c-deb9-4e3b-8aca-083154aac90a", "Running job", JobStatusCode.Running, DateTime.now(), null),
-     */
     Job("480cd21c-deb9-4e3b-8aca-083154aac90b", "Lord of the Rings", JobStatusCode.Stopped, DateTime.fromMicrosecondsSinceEpoch(1540000000000000), DateTime.fromMicrosecondsSinceEpoch(1550000000000000))
   ];
 
