@@ -4,11 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Socneto.Api.Models;
-using Socneto.Domain;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 using Socneto.Domain.Services;
@@ -25,47 +22,17 @@ namespace Socneto.Api.Controllers
         private readonly IJobManagementService _jobManagementService;
         private readonly IGetAnalysisService _getAnalysisService;
         private readonly IEventTracker<JobController> _eventTracker;
-        private readonly DefaultAcquirersCredentialsOptions _defaultAcquirersCredentials;
         
         public JobController(IAuthorizationService authorizationService, IJobService jobService, 
             IJobManagementService jobManagementService, IGetAnalysisService getAnalysisService, 
-            IOptions<DefaultAcquirersCredentialsOptions> defaultAcquirersCredentialsOptionsObject, 
             IEventTracker<JobController> eventTracker)
-        {
-            if (defaultAcquirersCredentialsOptionsObject.Value?.Twitter == null)
-                throw new ArgumentNullException(nameof(defaultAcquirersCredentialsOptionsObject.Value.Twitter));
-            
-            if (defaultAcquirersCredentialsOptionsObject.Value?.Reddit == null)
-                throw new ArgumentNullException(nameof(defaultAcquirersCredentialsOptionsObject.Value.Reddit));
-            
+        {   
             _authorizationService = authorizationService;
             _jobService = jobService;
             _jobManagementService = jobManagementService;
             _getAnalysisService = getAnalysisService;
             _eventTracker = eventTracker;
-            _defaultAcquirersCredentials = defaultAcquirersCredentialsOptionsObject.Value;
         }
-
-        private AcquirerCredentials DefaultCredentials => new AcquirerCredentials
-        {
-            TwitterCredentials = DefaultTwitterCredentials,
-            RedditCredentials = DefaultRedditCredentials
-        };
-
-        private TwitterCredentials DefaultTwitterCredentials => new TwitterCredentials
-        {
-            ApiKey = _defaultAcquirersCredentials.Twitter.ApiKey,
-            ApiSecretKey = _defaultAcquirersCredentials.Twitter.ApiSecretKey,
-            AccessToken = _defaultAcquirersCredentials.Twitter.AccessToken,
-            AccessTokenSecret = _defaultAcquirersCredentials.Twitter.AccessTokenSecret,
-        };
-
-        private RedditCredentials DefaultRedditCredentials => new RedditCredentials
-        {
-            AppId = _defaultAcquirersCredentials.Reddit.AppId,
-            AppSecret = _defaultAcquirersCredentials.Reddit.AppSecret,
-            RefreshToken = _defaultAcquirersCredentials.Reddit.RefreshToken
-        };
 
         [HttpGet]
         [Route("api/job/all")]
@@ -100,29 +67,9 @@ namespace Socneto.Api.Controllers
             
             if (request.Credentials == null)
             {
-                request.Credentials = new Dictionary<string, AcquirerCredentials>();
+                request.Credentials = new Dictionary<string, Dictionary<string, string>>();
             }
 
-            var attributes = new JObject();
-            foreach (var selectedAcquirer in request.SelectedAcquirers)
-            {
-                var acquirerCredentials = request.Credentials.ContainsKey(selectedAcquirer)
-                    ? request.Credentials[selectedAcquirer]
-                    : DefaultCredentials;
-                var twitterCredentials = acquirerCredentials.TwitterCredentials ?? DefaultTwitterCredentials;
-                var redditCredentials = acquirerCredentials.RedditCredentials ?? DefaultRedditCredentials;
-                attributes.Add(selectedAcquirer, new JObject(
-                    new JProperty("ApiKey", twitterCredentials.ApiKey),
-                    new JProperty("ApiSecretKey", twitterCredentials.ApiSecretKey),    
-                    new JProperty("AccessToken", twitterCredentials.AccessToken),
-                    new JProperty("AccessTokenSecret", twitterCredentials.AccessTokenSecret),
-                    
-                    new JProperty("RedditAppId", redditCredentials.AppId),
-                    new JProperty("RedditAppSecret", redditCredentials.AppSecret),
-                    new JProperty("RedditRefreshToken", redditCredentials.RefreshToken)
-                ));
-            }
-            
             var jobSubmit = new JobSubmit
             {
                 JobName = request.JobName,
@@ -130,10 +77,9 @@ namespace Socneto.Api.Controllers
                 SelectedAcquirersIdentifiers = request.SelectedAcquirers,
                 SelectedAnalysersIdentifiers = request.SelectedAnalysers,
                 Language = request.Language,
-                Attributes = attributes
             };
 
-            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit);
+            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit, request.Credentials);
             var response = new JobStatusResponse
             {
                 JobId = jobStatus.JobId,
