@@ -16,7 +16,6 @@ import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
-import 'package:tuple/tuple.dart';
 
 
 @Component(
@@ -185,19 +184,17 @@ class CreateJobModal {
     }
   }
 
-  List<Tuple2<String, Map<String, String>>> _getAllCredentials() {
-    List<Tuple2<String, Map<String, String>>> credentialsWithAcquirerId = [];
+  Map<String, Map<String, String>> _getAllCredentials() {
+    Map<String, Map<String, String>> acquirersToCredentials = {};
 
     this.acquirersWithCredentials.forEach((credentials) {
-      final credentialsTuple = Tuple2<String, Map<String, String>>(
-          credentials.acquirer.identifier,
-          this._createCredentialsMap(credentials.credentials)
-      );
+      Map<String, String> acquirerCredentialsMap = this._createCredentialsMap(credentials.credentials);
+      String acquirerIdentifier = credentials.acquirer.identifier;
 
-      credentialsWithAcquirerId.add(credentialsTuple);
+      acquirersToCredentials[acquirerIdentifier] = acquirerCredentialsMap;
     });
 
-    return credentialsWithAcquirerId;
+    return acquirersToCredentials;
   }
 
   Map<String, String> _createCredentialsMap(List<MutableTuple<String, String>> data) {
