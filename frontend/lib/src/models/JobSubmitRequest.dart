@@ -8,7 +8,7 @@ class JobSubmitRequest {
   final List<SocnetoComponent> acquirers;
   final List<SocnetoComponent> analyzers;
   final String language;
-  final List<Tuple2<String, Map<String, String>>> credentials;
+  final Map<String, Map<String, String>> credentials;
 
   JobSubmitRequest(this.jobName, this.query, this.acquirers, this.analyzers, this.language, this.credentials);
 

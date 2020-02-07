@@ -33,7 +33,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> acquirers,
       List<SocnetoComponent> analyzers, String language,
-      List<Tuple2<String, Map<String, String>>> credentials)
+      Map<String, Map<String, String>> credentials)
   async {
     var request = JobSubmitRequest(jobName, query, acquirers, analyzers, language, credentials);
     return (await this.post<JobStatus>("job/create", request.toMap(), (result) => JobStatus.fromMap(result)));
