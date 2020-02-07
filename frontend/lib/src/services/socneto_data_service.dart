@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
-import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobSubmitRequest.dart';
