@@ -28,6 +28,6 @@ echo "Running twitter test"
 $twitter_dockerfile = "$da_context/Dockerfile.twitter"
 Test-Da $da_context $twitter_dockerfile "twitter_da" "../code/twitter.cred"
 
-echo "Running twitter test"
-$reddit_dockerfile = "$da_context/Dockerfile.twitter"
+echo "Running reddit test"
+$reddit_dockerfile = "$da_context/Dockerfile.reddit"
 Test-Da $da_context $reddit_dockerfile "reddit_da" "../code/reddit.cred"

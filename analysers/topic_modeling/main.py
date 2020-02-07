@@ -24,23 +24,6 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
-def analyse_text(lda, text):
-    a = lda.get_topic_keywords(text)
-
-    dic = {}
-    for topic,prob in a:
-        if topic not in dic:
-            dic[topic]=prob
-        # else:
-        #     dic[topic] = dic[topic] + prob
-
-    # topics =np.array(a[0])
-    # probs = np.array(a[1])
-    # zipped = zip(topics.flatten(), probs.flatten())
-
-
-    return list(dic.keys())
-
 def register_itself(topic, input_topic, componentId, producer):
     request = {
         "ComponentId": componentId,
@@ -62,7 +45,7 @@ def register_itself(topic, input_topic, componentId, producer):
 
 
 def analyse(lda, text):
-    array = analyse_text(lda,text)
+    array = lda.get_topic_keywords(text)
     return {
         "topics": {
             "textListValue": array
@@ -70,8 +53,10 @@ def analyse(lda, text):
     }
 
 def process_acquired_data(config, producer):
-    consumer = KafkaConsumer(
-        config['input_topic'], bootstrap_servers=config['kafka_server'])
+    topic = config['input_topic']
+    server=config['kafka_server']
+    logger.info("creating consumer. topic '{}' server '{}' ".format(topic, server))
+    consumer = KafkaConsumer(topic, bootstrap_servers=server)
 
     lda = LDAAnalysis()
     while True:
@@ -151,7 +136,7 @@ default_config = {
 }
 
 if args.sleep_on_startup:
-    print("Waiting a while before registering")
-    time.sleep(180)
+    print("Waiting 30 secs")
+    time.sleep(30)
 
 main(default_config)
