@@ -7,6 +7,7 @@ import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobStatusCode.dart';
 import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
 import 'package:sw_project/src/models/Paging.dart';
+import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -122,6 +123,9 @@ class SocnetoMockDataService extends SocnetoDataService {
     ChartDefinition([AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
     ChartDefinition([AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
   ];
+
+  Future<PlatformStatus> getPlatformStatus() async =>
+    Future.value(PlatformStatus(SocnetoComponentStatus.RUNNING, SocnetoComponentStatus.RUNNING, SocnetoComponentStatus.RUNNING));
 
   Future<User> login(String username, String password) async =>
     Future.value(mockUsers.firstWhere((user) => user.username == username));

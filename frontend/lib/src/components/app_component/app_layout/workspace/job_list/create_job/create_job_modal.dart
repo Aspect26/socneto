@@ -12,7 +12,6 @@ import 'package:angular_components/utils/angular/scroll_host/angular_2.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -186,22 +185,28 @@ class CreateJobModal {
     }
   }
 
-  List<Tuple3<String, TwitterCredentials, RedditCredentials>> _getAllCredentials() {
-    List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentialsWithAcquirerId = [];
+  List<Tuple2<String, Map<String, String>>> _getAllCredentials() {
+    List<Tuple2<String, Map<String, String>>> credentialsWithAcquirerId = [];
 
     this.acquirersWithCredentials.forEach((credentials) {
-      if (credentials.useCustomTwitterCredentials || credentials.useCustomRedditCredentials) {
-        final credentialsTuple = Tuple3<String, TwitterCredentials, RedditCredentials>(
-            credentials.acquirer.identifier,
-            credentials.useCustomTwitterCredentials? credentials.twitterCredentials : null,
-            credentials.useCustomRedditCredentials? credentials.redditCredentials : null,
-        );
+      final credentialsTuple = Tuple2<String, Map<String, String>>(
+          credentials.acquirer.identifier,
+          this._createCredentialsMap(credentials.credentials)
+      );
 
-        credentialsWithAcquirerId.add(credentialsTuple);
-      }
+      credentialsWithAcquirerId.add(credentialsTuple);
     });
 
     return credentialsWithAcquirerId;
+  }
+
+  Map<String, String> _createCredentialsMap(List<MutableTuple<String, String>> data) {
+    Map<String, String> resultMap = {};
+    data.forEach((credentialTuple) {
+      resultMap[credentialTuple.item1] = credentialTuple.item2;
+    });
+
+    return resultMap;
   }
 
 }
