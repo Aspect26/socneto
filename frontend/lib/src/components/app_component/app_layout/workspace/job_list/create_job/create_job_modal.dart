@@ -12,12 +12,10 @@ import 'package:angular_components/utils/angular/scroll_host/angular_2.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
-import 'package:tuple/tuple.dart';
 
 
 @Component(
@@ -186,22 +184,26 @@ class CreateJobModal {
     }
   }
 
-  List<Tuple3<String, TwitterCredentials, RedditCredentials>> _getAllCredentials() {
-    List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentialsWithAcquirerId = [];
+  Map<String, Map<String, String>> _getAllCredentials() {
+    Map<String, Map<String, String>> acquirersToCredentials = {};
 
     this.acquirersWithCredentials.forEach((credentials) {
-      if (credentials.useCustomTwitterCredentials || credentials.useCustomRedditCredentials) {
-        final credentialsTuple = Tuple3<String, TwitterCredentials, RedditCredentials>(
-            credentials.acquirer.identifier,
-            credentials.useCustomTwitterCredentials? credentials.twitterCredentials : null,
-            credentials.useCustomRedditCredentials? credentials.redditCredentials : null,
-        );
+      Map<String, String> acquirerCredentialsMap = this._createCredentialsMap(credentials.credentials);
+      String acquirerIdentifier = credentials.acquirer.identifier;
 
-        credentialsWithAcquirerId.add(credentialsTuple);
-      }
+      acquirersToCredentials[acquirerIdentifier] = acquirerCredentialsMap;
     });
 
-    return credentialsWithAcquirerId;
+    return acquirersToCredentials;
+  }
+
+  Map<String, String> _createCredentialsMap(List<MutableTuple<String, String>> data) {
+    Map<String, String> resultMap = {};
+    data.forEach((credentialTuple) {
+      resultMap[credentialTuple.item1] = credentialTuple.item2;
+    });
+
+    return resultMap;
   }
 
 }

@@ -150,17 +150,7 @@ Basic authorization
   "language": "<enum>",
   "credentials": {
     "<string:acquirerId>": {
-      "twitter": {
-        "api_key": "<string>",
-        "api_secret_key": "<string>",
-        "access_token": "<string>",
-        "access_token_secret": "<string>"
-      },
-      "reddit": {
-        "app_id": "<string>",
-        "app_secret": "<string>",
-        "refresh_token": "<string>"
-      }
+      "<string>": "<string>"
     }
   }
 }
