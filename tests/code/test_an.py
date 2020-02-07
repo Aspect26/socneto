@@ -3,85 +3,58 @@ import json
 import kafka_client
 import utils
 
-class DataAcquirerTestCases:    
-    def __init__(self, 
-                kafka,
-                data_acquirer_job_update_topic,
-                credentials):
-        self.cred=credentials
+class AnalyserTestCases:
+    def __init__(self, kafka):
         self.kafka = kafka
-        self.data_acquirer_job_update_topic = data_acquirer_job_update_topic
 
-    def test_data_acquisition(
-        self,
-        posts_output_topic,
-        jobId = "e3a7ce8b-2d10-46ff-ba91-925a5a99a3e9",
-        attributes = {}):
-
+    def test_analysis(
+            self,
+            topic,
+            output_topic="job_management.component_data_analyzed_input.storage_db"):
         try:
-            print("Create new job")
-            self.kafka.produce_start_job(
-                            self.data_acquirer_job_update_topic,
-                            outputMessageBrokerChannel = posts_output_topic,
-                            jobId=jobId,
-                            attributes = attributes)
+            print("Produce post")
+            self.kafka.produce_post(
+                topic, text="In machine learning and natural language processing, a topic model is a type of statistical model for discovering the abstract 'topics' that occur in a collection of documents. Topic modeling is a frequently used text-mining tool for discovery of hidden semantic structures in a text body.")
+            print("Post produced - waiting for the analysis")
+            post = self.kafka.get_message_from_topic(output_topic)
+            print(post)
+            if post is not None and 'results' in post:
+                # print(post)
+                return (True, None)
+            else:
+                return (False,"No post was returned")
 
-            print("Waits for acquired posts")  
-
-            post =self.kafka.get_message_from_topic(posts_output_topic)
-            if post is None:
-                return (False, "No post found")
-            keys = [
-                'originalPostId', 
-                'postId', 
-                'jobId', 
-                'text', 
-                'originalText', 
-                'language', 
-                'source', 
-                'authorId','dateTime'
-            ]
-            print("Check that the message is in the correct format")            
-            for k in keys:
-                if k not in post:
-                    raise Exception("Element {} not found in post {}".format(k,post))
-            return (True,None)
-            
         except Exception as e:
-            return (False, "Testing data acquirer failed: {}".format(e))
-        finally:
-            print("Stop the job")
-            self.kafka.produce_stop_job(self.data_acquirer_job_update_topic,jobId)
-        
-    def test(self):
-        attributes = dict({'TopicQuery':'test'}, **self.cred)
-        output_topic = 'my_test_topic'
-        (result,message) = self.test_data_acquisition(output_topic,attributes = attributes)
+            return (False, "Testing analyser failed: {}".format(e))
+
+    def test(self, topic):        
+        (result, message) = self.test_analysis(topic)
 
         if not result:
-            error ="test {} failed: {}".format( 'test_data_acquisition', message)
+            error = "test {} failed: {}".format(
+                'test_analysis', message)
             print(error)
             raise Exception(error)
         else:
             print("success")
 
 
-def start_test(config_path = "./config.json", cred_path = "./twitter.cred"):
+def start_test(config_path, topic):
+    
     config=utils.load_config(config_path)
-    kafka = kafka_client.KafkaClient(config['kafka']['kafka_server'])
-    credentials=utils.resolve_credentials(cred_path)
-    jobupdatetopic = config['topics']['data_acquirer_update_topic']
-    testcases = DataAcquirerTestCases(kafka,jobupdatetopic, credentials)
+    kafka_server = config['kafka']['kafka_server']
 
-    testcases.test()
+    print(topic)
+    print("Kafka server : '{}'".format(kafka_server))
+
+    kafka = kafka_client.KafkaClient(kafka_server)
+    testcases = AnalyserTestCases(kafka)
+    testcases.test(topic)
 
 if __name__ == "__main__":
-    if(len(sys.argv)==3):
+    if(len(sys.argv) == 3):
         config_path = sys.argv[1]
-        cred_path = sys.argv[2]
-        start_test(config_path,cred_path);
+        topic = sys.argv[2]
+        start_test(config_path, topic)
     else:
-        start_test();
-
-
-
+        raise Exception("Please include topic argument")

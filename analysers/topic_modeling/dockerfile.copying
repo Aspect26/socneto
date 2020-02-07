@@ -3,9 +3,9 @@ FROM python:3.8
 WORKDIR /usr/src/app
 
 COPY ./ ./
-Copy ./en_core_web_lg-2.2.5.tar.gz ./
 
-RUN exec pip install --no-cache-dir -r requirements.txt
-RUN exec pip install en_core_web_lg-2.2.5.tar.gz
+#RUN pip install numpy==1.18.1
+RUN pip install --default-timeout=120 --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
+RUN pip install en_core_web_lg-2.2.5.tar.gz
 
 CMD [ "python", "./main.py", "--server_address","kafka:9092"]

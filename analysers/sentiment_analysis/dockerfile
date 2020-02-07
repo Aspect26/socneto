@@ -2,12 +2,13 @@ FROM python:3.8
 
 WORKDIR /usr/src/app
 
-COPY model_1574374374.795886.bin ./
+# COPY model_1574374374.795886.bin ./
 COPY Analysis.py ./
 COPY main.py ./
+COPY get_model.py ./
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt --default-timeout=120  --trusted-host pypi.python.org
+RUN pip install --default-timeout=120  --trusted-host pypi.python.org minio
+RUN python get_model.py
 
 CMD [ "python", "./main.py", "--server_address","kafka:9092" , "--sleep_on_startup"]

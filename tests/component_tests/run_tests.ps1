@@ -3,3 +3,6 @@ echo "testing job management service"
 
 echo "testing data acquirers"
 . ./run_test_da.ps1
+
+echo "testing analysers"
+. ./run_test_an.ps1
