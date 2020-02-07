@@ -11,7 +11,6 @@
         </div>
 
         <material-stepper #jobStepper
-                          legalJumps="all"
                           orientation="horizontal">
 
             <template step name="Job Definition"
@@ -83,7 +82,7 @@
         </material-stepper>
 
         <div footer>
-            <material-button *ngIf="!submitting && jobStepper.activeStepIndex != 1" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
+            <material-button *ngIf="!submitting && jobStepper.activeStepIndex != 1" [disabled]="!isJobDefinitionCorrect()" (trigger)="jobStepper.stepForward($event, jobStepper.activeStep)" transparent>Custom credentials (optional)</material-button>
             <material-button *ngIf="!submitting" class="close-button" [disabled]="!isJobDefinitionCorrect()" (trigger)="onSubmit()">Submit</material-button>
             <material-spinner *ngIf="submitting"></material-spinner>
         </div>

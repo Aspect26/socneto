@@ -43,6 +43,10 @@
     &[transparent] {
       background-color: transparent;
       color: get-color($primary, 500);
+
+      &[disabled] {
+        color: #6c6c6c;
+      }
     }
   }
 

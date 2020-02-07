@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
-import 'package:sw_project/src/models/Credentials.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobSubmitRequest.dart';
@@ -34,7 +33,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> acquirers,
       List<SocnetoComponent> analyzers, String language,
-      List<Tuple3<String, TwitterCredentials, RedditCredentials>> credentials)
+      Map<String, Map<String, String>> credentials)
   async {
     var request = JobSubmitRequest(jobName, query, acquirers, analyzers, language, credentials);
     return (await this.post<JobStatus>("job/create", request.toMap(), (result) => JobStatus.fromMap(result)));
