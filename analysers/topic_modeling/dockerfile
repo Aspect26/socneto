@@ -2,7 +2,9 @@ FROM python:3.8
 
 WORKDIR /usr/src/app
 
-COPY ./ ./
+COPY ./*.py ./
+COPY ./requirements.txt ./
+COPY ./prepare.sh ./
 
 RUN exec ./prepare.sh
 

@@ -98,9 +98,13 @@ namespace Api
             }
         }
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            MainAsync(args).GetAwaiter().GetResult();    
+            if (args.Contains("--sleep_on_startup"))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(180));
+            }
+            await MainAsync(args);
         }        
     }
 }
