@@ -139,7 +139,7 @@ default_config = {
 }
 
 if args.sleep_on_startup:
-    print("Waiting a minute")
-    time.sleep(180)
+    print("Waiting 30 seconds")
+    time.sleep(30)
 
 main(default_config)
