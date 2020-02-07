@@ -1,3 +1,17 @@
+.grid.y {
+    color: lightgray;
+    shape-rendering: crispEdges;
+    stroke-dasharray: 3;
+}
+
+.grid.y path {
+    visibility: hidden;
+}
+
+.axis.y path {
+    visibility: hidden;
+}
+
 .line-chart .line {
     fill: none;
     stroke-width: 2px;
