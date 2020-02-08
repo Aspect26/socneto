@@ -124,6 +124,8 @@ services:
     container_name: tw-acquirer
     build: './acquisition/DataAcquirer'
     restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
       - kafka
       - jms
