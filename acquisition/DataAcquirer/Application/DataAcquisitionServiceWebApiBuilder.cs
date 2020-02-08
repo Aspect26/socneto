@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Abstract;
@@ -23,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Serilog.Extensions.Logging;
 
 namespace Application
@@ -133,14 +136,15 @@ namespace Application
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (aspNetCoreEnv == "Development")
+            if (aspNetCoreEnv != null)
             {
-                builder.AddJsonFile($"appsettings.Development.json", true, true);
+                builder.AddJsonFile($"appsettings.{aspNetCoreEnv}.json", true, true);
             }
 
             var configuration = builder.Build();
             var webHost = WebHost
                 .CreateDefaultBuilder(_args)
+
                 .ConfigureLogging(logging =>
                 {
                     logging.AddFile("Logs/ts-{Date}.txt");
@@ -151,7 +155,7 @@ namespace Application
                     //rootConfiguration = configurationBuilder.Build();
                     environment = hostingContext.HostingEnvironment;
                 })
-                
+
                 .ConfigureServices(services =>
                     ConfigureServices(services, configuration, isDevelopment ?? false))
                 .Configure(app =>
@@ -200,10 +204,19 @@ namespace Application
 
             services.AddTransient<IRegistrationService, RegistrationService>();
 
-#warning Null tranlsation service used
-            services.AddHttpClient<ITranslationService, NullTranslationService>();
-
-            services.AddHttpClient();
+            services.AddSingleton<ITranslationService, TranslationService>(
+                sp =>
+                {
+                    var handler = new HttpClientHandler
+                    {
+                        SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
+                    };
+                    var client = new HttpClient(handler);
+                    var options = sp.GetRequiredService<IOptions<TranslationServiceOptions>>();
+                    var logger = sp.GetRequiredService<ILogger<TranslationService>>();
+                    return new TranslationService(client, options, logger);
+            }
+                );
 
             if (isDevelopment)
             {
