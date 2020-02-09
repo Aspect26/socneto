@@ -23,11 +23,6 @@ namespace Api
     {
         public static async Task MainAsync(string[] args)
         {
-            if (args.Contains("--sleep_on_startup"))
-            {
-                await Task.Delay(TimeSpan.FromSeconds(200));
-            }
-
             var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
             var directory = new FileInfo(assemblyPath).Directory.FullName; 
             var twitterMetaDir = Path.Combine(directory, "metatw");
