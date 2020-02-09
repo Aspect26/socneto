@@ -97,7 +97,7 @@ services:
       - storage
       - kafka
     environment:
-      - ELASTICSEARCH_WAIT_MILLIS=40000
+      - ASPNETCORE_ENVIRONMENT=Production
 
   backend:
     build: './backend'
