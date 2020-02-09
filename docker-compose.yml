@@ -108,6 +108,12 @@ services:
       - storage
       - jms
 
+  frontend:
+    build: './frontend'
+    ports:
+      - '8080:8080'
+    container_name: frontend
+
   sentiment-analyser:
     container_name: se
     build: './analysers/sentiment_analysis' 
