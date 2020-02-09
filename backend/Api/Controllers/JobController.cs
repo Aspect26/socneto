@@ -167,7 +167,7 @@ namespace Socneto.Api.Controllers
             AggregationAnalysisResult analysisResult;
             try
             {
-                analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId,
+                analysisResult = await _getAnalysisService.GetAggregationAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperty);
             }
             catch (GetAnalysisService.GetAnalysisException)
@@ -195,7 +195,7 @@ namespace Socneto.Api.Controllers
             ArrayAnalysisResult analysisResult;
             try
             {
-                analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId,
+                analysisResult = await _getAnalysisService.GetArrayAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
             }
             catch (GetAnalysisService.GetAnalysisException)
