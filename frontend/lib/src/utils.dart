@@ -37,5 +37,5 @@ String _plural(int count, String singular, String plural) {
 }
 
 T getEnumByString<T>(List<T> allEnumValues, String value, T defaultValue) {
-  return allEnumValues.firstWhere((t) => t.toString() == "${T.toString()}.$value", orElse: () => null)  ?? defaultValue;
+  return allEnumValues.firstWhere((t) => t.toString().split(".").last == value, orElse: () => null)  ?? defaultValue;
 }
