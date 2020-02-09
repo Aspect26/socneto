@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -7,6 +8,9 @@ namespace Socneto.Domain.Models
 {
     public class GetAggregationAnalysisStorageRequest
     {
+        [JsonProperty("jobId")]
+        public Guid JobId { get; set; }
+        
         [JsonProperty("type")]
         public AnalysisType Type { get; set; }
         
@@ -25,12 +29,13 @@ namespace Socneto.Domain.Models
 
     public class GetArrayAnalysisStorageRequest
     {
+        [JsonProperty("jobId")]
+        public Guid JobId { get; set; }
+        
         [JsonProperty("type")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisType Type { get; set; }
         
         [JsonProperty("resultRequestType")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public AnalysisResultType ResultType { get; set; }
         
         [JsonProperty("componentId")]
