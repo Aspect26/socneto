@@ -1,0 +1,92 @@
+version: '3'
+services:
+
+  zookeeper:
+    image: 'bitnami/zookeeper'
+    restart: always
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: 'bitnami/kafka'
+    restart: always
+    ports:
+      - 9094:9094
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://kafka:9094
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
+
+  db:
+    image: "postgres"
+    container_name: storagedb
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=storagedb
+    ports:
+      - "5432:5432"
+  mongo_db:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+  kibana:
+    depends_on:
+      - logstash
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    ports:
+      - 5601:5601
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+
+  logstash:
+    build: ../../storage/docker/logstash/
+    depends_on:
+      - elasticsearch
+    ports:
+      - "9600:9600"
+      - "9999:9999"
+      - "9998:9998"
+    environment:
+      xpack.monitoring.elasticsearch.hosts: http://elasticsearch:9200
+
+  storage:
+    build: '../../storage'
+    ports:
+      - '8888:8888'
+    container_name: storageservice
+    depends_on:
+      - kafka
+      - mongo_db
+      - db
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_WAIT_MILLIS=80000  
+volumes:
+  data01:
