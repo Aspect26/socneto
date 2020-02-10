@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
@@ -48,8 +49,13 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<List<Job>> getUserJobs() async =>
       await this.getList<Job>("job/all", (result) => Job.fromMap(result));
 
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
-      await this.get<PaginatedAnalyzedPosts>("job/$jobId/posts?page=$page&pageSize=$pageSize", (result) => PaginatedAnalyzedPosts.fromMap(result));
+  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async {
+    var path = "job/$jobId/posts?page=$page&page_size=$pageSize"
+        "${containsWords.map((word) => "&contains_words=$word").toList().join()}"
+        "${excludeWords.map((word) => "&exclude_words=$word").toList().join()}"
+        "${dateRange != null? "&from=${dateRange.start.toString()}&to=${dateRange.end.toString()}" : ""}";
+    return await this.get<PaginatedAnalyzedPosts>(path, (result) => PaginatedAnalyzedPosts.fromMap(result));
+  }
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;

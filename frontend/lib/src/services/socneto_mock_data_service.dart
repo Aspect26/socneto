@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/models/AnalysisDataPath.dart';
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
@@ -124,6 +125,14 @@ class SocnetoMockDataService extends SocnetoDataService {
     ChartDefinition([AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
   ];
 
+  static final List<AnalyzedPost> mockPosts = [
+    AnalyzedPost(mockJobs[0].id, Post("author", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)), {}),
+    AnalyzedPost(mockJobs[0].id, Post("author", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)), {}),
+    AnalyzedPost(mockJobs[0].id, Post("author", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)), {}),
+    AnalyzedPost(mockJobs[0].id, Post("author", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)), {}),
+    AnalyzedPost(mockJobs[0].id, Post("author", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)), {}),
+  ];
+
   Future<PlatformStatus> getPlatformStatus() async =>
     Future.value(PlatformStatus(SocnetoComponentStatus.RUNNING, SocnetoComponentStatus.RUNNING, SocnetoComponentStatus.RUNNING));
 
@@ -136,8 +145,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<List<Job>> getUserJobs() async =>
     Future.value(mockJobs);
 
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
-    Future.value(PaginatedAnalyzedPosts([], Paging(0, 1, 20)));
+  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async =>
+    Future.value(PaginatedAnalyzedPosts(mockPosts, Paging(0, 1, 20)));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     if (chartDefinition.chartType == ChartType.Line && chartDefinition.isXDateTime) {
