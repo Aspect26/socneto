@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
 
@@ -44,7 +46,95 @@ namespace Socneto.Domain.Services
 
         public async Task<ArrayAnalysisResult> GetArrayAnalysis(Guid jobId, string analyserId, string[] analysisProperties, bool isXPostDate)
         {
-            var analysisResultType = isXPostDate ? AnalysisResultType.ListWithTime : AnalysisResultType.List;
+            return isXPostDate
+                ? await GetListWithTimeAnalysis(jobId, analyserId, analysisProperties) 
+                : await GetListAnalysis(jobId, analyserId, analysisProperties);  
+        }
+
+        private async Task<ArrayAnalysisResult> GetListWithTimeAnalysis(Guid jobId, string analyserId, string[] analysisProperties)
+        {
+            List<TimeArrayAnalysisResult> analyses = new List<TimeArrayAnalysisResult>();
+            
+            foreach (var analysisProperty in analysisProperties)
+            {
+                var analysisPropertyRequest = new ArrayAnalysisRequestProperty
+                {
+                    AnalysisPropertyName = analysisProperty,
+                    AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperty)
+                };
+                
+                var arrayAnalysisStorageRequest = new GetArrayAnalysisStorageRequest
+                {
+                    JobId = jobId,
+                    Type = AnalysisType.List,
+                    ResultType = AnalysisResultType.ListWithTime,
+                    ComponentId = analyserId,
+                    AnalysisProperties = new List<ArrayAnalysisRequestProperty> { analysisPropertyRequest } 
+                };
+                
+                var analysis = await _storageService.GetAnalysisTimeArray(arrayAnalysisStorageRequest);
+                analyses.Add(analysis);
+            }
+
+            return MergeTimeAnalyses(analyses);
+        }
+
+        private ArrayAnalysisResult MergeTimeAnalyses(List<TimeArrayAnalysisResult> analyses)
+        {
+            if (analyses.Count == 0) return new ArrayAnalysisResult();
+
+            var result = new ArrayAnalysisResult
+            {
+                ResultName = analyses[0].ResultName,
+                Result = analyses[0].Result.Select(dataTuple => new JArray(dataTuple)).ToList()
+            };
+
+            foreach (var analysisResult in analyses.GetRange(1, analyses.Count - 1))
+            {
+                ConcatTimeAnalyses(result, analysisResult);
+            }
+
+            return result;
+        }
+
+        private void ConcatTimeAnalyses(ArrayAnalysisResult to, TimeArrayAnalysisResult from)
+        {
+            int toIndex;
+            int fromIndex;
+
+            
+            for (toIndex = 0, fromIndex = 0; toIndex < to.Result.Count && fromIndex < from.Result.Count;)
+            {
+                var dateTimesDiff = DateTime.Compare(DateTime.Parse((string)to.Result[toIndex][0]), from.Result[fromIndex].Item1);
+                if (toIndex == to.Result.Count)
+                {
+                    to.Result.AddRange(from.Result.GetRange(fromIndex, from.Result.Count - fromIndex)
+                        .Select(dataTuple => new JArray(dataTuple.Item1, dataTuple.Item2)));
+                }
+                else if (fromIndex == from.Result.Count)
+                {
+                    return;
+                }
+                else if (dateTimesDiff == 0)
+                {
+                    to.Result[toIndex].Add(from.Result[fromIndex].Item2);
+                    fromIndex++;
+                    toIndex++;
+                } 
+                else if (dateTimesDiff > 0)
+                {
+                    to.Result.Insert(toIndex, new JArray(from.Result[fromIndex].Item1, from.Result[fromIndex].Item2));
+                    fromIndex++;
+                }
+                else
+                {
+                    toIndex++;
+                }
+            }
+        }
+
+        private async Task<ArrayAnalysisResult> GetListAnalysis(Guid jobId, string analyserId, string[] analysisProperties)
+        {
             var analysisPropertiesRequest = new List<ArrayAnalysisRequestProperty>();
             
             foreach (var analysisProperty in analysisProperties)
@@ -60,7 +150,7 @@ namespace Socneto.Domain.Services
             {
                 JobId = jobId,
                 Type = AnalysisType.List,
-                ResultType = analysisResultType,
+                ResultType = AnalysisResultType.List,
                 ComponentId = analyserId,
                 AnalysisProperties = analysisPropertiesRequest
             };

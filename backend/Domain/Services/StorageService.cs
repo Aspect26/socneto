@@ -115,5 +115,10 @@ namespace Socneto.Domain.Services
         {
             return await _httpService.Post<ArrayAnalysisResult>($"results", getAnalysisRequest);
         }
+
+        public async Task<TimeArrayAnalysisResult> GetAnalysisTimeArray(GetArrayAnalysisStorageRequest getAnalysisRequest)
+        {
+            return await _httpService.Post<TimeArrayAnalysisResult>($"results", getAnalysisRequest);
+        }
     }
 }
