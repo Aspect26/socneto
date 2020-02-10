@@ -1,7 +1,9 @@
+using System.Collections.Generic;
+
 namespace Socneto.Domain.Services
 {
-    public class ICsvService
+    public interface ICsvService
     {
-        
+        string GetCsv<T>(IEnumerable<T> data);
     }
 }
