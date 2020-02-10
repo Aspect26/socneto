@@ -126,16 +126,23 @@ namespace Socneto.Api.Controllers
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts")]
-        public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, [FromQuery] int page = 1, [FromQuery] int size = 20)
+        public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, 
+            [FromQuery] int page = 1, [FromQuery(Name = "page_size")] int pageSize = 20, 
+            [FromQuery(Name = "contains_words")] string[] containsWords = null,
+            [FromQuery(Name = "exclude_words")] string[] excludeWords = null,
+            [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
         {
+            containsWords = containsWords ?? new string[0];
+            excludeWords = excludeWords ?? new string[0];
+            
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
                 _eventTracker.TrackInfo("GetJobPosts", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
             }
 
-            var offset = (page - 1) * size;
-            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, offset, size);
+            var offset = (page - 1) * pageSize;
+            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, offset, pageSize);
 
             var postDtos = posts.Select(AnalyzedPostDto.FromModel).ToList();
             var paginatedPosts = new Paginated<AnalyzedPostDto>
@@ -143,8 +150,8 @@ namespace Socneto.Api.Controllers
                 Pagination = new Pagination
                 {
                     TotalSize = postsCount,
-                    Page = Math.Clamp(page, 1, ((postsCount - 1) / size) + 1),
-                    PageSize = size
+                    Page = Math.Clamp(page, 1, ((postsCount - 1) / pageSize) + 1),
+                    PageSize = pageSize
                 },
                 Data = postDtos
             };
