@@ -33,10 +33,14 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialExpansionPanel,
     MaterialExpansionPanelAutoDismiss,
     MaterialExpansionPanelSet,
+    MaterialChipComponent,
     MaterialDialogComponent,
+    MaterialDateRangePickerComponent,
     MaterialInputComponent,
+    MaterialPopupComponent,
     MaterialProgressComponent,
     materialInputDirectives,
+    PopupSourceDirective,
     MaterialYesNoButtonsComponent,
     ModalComponent,
     NgModel,
@@ -60,31 +64,110 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class PostsListComponent implements AfterChanges {
 
+    // TODO: the filter related things should be extracted into new FilterPostsComponent
     static const int PAGE_SIZE = 20;
 
     @Input() Job job;
+
     List<AnalyzedPost> posts = [];
     Paginator paginator = Paginator(0, 1, PAGE_SIZE);
     bool loading = false;
+    bool showFilterPopup = false;
+    bool useDateFilter = false;
+    bool useContainsWordsFilter = false;
+    bool useExcludeWordsFilter = false;
+
+    DateRange dateRange;
+
+    List<String> containedWords = [];
+    String newContainedWord = "";
+
+    List<String> excludedWords = [];
+    String newExcludedWord = "";
 
     final SocnetoService _socnetoService;
 
     PostsListComponent(this._socnetoService);
 
     @override
-    void ngAfterChanges() async {
+    void ngAfterChanges() async =>
         await this._updateDisplayedPosts();
-    }
 
     void onPageChange(int page) async {
         this.paginator.currentPage = page;
         await this._updateDisplayedPosts();
     }
 
+    void onRemoveDateFilter() {
+        this.useDateFilter = false;
+        this._updateDisplayedPosts();
+    }
+
+    void onRemoveContainsWordsFilter() {
+        this.useContainsWordsFilter = false;
+        this.containedWords.clear();
+        this._updateDisplayedPosts();
+    }
+
+    void onRemoveExcludeWordsFilter() {
+        this.useExcludeWordsFilter = false;
+        this.excludedWords.clear();
+        this._updateDisplayedPosts();
+    }
+
+    void onDateRangeChange(DatepickerComparison dateRange) {
+        this.dateRange = dateRange?.range != null ? DateRange(dateRange.range.start, dateRange.range.end) : null;
+        this._updateDisplayedPosts();
+    }
+
+    bool someFilterMissing() =>
+        !useDateFilter || !useContainsWordsFilter || !useExcludeWordsFilter;
+
+    bool canAddNewContainedWord() =>
+        this.newContainedWord.isNotEmpty && !this.containedWords.contains(this.newContainedWord);
+
+    void onAddContainedWord() {
+        if (!this.canAddNewContainedWord()) {
+            return;
+        }
+
+        this.containedWords.add(newContainedWord);
+        this.newContainedWord = "";
+        this._updateDisplayedPosts();
+    }
+
+    void onRemoveContainedWord(String word) {
+        this.containedWords.removeWhere((x) => x == word);
+        this._updateDisplayedPosts();
+    }
+
+    bool canAddNewExcludedWord() =>
+        this.newExcludedWord.isNotEmpty && !this.excludedWords.contains(this.newExcludedWord);
+
+    void onAddExcludedWord() {
+        if (!this.canAddNewExcludedWord()) {
+            return;
+        }
+
+        this.excludedWords.add(newExcludedWord);
+        this.newExcludedWord = "";
+        this._updateDisplayedPosts();
+    }
+
+    void onRemoveExcludedWord(String word) {
+        this.excludedWords.add(word);
+        this._updateDisplayedPosts();
+    }
+
     void _updateDisplayedPosts() async {
         this.loading = true;
         try {
-            var paginatedPosts = await this._socnetoService.getJobPosts(job.id, paginator.currentPage, paginator.pageSize);
+            List<String> containsWords = this.useContainsWordsFilter? this.containedWords : [];
+            List<String> excludeWords = this.useExcludeWordsFilter? this.excludedWords : [];
+            DateRange dateRange = this.useDateFilter? this.dateRange : null;
+
+            var paginatedPosts = await this._socnetoService.getJobPosts(job.id, paginator.currentPage,
+                paginator.pageSize, containsWords, excludeWords, dateRange);
             this.posts = paginatedPosts.posts;
             this.paginator = Paginator(paginatedPosts.paging.totalSize, paginatedPosts.paging.page, paginatedPosts.paging.pageSize);
         } on HttpException catch (e) {
