@@ -60,4 +60,11 @@
     }
   }
 
+  material-button:not([icon]) {
+
+    material-icon {
+      margin: 0 10px;
+    }
+  }
+
 }

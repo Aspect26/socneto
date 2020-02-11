@@ -39,12 +39,12 @@ class HttpServiceBase {
 
   @protected
   Future<Response> httpGet(String path, {Map<String, String> headers}) async =>
-      await http.get(this._getFullApiCallPath(path), headers: headers);
+      await http.get(this.getFullApiCallPath(path), headers: headers);
 
   @protected
   Future<Response> httpPost(String path, Map<String, dynamic> data, {Map<String, String> headers}) async =>
     await http.post(
-        this._getFullApiCallPath(path), body: utf8.encode(json.encode(data)),
+        this.getFullApiCallPath(path), body: utf8.encode(json.encode(data)),
         headers: this.appendHeader(headers, "Content-Type", "application/json"));
 
   @protected
@@ -56,6 +56,9 @@ class HttpServiceBase {
     headers[headerName] = headerValue;
     return headers;
   }
+
+  String getFullApiCallPath(String path) =>
+      this._api_url + "/" + this._api_prefix + "/" + path;
 
   void _checkResponseStatusCode(Response response) {
     switch (response.statusCode) {
@@ -85,8 +88,5 @@ class HttpServiceBase {
     var data = (jsonDecode(response.body) as Map);
     return mapJson(data);
   }
-
-  String _getFullApiCallPath(String path) =>
-      this._api_url + "/" + this._api_prefix + "/" + path;
 
 }

@@ -69,6 +69,7 @@ class PostsListComponent implements AfterChanges {
     List<AnalyzedPost> posts = [];
     Paginator paginator = Paginator(0, 1, PAGE_SIZE);
     bool loading = false;
+    String exportLink = "";
 
     final SocnetoService _socnetoService;
 
@@ -77,6 +78,7 @@ class PostsListComponent implements AfterChanges {
     @override
     void ngAfterChanges() async {
         await this._updateDisplayedPosts();
+        this.exportLink = this._socnetoService.getJobPostsExportLink(this.job.id);
     }
 
     void onPageChange(int page) async {
