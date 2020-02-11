@@ -1,14 +1,32 @@
+<section *ngIf="posts.isEmpty && !loading" class="no-data">
+    NO POSTS
+</section>
+
 <paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
 <ng-template *ngIf="!loading">
     <material-expansionpanel *ngFor="let post of posts"
-                             expandIcon="comment"
                              [showSaveCancel]="false">
         <div name>
             <div class="name">
                 <span class="title">Post:</span>
                 {{ post.post.text }}
             </div>
+        </div>
+
+        <div>
+            <span class="title">Author:</span>
+            {{ post.post.authorId }}
+        </div>
+
+        <div>
+            <span class="title">Posted at:</span>
+            {{ post.post.postedAt }}
+        </div>
+
+        <div>
+            <span class="title">Analyses:</span>
+            <pre class="json"><code>{{ prettyJson(post.analyses) }}</code></pre>
         </div>
 
     </material-expansionpanel>
