@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,16 +23,18 @@ namespace Socneto.Api.Controllers
         private readonly IJobService _jobService;
         private readonly IJobManagementService _jobManagementService;
         private readonly IGetAnalysisService _getAnalysisService;
+        private readonly ICsvService _csvService;
         private readonly IEventTracker<JobController> _eventTracker;
         
         public JobController(IAuthorizationService authorizationService, IJobService jobService, 
             IJobManagementService jobManagementService, IGetAnalysisService getAnalysisService, 
-            IEventTracker<JobController> eventTracker)
+            ICsvService csvService, IEventTracker<JobController> eventTracker)
         {   
             _authorizationService = authorizationService;
             _jobService = jobService;
             _jobManagementService = jobManagementService;
             _getAnalysisService = getAnalysisService;
+            _csvService = csvService;
             _eventTracker = eventTracker;
         }
 
@@ -151,6 +155,27 @@ namespace Socneto.Api.Controllers
             
             return Ok(paginatedPosts);
         }
+
+        [HttpGet]
+        [Route("api/job/{jobId:guid}/posts/export")]
+        [Produces("text/csv")]
+        public async Task<IActionResult> JobPostsExport([FromRoute] Guid jobId)
+        {
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetJobPostsExport", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
+                return Unauthorized();
+            }
+            
+            var allJobAnalyzedPosts = await _jobService.GetAllJobPosts(jobId);
+            // TODO: wouldn't it be better to query directly posts only?
+            var allJobPosts = allJobAnalyzedPosts.Select(analyzedPost => analyzedPost.Post).ToList();
+
+            var postsCsvString = _csvService.GetCsv(allJobPosts);
+            var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(postsCsvString));
+
+            return new FileStreamResult(dataStream, "text/csv");
+        }
         
         [HttpPost]
         [Route("api/job/{jobId:guid}/aggregation_analysis")]
@@ -167,7 +192,7 @@ namespace Socneto.Api.Controllers
             AggregationAnalysisResult analysisResult;
             try
             {
-                analysisResult = await _getAnalysisService.GetAggregationAnalysis(analysisRequest.AnalyserId,
+                analysisResult = await _getAnalysisService.GetAggregationAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperty);
             }
             catch (GetAnalysisService.GetAnalysisException)
@@ -195,7 +220,7 @@ namespace Socneto.Api.Controllers
             ArrayAnalysisResult analysisResult;
             try
             {
-                analysisResult = await _getAnalysisService.GetArrayAnalysis(analysisRequest.AnalyserId,
+                analysisResult = await _getAnalysisService.GetArrayAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
             }
             catch (GetAnalysisService.GetAnalysisException)

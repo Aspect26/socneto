@@ -20,7 +20,7 @@ namespace Socneto.Domain.Services
             _eventTracker = eventTracker;
         }
         
-        public async Task<AggregationAnalysisResult> GetAggregationAnalysis(string analyserId, string analysisProperty)
+        public async Task<AggregationAnalysisResult> GetAggregationAnalysis(Guid jobId, string analyserId, string analysisProperty)
         {
             var analysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperty);
             var resultType =
@@ -31,6 +31,7 @@ namespace Socneto.Domain.Services
             
             var storageRequest = new GetAggregationAnalysisStorageRequest
             {
+                JobId = jobId,
                 Type = AnalysisType.Aggregation,
                 ResultType = resultType,
                 ComponentId = analyserId,
@@ -41,7 +42,7 @@ namespace Socneto.Domain.Services
             return await _storageService.GetAnalysisAggregation(storageRequest);
         }
 
-        public async Task<ArrayAnalysisResult> GetArrayAnalysis(string analyserId, string[] analysisProperties, bool isXPostDate)
+        public async Task<ArrayAnalysisResult> GetArrayAnalysis(Guid jobId, string analyserId, string[] analysisProperties, bool isXPostDate)
         {
             var analysisResultType = isXPostDate ? AnalysisResultType.ListWithTime : AnalysisResultType.List;
             var analysisPropertiesRequest = new List<ArrayAnalysisRequestProperty>();
@@ -57,6 +58,7 @@ namespace Socneto.Domain.Services
             
             var arrayAnalysisStorageRequest = new GetArrayAnalysisStorageRequest
             {
+                JobId = jobId,
                 Type = AnalysisType.List,
                 ResultType = analysisResultType,
                 ComponentId = analyserId,

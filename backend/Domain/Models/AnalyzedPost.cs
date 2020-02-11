@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Socneto.Domain.Models
 {
@@ -13,6 +13,6 @@ namespace Socneto.Domain.Models
         public Post Post { get; set; }
 
         [JsonProperty("analyses")]
-        public Dictionary<string,  Dictionary<string, AnalysisValue>>[] Analyses { get; set; }
+        public JObject Analyses { get; set; }
     }
 }

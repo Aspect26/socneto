@@ -97,7 +97,7 @@ services:
       - storage
       - kafka
     environment:
-      - ELASTICSEARCH_WAIT_MILLIS=40000
+      - ASPNETCORE_ENVIRONMENT=Production
 
   backend:
     build: './backend'
@@ -107,6 +107,12 @@ services:
     depends_on:
       - storage
       - jms
+
+  frontend:
+    build: './frontend'
+    ports:
+      - '8080:8080'
+    container_name: frontend
 
   sentiment-analyser:
     container_name: se
@@ -124,6 +130,8 @@ services:
     container_name: tw-acquirer
     build: './acquisition/DataAcquirer'
     restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
       - kafka
       - jms

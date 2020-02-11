@@ -182,8 +182,8 @@ namespace Domain.JobManagement
 
                 var text = ClearText(dataPost.Text);
                 string originalText = null;
-                
-                if (translate && dataPost.Language != "en")
+
+                if (translate && dataPost.Language != "en" && dataPost.Language != null)
                 {
                     try
                     {
