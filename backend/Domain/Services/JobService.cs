@@ -37,5 +37,10 @@ namespace Socneto.Domain.Services
 
             return new Tuple<IList<AnalyzedPost>, int>(pagePosts, posts.Count);
         }
+
+        public async Task<IList<AnalyzedPost>> GetAllJobPosts(Guid jobId)
+        {
+            return await _storageService.GetAllPosts(jobId);
+        }
     }
 }

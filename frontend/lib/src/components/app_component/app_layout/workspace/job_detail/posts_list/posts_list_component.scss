@@ -11,6 +11,18 @@
     max-width: 100%;
     padding: 16px;
 
+    section.no-data {
+      height: 150px;
+      line-height: 150px;
+
+      border: 10px solid get-color($primary, 300);
+      border-radius: 27px;
+      color: get-color($primary, 300);
+
+      font-size: 30px;
+      text-align: center;
+    }
+
     material-expansionpanel {
       .panel-name {
         div {
@@ -29,10 +41,29 @@
         }
       }
 
+      .title {
+        color: get-color($primary, 300);
+      }
+
+      .json {
+        $background_color: get-color($background, 200);
+        padding: 0 15px;
+        background-color: $background_color;
+        border: 5px $background_color solid;
+        border-radius: 5px;
+      }
+
     }
 
     .loading-wrapper {
       padding: 10% 50px;
+    }
+  }
+
+  material-button:not([icon]) {
+
+    material-icon {
+      margin: 0 10px;
     }
   }
 

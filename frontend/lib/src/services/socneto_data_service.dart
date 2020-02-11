@@ -51,6 +51,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
       await this.get<PaginatedAnalyzedPosts>("job/$jobId/posts?page=$page&pageSize=$pageSize", (result) => PaginatedAnalyzedPosts.fromMap(result));
 
+  String getJobPostsExportLink(String jobId) =>
+      this.getFullApiCallPath("job/$jobId/posts/export");
+
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
     var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property).toList();
@@ -98,6 +101,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
+      "title": chartDefinition.title,
       "chart_type": chartDefinition.chartType.toString().split('.').last,
       "analysis_data_paths": chartDefinition.analysisDataPaths.map((analysisDataPath) => {
         "analyser_component_id": analysisDataPath.analyserId,

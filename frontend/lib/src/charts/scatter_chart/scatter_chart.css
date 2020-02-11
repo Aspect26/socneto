@@ -1,0 +1,9 @@
+.scatter-chart .grid {
+    color: lightgray;
+    shape-rendering: crispEdges;
+    stroke-dasharray: 3;
+}
+
+.scatter-chart .grid path {
+    visibility: hidden;
+}
