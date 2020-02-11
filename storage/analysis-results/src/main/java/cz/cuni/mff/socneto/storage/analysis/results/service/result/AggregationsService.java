@@ -1,6 +1,5 @@
 package cz.cuni.mff.socneto.storage.analysis.results.service.result;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -37,7 +36,7 @@ public class AggregationsService {
     public Map<String, Double> mapSum(UUID jobId, String componentId, String resultName, String valueName) {
 
         var aggregation = createAggregation(resultName, valueName, SUM_INIT_SCRIPT, SUM_MAP_SCRIPT, SUM_COMBINE_SCRIPT, SUM_REDUCE_SCRIPT);
-        var filter = createFilterQuery(jobId, componentId); // comp_2
+        var filter = createFilterQuery(jobId, componentId);
 
         return (Map<String, Double>) executeQuery(aggregation, filter).aggregation();
     }
@@ -46,7 +45,7 @@ public class AggregationsService {
     public Map<String, Integer> listCount(UUID jobId, String componentId, String resultName, String valueName) {
 
         var aggregation = createAggregation(resultName, valueName, COUNT_INIT_SCRIPT, COUNT_MAP_SCRIPT, COUNT_COMBINE_SCRIPT, COUNT_REDUCE_SCRIPT);
-        var filter = createFilterQuery(jobId, componentId); // comp_3
+        var filter = createFilterQuery(jobId, componentId);
 
         return (Map<String, Integer>) executeQuery(aggregation, filter).aggregation();
 
@@ -75,12 +74,13 @@ public class AggregationsService {
     }
 
     private BoolQueryBuilder createFilterQuery(UUID jobId, String componentId) {
-        // TODO: jobId
-        return QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("componentId", componentId));
+        return QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery("componentId", componentId))
+                .filter(QueryBuilders.termQuery("jobId", jobId.toString()));
     }
 
     private InternalScriptedMetric executeQuery(ScriptedMetricAggregationBuilder aggregation, BoolQueryBuilder filter) {
-        var query = new NativeSearchQueryBuilder().withQuery(filter).addAggregation(aggregation).build();
+        var query = new NativeSearchQueryBuilder().withQuery(filter).addAggregation(aggregation).withIndices("analysesx").build();
         return elasticsearchOperations.query(query,
                 searchResponse -> searchResponse).getAggregations().get("RESULT");
     }

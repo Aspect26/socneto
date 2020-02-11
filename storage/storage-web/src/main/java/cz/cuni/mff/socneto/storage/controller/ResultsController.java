@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class ResultsController {
@@ -15,7 +17,7 @@ public class ResultsController {
     private final ResultService resultService;
 
     @PostMapping("/results")
-    public Result computeResults(@RequestBody ResultRequest resultRequest) {
+    public Result computeResults(@Valid @RequestBody ResultRequest resultRequest) {
         return resultService.computeResults(resultRequest);
     }
 

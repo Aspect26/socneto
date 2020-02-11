@@ -9,6 +9,7 @@ import lombok.Data;
 public class PostDto {
     private String id;
     private String text;
+    private String originalText;
     private String authorId;
     private String source;
     private String dateTime;

@@ -20,7 +20,6 @@ public class ComponentDtoServiceImpl implements ComponentDtoService {
 
     @Override
     public ComponentDto find(String id) {
-        // TODO validate
         return componentMapper.componentToComponentDto(componentService.find(id));
     }
 
@@ -32,19 +31,16 @@ public class ComponentDtoServiceImpl implements ComponentDtoService {
 
     @Override
     public List<ComponentDto> findAllByType(ComponentType type) {
-        // TODO validate
         return componentMapper.componentsToComponentDtos(toList(componentService.findAllByType(type)));
     }
 
     @Override
     public ComponentDto save(ComponentDto component) {
-        // TODO validate
         return componentMapper.componentToComponentDto(componentService.save(componentMapper.componentDtoToComponent(component)));
     }
 
     @Override
     public ComponentDto update(ComponentDto component) {
-        // TODO validate
         return componentMapper.componentToComponentDto(componentService.update(componentMapper.componentDtoToComponent(component)));
     }
 
