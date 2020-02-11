@@ -29,6 +29,18 @@
         }
       }
 
+      .title {
+        color: get-color($primary, 300);
+      }
+
+      .json {
+        $background_color: get-color($background, 200);
+        padding: 0 15px;
+        background-color: $background_color;
+        border: 5px $background_color solid;
+        border-radius: 5px;
+      }
+
     }
 
     .loading-wrapper {
