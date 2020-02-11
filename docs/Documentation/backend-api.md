@@ -177,7 +177,7 @@ Basic authorization
 
 Stops a given job
 
-`GET api/job/{jobId}/stop}`
+`GET api/job/{jobId}/stop`
 
 #### Authorization
 
@@ -214,7 +214,53 @@ TODO: components_status
 
 Retrieves all the posts the job has acquired 
 
-<!-- TODO this query may change later -->
+`GET /api/job/{jobId:guid}/posts?page={page:int}&size={size:int}`
+
+#### Authorization
+
+Basic authorization
+
+#### Request parameters
+
+**Query parameters**
+
+| Name | Description                    | Example |
+| :--- | :----------------------        |:--- |
+| `jobId` | GUID of the job to be queried | `09cb74d9-1fad-47ed-9af8-5f90f01a1a34` |
+| `page` | Page of the paginated result | `3` |
+| `size` | Page size of the pagination | `20` |
+
+#### Response
+
+**Codes**
+
+| Status code | Description                                                            |
+| :---------- | :--------------------------------------------------------------------- |
+| `200`       | Request was successful. The posts can be found in the body |
+| `401`       | The user is not authorized to see the given job. |
+
+**Example**
+```json
+{
+  "pagination": {
+    "total_size": "<int>",
+    "page_size": "<int>",
+    "page": "<int>"
+  },
+  "data": [
+    {
+      "job_id": "<guid>",
+      "analyses": "<object>",
+      "post": {
+        "author_id": "<string>",
+        "text": "<string>",
+        "posted_at": "<datetime>"
+      }    
+    },
+    ...
+  ]
+}
+```
 
 ### Aggregation analysis
 
