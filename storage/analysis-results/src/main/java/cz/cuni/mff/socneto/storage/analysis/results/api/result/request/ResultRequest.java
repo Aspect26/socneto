@@ -2,7 +2,6 @@ package cz.cuni.mff.socneto.storage.analysis.results.api.result.request;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import cz.cuni.mff.socneto.storage.analysis.results.api.result.response.Result;
 import cz.cuni.mff.socneto.storage.analysis.results.service.result.ResultRequestDtoVisitor;
 import lombok.Getter;
 
@@ -29,5 +28,5 @@ public abstract class ResultRequest {
         this.componentId = componentId;
     }
 
-    public abstract Result visit(ResultRequestDtoVisitor resultRequestDtoVisitor);
+    public abstract <T> T visit(ResultRequestDtoVisitor<T> resultRequestDtoVisitor);
 }

@@ -8,5 +8,6 @@ import lombok.Data;
 public class Post {
     private String id;
     private String text;
+    private String originalText;
     private String authorId;
 }
