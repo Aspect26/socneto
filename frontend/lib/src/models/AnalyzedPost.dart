@@ -8,7 +8,7 @@ class AnalyzedPost {
   AnalyzedPost(this.jobId, this.post, this.analyses);
 
   AnalyzedPost.fromMap(Map data) :
-        jobId = data["jobId"],
-        post = Post.fromMap(data["postDto"]),
+        jobId = data["job_id"],
+        post = Post.fromMap(data["post"]),
         analyses = data["analyses"];
 }
