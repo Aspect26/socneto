@@ -3,14 +3,13 @@ package cz.cuni.mff.socneto.storage.analysis.results.service.result;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.AggregationResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.ListResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.SingleResultRequest;
-import cz.cuni.mff.socneto.storage.analysis.results.api.result.response.Result;
 
-public interface ResultRequestDtoVisitor {
+public interface ResultRequestDtoVisitor<T> {
 
-    Result requestResults(SingleResultRequest resultRequest);
+    T requestResults(SingleResultRequest resultRequest);
 
-    Result requestResults(ListResultRequest resultRequest);
+    T requestResults(ListResultRequest resultRequest);
 
-    Result requestResults(AggregationResultRequest resultRequest);
+    T requestResults(AggregationResultRequest resultRequest);
 
 }
