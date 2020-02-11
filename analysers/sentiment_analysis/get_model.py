@@ -1,5 +1,7 @@
 from minio import Minio
 from minio.error import ResponseError
+import sys
+
 
 client = Minio('acheron.ms.mff.cuni.cz:39107',
                access_key='socnetoadmin',
@@ -7,9 +9,10 @@ client = Minio('acheron.ms.mff.cuni.cz:39107',
                secure = False)
 
 # Get a full object
-model_name = "model_1574374374.795886.bin"
+model_name = sys.argv[1]
 try:
     print("Downloading model (500MiB)")
     client.fget_object('models', model_name, model_name)
 except ResponseError as err:
     print(err)
+
