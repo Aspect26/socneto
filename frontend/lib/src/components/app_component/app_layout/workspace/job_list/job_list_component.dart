@@ -10,6 +10,7 @@ import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/create_job_modal.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/stop_job/stop_job_modal.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/components/shared/platform_startup_info/platform_startup_info_component.dart';
@@ -37,6 +38,7 @@ import 'package:sw_project/src/utils.dart';
     PlatformStartupInfoComponent,
     PaginatorComponent,
     CreateJobModal,
+    StopJobModal,
     NgFor,
     NgIf
   ],
@@ -52,6 +54,7 @@ import 'package:sw_project/src/utils.dart';
 class JobListComponent implements AfterChanges {
 
   @ViewChild(CreateJobModal) CreateJobModal createJobModal;
+  @ViewChild(StopJobModal) StopJobModal stopJobModal;
   @Input() String username;
 
   static final int PAGE_SIZE = 10;
@@ -88,13 +91,7 @@ class JobListComponent implements AfterChanges {
   }
 
   void stopJob(Job job) async {
-    try {
-      final jobStatus = await this._socnetoService.stopJob(job.id);
-      this._setJobStatus(job, jobStatus);
-    } on HttpException catch (e){
-      Toastr.error("Job stop", "Unable to stop job");
-      print(e);
-    }
+    this.stopJobModal.show(job);
   }
 
   String getProcessingTime(Job job) {
@@ -119,6 +116,11 @@ class JobListComponent implements AfterChanges {
   void onPageChange(int page) {
     this.paginator.currentPage = page;
     this._updateDisplayedJobs();
+  }
+
+  void onStopJobSubmit(JobStatus jobStatus) async {
+    this.stopJobModal.close();
+    this._setJobStatus(jobStatus);
   }
 
   void onCreateJobSubmit(JobStatus jobStatus) async {
@@ -155,8 +157,11 @@ class JobListComponent implements AfterChanges {
     }
   }
 
-  void _setJobStatus(Job job, JobStatus jobStatus) {
-    job.status = jobStatus.status;
+  void _setJobStatus(JobStatus jobStatus) {
+    var job = this.jobs.firstWhere((job) => job.id == jobStatus.jobId, orElse: () => null);
+    if (job != null) {
+      job.status = jobStatus.status;
+    }
   }
 
   void _updateDisplayedJobs() {
