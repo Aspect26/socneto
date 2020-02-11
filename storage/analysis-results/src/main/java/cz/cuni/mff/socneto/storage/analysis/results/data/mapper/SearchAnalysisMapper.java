@@ -5,8 +5,7 @@ import cz.cuni.mff.socneto.storage.analysis.results.data.model.SearchAnalysis;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, implementationName = "mp")
-// TODO remove implementationName
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, implementationName = "mapper")
 public interface SearchAnalysisMapper {
 
     SearchAnalysis searchAnalysisDtoToSearchAnalysis(SearchAnalysisDto searchAnalysisDto);

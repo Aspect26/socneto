@@ -1,6 +1,5 @@
 package cz.cuni.mff.socneto.storage.analysis.results.api.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
