@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus.dart';
@@ -61,6 +63,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
 class PostsListComponent implements AfterChanges {
 
     static const int PAGE_SIZE = 20;
+    static const JsonEncoder JSON_ENCODER = JsonEncoder.withIndent("  ");
 
     @Input() Job job;
     List<AnalyzedPost> posts = [];
@@ -80,6 +83,8 @@ class PostsListComponent implements AfterChanges {
         this.paginator.currentPage = page;
         await this._updateDisplayedPosts();
     }
+
+    String prettyJson(dynamic obj) => JSON_ENCODER.convert(obj);
 
     void _updateDisplayedPosts() async {
         this.loading = true;
