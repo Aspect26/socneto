@@ -11,6 +11,18 @@
     max-width: 100%;
     padding: 16px;
 
+    section.no-data {
+      height: 150px;
+      line-height: 150px;
+
+      border: 10px solid get-color($primary, 300);
+      border-radius: 27px;
+      color: get-color($primary, 300);
+
+      font-size: 30px;
+      text-align: center;
+    }
+
     material-expansionpanel {
       .panel-name {
         div {

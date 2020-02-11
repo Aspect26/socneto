@@ -1,3 +1,7 @@
+<section *ngIf="posts.isEmpty && !loading" class="no-data">
+    NO POSTS
+</section>
+
 <paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
 <ng-template *ngIf="!loading">
