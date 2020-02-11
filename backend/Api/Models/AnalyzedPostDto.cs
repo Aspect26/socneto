@@ -1,16 +1,20 @@
 using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
 {
     public class AnalyzedPostDto
     {
+        [JsonProperty("job_id")]
         public Guid JobId { get; set; }
 
+        [JsonProperty("post")]
         public PostDto PostDto { get; set; }
 
-        public Dictionary<string,  Dictionary<string, AnalysisValue>>[] Analyses { get; set; }
+        [JsonProperty("analyses")]
+        public JObject Analyses { get; set; }
 
         public static AnalyzedPostDto FromModel(AnalyzedPost post)
         {

@@ -1,0 +1,20 @@
+<modal [(visible)]="displayed">
+    <material-dialog *ngIf="job != null"
+                     headered
+                     class="stop-job-dialog">
+
+        <div header>
+            <h1>Confirm stopping job</h1>
+        </div>
+
+        <span>
+        Are you sure you want to stop job <b>{{ job.name }}</b>? This action cannot be undone.
+        </span>
+
+        <div footer>
+            <material-yes-no-buttons *ngIf="!submitting" raised yesHighlighted class="red-yes" (no)="close()" (yes)="onConfirmed()"></material-yes-no-buttons>
+            <material-spinner *ngIf="submitting"></material-spinner>
+        </div>
+
+    </material-dialog>
+</modal>
