@@ -55,6 +55,8 @@ class ChartComponent implements AfterChanges {
     this._setChartStrategy();
     this._refreshChart();
   }
+
+  String get chartTitle => this.chartDefinition?.title != null && this.chartDefinition.title.isNotEmpty? this.chartDefinition.title : "Chart";
   
   void _setChartStrategy() {
     switch (this.chartDefinition.chartType) {
