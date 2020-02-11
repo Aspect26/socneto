@@ -86,6 +86,14 @@ class PostsListComponent implements AfterChanges {
         await this._updateDisplayedPosts();
     }
 
+    bool areAnalysesPresent(AnalyzedPost post) {
+        if (post.analyses == null) {
+            return false;
+        }
+
+        return (post.analyses as List<dynamic>).isNotEmpty;
+    }
+
     String prettyJson(dynamic obj) => JSON_ENCODER.convert(obj);
 
     void _updateDisplayedPosts() async {

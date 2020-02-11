@@ -112,9 +112,9 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<AnalyzedPost> mockAnalyzedPosts = [
-    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", now.add(Duration(days: -1))), { "polarity": {"type": "number", "value": 1 } }),
-    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", now.add(Duration(days: -2))), { "polarity": {"type": "number", "value": 0 } }),
-    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", now.add(Duration(days: -3))), { "polarity": {"type": "number", "value": 1 } })
+    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", " aasdas", now.add(Duration(days: -1))), { "polarity": {"type": "number", "value": 1 } }),
+    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", " aasdas", now.add(Duration(days: -2))), { "polarity": {"type": "number", "value": 0 } }),
+    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", " aasdas", now.add(Duration(days: -3))), { "polarity": {"type": "number", "value": 1 } })
   ];
 
   static final List<ChartDefinition> mockCharts = [
