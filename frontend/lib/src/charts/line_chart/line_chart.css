@@ -1,14 +1,14 @@
-.grid.y {
+.line-chart .grid.y {
     color: lightgray;
     shape-rendering: crispEdges;
     stroke-dasharray: 3;
 }
 
-.grid.y path {
+.line-chart .grid.y path {
     visibility: hidden;
 }
 
-.axis.y path {
+.line-chart .axis.y path {
     visibility: hidden;
 }
 
