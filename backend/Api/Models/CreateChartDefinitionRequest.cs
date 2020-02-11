@@ -8,6 +8,9 @@ namespace Socneto.Api.Models
 {
     public class CreateChartDefinitionRequest
     {
+        [JsonProperty("title")]
+        public string Title { get; set; }
+    
         [JsonProperty("analysis_data_paths")]
         public List<AnalysisDataPathRequest> AnalysisDataPaths { get; set; }
         

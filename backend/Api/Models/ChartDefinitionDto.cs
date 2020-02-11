@@ -6,6 +6,9 @@ namespace Socneto.Api.Models
 {
     public class ChartDefinitionDto
     {
+        [JsonProperty("title")]
+        public string Title { get; set; }
+    
         [JsonProperty("analysis_data_paths")]
         public List<AnalysisDataPath> AnalysisDataPaths { get; set; }
         
@@ -19,6 +22,7 @@ namespace Socneto.Api.Models
         {
             return new ChartDefinitionDto
             {
+                Title = chartDefinition.Title,
                 AnalysisDataPaths = chartDefinition.AnalysisDataPaths,
                 ChartType = chartDefinition.ChartType.ToString(),
                 IsXDateTime = chartDefinition.IsXPostDatetime

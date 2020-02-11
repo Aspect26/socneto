@@ -21,10 +21,11 @@ namespace Socneto.Domain.Services
             return jobView?.ViewConfiguration == null ? new List<ChartDefinition>() : jobView.ViewConfiguration.ChartDefinitions;
         }
 
-        public async Task<JobView> CreateJobChart(Guid jobId, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime)
+        public async Task<JobView> CreateJobChart(Guid jobId, string title, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime)
         {
             var newChartDefinition = new ChartDefinition
             {
+                Title = title,
                 ChartType = chartType,
                 AnalysisDataPaths = analysisDataPaths,
                 IsXPostDatetime = isXPostDateTime
