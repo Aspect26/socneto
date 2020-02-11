@@ -148,7 +148,7 @@ Basic authorization
   "selected_acquirers": "<string[]>",
   "selected_analysers": "<string[]>",
   "language": "<enum>",
-  "credentials": {
+  "attributes": {
     "<string:acquirerId>": {
       "<string>": "<string>"
     }
@@ -254,6 +254,7 @@ Basic authorization
       "post": {
         "author_id": "<string>",
         "text": "<string>",
+        "original_text": "<string>",
         "posted_at": "<datetime>"
       }    
     },

@@ -11,6 +11,9 @@ namespace Socneto.Api.Models
         
         [JsonProperty("text")]
         public string Text { get; set; }
+        
+        [JsonProperty("original_text")]
+        public string OriginalText { get; set; }
 
         [JsonProperty("posted_at")]
         public DateTime? PostedAt { get; set; }
@@ -22,6 +25,7 @@ namespace Socneto.Api.Models
                 AuthorId = post.AuthorId,
                 Text = post.Text,
                 PostedAt = post.PostedAt,
+                OriginalText = post.OriginalText,
             };
         }
     }

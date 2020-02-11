@@ -10,6 +10,9 @@ namespace Socneto.Domain.Models
         
         [JsonProperty("text")]
         public string Text { get; set; }
+        
+        [JsonProperty("originalText")]
+        public string OriginalText { get; set; }
 
         [JsonProperty("postedAt")]
         public DateTime? PostedAt { get; set; }

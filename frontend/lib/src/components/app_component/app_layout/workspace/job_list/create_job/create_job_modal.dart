@@ -9,7 +9,7 @@ import 'package:angular_components/material_list/material_list.dart';
 import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_components/utils/angular/scroll_host/angular_2.dart';
-import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_credentials_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_list/create_job/component_attributes_component.dart';
 import 'package:sw_project/src/components/shared/component_select/components_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
@@ -44,7 +44,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialSpinnerComponent,
     ModalComponent,
     ComponentsSelectComponent,
-    ComponentCredentialsComponent,
+    ComponentAttributesComponent,
     MaterialStepperComponent,
     StepDirective,
     SummaryDirective,
@@ -58,6 +58,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
   providers: [materialProviders, scrollHostProviders, overlayBindings],
 )
 class CreateJobModal {
+
+  @ViewChild(MaterialStepperComponent) MaterialStepperComponent stepper;
 
   final _submitController = StreamController<JobStatus>();
   @Output() Stream<JobStatus> get submit => _submitController.stream;
@@ -80,7 +82,7 @@ class CreateJobModal {
   SingleSelectionModel languageSelection = SingleSelectionModel();
   List<SocnetoComponent> selectedSocialNetworks = [];
   List<SocnetoComponent> selectedDataAnalyzers = [];
-  List<AcquirerWithCredentials> acquirersWithCredentials = [];
+  List<AcquirerWithAttributes> acquirersWithAttributes = [];
 
   CreateJobModal(this._socnetoService);
 
@@ -102,6 +104,7 @@ class CreateJobModal {
     this.selectedDataAnalyzers.clear();
     this.errorMessage = null;
 
+    this._resetStepper();
     this._loadSocialNetworks();
     this._loadDataAnalyzers();
   }
@@ -118,9 +121,9 @@ class CreateJobModal {
     if (this.isJobDefinitionCorrect()) {
       try {
         this.submitting = true;
-        final credentials = this._getAllCredentials();
+        final attributes = this._getAllAttributes();
         final jobStatus = await this._socnetoService.submitNewJob(this.jobName, this.topic, this.selectedSocialNetworks,
-            this.selectedDataAnalyzers, this.languageSelection.selectedValue, credentials);
+            this.selectedDataAnalyzers, this.languageSelection.selectedValue, attributes);
         this.reset();
         this._submitController.add(jobStatus);
         Toastr.success("New Job", "Job successfully submited");
@@ -148,15 +151,21 @@ class CreateJobModal {
     this._loadDataAnalyzers();
   }
 
-  onCredentialsChange(List<AcquirerWithCredentials> credentials) {
-    this.acquirersWithCredentials = credentials;
+  onAttributesChange(List<AcquirerWithAttributes> attributes) {
+    this.acquirersWithAttributes = attributes;
   }
 
   bool isJobDefinitionCorrect() {
     return this.jobName.isNotEmpty && this.topic.isNotEmpty && this.selectedDataAnalyzers.isNotEmpty && this.selectedSocialNetworks.isNotEmpty;
   }
 
-  _loadSocialNetworks() async {
+  void _resetStepper() {
+    this.stepper.legalJumps = "all";
+    this.stepper.jumpStep(0);
+    this.stepper.legalJumps = "none";
+  }
+
+  void _loadSocialNetworks() async {
     this.loadingSocialNetworks = true;
     this.availableSocialNetworks = [];
 
@@ -170,7 +179,7 @@ class CreateJobModal {
     }
   }
 
-  _loadDataAnalyzers() async {
+  void _loadDataAnalyzers() async {
     this.loadingDataAnalyzers = true;
     this.availableDataAnalyzers = [];
 
@@ -184,23 +193,23 @@ class CreateJobModal {
     }
   }
 
-  Map<String, Map<String, String>> _getAllCredentials() {
-    Map<String, Map<String, String>> acquirersToCredentials = {};
+  Map<String, Map<String, String>> _getAllAttributes() {
+    Map<String, Map<String, String>> acquirersToAttributes = {};
 
-    this.acquirersWithCredentials.forEach((credentials) {
-      Map<String, String> acquirerCredentialsMap = this._createCredentialsMap(credentials.credentials);
-      String acquirerIdentifier = credentials.acquirer.identifier;
+    this.acquirersWithAttributes.forEach((attributes) {
+      Map<String, String> acquirerAttributesMap = this._createAttributesMap(attributes.attributes);
+      String acquirerIdentifier = attributes.acquirer.identifier;
 
-      acquirersToCredentials[acquirerIdentifier] = acquirerCredentialsMap;
+      acquirersToAttributes[acquirerIdentifier] = acquirerAttributesMap;
     });
 
-    return acquirersToCredentials;
+    return acquirersToAttributes;
   }
 
-  Map<String, String> _createCredentialsMap(List<MutableTuple<String, String>> data) {
+  Map<String, String> _createAttributesMap(List<MutableTuple<String, String>> data) {
     Map<String, String> resultMap = {};
-    data.forEach((credentialTuple) {
-      resultMap[credentialTuple.item1] = credentialTuple.item2;
+    data.forEach((attributeTuple) {
+      resultMap[attributeTuple.item1] = attributeTuple.item2;
     });
 
     return resultMap;
