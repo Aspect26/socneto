@@ -22,7 +22,8 @@ class LineChartStrategy implements ChartStrategy {
     for (var currentLineData in dataSet) {
       this._chartData.add([]);
       for (var dataPointValue in currentLineData) {
-        var xValue = this._chartDefinition.isXDateTime ? DateTime.parse(dataPointValue[0] as String).toIso8601String() : dataPointValue[0];
+        var xValue = this._chartDefinition.isXDateTime && dataPointValue[0] is String && this._isValidDate(dataPointValue[0])?
+          DateTime.parse(dataPointValue[0]).toIso8601String() : dataPointValue[0];
         this._chartData.last.add({'x': xValue, 'y': dataPointValue[1]});
       }
 
@@ -38,6 +39,16 @@ class LineChartStrategy implements ChartStrategy {
 
   List<String> _getLineChartLabels() {
     return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property).toList();
+  }
+
+  // TODO: dart are you kidding me -_- There's no other way to check if a string is a correct date string
+  bool _isValidDate(String value) {
+    try {
+      DateTime.parse(value);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
 }
