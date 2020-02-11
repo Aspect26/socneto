@@ -94,8 +94,8 @@ class StopJobModal {
       this.submitting = true;
       final jobStatus = await this._socnetoService.stopJob(job.id);
       this._submitController.add(jobStatus);
-    } on HttpException catch (e){
-      Toastr.error("Job stop", "Unable to stop job");
+    } on HttpException catch (e) {
+      Toastr.httpError(e);
       print(e);
     } finally {
       this.submitting = false;
