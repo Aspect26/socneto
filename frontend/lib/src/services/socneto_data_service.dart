@@ -101,6 +101,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
+      "title": chartDefinition.title,
       "chart_type": chartDefinition.chartType.toString().split('.').last,
       "analysis_data_paths": chartDefinition.analysisDataPaths.map((analysisDataPath) => {
         "analyser_component_id": analysisDataPath.analyserId,

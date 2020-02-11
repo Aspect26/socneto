@@ -62,7 +62,7 @@ namespace Socneto.Api.Controllers
                 Property = analysisProperty.Property
             }).ToList();
             
-            await _chartsService.CreateJobChart(jobId, request.ChartType, analysisDataPaths, request.IsXPostDateTime);
+            await _chartsService.CreateJobChart(jobId, request.Title, request.ChartType, analysisDataPaths, request.IsXPostDateTime);
             return Ok(SuccessResponse.True());
         }
     }
