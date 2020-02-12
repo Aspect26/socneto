@@ -6,7 +6,7 @@ class Post {
   Post(this.authorId, this.text, this.postedAt);
 
   Post.fromMap(Map data) :
-      authorId = data["authorId"],
+      authorId = data["author_id"],
       text = data["text"],
-      postedAt = data["postedAt"] != null? DateTime.parse(data["postedAt"]) : null;
+      postedAt = data["posted_at"] != null? DateTime.parse(data["posted_at"]) : null;
 }

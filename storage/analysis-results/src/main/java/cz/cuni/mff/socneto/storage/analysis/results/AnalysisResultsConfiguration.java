@@ -1,16 +1,21 @@
 package cz.cuni.mff.socneto.storage.analysis.results;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -62,19 +67,29 @@ public class AnalysisResultsConfiguration {
         );
     }
 
-
-    // Move away
-
     @PostConstruct
     void init() throws IOException, InterruptedException {
-        Thread.sleep(wait);
-
-        log.info("Loading scripts");
-
         RestHighLevelClient restHighLevelClient = heightClient();
         ObjectMapper objectMapper = new ObjectMapper();
 
+        while (true) {
+            try {
+                var response = restHighLevelClient.cluster().health(new ClusterHealthRequest(), RequestOptions.DEFAULT);
+                if (response.getStatus().equals(ClusterHealthStatus.GREEN) || response.getStatus().equals(ClusterHealthStatus.YELLOW)) {
+                    break;
+                }
+            } catch (Exception e) {
+                Thread.sleep(10_000);
+                log.info("Wainting for elasticsearch.");
+                continue;
+            }
+        }
 
+        loadScripts(restHighLevelClient, objectMapper);
+    }
+
+    private void loadScripts(RestHighLevelClient restHighLevelClient, ObjectMapper objectMapper) throws IOException {
+        log.info("Loading scripts");
         var resource = this.getClass().getResource("scripts.json");
         var array = (ArrayNode) objectMapper.readTree(resource);
 
@@ -94,4 +109,5 @@ public class AnalysisResultsConfiguration {
 
         log.info("Scripts loaded.");
     }
+
 }

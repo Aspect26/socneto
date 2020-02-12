@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +17,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ComponentJobConfigDto {
     private Long id;
+    @NotBlank
     private String componentId;
+    @NotNull
     private UUID jobId;
     private List<String> outputChannelNames;
     private ObjectNode attributes;

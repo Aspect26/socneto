@@ -36,8 +36,11 @@ class LineChart {
 
         let svg = this._createSvg(selector, elementWidth);
         let background = this._createBackground(svg, elementWidth);
+
+        this._createGridYLines(svg, yScale, chartWidth);
+
         this._createXAxis(svg, xScale, chartHeight);
-        this._createYAxis(svg, yScale);
+        this._createYAxis(svg, yScale, chartWidth);
 
         for (let index = 0; index < dataSets.length; ++index) {
             let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
@@ -93,6 +96,13 @@ class LineChart {
             .attr("height", this._ELEMENT_HEIGHT);
     }
 
+    _createGridYLines(svg, yScale, chartWidth) {
+        svg.append("g")
+            .attr("class", "y grid")
+            .attr("transform", "translate(" + this._LEGEND_WIDTH + ", 0)")
+            .call(d3.axisLeft(yScale).tickSize(-chartWidth).tickFormat(""));
+    }
+
     _createXAxis(svg, xScale, chartHeight) {
         svg.append("g")
             .attr("class", "x axis")
@@ -104,7 +114,7 @@ class LineChart {
         svg.append("g")
             .attr("class", "y axis")
             .attr("transform", "translate(" + this._LEGEND_WIDTH + ", 0)")
-            .call(d3.axisLeft(yScale));
+            .call(d3.axisLeft(yScale).tickSize(0));
     }
 
     _createChartLine(svg, dataSet, dataLabel, color, curve) {

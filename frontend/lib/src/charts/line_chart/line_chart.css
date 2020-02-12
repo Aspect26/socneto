@@ -1,3 +1,17 @@
+.line-chart .grid.y {
+    color: lightgray;
+    shape-rendering: crispEdges;
+    stroke-dasharray: 3;
+}
+
+.line-chart .grid.y path {
+    visibility: hidden;
+}
+
+.line-chart .axis.y path {
+    visibility: hidden;
+}
+
 .line-chart .line {
     fill: none;
     stroke-width: 2px;
@@ -51,7 +65,9 @@
 .position-marker {
     position: absolute;
 
-    border: 1px dashed black;
+    border-bottom: 1px dashed black;
+    border-left: 1px dashed black;
+    border-top: none;
     border-radius: 8px;
     pointer-events: none;
 }

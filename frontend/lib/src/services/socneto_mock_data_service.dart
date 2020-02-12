@@ -119,10 +119,10 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
-    ChartDefinition([AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true),
-    ChartDefinition([AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
-    ChartDefinition([AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
-    ChartDefinition([AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
+    ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true),
+    ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
+    ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
+    ChartDefinition("Chart 4", [AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
   ];
 
   static final List<AnalyzedPost> mockPosts = [
