@@ -19,6 +19,8 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class JobController : SocnetoController
     {
+        private const int ExportPageSize = 200;
+        
         private readonly IAuthorizationService _authorizationService;
         private readonly IJobService _jobService;
         private readonly IJobManagementService _jobManagementService;
@@ -177,15 +179,21 @@ namespace Socneto.Api.Controllers
                 _eventTracker.TrackInfo("GetJobPostsExport", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
             }
+
+            var currentPage = 1;
+            var (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, currentPage, ExportPageSize);
+            var csvStringBuilder = new StringBuilder();
+            csvStringBuilder.Append(_csvService.GetCsv(currentPagePosts.Select(PostDto.FromModel).ToList(), true));
             
-            var allJobAnalyzedPosts = await _jobService.GetAllJobPosts(jobId, containsWords, excludeWords);
-            // TODO: wouldn't it be better to query directly posts only?
-            var allJobPosts = allJobAnalyzedPosts.Select(analyzedPost => analyzedPost.Post).ToList();
-
-            var postsCsvString = _csvService.GetCsv(allJobPosts);
-            var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(postsCsvString));
-
-            return new FileStreamResult(dataStream, "text/csv");
+            while (currentPage < (postsCount / ExportPageSize) + 1)
+            {
+                currentPage++;
+                (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, currentPage, ExportPageSize);
+                csvStringBuilder.Append(_csvService.GetCsv(currentPagePosts.Select(PostDto.FromModel).ToList(), false));
+            }
+            
+            var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(csvStringBuilder.ToString()));
+            return new FileStreamResult(dataStream, "text/csv") {FileDownloadName = $"socneto_export_{jobId}.csv"};
         }
         
         [HttpPost]
