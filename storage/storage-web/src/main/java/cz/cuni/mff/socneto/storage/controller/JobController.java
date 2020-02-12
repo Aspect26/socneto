@@ -1,14 +1,19 @@
 package cz.cuni.mff.socneto.storage.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import cz.cuni.mff.socneto.storage.internal.api.dto.JobDto;
 import cz.cuni.mff.socneto.storage.internal.api.dto.JobViewDto;
 import cz.cuni.mff.socneto.storage.internal.api.service.JobDtoService;
 import cz.cuni.mff.socneto.storage.internal.api.service.JobViewDtoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -51,7 +56,7 @@ public class JobController {
     }
 
     @PutMapping("/jobs/{id}")
-    public JobDto updateJob(@PathVariable UUID id, @RequestBody JobDto job) {
+    public JobDto updateJob(@PathVariable UUID id, @Valid @RequestBody JobDto job) {
         job.setJobId(id);
         return jobDtoService.update(job);
     }

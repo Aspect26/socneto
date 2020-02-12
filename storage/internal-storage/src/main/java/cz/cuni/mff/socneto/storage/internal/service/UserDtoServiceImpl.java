@@ -15,13 +15,11 @@ public class UserDtoServiceImpl implements UserDtoService {
 
     @Override
     public UserDto find(String username) {
-        // TODO validate
         return userMapper.userToUserDto(userService.find(username));
     }
 
     @Override
     public UserDto save(UserDto user) {
-        // TODO validate
         return userMapper.userToUserDto(userService.save(userMapper.userDtoToUser(user)));
     }
 

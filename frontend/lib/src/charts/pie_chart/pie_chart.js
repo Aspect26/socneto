@@ -84,6 +84,16 @@ class PieChart {
             .attr('d', pieArc)
             .exit()
             .remove();
+
+        let slices = svg.select(".slices").selectAll("path.slice");
+        slices
+            .on('mouseover', (_, hoveredElementIndex) => {
+                slices.transition().style("opacity", 0.5);
+                d3.select(slices.nodes()[hoveredElementIndex]).transition().style("opacity", 1);
+            })
+            .on('mouseout', (d, i) => {
+                slices.transition().style("opacity", 1.0);
+            });
     }
 
     _createPieLabels(svg, pieData, dataTotalSum, pieArc, textOffsetMiddle) {

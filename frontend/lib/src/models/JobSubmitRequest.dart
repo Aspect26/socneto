@@ -1,5 +1,3 @@
-import 'package:tuple/tuple.dart';
-
 import 'SocnetoComponent.dart';
 
 class JobSubmitRequest {

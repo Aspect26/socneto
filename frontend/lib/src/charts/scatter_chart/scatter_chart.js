@@ -21,7 +21,10 @@ class ScatterChart {
         let yScale = this._createYScale(chartHeight, dataSet);
 
         let svg = this._createSvg(selector, chartWidth, this._ELEMENT_HEIGHT, this._CHART_PADDING_HORIZONTAL);
+
+        this._appendGridLines(svg, yScale, xScale, chartWidth, chartHeight);
         this._appendAxis(svg, xScale, yScale, chartHeight);
+
         this._appendScatterDots(svg, xScale, yScale, dataSet)
     }
 
@@ -50,6 +53,16 @@ class ScatterChart {
         return d3.scaleLinear()
             .range([height, 0])
             .domain(d3.extent(data, datum => datum.y ))
+    }
+
+    _appendGridLines(svg, yScale, xScale, chartWidth, chartHeight) {
+        svg.append("g")
+            .attr("class", "y grid")
+            .call(d3.axisLeft(yScale).tickSize(-chartWidth).tickFormat(""));
+
+        svg.append("g")
+            .attr("class", "x grid")
+            .call(d3.axisBottom(xScale).tickSize(chartHeight).tickFormat(""));
     }
 
     _appendAxis(svg, xScale, yScale, height) {

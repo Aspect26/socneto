@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/focus/focus.dart';
@@ -66,12 +68,15 @@ class PostsListComponent implements AfterChanges {
 
     // TODO: the filter related things should be extracted into new FilterPostsComponent
     static const int PAGE_SIZE = 20;
+    static const JsonEncoder JSON_ENCODER = JsonEncoder.withIndent("  ");
 
     @Input() Job job;
 
     List<AnalyzedPost> posts = [];
     Paginator paginator = Paginator(0, 1, PAGE_SIZE);
     bool loading = false;
+    String exportLink = "";
+
     bool showFilterPopup = false;
     bool useDateFilter = false;
     bool useContainsWordsFilter = false;
@@ -90,8 +95,12 @@ class PostsListComponent implements AfterChanges {
     PostsListComponent(this._socnetoService);
 
     @override
-    void ngAfterChanges() async =>
+    void ngAfterChanges() async {
         await this._updateDisplayedPosts();
+        this.exportLink = this._socnetoService.getJobPostsExportLink(this.job.id);
+    }
+
+    String prettyJson(dynamic obj) => JSON_ENCODER.convert(obj);
 
     void onPageChange(int page) async {
         this.paginator.currentPage = page;

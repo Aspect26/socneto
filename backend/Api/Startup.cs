@@ -78,6 +78,7 @@ namespace Socneto.Api
                 .AddTransient<IChartsService, ChartsService>()
                 .AddTransient<IJobManagementService, JobManagementService>()
                 .AddTransient<IStorageService, StorageService>()
+                .AddTransient<ICsvService, CsvService>()
                 .AddHostedService<EventSendingHostedService>()
                 .AddSingleton<EventQueue>()
                 .Configure<TaskOptions>(Configuration.GetSection("Socneto:TaskOptions"))

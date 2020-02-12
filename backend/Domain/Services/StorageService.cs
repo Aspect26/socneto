@@ -82,6 +82,11 @@ namespace Socneto.Domain.Services
             return await _httpService.Get<List<AnalyzedPost>>($"analyzedPosts?jobId={jobId}&offset={offset}&size={size}");
         }
         
+        public async Task<IList<AnalyzedPost>> GetAllPosts(Guid jobId)
+        {
+            return await _httpService.Get<List<AnalyzedPost>>($"analyzedPosts?jobId={jobId}");
+        }
+        
         public async Task<IList<SocnetoComponent>> GetAnalysers()
         {
             var analysers = await _httpService.Get<List<SocnetoComponent>>($"components?type=DATA_ANALYSER");
