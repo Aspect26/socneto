@@ -22,8 +22,8 @@ import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/components/shared/paginator/Paginator.dart';
 import 'package:sw_project/src/components/shared/paginator/paginator_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
-import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/Job.dart';
+import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
@@ -72,7 +72,7 @@ class PostsListComponent implements AfterChanges {
 
     @Input() Job job;
 
-    List<AnalyzedPost> posts = [];
+    List<Post> posts = [];
     Paginator paginator = Paginator(0, 1, PAGE_SIZE);
     bool loading = false;
     String exportLink = "";

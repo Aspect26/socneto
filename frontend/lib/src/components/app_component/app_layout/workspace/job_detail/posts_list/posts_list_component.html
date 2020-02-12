@@ -1,9 +1,3 @@
-<section *ngIf="posts.isEmpty && !loading" class="no-data">
-    NO POSTS
-</section>
-
-<paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
-
 <div class="filters">
     <material-button class="filters-button" [disabled]="!someFilterMissing()" raised popupSource #customsrc="popupSource" (trigger)="showFilterPopup = !showFilterPopup">
         Filters
@@ -51,29 +45,35 @@
     </div>
 </div>
 
+<section *ngIf="posts.isEmpty && !loading" class="no-data">
+    NO POSTS
+</section>
+
+<paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
+
 <ng-template *ngIf="!loading">
     <material-expansionpanel *ngFor="let post of posts"
                              [showSaveCancel]="false">
         <div name>
             <div class="name">
                 <span class="title">Post:</span>
-                {{ post.post.text }}
+                {{ post.text }}
             </div>
         </div>
 
         <div>
-            <span class="title">Author:</span>
-            {{ post.post.authorId }}
+            <span class="title">Id:</span>
+            {{ post.originalId }}
         </div>
 
         <div>
-            <span class="title">Posted at:</span>
-            {{ post.post.postedAt }}
+            <span class="title">Original Text:</span>
+            {{ post.originalText }}
         </div>
 
         <div>
-            <span class="title">Analyses:</span>
-            <pre class="json"><code>{{ prettyJson(post.analyses) }}</code></pre>
+            <span class="title">Posted At:</span>
+            {{ post.postedAt }}
         </div>
 
     </material-expansionpanel>

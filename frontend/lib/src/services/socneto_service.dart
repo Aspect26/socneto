@@ -2,7 +2,7 @@ import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
-import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PaginatedPosts.dart';
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -48,7 +48,7 @@ class SocnetoService {
       await this._dataService.getJob(jobId);
   Future<List<Job>> getUserJobs() async =>
       await this._dataService.getUserJobs();
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async =>
+  Future<PaginatedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async =>
       await this._dataService.getJobPosts(jobId, page, pageSize, containsWords, excludeWords, dateRange);
   String getJobPostsExportLink(String jobId) =>
       this._dataService.getJobPostsExportLink(jobId);

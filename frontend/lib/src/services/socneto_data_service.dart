@@ -7,7 +7,7 @@ import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobSubmitRequest.dart';
-import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PaginatedPosts.dart';
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -49,12 +49,12 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<List<Job>> getUserJobs() async =>
       await this.getList<Job>("job/all", (result) => Job.fromMap(result));
 
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async {
+  Future<PaginatedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async {
     var path = "job/$jobId/posts?page=$page&page_size=$pageSize"
         "${containsWords.map((word) => "&contains_words=$word").toList().join()}"
         "${excludeWords.map((word) => "&exclude_words=$word").toList().join()}"
         "${dateRange != null? "&from=${dateRange.start.toString()}&to=${dateRange.end.toString()}" : ""}";
-    return await this.get<PaginatedAnalyzedPosts>(path, (result) => PaginatedAnalyzedPosts.fromMap(result));
+    return await this.get<PaginatedPosts>(path, (result) => PaginatedPosts.fromMap(result));
   }
 
   String getJobPostsExportLink(String jobId) =>
