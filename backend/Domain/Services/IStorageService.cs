@@ -18,9 +18,9 @@ namespace Socneto.Domain.Services
 
         Task<Job> GetJob(Guid jobId);
 
-        Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId, int offset, int size);
+        Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords, int page, int pageSize);
         
-        Task<IList<AnalyzedPost>> GetAllPosts(Guid jobId);
+        Task<IList<AnalyzedPost>> GetAllPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords);
 
         Task<JobView> GetJobView(Guid jobId);
 

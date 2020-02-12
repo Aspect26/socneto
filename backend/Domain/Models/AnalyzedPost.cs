@@ -13,6 +13,6 @@ namespace Socneto.Domain.Models
         public Post Post { get; set; }
 
         [JsonProperty("analyses")]
-        public JObject Analyses { get; set; }
+        public JArray Analyses { get; set; }
     }
 }

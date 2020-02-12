@@ -131,7 +131,7 @@ namespace Socneto.Api.Controllers
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts")]
         public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, 
-            [FromQuery] int page = 1, [FromQuery(Name = "page_size")] int pageSize = 20, 
+            [FromQuery(Name = "page")] int page = 1, [FromQuery(Name = "page_size")] int pageSize = 20, 
             [FromQuery(Name = "contains_words")] string[] containsWords = null,
             [FromQuery(Name = "exclude_words")] string[] excludeWords = null,
             [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
@@ -145,11 +145,10 @@ namespace Socneto.Api.Controllers
                 return Unauthorized();
             }
 
-            var offset = (page - 1) * pageSize;
-            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, offset, pageSize);
+            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, page, pageSize);
 
-            var postDtos = posts.Select(AnalyzedPostDto.FromModel).ToList();
-            var paginatedPosts = new Paginated<AnalyzedPostDto>
+            var postDtos = posts.Select(PostDto.FromModel).ToList();
+            var paginatedPosts = new Paginated<PostDto>
             {
                 Pagination = new Pagination
                 {
@@ -166,15 +165,20 @@ namespace Socneto.Api.Controllers
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts/export")]
         [Produces("text/csv")]
-        public async Task<IActionResult> JobPostsExport([FromRoute] Guid jobId)
+        public async Task<IActionResult> JobPostsExport([FromRoute] Guid jobId,
+            [FromQuery(Name = "contains_words")] string[] containsWords = null,
+            [FromQuery(Name = "exclude_words")] string[] excludeWords = null)
         {
+            containsWords = containsWords ?? new string[0];
+            excludeWords = excludeWords ?? new string[0];
+            
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
                 _eventTracker.TrackInfo("GetJobPostsExport", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
             }
             
-            var allJobAnalyzedPosts = await _jobService.GetAllJobPosts(jobId);
+            var allJobAnalyzedPosts = await _jobService.GetAllJobPosts(jobId, containsWords, excludeWords);
             // TODO: wouldn't it be better to query directly posts only?
             var allJobPosts = allJobAnalyzedPosts.Select(analyzedPost => analyzedPost.Post).ToList();
 
