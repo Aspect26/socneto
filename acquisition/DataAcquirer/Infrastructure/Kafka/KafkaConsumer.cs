@@ -55,7 +55,7 @@ namespace Infrastructure.Kafka
             // is UTF8. The default deserializer for Ignore returns null for all input data
             // (including non-null data).
             using (var consumer = new ConsumerBuilder<Ignore, string>(config)
-                .SetErrorHandler((_, e) => _logger.LogError(e.Reason))
+                .SetErrorHandler((_, e) => _logger.LogWarning(e.Reason))
                 .SetPartitionsAssignedHandler((c, partitions) =>
                 {
                     _logger.LogTrace($"Assigned partitions: [{string.Join(", ", partitions)}]");
