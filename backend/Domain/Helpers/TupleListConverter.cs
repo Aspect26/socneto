@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Socneto.Domain.Helpers
 {
@@ -20,15 +21,24 @@ namespace Socneto.Domain.Helpers
             if (reader.TokenType == JsonToken.Null)
                 return null;
 
-            var jArray = Newtonsoft.Json.Linq.JArray.Load(reader);
+            var jArray = JArray.Load(reader);
             var result = new List<Tuple<T1, T2>>();
-            
-            foreach (var childArray in jArray.Children<Newtonsoft.Json.Linq.JArray>())
+
+            if (jArray.Count == 0) return result;
+
+            foreach (var childArray in jArray.Children())
             {
-                if (childArray.Count != 2)
-                    throw new JsonSerializationException("Cannot deserialize array of length different than 2 into tuple");
+                if (childArray.Type != JTokenType.Array)
+                {
+                    throw new JsonSerializationException("One of the children is not an array");
+                }
                 
-                result.Add(new Tuple<T1, T2>(childArray[0].ToObject<T1>(), childArray[1].ToObject<T2>()));
+                var childArrayTyped = childArray as JArray;
+                
+                if (childArrayTyped.Count != 2)
+                    throw new JsonSerializationException("Cannot deserialize array of length different than 2 into tuple");
+
+                result.Add(new Tuple<T1, T2>(childArrayTyped[0].ToObject<T1>(), childArrayTyped[1].ToObject<T2>()));
             }
 
             return result;

@@ -76,6 +76,14 @@ namespace Socneto.Domain.Services
                 analyses.Add(analysis);
             }
 
+            if (analyses.Count == 0) return new ArrayAnalysisResult();
+
+            var result = new ArrayAnalysisResult
+            {
+                ResultName = analyses[0].ResultName,
+                Result = analyses.Select((timeAnalysisResult) => new JArray(timeAnalysisResult.Result)).ToList()
+            };
+
             return MergeTimeAnalyses(analyses);
         }
 
@@ -86,7 +94,7 @@ namespace Socneto.Domain.Services
             var result = new ArrayAnalysisResult
             {
                 ResultName = analyses[0].ResultName,
-                Result = analyses[0].Result.Select(dataTuple => new JArray(dataTuple)).ToList()
+                Result = analyses[0].Result.Select(dataTuple => new JArray(dataTuple.Item1, dataTuple.Item2)).ToList()
             };
 
             foreach (var analysisResult in analyses.GetRange(1, analyses.Count - 1))

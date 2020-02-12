@@ -21,7 +21,7 @@ namespace Socneto.Domain.Models
         public string ResultName { get; set; }
         
         [JsonProperty("list")]
-        [JsonConverter(typeof(TupleListConverter<DateTime, JObject>))]
-        public List<Tuple<DateTime, JObject>> Result { get; set; }
+        [JsonConverter(typeof(TupleListConverter<DateTime, JToken>))]
+        public List<Tuple<DateTime, JToken>> Result { get; set; }
     }
 }
