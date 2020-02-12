@@ -170,7 +170,7 @@ class PostsListComponent implements AfterChanges {
     }
 
     void onRemoveExcludedWord(String word) {
-        this.excludedWords.add(word);
+        this.excludedWords.removeWhere((x) => x == word);
         this._updateDisplayedPosts();
     }
 
