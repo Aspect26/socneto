@@ -1,8 +1,9 @@
 using System;
-using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.DependencyWaiting;
 using Domain.JobStorage;
 using Domain.Models;
 using Domain.SubmittedJobConfiguration;
@@ -13,34 +14,11 @@ using Newtonsoft.Json.Converters;
 
 namespace Infrastructure
 {
-    public class InMemoryJobStorage : IJobStorage
-    {
-        private readonly ConcurrentDictionary<Guid, Job> _jobs = new ConcurrentDictionary<Guid, Job>();
-        public Task<Job> GetJobAsync(Guid jobId)
-        {
-            if(_jobs.TryGetValue(jobId,out var job))
-            {
-                return Task.FromResult(job);
-            }
-            return null;
-        }
-
-        public Task InsertNewJobAsync(Job job)
-        {
-            _jobs.TryAdd(job.JobId, job);
-            return Task.CompletedTask;
-        }
-
-        public async Task UpdateJobAsync(Job job)
-        {
-            var previous = await GetJobAsync(job.JobId);
-            _jobs.TryUpdate(job.JobId, job, previous);
-        }
-    }
 
     public class JobStorageProxy : IJobStorage
     {
         private readonly HttpClient _httpClient;
+        private readonly IStorageDependencyWaitingService _storageDependencyWaitingService;
         private readonly ILogger<JobStorageProxy> _logger;
         private readonly Uri _baseUri;
         private readonly Uri _addJobUri;
@@ -52,22 +30,25 @@ namespace Infrastructure
             DateFormatString = "yyyy-MM-ddTHH:mm:ss"
         };
         public JobStorageProxy(
-            HttpClient httpClient, 
+            HttpClient httpClient,
+            IStorageDependencyWaitingService storageDependencyWaitingService,
             IOptions<JobStorageOptions> jobStorageOptionsAccessor,
             ILogger<JobStorageProxy> logger)
         {
             _httpClient = httpClient;
-
+            _storageDependencyWaitingService = storageDependencyWaitingService;
             _logger = logger;
             _baseUri = jobStorageOptionsAccessor.Value.BaseUri;
             _addJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.AddJobRoute);
             _updateJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.UpdateJobRoute);
             _getJobUri = new Uri(_baseUri, jobStorageOptionsAccessor.Value.GetJobRoute);
-            
+
         }
 
         public async Task InsertNewJobAsync(Job job)
         {
+            await WaitOnStorage();
+
             var jsonBody = JsonConvert.SerializeObject(job, _dateSettings);
             var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
@@ -81,11 +62,13 @@ namespace Infrastructure
             }
         }
 
+        
+
         public async Task<Job> GetJobAsync(Guid jobId)
         {
-
+            await WaitOnStorage();
             var route = _getJobUri.AbsolutePath
-                .TrimEnd('/') 
+                .TrimEnd('/')
                 + "/" + jobId.ToString();
 
             var url = new Uri(_baseUri, route);
@@ -105,7 +88,7 @@ namespace Infrastructure
             var content = await response.Content.ReadAsStringAsync();
             try
 
-            { 
+            {
                 return JsonConvert.DeserializeObject<Job>(content, _dateSettings);
             }
             catch (JsonReaderException jre)
@@ -128,6 +111,20 @@ namespace Infrastructure
             //    var error = await response.Content.ReadAsStringAsync();
             //    throw new InvalidOperationException($"Adding data to storage failed: {error}");
             //}
-        }        
+        }
+
+        private async Task WaitOnStorage()
+        {
+            var shouldWait = true;
+            while (shouldWait)
+            {
+                shouldWait = !await _storageDependencyWaitingService.IsDependencyReadyAsync();
+                if (shouldWait)
+                {
+                    _logger.LogWarning("Storage not ready");
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                }
+            }
+        }
     }
 }
