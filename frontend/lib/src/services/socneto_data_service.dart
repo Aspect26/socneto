@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobSubmitRequest.dart';
-import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PaginatedPosts.dart';
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -48,11 +49,22 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<List<Job>> getUserJobs() async =>
       await this.getList<Job>("job/all", (result) => Job.fromMap(result));
 
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
-      await this.get<PaginatedAnalyzedPosts>("job/$jobId/posts?page=$page&pageSize=$pageSize", (result) => PaginatedAnalyzedPosts.fromMap(result));
+  Future<PaginatedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async {
+    var path = "job/$jobId/posts?page=$page&page_size=$pageSize"
+        "${containsWords.map((word) => "&contains_words=$word").toList().join()}"
+        "${excludeWords.map((word) => "&exclude_words=$word").toList().join()}"
+        "${dateRange != null? "&from=${dateRange.start.toString()}&to=${dateRange.end.toString()}" : ""}";
+    return await this.get<PaginatedPosts>(path, (result) => PaginatedPosts.fromMap(result));
+  }
 
-  String getJobPostsExportLink(String jobId) =>
-      this.getFullApiCallPath("job/$jobId/posts/export");
+  String getJobPostsExportLink(String jobId, List<String> containsWords, List<String> excludeWords, DateRange dateRange) {
+    var path = "job/$jobId/posts/export?"
+        "${containsWords.map((word) => "&contains_words=$word").toList().join()}"
+        "${excludeWords.map((word) => "&exclude_words=$word").toList().join()}"
+        "${dateRange != null? "&from=${dateRange.start.toString()}&to=${dateRange.end.toString()}" : ""}";
+
+    return this.getFullApiCallPath(path);
+  }
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;

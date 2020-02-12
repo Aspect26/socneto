@@ -28,19 +28,11 @@ namespace Socneto.Domain.Services
             return await _storageService.GetUserJobs(username);
         }
 
-        public async Task<Tuple<IList<AnalyzedPost>, int>> GetJobPosts(Guid jobId, int offset, int size)
+        public async Task<Tuple<IList<Post>, int>> GetJobPosts(Guid jobId, string[] allowedWords, 
+            string[] forbiddenWords, int page, int pageSize)
         {
-            var posts = await _storageService.GetAnalyzedPosts(jobId, offset, size);
-            // TODO: storage service should support paginating
-            var actualSize = Math.Min(size, posts.Count - offset);
-            var pagePosts = ((List<AnalyzedPost>) posts).GetRange(offset, actualSize);
-
-            return new Tuple<IList<AnalyzedPost>, int>(pagePosts, posts.Count);
-        }
-
-        public async Task<IList<AnalyzedPost>> GetAllJobPosts(Guid jobId)
-        {
-            return await _storageService.GetAllPosts(jobId);
+            var postsWithCount = await _storageService.GetPosts(jobId, allowedWords, forbiddenWords, page - 1, pageSize);
+            return new Tuple<IList<Post>, int>(postsWithCount.Data, postsWithCount.TotalCount);
         }
     }
 }
