@@ -1,14 +1,15 @@
 import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/Paging.dart';
+import 'package:sw_project/src/models/Post.dart';
 
-class PaginatedAnalyzedPosts {
+class PaginatedPosts {
 
-  final List<AnalyzedPost> posts;
+  final List<Post> posts;
   final Paging paging;
 
-  PaginatedAnalyzedPosts(this.posts, this.paging);
+  PaginatedPosts(this.posts, this.paging);
 
-  PaginatedAnalyzedPosts.fromMap(Map data) :
-      posts = (data["data"] as List<dynamic>).map((dynamic innerData) => AnalyzedPost.fromMap(innerData as Map)).toList(),
+  PaginatedPosts.fromMap(Map data) :
+      posts = (data["data"] as List<dynamic>).map((dynamic innerData) => Post.fromMap(innerData as Map)).toList(),
       paging = Paging.fromMap(data["pagination"]);
 }
