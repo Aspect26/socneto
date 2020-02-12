@@ -86,8 +86,8 @@
 <paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
 
-<a *ngIf="posts.isNotEmpty" [href]="exportLink">
-    <material-button [routerLink]="exportLink">
+<a *ngIf="posts.isNotEmpty" [href]="getExportLink()" target="_blank" rel="noopener noreferrer">
+    <material-button>
         Export to CSV
         <material-icon class="margin" icon="cloud_download"></material-icon>
     </material-button>

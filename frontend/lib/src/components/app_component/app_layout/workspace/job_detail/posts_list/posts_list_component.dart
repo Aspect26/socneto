@@ -75,7 +75,6 @@ class PostsListComponent implements AfterChanges {
     List<Post> posts = [];
     Paginator paginator = Paginator(0, 1, PAGE_SIZE);
     bool loading = false;
-    String exportLink = "";
 
     bool showFilterPopup = false;
     bool useDateFilter = false;
@@ -97,7 +96,14 @@ class PostsListComponent implements AfterChanges {
     @override
     void ngAfterChanges() async {
         await this._updateDisplayedPosts();
-        this.exportLink = this._socnetoService.getJobPostsExportLink(this.job.id);
+    }
+
+    String getExportLink() {
+        List<String> containsWords = this.useContainsWordsFilter? this.containedWords : [];
+        List<String> excludeWords = this.useExcludeWordsFilter? this.excludedWords : [];
+        DateRange dateRange = this.useDateFilter? this.dateRange : null;
+
+        return this._socnetoService.getJobPostsExportLink(this.job.id, containsWords, excludeWords, dateRange);
     }
 
     String prettyJson(dynamic obj) => JSON_ENCODER.convert(obj);

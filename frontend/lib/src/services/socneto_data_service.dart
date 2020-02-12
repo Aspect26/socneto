@@ -57,8 +57,14 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     return await this.get<PaginatedPosts>(path, (result) => PaginatedPosts.fromMap(result));
   }
 
-  String getJobPostsExportLink(String jobId) =>
-      this.getFullApiCallPath("job/$jobId/posts/export");
+  String getJobPostsExportLink(String jobId, List<String> containsWords, List<String> excludeWords, DateRange dateRange) {
+    var path = "job/$jobId/posts/export?"
+        "${containsWords.map((word) => "&contains_words=$word").toList().join()}"
+        "${excludeWords.map((word) => "&exclude_words=$word").toList().join()}"
+        "${dateRange != null? "&from=${dateRange.start.toString()}&to=${dateRange.end.toString()}" : ""}";
+
+    return this.getFullApiCallPath(path);
+  }
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
