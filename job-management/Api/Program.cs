@@ -20,14 +20,16 @@ namespace Api
                 "--use_file_storage"
             };
 #endif
+
             if (args.Contains("--sleep_on_startup"))
             {
                 await Task.Delay(TimeSpan.FromSeconds(180));
             }
-            
+
             var builder = JobManagementServiceBuilder.GetBuilder(args);
-            var app = builder.Build();
-            app.Run();
+            var app = builder.BuildJobManagementService();
+
+            await app.RunAsync();
         }
     }
 }

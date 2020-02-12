@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Domain.Abstract;
 using Domain.ComponentManagement;
+using Domain.DependencyWaiting;
 using Domain.EventTracking;
 using Domain.JobStorage;
 using Domain.Models;
@@ -8,6 +9,7 @@ using Domain.Registration;
 using Domain.SubmittedJobConfiguration;
 using Infrastructure;
 using Infrastructure.ComponentManagement;
+using Infrastructure.DependencyWaiting;
 using Infrastructure.Kafka;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -17,14 +19,36 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Api
 {
-    public class JobManagementServiceBuilder
+    public class JobManagementServiceWebHost
     {
-        public static IWebHostBuilder GetBuilder(string[] args)
+        private readonly IWebHost _app;
+
+        public JobManagementServiceWebHost(IWebHost app)
         {
-            return WebHost.CreateDefaultBuilder(args)
+            _app = app;
+        }
+
+        public async Task RunAsync()
+        {
+            await _app.RunAsync();
+        }
+    }
+
+    public class JobManagementServiceBuilder :IWebHostBuilder
+    {
+        private readonly IWebHostBuilder _builder;
+
+        public JobManagementServiceBuilder(IWebHostBuilder builder)
+        {
+            _builder = builder;
+        }
+        public static JobManagementServiceBuilder GetBuilder(string[] args)
+        {
+            var builder=  WebHost.CreateDefaultBuilder(args)
                 .Configure(app =>
                 {
                     app.UseCors("_myAllowSpecificOrigins");
@@ -36,6 +60,7 @@ namespace Api
                     });
                 })
                 .ConfigureServices(sp => ConfigureServices(sp, args));
+            return new JobManagementServiceBuilder(builder);
         }
 
         public static void ConfigureServices(IServiceCollection services, string[] args)
@@ -64,6 +89,8 @@ namespace Api
             services.AddTransient<IRegistrationRequestProcessor, RegistrationRequestProcessor>();
             services.AddTransient<ISubscribedComponentManager, SubscribedComponentManager>();
             services.AddTransient<IComponentConfigUpdateNotifier, ComponentConfigUpdateNotifier>();
+
+            services.AddHttpClient<IStorageDependencyWaitingService, StorageDependencyWaitingService>();
 
             if (useFileStorage)
             {
@@ -142,7 +169,46 @@ namespace Api
             services.AddOptions<JobStorageOptions>()
                 .Bind(configuration.GetSection($"{optionRootName}:JobStorageOptions"))
                 .ValidateDataAnnotations();
+
+            services.AddOptions<StorageServiceHealtcheckOptions>()
+                .Bind(configuration.GetSection($"{optionRootName}:StorageServiceHealtcheckOptions"))
+                .ValidateDataAnnotations();
         }
 
+        public IWebHost Build()
+        {
+            return _builder.Build();
+        }
+
+        public JobManagementServiceWebHost BuildJobManagementService()
+        {
+            var app = _builder.Build();
+            return new JobManagementServiceWebHost(app);
+        }
+
+        public IWebHostBuilder ConfigureAppConfiguration(Action<WebHostBuilderContext, IConfigurationBuilder> configureDelegate)
+        {
+            return _builder.ConfigureAppConfiguration(configureDelegate);
+        }
+
+        public IWebHostBuilder ConfigureServices(Action<WebHostBuilderContext, IServiceCollection> configureServices)
+        {
+            return _builder.ConfigureServices(configureServices);
+        }
+
+        public IWebHostBuilder ConfigureServices(Action<IServiceCollection> configureServices)
+        {
+            return _builder.ConfigureServices(configureServices);
+        }
+
+        public string GetSetting(string key)
+        {
+            return _builder.GetSetting(key);
+        }
+
+        public IWebHostBuilder UseSetting(string key, string value)
+        {
+            return _builder.UseSetting(key, value);
+        }
     }
 }

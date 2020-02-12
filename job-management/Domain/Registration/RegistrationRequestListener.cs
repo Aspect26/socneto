@@ -41,7 +41,7 @@ namespace Domain.Registration
             _logger.LogInformation("Registration request accepted: {registrationRequestJson}",
                 registrationRequest);
 
-            RegistrationRequestMessage registrationRequestMessage ;
+            RegistrationRequestMessage registrationRequestMessage;
             try
             {
                 registrationRequestMessage = JsonConvert.DeserializeObject<RegistrationRequestMessage>(registrationRequest);
@@ -51,18 +51,9 @@ namespace Domain.Registration
                 _logger.LogError("Error while parsing registration request: {error}", jre.Message);
                 return;
             }
-            try
-            {
-                await _registrationRequestProcessor.ProcessRequestAsync(registrationRequestMessage);
-            }
-            catch (ArgumentException ae)
-            {
-                _logger.LogError("Format error: {errorMessage}", ae.Message);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Unexpected error: {errorMessage}", e.Message);
-            }
+
+            await _registrationRequestProcessor.ProcessRequestAsync(registrationRequestMessage);
+
         }
     }
 }
