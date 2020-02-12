@@ -34,7 +34,25 @@ class KafkaClient:
                 finally:
                     consumer.close()                    
             i+=1
-            
+    
+    def register_component(
+        self,
+        topic = "job_management.registration.request",
+        component_id= "test_acquirer_id",
+        component_type = "DATA_ACQUIRER",
+        input_channel_name = "input_channel",
+        update_channel_name = "update_channel",
+        attributes = {}):
+   
+        request = {
+            "componentType" : component_type,
+            "componentId":component_id,
+            "inputChannelName":input_channel_name,
+            "updateChannelName":update_channel_name,
+            "attributes":attributes
+        }
+
+        self.produce_request(request ,topic)
 
     def produce_start_job(self,
                         topic,
