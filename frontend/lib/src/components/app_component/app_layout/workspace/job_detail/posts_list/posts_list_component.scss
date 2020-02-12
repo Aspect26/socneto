@@ -23,6 +23,32 @@
       text-align: center;
     }
 
+    .filters {
+
+      .filters-button {
+        margin-bottom: 15px;
+      }
+
+      .remove-filter {
+        margin-right: 15px;
+      }
+
+      material-button[icon]:not([disabled]) {
+        material-icon {
+          color: get-color($primary);
+        }
+      }
+
+      .filter-line {
+        display: flex;
+        align-items: center;
+
+        material-chip {
+          width: fit-content;
+        }
+      }
+    }
+
     material-expansionpanel {
       .panel-name {
         div {
