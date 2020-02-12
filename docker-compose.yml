@@ -111,6 +111,8 @@ services:
     ports:
       - '8080:8080'
     container_name: frontend
+    depends_on:
+      - backend
 
   sentiment-analyser:
     container_name: se
