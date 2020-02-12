@@ -34,10 +34,5 @@ namespace Socneto.Domain.Services
             var postsWithCount = await _storageService.GetPosts(jobId, allowedWords, forbiddenWords, page - 1, pageSize);
             return new Tuple<IList<Post>, int>(postsWithCount.Data, postsWithCount.TotalCount);
         }
-
-        public async Task<IList<AnalyzedPost>> GetAllJobPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords)
-        {
-            return await _storageService.GetAllPosts(jobId, allowedWords, forbiddenWords);
-        }
     }
 }
