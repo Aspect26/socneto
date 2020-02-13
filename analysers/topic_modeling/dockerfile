@@ -6,6 +6,6 @@ COPY ./*.py ./
 COPY ./requirements.txt ./
 COPY ./prepare.sh ./
 
-RUN exec ./prepare.sh
+RUN sh ./prepare.sh
 
 CMD [ "python", "./main.py", "--server_address","kafka:9092" , "--sleep_on_startup"]
