@@ -38,7 +38,7 @@ namespace Socneto.Domain.Models
         [EnumMember(Value = "numberListValue")]
         NumberList,
         
-        [EnumMember(Value = "testListValue")]
+        [EnumMember(Value = "textListValue")]
         StringList,
         
         [EnumMember(Value = "numberMapValue")]
