@@ -1,0 +1,17 @@
+targets:
+  $default:
+    builders:
+      angular_components|scss_builder:
+        enabled: True
+      build_web_compilers|entrypoint:
+        generate_for:
+        - web/main.dart
+        options:
+          compiler: dart2js
+          dart2js_args:
+          - -DbackendAddress="acheron.ms.mff.cuni.cz:12345"
+          - --fast-startup
+          - --minify
+          - --trust-type-annotations
+          - --trust-primitives
+

@@ -1,6 +1,10 @@
 version: '3'
 services:
 
+  frontend:
+    environment:
+      FRONTEND_ENV=prod101
+
   topic-modelling-analyser:
     container_name: tma
     build: '../analysers/topic_modeling'
