@@ -19,7 +19,7 @@ import 'package:tuple/tuple.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 
-  static const String API_URL = "http://localhost:6010";
+  static const String API_URL = "http://backend:6010";
   static const String API_PREFIX = "api";
 
   SocnetoDataService() : super(API_URL, API_PREFIX);
