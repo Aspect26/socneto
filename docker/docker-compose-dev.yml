@@ -1,13 +1,17 @@
 version: '3'
 services:
 
+  topic-modelling-analyser:
+    container_name: tma
+    build: '../analysers/topic_modeling'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+
   sentiment-analyser:
     container_name: se
     build: '../analysers/sentiment_analysis'
-    # build:
-    #   shm_size: 2gb
-    #   context: './analysers/sentiment_analysis'
-    #   dockerfile: './analysers/sentiment_analysis/dockerfile'
     restart: always
     depends_on:
       - kafka

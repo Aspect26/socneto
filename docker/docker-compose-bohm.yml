@@ -2,8 +2,8 @@ version: '3'
 services:
 
   frontend:
-    environment:
-      - FRONTEND_ENV=prod101
+    build:
+      dockerfile: Dockerfile.bohm
 
   topic-modelling-analyser:
     container_name: tma

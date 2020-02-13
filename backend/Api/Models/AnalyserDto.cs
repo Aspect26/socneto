@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Socneto.Domain.Models;
@@ -8,7 +9,23 @@ namespace Socneto.Api.Models
     [JsonConverter(typeof(StringEnumConverter))]
     public enum AnalysisPropertyType
     {
-        Number, String, List, Tuple
+        [EnumMember(Value = "numberValue")]
+        Number,
+        
+        [EnumMember(Value = "textValue")]
+        String,
+        
+        [EnumMember(Value = "numberListValue")]
+        NumberList,
+        
+        [EnumMember(Value = "textListValue")]
+        StringList,
+        
+        [EnumMember(Value = "numberMapValue")]
+        NumberMap,
+        
+        [EnumMember(Value = "textMapValue")]
+        StringMap
     }
 
     public class AnalyserDto

@@ -34,8 +34,8 @@ def register_itself(topic, input_topic, componentId, producer):
         "InputChannelName": input_topic,
         "attributes": {
             "outputFormat": {
-                "polarity": "number",
-                "accuracy": "number"
+                "polarity": "numberValue",
+                "accuracy": "numberValue"
             }
         }
     }
