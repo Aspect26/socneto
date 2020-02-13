@@ -30,10 +30,13 @@ namespace Socneto.Api.Models
 
     public class AnalyserDto
     {
+        [JsonProperty("identifier")]
         public string Identifier { get; set; }
         
+        [JsonProperty("analysis_properties")]
         public Dictionary<string, AnalysisPropertyType> AnalysisProperties { get; set; }
         
+        [JsonProperty("component_type")]
         [JsonConverter(typeof(StringEnumConverter))]
         public SocnetoComponentType ComponentType { get; set; }
 
