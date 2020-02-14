@@ -7,7 +7,7 @@ services:
 
   topic-modelling-analyser:
     container_name: tma
-    build: '../analysers/topic_modeling'
+    build: './analysers/topic_modeling'
     restart: always
     depends_on:
       - kafka
@@ -16,7 +16,7 @@ services:
   twitter-static-acquirer:
     container_name: tw-static-acquirer
     build:
-      context: '../acquisition/DataAcquirer'
+      context: './acquisition/DataAcquirer'
       dockerfile: 'Dockerfile.custom'
     restart: always
     depends_on:
