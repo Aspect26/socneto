@@ -12,7 +12,7 @@ namespace Socneto.Api.Models
 
         [JsonProperty("post")]
         public PostDto PostDto { get; set; }
-
+        
         [JsonProperty("analyses")]
         public JArray Analyses { get; set; }
 

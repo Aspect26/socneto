@@ -22,8 +22,8 @@ namespace Socneto.Api.Models
         [JsonProperty("language")]
         public Language Language { get; set; } 
         
-        [JsonProperty("credentials")]
-        public Dictionary<string, Dictionary<string, string>> Credentials { get; set; }
+        [JsonProperty("attributes")]
+        public Dictionary<string, Dictionary<string, string>> Attributes { get; set; }
     }
 
 }
