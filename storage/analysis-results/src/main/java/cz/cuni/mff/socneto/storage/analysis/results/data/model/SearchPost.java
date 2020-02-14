@@ -24,5 +24,6 @@ public class SearchPost {
     private String text;
     @Field(type = FieldType.Text)
     private String originalText;
+    @Field(type = FieldType.Date)
     private Date datetime;
 }

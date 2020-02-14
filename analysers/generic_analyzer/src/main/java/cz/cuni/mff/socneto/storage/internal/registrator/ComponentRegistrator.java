@@ -26,7 +26,7 @@ public class ComponentRegistrator {
         registration.setComponentType(componentProperties.getComponentType());
         registration.setInputChannelName(componentProperties.getTopicInput());
         registration.setUpdateChannelName(componentProperties.getTopicUpdate());
-        registration.setResultsFormat(analyzerService.getFormat());
+        registration.setAttributes(new RegistrationMessage.Attributes(analyzerService.getFormat()));
 
         registrationProducer.send(applicationProperties.getTopicRegistration(), registration);
     }

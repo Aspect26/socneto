@@ -2,6 +2,7 @@ package cz.cuni.mff.socneto.storage.analyzer.implementation;
 
 import cz.cuni.mff.socneto.storage.analyzer.Analyzer;
 import cz.cuni.mff.socneto.storage.model.AnalysisMessage.AnalysisResult;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
