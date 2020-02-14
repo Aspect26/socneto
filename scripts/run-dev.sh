@@ -1,1 +1,1 @@
-docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose-dev.yml up --build --force-recreate
+docker-compose -f ./docker-compose.yml -f ./docker-compose-dev.yml up --build --force-recreate
