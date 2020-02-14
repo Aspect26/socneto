@@ -71,9 +71,9 @@ namespace Socneto.Api.Controllers
                 return Unauthorized();
             }
             
-            if (request.Credentials == null)
+            if (request.Attributes == null)
             {
-                request.Credentials = new Dictionary<string, Dictionary<string, string>>();
+                request.Attributes = new Dictionary<string, Dictionary<string, string>>();
             }
 
             var jobSubmit = new JobSubmit
@@ -85,7 +85,7 @@ namespace Socneto.Api.Controllers
                 Language = request.Language,
             };
 
-            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit, request.Credentials);
+            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit, request.Attributes);
             var response = new JobStatusResponse
             {
                 JobId = jobStatus.JobId,
@@ -147,7 +147,7 @@ namespace Socneto.Api.Controllers
                 return Unauthorized();
             }
 
-            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, page, pageSize);
+            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to, page, pageSize);
 
             var postDtos = posts.Select(PostDto.FromModel).ToList();
             var paginatedPosts = new Paginated<PostDto>
@@ -169,7 +169,8 @@ namespace Socneto.Api.Controllers
         [Produces("text/csv")]
         public async Task<IActionResult> JobPostsExport([FromRoute] Guid jobId,
             [FromQuery(Name = "contains_words")] string[] containsWords = null,
-            [FromQuery(Name = "exclude_words")] string[] excludeWords = null)
+            [FromQuery(Name = "exclude_words")] string[] excludeWords = null,
+            [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
         {
             containsWords = containsWords ?? new string[0];
             excludeWords = excludeWords ?? new string[0];
@@ -181,14 +182,14 @@ namespace Socneto.Api.Controllers
             }
 
             var currentPage = 1;
-            var (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, currentPage, ExportPageSize);
+            var (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to,currentPage, ExportPageSize);
             var csvStringBuilder = new StringBuilder();
             csvStringBuilder.Append(_csvService.GetCsv(currentPagePosts.Select(PostDto.FromModel).ToList(), true));
             
             while (currentPage < (postsCount / ExportPageSize) + 1)
             {
                 currentPage++;
-                (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, currentPage, ExportPageSize);
+                (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to, currentPage, ExportPageSize);
                 csvStringBuilder.Append(_csvService.GetCsv(currentPagePosts.Select(PostDto.FromModel).ToList(), false));
             }
             
