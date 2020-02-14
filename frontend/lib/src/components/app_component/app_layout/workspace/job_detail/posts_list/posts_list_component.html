@@ -55,27 +55,27 @@
     <material-expansionpanel *ngFor="let post of posts"
                              [showSaveCancel]="false">
         <div name>
+            <material-icon *ngIf="post.post.originalText != null && post.post.originalText.isNotEmpty" icon="translate"></material-icon>
             <div class="name">
                 <span class="title">Post:</span>
                 {{ post.text }}
             </div>
         </div>
 
-        <div>
+        <div *ngIf="post.originalId != null">
             <span class="title">Id:</span>
             {{ post.originalId }}
         </div>
 
-        <div>
+        <div *ngIf="post.originalText != null && post.originalText.isNotEmpty">
             <span class="title">Original Text:</span>
             {{ post.originalText }}
         </div>
 
-        <div>
+        <div  *ngIf="post.postedAt != null">
             <span class="title">Posted At:</span>
             {{ post.postedAt }}
         </div>
-
     </material-expansionpanel>
 </ng-template>
 
