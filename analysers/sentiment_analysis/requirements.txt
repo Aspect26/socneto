@@ -1,4 +1,7 @@
+cython==0.29.15
 kafka-python==1.4.6
 numpy==1.17.3
-pandas==0.25.2
+pandas==1.0.1
 fasttext==0.9.1
+ktrain==0.9.4
+tensorflow==1.15
