@@ -29,9 +29,9 @@ namespace Socneto.Domain.Services
         }
 
         public async Task<Tuple<IList<Post>, int>> GetJobPosts(Guid jobId, string[] allowedWords, 
-            string[] forbiddenWords, int page, int pageSize)
+            string[] forbiddenWords, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
-            var postsWithCount = await _storageService.GetPosts(jobId, allowedWords, forbiddenWords, page - 1, pageSize);
+            var postsWithCount = await _storageService.GetPosts(jobId, allowedWords, forbiddenWords, fromDate, toDate, page - 1, pageSize);
             return new Tuple<IList<Post>, int>(postsWithCount.Data, postsWithCount.TotalCount);
         }
     }
