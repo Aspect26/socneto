@@ -18,10 +18,9 @@ namespace Socneto.Domain.Services
 
         Task<Job> GetJob(Guid jobId);
 
-        Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords, int page, int pageSize);
+        Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords, DateTime? fromDate, 
+            DateTime? toDate, int page, int pageSize);
         
-        Task<IList<AnalyzedPost>> GetAllPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords);
-
         Task<JobView> GetJobView(Guid jobId);
 
         Task<JobView> StoreJobView(Guid jobId, JobView jobView);
