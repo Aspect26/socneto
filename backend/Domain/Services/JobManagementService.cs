@@ -62,21 +62,20 @@ namespace Socneto.Domain.Services
             }
         }
 
-        public async Task<JobStatus> SubmitJob(JobSubmit jobSubmit, Dictionary<string, Dictionary<string, string>> credentials)
+        public async Task<JobStatus> SubmitJob(JobSubmit jobSubmit, Dictionary<string, Dictionary<string, string>> originalAttributes)
         {
-            
             var attributes = new JObject();
             foreach (var selectedAcquirerId in jobSubmit.SelectedAcquirersIdentifiers)
             {
-                var acquirerCredentials = credentials.ContainsKey(selectedAcquirerId)
-                    ? credentials[selectedAcquirerId]
+                var acquirerAttributes = originalAttributes.ContainsKey(selectedAcquirerId)
+                    ? originalAttributes[selectedAcquirerId]
                     : new Dictionary<string, string>();
 
-                AddDefaultTwitterCredentialsIfNotSet(acquirerCredentials);
-                AddDefaultRedditCredentialsIfNotSet(acquirerCredentials);
+                AddDefaultTwitterCredentialsIfNotSet(acquirerAttributes);
+                AddDefaultRedditCredentialsIfNotSet(acquirerAttributes);
                 
                 attributes.Add(selectedAcquirerId, new JObject(
-                    acquirerCredentials.ToList().Select(credential => new JProperty(credential.Key, credential.Value)).ToList())
+                    acquirerAttributes.ToList().Select(attribute => new JProperty(attribute.Key, attribute.Value)).ToList())
                 );
             }
 

@@ -71,9 +71,9 @@ namespace Socneto.Api.Controllers
                 return Unauthorized();
             }
             
-            if (request.Credentials == null)
+            if (request.Attributes == null)
             {
-                request.Credentials = new Dictionary<string, Dictionary<string, string>>();
+                request.Attributes = new Dictionary<string, Dictionary<string, string>>();
             }
 
             var jobSubmit = new JobSubmit
@@ -85,7 +85,7 @@ namespace Socneto.Api.Controllers
                 Language = request.Language,
             };
 
-            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit, request.Credentials);
+            var jobStatus = await _jobManagementService.SubmitJob(jobSubmit, request.Attributes);
             var response = new JobStatusResponse
             {
                 JobId = jobStatus.JobId,
