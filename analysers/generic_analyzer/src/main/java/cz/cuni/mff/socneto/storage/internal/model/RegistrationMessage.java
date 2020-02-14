@@ -1,6 +1,8 @@
 package cz.cuni.mff.socneto.storage.internal.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.Map;
 
@@ -10,5 +12,11 @@ public class RegistrationMessage {
     private String componentType;
     private String updateChannelName;
     private String inputChannelName;
-    private Map<String, String> resultsFormat;
+    private Attributes attributes;
+
+    @Getter
+    @AllArgsConstructor
+    public static class Attributes {
+        private Map<String, String> outputFormat;
+    }
 }

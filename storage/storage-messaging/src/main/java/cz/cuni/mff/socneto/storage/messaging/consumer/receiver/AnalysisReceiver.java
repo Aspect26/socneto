@@ -42,9 +42,14 @@ public class AnalysisReceiver {
         var searchAnalysisDto = map(analysisMessage);
 
         Optional<SearchPostDto> post;
+        int retries = 0;
         while ((post = searchPostDtoService.getById(searchAnalysisDto.getPostId())).isEmpty()) {
             try {
                 Thread.sleep(1000);
+                if (retries++ > 5) {
+                    log.error("not found post:" + searchAnalysisDto.getPostId());
+                    return;
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
