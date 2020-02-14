@@ -7,7 +7,7 @@
 @import 'package:angular_components/material_button/mixins';
 
 
-@mixin component-credentials-component($theme) {
+@mixin component-attributes-component($theme) {
 
   $primary: map-get($theme, primary);
   $background: map-get($theme, background);
@@ -20,11 +20,15 @@
       flex-direction: column;
       display: flex;
 
-      .credential-wrapper {
+      material-toggle {
+        width: fit-content;
+      }
+
+      .attribute-wrapper {
         display: flex;
         align-items: center;
 
-        .credential {
+        .attribute {
           display: flex;
           flex-direction: row;
 

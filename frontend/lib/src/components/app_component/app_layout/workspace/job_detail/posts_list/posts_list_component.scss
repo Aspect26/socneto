@@ -51,6 +51,19 @@
 
     material-expansionpanel {
       .panel-name {
+        div[name] {
+          display: flex;
+          align-items: center;
+
+          material-icon {
+            margin-right: 15px;
+
+            i {
+              color: get-color($primary);
+            }
+          }
+        }
+
         div {
           text-overflow: ellipsis;
           overflow: hidden;
