@@ -11,6 +11,7 @@ public class PostMessage {
     private String originalPostId;
     private UUID jobId;
     private String text;
+    private String originalText;
     private String source;
     private String authorId;
     private String query;

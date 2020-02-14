@@ -6,6 +6,9 @@ namespace Socneto.Domain.Models
 {
     public class ChartDefinition
     {
+        [JsonProperty("title")]
+        public string Title { get; set; }
+        
         [JsonProperty("analysis_data_paths")]
         public List<AnalysisDataPath> AnalysisDataPaths { get; set; }
         

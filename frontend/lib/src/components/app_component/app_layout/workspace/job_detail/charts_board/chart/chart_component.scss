@@ -13,6 +13,11 @@
     position: relative;
     padding: 20px;
 
+    h3.title {
+      color: get-color($primary);
+      font-weight: normal;
+    }
+
     &.highlight {
       background-color: get-color($primary, A200);
     }

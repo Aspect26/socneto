@@ -1,7 +1,6 @@
 package cz.cuni.mff.socneto.storage.analysis.results.api.result.request;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import cz.cuni.mff.socneto.storage.analysis.results.api.result.response.Result;
 import cz.cuni.mff.socneto.storage.analysis.results.service.result.ResultRequestDtoVisitor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +21,7 @@ public class ListResultRequest extends ResultRequest {
     }
 
     @Override
-    public Result visit(ResultRequestDtoVisitor resultRequestDtoVisitor) {
+    public <T> T visit(ResultRequestDtoVisitor<T> resultRequestDtoVisitor) {
         return resultRequestDtoVisitor.requestResults(this);
     }
 

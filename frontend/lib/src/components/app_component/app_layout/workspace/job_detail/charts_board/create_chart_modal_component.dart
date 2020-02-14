@@ -39,6 +39,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialTooltipDirective,
     MaterialDialogComponent,
     MaterialFabComponent,
+    materialInputDirectives,
     ModalComponent,
     ChartTypeSelectComponent,
     NgFor,
@@ -61,6 +62,7 @@ class CreateChartModalComponent {
   List<SocnetoAnalyser> analysers = [];
   bool displayed = false;
   String errorMessage;
+  String chartTitle = "";
   List<AnalysisDataPath> dataPaths = [];
   ChartType chartType;
   bool useTimeAsX = false;
@@ -174,11 +176,12 @@ class CreateChartModalComponent {
     }
 
     var usedDataPaths = this.useTimeAsX && this.chartType == ChartType.Line? this.dataPaths.sublist(1, this.dataPaths.length) : this.dataPaths;
-    this._submitController.add(ChartDefinition(usedDataPaths, this.chartType, this.useTimeAsX));
+    this._submitController.add(ChartDefinition(this.chartTitle, usedDataPaths, this.chartType, this.useTimeAsX));
   }
 
   bool isDefinitionCorrect() {
-    return this.chartType != null && (this.dataPaths.length >= this.requiredNumberOfDataPaths);
+    return this.chartTitle != null && this.chartTitle.isNotEmpty && this.chartType != null
+        && (this.dataPaths.length >= this.requiredNumberOfDataPaths);
   }
 
   void _addDefaultDataPaths(int count) {

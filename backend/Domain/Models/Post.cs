@@ -5,16 +5,22 @@ namespace Socneto.Domain.Models
 {
     public class Post
     {
-        [JsonProperty("authorId")]
-        public string AuthorId { get; set; }
+        [JsonProperty("postId")]
+        public Guid PostId { get; set; }
+        
+        [JsonProperty("jobId")]
+        public Guid JobId { get; set; }
+        
+        [JsonProperty("originalId")]
+        public string OriginalId { get; set; }
         
         [JsonProperty("text")]
         public string Text { get; set; }
         
         [JsonProperty("originalText")]
         public string OriginalText { get; set; }
-
-        [JsonProperty("postedAt")]
+        
+        [JsonProperty("datetime")]
         public DateTime? PostedAt { get; set; }
     }
 }

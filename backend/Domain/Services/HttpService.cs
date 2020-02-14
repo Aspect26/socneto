@@ -42,8 +42,8 @@ namespace Socneto.Domain.Services
         public async Task<TResult> Post<TResult>(string path, object data = null)
         {
             var fullPath = GetFullPath(path);
+            _eventTracker.TrackInfo(EventTrackerEventName,$"POST /{path} {JsonConvert.SerializeObject(data)}");
             var content = CreateHttpContent(data ?? new object());
-            _eventTracker.TrackInfo(EventTrackerEventName,$"POST /{path} {content}");
 
             try
             {

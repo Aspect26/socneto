@@ -10,6 +10,11 @@
             </material-button>
         </div>
 
+        <div>
+            <span class="title-label">Chart title:</span>
+            <material-input [(ngModel)]="chartTitle"></material-input>
+        </div>
+
         <chart-type-select (change)="onChartTypeSelected($event)"></chart-type-select>
 
         <br>
