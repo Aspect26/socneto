@@ -78,31 +78,19 @@ namespace Socneto.Domain.Services
         }
 
         public async Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, 
-            string[] forbiddenWords, int page, int pageSize)
+            string[] forbiddenWords, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
             var body = new PostsStorageRequest
             {
                 JobId = jobId,
                 AllowedWords = allowedWords,
                 ForbiddenWords = forbiddenWords,
+                FromDate = fromDate,
+                ToDate = toDate,
                 Page = page,
                 PageSize = pageSize
             };
             return await _httpService.Post<ListWithCount<Post>>($"analyzedPosts", body);
-        }
-        
-        public async Task<IList<AnalyzedPost>> GetAllPosts(Guid jobId, string[] allowedWords, string[] forbiddenWords)
-        {
-            var body = new PostsStorageRequest
-            {
-                JobId = jobId,
-                AllowedWords = allowedWords,
-                ForbiddenWords = forbiddenWords,
-                Page = 0,
-                PageSize = Int32.MaxValue
-            };
-            var postsWithCount = await _httpService.Post<ListWithCount<AnalyzedPost>>($"analyzedPosts", body);
-            return postsWithCount.Data;
         }
         
         public async Task<IList<SocnetoComponent>> GetAnalysers()
