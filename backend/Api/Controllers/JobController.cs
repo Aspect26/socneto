@@ -19,6 +19,8 @@ namespace Socneto.Api.Controllers
     [ApiController]
     public class JobController : SocnetoController
     {
+        private const int ExportPageSize = 200;
+        
         private readonly IAuthorizationService _authorizationService;
         private readonly IJobService _jobService;
         private readonly IJobManagementService _jobManagementService;
@@ -130,25 +132,31 @@ namespace Socneto.Api.Controllers
 
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts")]
-        public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, [FromQuery] int page = 1, [FromQuery] int size = 20)
+        public async Task<ActionResult<Paginated<AnalyzedPostDto>>> GetJobPosts([FromRoute] Guid jobId, 
+            [FromQuery(Name = "page")] int page = 1, [FromQuery(Name = "page_size")] int pageSize = 20, 
+            [FromQuery(Name = "contains_words")] string[] containsWords = null,
+            [FromQuery(Name = "exclude_words")] string[] excludeWords = null,
+            [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
         {
+            containsWords = containsWords ?? new string[0];
+            excludeWords = excludeWords ?? new string[0];
+            
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
                 _eventTracker.TrackInfo("GetJobPosts", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
             }
 
-            var offset = (page - 1) * size;
-            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, offset, size);
+            var (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, page, pageSize);
 
-            var postDtos = posts.Select(AnalyzedPostDto.FromModel).ToList();
-            var paginatedPosts = new Paginated<AnalyzedPostDto>
+            var postDtos = posts.Select(PostDto.FromModel).ToList();
+            var paginatedPosts = new Paginated<PostDto>
             {
                 Pagination = new Pagination
                 {
                     TotalSize = postsCount,
-                    Page = Math.Clamp(page, 1, ((postsCount - 1) / size) + 1),
-                    PageSize = size
+                    Page = Math.Clamp(page, 1, ((postsCount - 1) / pageSize) + 1),
+                    PageSize = pageSize
                 },
                 Data = postDtos
             };
@@ -159,22 +167,33 @@ namespace Socneto.Api.Controllers
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts/export")]
         [Produces("text/csv")]
-        public async Task<IActionResult> JobPostsExport([FromRoute] Guid jobId)
+        public async Task<IActionResult> JobPostsExport([FromRoute] Guid jobId,
+            [FromQuery(Name = "contains_words")] string[] containsWords = null,
+            [FromQuery(Name = "exclude_words")] string[] excludeWords = null)
         {
+            containsWords = containsWords ?? new string[0];
+            excludeWords = excludeWords ?? new string[0];
+            
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
                 _eventTracker.TrackInfo("GetJobPostsExport", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
                 return Unauthorized();
             }
+
+            var currentPage = 1;
+            var (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, currentPage, ExportPageSize);
+            var csvStringBuilder = new StringBuilder();
+            csvStringBuilder.Append(_csvService.GetCsv(currentPagePosts.Select(PostDto.FromModel).ToList(), true));
             
-            var allJobAnalyzedPosts = await _jobService.GetAllJobPosts(jobId);
-            // TODO: wouldn't it be better to query directly posts only?
-            var allJobPosts = allJobAnalyzedPosts.Select(analyzedPost => analyzedPost.Post).ToList();
-
-            var postsCsvString = _csvService.GetCsv(allJobPosts);
-            var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(postsCsvString));
-
-            return new FileStreamResult(dataStream, "text/csv");
+            while (currentPage < (postsCount / ExportPageSize) + 1)
+            {
+                currentPage++;
+                (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, currentPage, ExportPageSize);
+                csvStringBuilder.Append(_csvService.GetCsv(currentPagePosts.Select(PostDto.FromModel).ToList(), false));
+            }
+            
+            var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(csvStringBuilder.ToString()));
+            return new FileStreamResult(dataStream, "text/csv") {FileDownloadName = $"socneto_export_{jobId}.csv"};
         }
         
         [HttpPost]

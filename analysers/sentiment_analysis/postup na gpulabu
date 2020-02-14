@@ -1,0 +1,25 @@
+srun -p debug-lp --pty bash
+ch-build -t bertn1 .
+mkdir temp
+ch-builder2tar bertn1 /mnt/home/knotek/bert1/temp
+ch-tar2dir /mnt/home/knotek/bert1/temp/bertn1.tar.gz /mnt/home/knotek/bert1/temp
+exit
+srun -p volta-hp --gpus=1 ch-fromhost --nvidia /mnt/home/knotek/bert1/temp/bertn1
+srun -p volta-hp --gpus=1 ch-run /mnt/home/knotek/bert1/temp/bertn1 --bind=/mnt/home/knotek/bert1/temp python sentiment_with_bert.py
+
+
+nebo
+
+sbatch -o /mnt/home/knotek/bert1/vypis  -e /mnt/home/knotek/bert1/error -p volta-hp --gpus=1 bertn1.sh
+skript je na gpulabu
+
+
+
+
+ch-tar2dir /mnt/home/knotek/bert2/temp/bertn2.tar.gz /mnt/home/knotek/bert2/temp
+srun -p volta-hp --gpus=1 ch-fromhost --nvidia /mnt/home/knotek/bert2/temp/bertn2
+sbatch -o /mnt/home/knotek/bert2/vypis  -e /mnt/home/knotek/bert2/error -p volta-hp --gpus=1 bertn2.sh
+
+
+
+srun -p volta-hp --gpus=1 ch-run /mnt/home/knotek/bert2/temp/bertn2 --bind=/mnt/home/knotek/bert2/temp python sentiment_with_bert.py

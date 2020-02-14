@@ -21,7 +21,7 @@ namespace Socneto.Api.Models
             return new AnalyzedPostDto
             {
                 JobId =  post.JobId,
-                PostDto = PostDto.FromValue(post.Post),
+                PostDto = PostDto.FromModel(post.Post),
                 Analyses = post.Analyses,
             };
         }

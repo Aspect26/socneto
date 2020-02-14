@@ -12,14 +12,17 @@ namespace Socneto.Domain.Services
     {
         private readonly string _delimiter = ",";
         
-        public string GetCsv<T>(IEnumerable<T> data)
+        public string GetCsv<T>(IEnumerable<T> data, bool withHeaders)
         {
             var itemType = data.GetType().GetGenericArguments()[0];
             var csvStringBuilder = new StringBuilder();
 
-            var propertyNames = GetPropertyNames(itemType);
-            csvStringBuilder.AppendLine(string.Join(_delimiter, propertyNames));
- 
+            if (withHeaders)
+            {
+                var propertyNames = GetPropertyNames(itemType);
+                csvStringBuilder.AppendLine(string.Join(_delimiter, propertyNames));
+            }
+
             foreach (var item in data)
             {
                 var itemCsvRepresentation = GetObjectCsvRepresentation(item);
@@ -60,9 +63,12 @@ namespace Socneto.Domain.Services
             if (property == null) return string.Empty;
             
             var itemPropertyValueString = property.ToString();
- 
+
             if (itemPropertyValueString.Contains(_delimiter))
+            {
+                itemPropertyValueString = itemPropertyValueString.Replace("\"", "\"\"");
                 itemPropertyValueString = $"\"{itemPropertyValueString}\"";
+            }
             if (itemPropertyValueString.Contains("\r"))
                 itemPropertyValueString = itemPropertyValueString.Replace("\r", " ");
             if (itemPropertyValueString.Contains("\n"))

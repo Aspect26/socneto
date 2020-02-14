@@ -5,6 +5,9 @@ import cz.cuni.mff.socneto.storage.analysis.results.repository.SearchPostReposit
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class SearchPostService {
@@ -13,6 +16,10 @@ public class SearchPostService {
 
     public SearchPost create(SearchPost searchPost) {
         return searchPostRepository.save(searchPost);
+    }
+
+    public Optional<SearchPost> getById(UUID id) {
+        return searchPostRepository.findById(id);
     }
 
 }
