@@ -6,13 +6,11 @@ using Newtonsoft.Json.Converters;
 
 namespace Socneto.Domain.Models
 {
-    // TODO: check if all these classes cannot be merged together
     public class GetAggregationAnalysisStorageRequest
     {
         [JsonProperty("jobId")]
         public Guid JobId { get; set; }
         
-        // TODO: readonly maybe, since it can be only AGGREGATION
         [JsonProperty("type")]
         public AnalysisType Type { get; set; }
         
