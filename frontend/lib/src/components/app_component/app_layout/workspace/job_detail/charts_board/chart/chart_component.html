@@ -2,7 +2,7 @@
     <h3>
         {{ chartTitle }}
     </h3>
-    <material-button icon autoFocus (trigger)="removeChart()">
+    <material-button icon (trigger)="removeChart()">
         <material-icon icon="delete_forever"></material-icon>
     </material-button>
 </div>
@@ -15,10 +15,22 @@
     NO DATA
 </section>
 
-<div class="chart-wrapper">
-    <section *ngIf="chartData.isNotEmpty">
-        <material-progress [indeterminate]="true"></material-progress>
-    </section>
+<div class="chart-pagination-wrapper">
+
+    <material-button *ngIf="isPaginated" icon class="pagination" [disabled]="currentPage >= maxPage" (trigger)="onPageBack()">
+        <material-icon icon="keyboard_arrow_left"></material-icon>
+    </material-button>
+
+    <div class="chart-wrapper">
+        <section *ngIf="chartData.isNotEmpty">
+            <material-progress [indeterminate]="true"></material-progress>
+        </section>
+    </div>
+
+    <material-button *ngIf="isPaginated" icon class="pagination" [disabled]="currentPage <= 1" (trigger)="onPageForward()">
+        <material-icon icon="keyboard_arrow_right"></material-icon>
+    </material-button>
+
 </div>
 
 <verification-modal title="Remove chart" [confirmedCallback]="onRemoveChartVerified">Are you sure you want to remove chart <b>{{ chartTitle }}</b>?</verification-modal>

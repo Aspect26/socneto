@@ -15,6 +15,7 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
+import 'package:tuple/tuple.dart';
 
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
@@ -66,18 +67,19 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     return this.getFullApiCallPath(path);
   }
 
-  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
+  Future<Tuple2<List<List<List<dynamic>>>, int>> getChartData(String jobId, ChartDefinition chartDefinition, int pageSize, int page) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
     var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property).toList();
     if (chartDefinition.chartType == ChartType.Pie) {
       return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
     } else {
-      return await this._getArrayChartData(jobId, analyserId, propertyNames, chartDefinition.isXDateTime);
+      return await this._getArrayChartData(jobId, analyserId, propertyNames, chartDefinition.isXDateTime, pageSize, page);
     }
   }
 
-  Future<List<List<List<dynamic>>>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
+  Future<Tuple2<List<List<List<dynamic>>>, int>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
     AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
+    // TODO: would be nice to have some model here
     Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
 
     List<List<dynamic>> values = [];
@@ -86,14 +88,16 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       values.add([key, value])
     });
 
-    return values.isEmpty? [] : [values];
+    return values.isEmpty? Tuple2([], 0) : Tuple2([values], values.length);
   }
 
-  Future<List<List<List<dynamic>>>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames, bool isXPostDate) async {
-    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames, isXPostDate);
+  Future<Tuple2<List<List<List<dynamic>>>, int>> _getArrayChartData(String jobId, String analyserId, List<String> propertyNames, bool isXPostDate, int pageSize, int page) async {
+    ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames, isXPostDate, pageSize, page);
+    // TODO: would be nice to have some model here
     Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
 
     List<List<List<dynamic>>> values = [];
+    var totalCount = result["total_count"];
     var arrays = result["data"];
     arrays.forEach((array) {
       List<List<dynamic>> currentArrayData = [];
@@ -103,7 +107,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       values.add(currentArrayData);
     });
 
-    return values.isEmpty? [] : values;
+    return values.isEmpty? Tuple2([], 0) : Tuple2(values, totalCount);
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
