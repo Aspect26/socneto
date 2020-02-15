@@ -11,7 +11,7 @@ class PieChart {
         "#948B3D"
     ];
 
-    _ELEMENT_HEIGHT = 450;
+    _ELEMENT_HEIGHT = 700;
     _CHART_PADDING_VERTICAL = 20;
     _CHART_PADDING_HORIZONTAL = 10;
     _LABELS_MIDDLE_OFFSET = 1.2;
