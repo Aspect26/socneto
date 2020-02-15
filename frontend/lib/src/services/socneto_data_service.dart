@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:angular_components/angular_components.dart';
+import 'package:sw_project/src/config.dart';
 import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
 import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
@@ -19,7 +20,7 @@ import 'package:tuple/tuple.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 
-  static const String API_URL = "http://localhost:6010";
+  static String API_URL = Config.backendHost ?? "http://localhost:6010";
   static const String API_PREFIX = "api";
 
   SocnetoDataService() : super(API_URL, API_PREFIX);

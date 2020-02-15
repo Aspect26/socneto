@@ -6,8 +6,10 @@ namespace Socneto.Api.Models
 {
     public class AcquirerDto
     {
+        [JsonProperty("identifier")]
         public string Identifier { get; set; }
         
+        [JsonProperty("component_type")]
         [JsonConverter(typeof(StringEnumConverter))]
         public  SocnetoComponentType ComponentType { get; set; }
         

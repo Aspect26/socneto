@@ -15,5 +15,5 @@ class SocnetoComponent {
 
   SocnetoComponent.fromMap(Map data) :
         identifier = data["identifier"] ?? "",
-        type = getEnumByString(ComponentType.values, data["componentType"], ComponentType.UNKNOWN);
+        type = getEnumByString(ComponentType.values, data["component_type"], ComponentType.UNKNOWN);
 }

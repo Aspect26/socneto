@@ -17,11 +17,13 @@ namespace Socneto.Domain.Models
     
     public class SocnetoComponent
     {
-        
+        [JsonProperty("componentId")]
         public string ComponentId { get; set; }
         
+        [JsonProperty("type")]
         public SocnetoComponentType ComponentType { get; set; }
         
+        [JsonProperty("attributes")]
         public JObject Attributes { get; set; }
         
     }
@@ -38,7 +40,7 @@ namespace Socneto.Domain.Models
         [EnumMember(Value = "numberListValue")]
         NumberList,
         
-        [EnumMember(Value = "testListValue")]
+        [EnumMember(Value = "textListValue")]
         StringList,
         
         [EnumMember(Value = "numberMapValue")]

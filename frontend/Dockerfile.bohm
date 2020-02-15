@@ -4,6 +4,8 @@ RUN mkdir /app
 ADD ./ /app
 
 WORKDIR "/app"
+RUN rm "./build.yaml"
+RUN mv "./build.prod101.yaml" "./build.yaml"
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get install --yes nodejs
