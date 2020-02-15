@@ -242,7 +242,7 @@ namespace Socneto.Api.Controllers
             try
             {
                 analysisResult = await _getAnalysisService.GetArrayAnalysis(jobId, analysisRequest.AnalyserId,
-                    analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
+                    analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate, analysisRequest.PageSize, analysisRequest.Page - 1);
             }
             catch (GetAnalysisService.GetAnalysisException e)
             {

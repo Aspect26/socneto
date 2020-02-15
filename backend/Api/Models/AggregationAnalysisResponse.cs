@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Socneto.Domain.Models;
 
 namespace Socneto.Api.Models
@@ -7,7 +8,7 @@ namespace Socneto.Api.Models
     public class AggregationAnalysisResponse
     {
         [JsonProperty("aggregations")]
-        public Dictionary<string, double> Result { get; set; }  
+        public Dictionary<string, JToken> Result { get; set; }  
         
         public static AggregationAnalysisResponse FromModel(AggregationAnalysisResult analysisResult)
         {
@@ -21,7 +22,7 @@ namespace Socneto.Api.Models
         {
             return new AggregationAnalysisResponse
             {
-                Result = new Dictionary<string, double>()
+                Result = new Dictionary<string, JToken>()
             };
         }
     }

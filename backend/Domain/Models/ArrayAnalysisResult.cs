@@ -13,6 +13,9 @@ namespace Socneto.Domain.Models
         
         [JsonProperty("list")]
         public List<JArray> Result { get; set; }
+        
+        [JsonProperty("totalCount")]
+        public int TotalCount { get; set; }
     }
 
     public class TimeArrayAnalysisResult
@@ -23,5 +26,8 @@ namespace Socneto.Domain.Models
         [JsonProperty("list")]
         [JsonConverter(typeof(TupleListConverter<DateTime, JToken>))]
         public List<Tuple<DateTime, JToken>> Result { get; set; }
+        
+        [JsonProperty("totalCount")]
+        public int TotalCount { get; set; }
     }
 }

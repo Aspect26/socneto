@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Socneto.Domain.Models
 {
@@ -9,6 +10,6 @@ namespace Socneto.Domain.Models
         public string ResultName { get; set; }
         
         [JsonProperty("map")]
-        public Dictionary<string, double> MapResult { get; set; }
+        public Dictionary<string, JToken> MapResult { get; set; }
     }
 }
