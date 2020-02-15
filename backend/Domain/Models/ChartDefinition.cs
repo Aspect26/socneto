@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -6,6 +7,9 @@ namespace Socneto.Domain.Models
 {
     public class ChartDefinition
     {
+        [JsonProperty("id")]
+        public Guid Identifier { get; set; }
+        
         [JsonProperty("title")]
         public string Title { get; set; }
         
