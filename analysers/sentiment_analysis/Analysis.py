@@ -7,11 +7,11 @@ Created on Mon Mar 11 07:30:22 2019
 
 import pandas as pd
 import re
-import fasttext
+import ktrain
 
 class Analysis:
     def __init__(self, file):
-        self.model = fasttext.load_model(file)
+        self.model = ktrain.load_predictor(file)
 
         super().__init__()
 
@@ -21,21 +21,24 @@ class Analysis:
         Returns sentiment and its probability for given string.
         label: '__label__positive', '__label__negative', '__label__neutral'
         """
-        label, probab = self.model.predict(tweet)
-        label = label[0]
+
+        probab = self.model.predict_proba(tweet)
+        label = probab.argmax()
         num_label = {
-            '__label__positive':1,
-            '__label__negative':-1, 
-            '__label__neutral':0
+            1:1,
+            2:-1,
+            0:0
         }[label]
 
-        return num_label, probab[0]
+        return num_label, probab[label]
 
 
 
 
 # if __name__ == '__main__':
 #
-#     print('start')
-#     l,p = get_text_sentiment("super nice wrong day")
-#     print('end')
+# print('start')
+# l,p = Analysis('./distilbert_predictor').get_text_sentiment("super nice wrong day")
+# print(l)
+# print(p)
+# print('end')

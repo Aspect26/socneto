@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,10 +15,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JobDto {
+    @NotNull
     private UUID jobId;
-    @NotBlank(message = "Job name can't be null.")
+    @NotBlank
     private String jobName;
-    @NotBlank(message = "User can't be null.")
+    @NotBlank
     private String username;
     private String topicQuery;
     private String status;

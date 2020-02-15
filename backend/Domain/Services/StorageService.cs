@@ -77,14 +77,20 @@ namespace Socneto.Domain.Services
             return await _httpService.Put<JobView>($"jobs/{jobId}/view", jobView);
         }
 
-        public async Task<IList<AnalyzedPost>> GetAnalyzedPosts(Guid jobId, int offset, int size)
+        public async Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, 
+            string[] forbiddenWords, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
-            return await _httpService.Get<List<AnalyzedPost>>($"analyzedPosts?jobId={jobId}&offset={offset}&size={size}");
-        }
-        
-        public async Task<IList<AnalyzedPost>> GetAllPosts(Guid jobId)
-        {
-            return await _httpService.Get<List<AnalyzedPost>>($"analyzedPosts?jobId={jobId}");
+            var body = new PostsStorageRequest
+            {
+                JobId = jobId,
+                AllowedWords = allowedWords,
+                ForbiddenWords = forbiddenWords,
+                FromDate = fromDate,
+                ToDate = toDate,
+                Page = page,
+                PageSize = pageSize
+            };
+            return await _httpService.Post<ListWithCount<Post>>($"analyzedPosts", body);
         }
         
         public async Task<IList<SocnetoComponent>> GetAnalysers()

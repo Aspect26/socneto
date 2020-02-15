@@ -55,6 +55,7 @@ services:
         hard: -1
     volumes:
       - data01:/usr/share/elasticsearch/data
+
   kibana:
     depends_on:
       - logstash
@@ -64,6 +65,7 @@ services:
     container_name: kibana
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+
   logstash:
     build: ./storage/docker/logstash/
     depends_on:
@@ -85,9 +87,7 @@ services:
       - mongo_db
       - db
       - elasticsearch
-    environment:
-      - ELASTICSEARCH_WAIT_MILLIS=80000
-  
+
   jms:
     build: './job-management'
     ports:
@@ -113,28 +113,8 @@ services:
     ports:
       - '8080:8080'
     container_name: frontend
-
-  sentiment-analyser:
-    container_name: se
-    build: './analysers/sentiment_analysis' 
-    # build: 
-    #   shm_size: 2gb
-    #   context: './analysers/sentiment_analysis'
-    #   dockerfile: './analysers/sentiment_analysis/dockerfile'
-    restart: always
     depends_on:
-      - kafka
-      - jms
-  
-  twitter-acquirer:
-    container_name: tw-acquirer
-    build: './acquisition/DataAcquirer'
-    restart: always
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      - kafka
-      - jms
+      - backend
   
 volumes:
   data01:

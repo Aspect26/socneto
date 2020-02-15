@@ -4,6 +4,6 @@ namespace Socneto.Domain.Services
 {
     public interface ICsvService
     {
-        string GetCsv<T>(IEnumerable<T> data);
+        string GetCsv<T>(IEnumerable<T> data, bool withHeaders);
     }
 }

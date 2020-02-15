@@ -1,3 +1,50 @@
+<div class="filters">
+    <material-button class="filters-button" [disabled]="!someFilterMissing()" raised popupSource #customsrc="popupSource" (trigger)="showFilterPopup = !showFilterPopup">
+        Filters
+        <material-icon icon="filter_list" aria-hidden="true"></material-icon>
+    </material-button>
+
+    <material-popup [source]="customsrc" [(visible)]="showFilterPopup" [enforceSpaceConstraints]="true">
+        <material-list>
+            <material-list-item *ngIf="!useDateFilter" (trigger)="useDateFilter = true">Date range</material-list-item>
+            <material-list-item *ngIf="!useContainsWordsFilter" (trigger)="useContainsWordsFilter = true">Contain word</material-list-item>
+            <material-list-item *ngIf="!useExcludeWordsFilter" (trigger)="useExcludeWordsFilter = true">Exclude words</material-list-item>
+        </material-list>
+    </material-popup>
+
+    <div *ngIf="useDateFilter" class="filter-line">
+        <material-button icon (trigger)="onRemoveDateFilter()" class="remove-filter">
+            <material-icon icon="clear" aria-hidden="true"></material-icon>
+        </material-button>
+        <material-date-range-picker [supportsComparison]="false"
+                                    [showNextPrevButtons]="false"
+                                    (rangeChange)="onDateRangeChange($event)">
+        </material-date-range-picker>
+    </div>
+
+    <div *ngIf="useContainsWordsFilter" class="filter-line">
+        <material-button icon (trigger)="onRemoveContainsWordsFilter()" class="remove-filter">
+            <material-icon icon="clear" aria-hidden="true"></material-icon>
+        </material-button>
+        <material-input [(ngModel)]="newContainedWord" (keyup.enter)="onAddContainedWord()" type="text" floatingLabel label="Must contain word"></material-input>
+        <material-button [disabled]="!canAddNewContainedWord()" icon (trigger)="onAddContainedWord()">
+            <material-icon icon="add" aria-hidden="true"></material-icon>
+        </material-button>
+        <material-chip *ngFor="let containedWord of containedWords" (remove)="onRemoveContainedWord(containedWord)">{{ containedWord }}</material-chip>
+    </div>
+
+    <div *ngIf="useExcludeWordsFilter" class="filter-line">
+        <material-button icon (trigger)="onRemoveExcludeWordsFilter()" class="remove-filter">
+            <material-icon icon="clear" aria-hidden="true"></material-icon>
+        </material-button>
+        <material-input [(ngModel)]="newExcludedWord" (keyup.enter)="onAddExcludedWord()" type="text" floatingLabel label="Can't contain word"></material-input>
+        <material-button [disabled]="!canAddNewExcludedWord()" icon (trigger)="onAddExcludedWord()">
+            <material-icon icon="add" aria-hidden="true"></material-icon>
+        </material-button>
+        <material-chip *ngFor="let excludedWord of excludedWords" (remove)="onRemoveExcludedWord(excludedWord)">{{ excludedWord }}</material-chip>
+    </div>
+</div>
+
 <section *ngIf="posts.isEmpty && !loading" class="no-data">
     NO POSTS
 </section>
@@ -8,27 +55,27 @@
     <material-expansionpanel *ngFor="let post of posts"
                              [showSaveCancel]="false">
         <div name>
+            <material-icon *ngIf="post.originalText != null && post.originalText.isNotEmpty" icon="translate"></material-icon>
             <div class="name">
                 <span class="title">Post:</span>
-                {{ post.post.text }}
+                {{ post.text }}
             </div>
         </div>
 
-        <div>
-            <span class="title">Author:</span>
-            {{ post.post.authorId }}
+        <div *ngIf="post.originalId != null">
+            <span class="title">Id:</span>
+            {{ post.originalId }}
         </div>
 
-        <div>
-            <span class="title">Posted at:</span>
-            {{ post.post.postedAt }}
+        <div *ngIf="post.originalText != null && post.originalText.isNotEmpty">
+            <span class="title">Original Text:</span>
+            {{ post.originalText }}
         </div>
 
-        <div>
-            <span class="title">Analyses:</span>
-            <pre class="json"><code>{{ prettyJson(post.analyses) }}</code></pre>
+        <div  *ngIf="post.postedAt != null">
+            <span class="title">Posted At:</span>
+            {{ post.postedAt }}
         </div>
-
     </material-expansionpanel>
 </ng-template>
 
@@ -39,8 +86,8 @@
 <paginator *ngIf="paginator.maxPage() > 1" [paginator]="paginator" (pageChange)="onPageChange($event)"></paginator>
 
 
-<a *ngIf="posts.isNotEmpty" [href]="exportLink">
-    <material-button [routerLink]="exportLink">
+<a *ngIf="posts.isNotEmpty" [href]="getExportLink()" target="_blank" rel="noopener noreferrer">
+    <material-button>
         Export to CSV
         <material-icon class="margin" icon="cloud_download"></material-icon>
     </material-button>

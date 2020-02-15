@@ -25,6 +25,7 @@ namespace Api
         {
             if (args.Contains("--sleep_on_startup"))
             {
+                Console.WriteLine("Sleeping 180 seconds");
                 await Task.Delay(TimeSpan.FromSeconds(180));
             }
 

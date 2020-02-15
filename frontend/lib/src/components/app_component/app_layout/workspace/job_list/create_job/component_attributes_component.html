@@ -1,0 +1,44 @@
+<material-tab-panel *ngIf="selectedAcquirer != null" [activeTabIndex]="0">
+
+    <material-tab *ngFor="let acquirer of acquirersWithAttributes" class="tab" label="{{ acquirer.acquirer.identifier }}">
+
+        <material-toggle label="Use translation" (checkedChange)="onUseTranslationChange(acquirer.attributes, $event)"></material-toggle>
+
+        <div *ngFor="let attribute of acquirer.attributes" class="attribute-wrapper">
+            <!-- TODO: This if is not a nice hack :( The 'Translate' attribute should only be set by the toggle above -->
+            <div *ngIf='attribute.item1 != "Translate"' class="attribute">
+                <material-input class="key" [(ngModel)]="attribute.item1" type="text" floatingLabel label="key"></material-input>
+                <material-input class="value" [(ngModel)]="attribute.item2" type="text" floatingLabel label="value"></material-input>
+            </div>
+            <material-button *ngIf='attribute.item1 != "Translate"' class="remove-button" icon (trigger)="onRemove(acquirer.attributes, attribute)">
+                <material-icon icon="remove"></material-icon>
+            </material-button>
+        </div>
+
+        <div>
+            <material-button class="add-button" icon (trigger)="onAddNew(acquirer.attributes)">
+                <material-icon icon="add"></material-icon>
+            </material-button>
+        </div>
+
+        <div>
+            <material-button *ngIf="!hasAllTwitterKeys(acquirer.attributes)"
+                             class="add-button"
+                             icon
+                             (trigger)="onAddDefaultTwitter(acquirer.attributes)">
+                <material-icon icon="add"></material-icon>
+                DEFAULT TWITTER FIELDS
+            </material-button>
+
+            <material-button *ngIf="!hasAllRedditKeys(acquirer.attributes)"
+                             class="add-button"
+                             icon
+                             (trigger)="onAddDefaultReddit(acquirer.attributes)">
+                <material-icon icon="add"></material-icon>
+                DEFAULT REDDIT FIELDS
+            </material-button>
+        </div>
+
+    </material-tab>
+
+</material-tab-panel>

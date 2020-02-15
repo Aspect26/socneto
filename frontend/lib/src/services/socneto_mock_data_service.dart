@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/models/AnalysisDataPath.dart';
-import 'package:sw_project/src/models/AnalyzedPost.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobStatusCode.dart';
-import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PaginatedPosts.dart';
 import 'package:sw_project/src/models/Paging.dart';
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/Post.dart';
@@ -106,15 +106,9 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<SocnetoAnalyser> mockAnalysers = [
-    SocnetoAnalyser("sentiment", ComponentType.DATA_ANALYSER, [AnalysisProperty("polarity", AnalysisPropertyType.Number), AnalysisProperty("accuracy", AnalysisPropertyType.Number)]),
-    SocnetoAnalyser("keywords", ComponentType.DATA_ANALYSER, [AnalysisProperty("most", AnalysisPropertyType.StringList)]),
-    SocnetoAnalyser("magic", ComponentType.DATA_ANALYSER, [AnalysisProperty("m", AnalysisPropertyType.NumberList)]),
-  ];
-
-  static final List<AnalyzedPost> mockAnalyzedPosts = [
-    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", now.add(Duration(days: -1))), { "polarity": {"type": "number", "value": 1 } }),
-    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", now.add(Duration(days: -2))), { "polarity": {"type": "number", "value": 0 } }),
-    AnalyzedPost(mockJobs[0].id, Post("asd", "asfd", now.add(Duration(days: -3))), { "polarity": {"type": "number", "value": 1 } })
+    SocnetoAnalyser("sentiment", ComponentType.DATA_ANALYSER, [AnalysisProperty("polarity", AnalysisPropertyType.numberValue), AnalysisProperty("accuracy", AnalysisPropertyType.numberValue)]),
+    SocnetoAnalyser("keywords", ComponentType.DATA_ANALYSER, [AnalysisProperty("most", AnalysisPropertyType.textListValue)]),
+    SocnetoAnalyser("magic", ComponentType.DATA_ANALYSER, [AnalysisProperty("m", AnalysisPropertyType.numberListValue)]),
   ];
 
   static final List<ChartDefinition> mockCharts = [
@@ -122,6 +116,14 @@ class SocnetoMockDataService extends SocnetoDataService {
     ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
     ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
     ChartDefinition("Chart 4", [AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
+  ];
+
+  static final List<Post> mockPosts = [
+    Post(null, "asdASd", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post(null, "asdASd", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post("1", "asdASd", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post("1233", "asdASd", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post("153", "asdASd", "asdasd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
   ];
 
   Future<PlatformStatus> getPlatformStatus() async =>
@@ -136,8 +138,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<List<Job>> getUserJobs() async =>
     Future.value(mockJobs);
 
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
-    Future.value(PaginatedAnalyzedPosts([], Paging(0, 1, 20)));
+  Future<PaginatedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async =>
+    Future.value(PaginatedPosts(mockPosts, Paging(0, 1, 20)));
 
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chartDefinition) async {
     if (chartDefinition.chartType == ChartType.Line && chartDefinition.isXDateTime) {

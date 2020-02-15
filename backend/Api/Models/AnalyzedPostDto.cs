@@ -12,16 +12,16 @@ namespace Socneto.Api.Models
 
         [JsonProperty("post")]
         public PostDto PostDto { get; set; }
-
+        
         [JsonProperty("analyses")]
-        public JObject Analyses { get; set; }
+        public JArray Analyses { get; set; }
 
         public static AnalyzedPostDto FromModel(AnalyzedPost post)
         {
             return new AnalyzedPostDto
             {
                 JobId =  post.JobId,
-                PostDto = PostDto.FromValue(post.Post),
+                PostDto = PostDto.FromModel(post.Post),
                 Analyses = post.Analyses,
             };
         }

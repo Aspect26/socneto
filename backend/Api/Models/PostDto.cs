@@ -6,21 +6,25 @@ namespace Socneto.Api.Models
 {
     public class PostDto
     {
-        [JsonProperty("author_id")]
-        public string AuthorId { get; set; }
+        [JsonProperty("original_id")]
+        public string OriginalId { get; set; }
         
         [JsonProperty("text")]
         public string Text { get; set; }
+        
+        [JsonProperty("original_text")]
+        public string OriginalText { get; set; }
 
         [JsonProperty("posted_at")]
         public DateTime? PostedAt { get; set; }
 
-        public static PostDto FromValue(Post post)
+        public static PostDto FromModel(Post post)
         {
             return new PostDto
             {
-                AuthorId = post.AuthorId,
+                OriginalId = post.OriginalId,
                 Text = post.Text,
+                OriginalText = post.OriginalText,
                 PostedAt = post.PostedAt,
             };
         }
