@@ -10,6 +10,7 @@ namespace Socneto.Domain.Services
 {
     public class GetAnalysisService : IGetAnalysisService
     {
+        private const int MaxResultSize = 500;
         
         private readonly IStorageService _storageService;
         private readonly IEventTracker<GetAnalysisService> _eventTracker;
@@ -37,21 +38,31 @@ namespace Socneto.Domain.Services
                 Type = AnalysisType.Aggregation,
                 ResultType = resultType,
                 ComponentId = analyserId,
-                AnalysisPropertyName = analysisProperty,
-                AnalysisPropertyType = analysisPropertyType
+                Properties = new List<AnalysisRequestProperty>
+                {
+                    new AnalysisRequestProperty
+                    {
+                        AnalysisPropertyName = analysisProperty,
+                        AnalysisPropertyType = analysisPropertyType
+                    }
+                }
             };
             
             return await _storageService.GetAnalysisAggregation(storageRequest);
         }
 
-        public async Task<ArrayAnalysisResult> GetArrayAnalysis(Guid jobId, string analyserId, string[] analysisProperties, bool isXPostDate)
+        public async Task<ArrayAnalysisResult> GetArrayAnalysis(Guid jobId, string analyserId, string[] analysisProperties, 
+            bool isXPostDate, int resultSize, int page)
         {
+            resultSize = Math.Min(resultSize, MaxResultSize);
+            
             return isXPostDate
-                ? await GetListWithTimeAnalysis(jobId, analyserId, analysisProperties) 
-                : await GetListAnalysis(jobId, analyserId, analysisProperties);  
+                ? await GetListWithTimeAnalysis(jobId, analyserId, analysisProperties, resultSize, page) 
+                : await GetListAnalysis(jobId, analyserId, analysisProperties, resultSize, page);  
         }
 
-        private async Task<ArrayAnalysisResult> GetListWithTimeAnalysis(Guid jobId, string analyserId, string[] analysisProperties)
+        private async Task<ArrayAnalysisResult> GetListWithTimeAnalysis(Guid jobId, string analyserId, 
+            string[] analysisProperties, int resultSize, int page)
         {
             if (analysisProperties.Length < 2) 
                 throw new GetAnalysisException(analyserId, "", "List with time analysis request requires at least one analysis property");
@@ -60,7 +71,7 @@ namespace Socneto.Domain.Services
             
             foreach (var analysisProperty in analysisProperties)
             {
-                var analysisPropertyRequest = new ArrayAnalysisRequestProperty
+                var analysisPropertyRequest = new AnalysisRequestProperty
                 {
                     AnalysisPropertyName = analysisProperty,
                     AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperty)
@@ -72,7 +83,9 @@ namespace Socneto.Domain.Services
                     Type = AnalysisType.List,
                     ResultType = AnalysisResultType.ListWithTime,
                     ComponentId = analyserId,
-                    AnalysisProperties = new List<ArrayAnalysisRequestProperty> { analysisPropertyRequest } 
+                    AnalysisProperties = new List<AnalysisRequestProperty> { analysisPropertyRequest },
+                    ResultSize = resultSize,
+                    ResultPage = page
                 };
                 
                 var analysis = await _storageService.GetAnalysisTimeArray(arrayAnalysisStorageRequest);
@@ -96,12 +109,13 @@ namespace Socneto.Domain.Services
             };
         }
 
-        private async Task<ArrayAnalysisResult> GetListAnalysis(Guid jobId, string analyserId, string[] analysisProperties)
+        private async Task<ArrayAnalysisResult> GetListAnalysis(Guid jobId, string analyserId, 
+            string[] analysisProperties, int resultSize, int page)
         {
             if (analysisProperties.Length < 2) 
                 throw new GetAnalysisException(analyserId, "", "List analysis request requires at least two analysis properties");
             
-            var xAxisProperty = new ArrayAnalysisRequestProperty
+            var xAxisProperty = new AnalysisRequestProperty
             {
                 AnalysisPropertyName = analysisProperties[0],
                 AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperties[0])
@@ -111,10 +125,10 @@ namespace Socneto.Domain.Services
             
             for (var i = 1; i < analysisProperties.Length; ++i)
             {
-                var currentAnalysisProperties = new List<ArrayAnalysisRequestProperty>
+                var currentAnalysisProperties = new List<AnalysisRequestProperty>
                 {
                     xAxisProperty,
-                    new ArrayAnalysisRequestProperty
+                    new AnalysisRequestProperty
                     {
                         AnalysisPropertyName = analysisProperties[i],
                         AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperties[i])
@@ -127,7 +141,9 @@ namespace Socneto.Domain.Services
                     Type = AnalysisType.List,
                     ResultType = AnalysisResultType.List,
                     ComponentId = analyserId,
-                    AnalysisProperties = currentAnalysisProperties
+                    AnalysisProperties = currentAnalysisProperties,
+                    ResultSize = resultSize,
+                    ResultPage = page
                 };
                 
                 var analysis = await _storageService.GetAnalysisArray(request);

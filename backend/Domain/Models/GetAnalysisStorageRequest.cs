@@ -20,11 +20,8 @@ namespace Socneto.Domain.Models
         [JsonProperty("componentId")]
         public string ComponentId { get; set; }
         
-        [JsonProperty("resultName")]
-        public string AnalysisPropertyName { get; set; }
-        
-        [JsonProperty("valueName")]
-        public AnalysisPropertyType AnalysisPropertyType { get; set; }
+        [JsonProperty("params")]
+        public List<AnalysisRequestProperty> Properties { get; set; }
     }
 
     public class GetArrayAnalysisStorageRequest
@@ -43,10 +40,16 @@ namespace Socneto.Domain.Models
         
         // TODO: these can be only two, so maybe use Tuple
         [JsonProperty("params")]
-        public List<ArrayAnalysisRequestProperty> AnalysisProperties { get; set; }
+        public List<AnalysisRequestProperty> AnalysisProperties { get; set; }
+
+        [JsonProperty("size")] 
+        public int ResultSize { get; set; }
+
+        [JsonProperty("page")] 
+        public int ResultPage { get; set; }
     }
 
-    public class ArrayAnalysisRequestProperty
+    public class AnalysisRequestProperty
     {
         [JsonProperty("resultName")]
         public string AnalysisPropertyName { get; set; }

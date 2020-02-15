@@ -9,7 +9,8 @@ namespace Socneto.Domain.Services
         
         Task<AggregationAnalysisResult> GetAggregationAnalysis(Guid jobId, string analyserId, string analysisProperty);
 
-        Task<ArrayAnalysisResult> GetArrayAnalysis(Guid jobId, string analyserId, string[] analysisProperties, bool isXPostDate);
+        Task<ArrayAnalysisResult> GetArrayAnalysis(Guid jobId, string analyserId, string[] analysisProperties, 
+            bool isXPostDate, int resultSize, int page);
 
     }
 }
