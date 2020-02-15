@@ -4,7 +4,7 @@ library charts_interop;
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as js;
 
-typedef LineChartFn = Function(String selector, List dataSets, List dataLabels, bool isXDateTime);
+typedef LineChartFn = Function(String selector, List dataSets, List dataLabels, bool isXDateTime, String xAxisLabel);
 typedef PieChartFn = Function(String selector, dynamic dataSet);
 typedef ScatterChartFn = Function(String selector, dynamic dataSet);
 
@@ -20,13 +20,13 @@ external ChartsInterface get charts;
 
 class SocnetoCharts {
 
-  static void createLineChart(String selector, List<List<dynamic>> dataSets, List<String> dataLabels, bool isXDateTime) {
+  static void createLineChart(String selector, List<List<dynamic>> dataSets, List<String> dataLabels, bool isXDateTime, String xAxisLabel) {
     List jsData = [];
     for (var index = 0; index < dataSets.length; index++) {
       jsData.add(dataSets[index].map((d) => _mapToJsObject(d)).toList());
     }
 
-    charts.createLineChart(selector, jsData, dataLabels, isXDateTime);
+    charts.createLineChart(selector, jsData, dataLabels, isXDateTime, xAxisLabel);
   }
 
   static void createPieChart(String selector, Map<String, num> dataSet) {
