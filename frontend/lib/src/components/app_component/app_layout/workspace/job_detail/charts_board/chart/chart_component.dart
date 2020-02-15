@@ -125,8 +125,8 @@ class ChartComponent implements AfterChanges {
       this.maxPage = (this.totalResults - 1) ~/ PAGE_SIZE + 1;
       this.isPaginated = this.chartDefinition?.chartType == ChartType.Line && this.maxPage > 1;
 
-    } on HttpException {
-      Toastr.error("Analysis", "Could not fetch analyses for chart");
+    } on HttpException catch (e) {
+      Toastr.httpError(e);
       return;
     } finally {
       this.loadingData = false;

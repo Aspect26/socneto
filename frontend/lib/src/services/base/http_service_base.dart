@@ -38,14 +38,24 @@ class HttpServiceBase {
   }
 
   @protected
-  Future<Response> httpGet(String path, {Map<String, String> headers}) async =>
-      await http.get(this.getFullApiCallPath(path), headers: headers);
+  Future<Response> httpGet(String path, {Map<String, String> headers}) async {
+    try {
+      return await http.get(this.getFullApiCallPath(path), headers: headers);
+    } on ClientException {
+      throw HttpException(400, "Client exception");
+    }
+  }
 
   @protected
-  Future<Response> httpPost(String path, Map<String, dynamic> data, {Map<String, String> headers}) async =>
-    await http.post(
-        this.getFullApiCallPath(path), body: utf8.encode(json.encode(data)),
-        headers: this.appendHeader(headers, "Content-Type", "application/json"));
+  Future<Response> httpPost(String path, Map<String, dynamic> data, {Map<String, String> headers}) async {
+    try {
+      return await http.post(
+          this.getFullApiCallPath(path), body: utf8.encode(json.encode(data)),
+          headers: this.appendHeader(headers, "Content-Type", "application/json"));
+    } on ClientException {
+      throw HttpException(400, "Client exception");
+    }
+  }
 
   @protected
   Map<String, String> appendHeader(Map<String, String> headers, String headerName, String headerValue) {
