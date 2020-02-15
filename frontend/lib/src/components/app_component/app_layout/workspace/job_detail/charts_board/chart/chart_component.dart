@@ -93,6 +93,10 @@ class ChartComponent implements AfterChanges {
     this._changePageTo(this.currentPage - 1);
   }
 
+  void onRefresh() {
+    this._refreshChart();
+  }
+
   void _changePageTo(int page) {
     if (page < 0 || page > this.maxPage) return;
 

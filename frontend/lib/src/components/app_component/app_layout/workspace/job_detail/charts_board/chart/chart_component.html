@@ -2,8 +2,13 @@
     <h3>
         {{ chartTitle }}
     </h3>
+
     <material-button icon (trigger)="removeChart()">
         <material-icon icon="delete_forever"></material-icon>
+    </material-button>
+
+    <material-button icon (trigger)="onRefresh()">
+        <material-icon icon="refresh"></material-icon>
     </material-button>
 </div>
 
