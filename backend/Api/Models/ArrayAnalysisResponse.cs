@@ -10,11 +10,15 @@ namespace Socneto.Api.Models
         [JsonProperty("data")]
         public List<JArray> Result { get; set; }  
         
+        [JsonProperty("total_count")]
+        public int TotalCount { get; set; }
+        
         public static ArrayAnalysisResponse FromModel(ArrayAnalysisResult analysisResult)
         {
             return new ArrayAnalysisResponse
             {
-                Result = analysisResult.Result
+                Result = analysisResult.Result,
+                TotalCount = analysisResult.TotalCount
             };
         }
 
@@ -22,7 +26,8 @@ namespace Socneto.Api.Models
         {
             return new ArrayAnalysisResponse
             {
-                Result = new List<JArray>()
+                Result = new List<JArray>(),
+                TotalCount = 0
             };
         }
     }
