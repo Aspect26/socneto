@@ -2,13 +2,17 @@ class ArrayAnalysisRequest {
   final String analyserId;
   final List<String> analysisProperties;
   final bool isXPostDate;
+  final int pageSize;
+  final int page;
 
-  ArrayAnalysisRequest(this.analyserId, this.analysisProperties, this.isXPostDate);
+  ArrayAnalysisRequest(this.analyserId, this.analysisProperties, this.isXPostDate, this.pageSize, this.page);
 
   Map<String, dynamic> toMap() => {
     'analyser_id': this.analyserId,
     'analysis_properties': this.analysisProperties,
     'is_x_post_date': this.isXPostDate,
+    'page_size': this.pageSize,
+    'page': this.page,
   };
 
 }

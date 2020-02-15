@@ -11,6 +11,7 @@ import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/local_storage_service.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_mock_data_service.dart';
+import 'package:tuple/tuple.dart';
 
 
 class SocnetoService {
@@ -52,8 +53,8 @@ class SocnetoService {
       await this._dataService.getJobPosts(jobId, page, pageSize, containsWords, excludeWords, dateRange);
   String getJobPostsExportLink(String jobId, List<String> containsWords, List<String> excludeWords, DateRange dateRange) =>
       this._dataService.getJobPostsExportLink(jobId, containsWords, excludeWords, dateRange);
-  Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chart) async =>
-      await this._dataService.getChartData(jobId, chart);
+  Future<Tuple2<List<List<List<dynamic>>>, int>> getChartData(String jobId, ChartDefinition chart, int pageSize, int page) async =>
+      await this._dataService.getChartData(jobId, chart, pageSize, page);
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
       await this._dataService.getJobChartDefinitions(jobId);
   Future<List<ChartDefinition>> removeChartDefinition(String jobId, String chartId) async =>
