@@ -1,9 +1,9 @@
 let Socneto = {
 
     Charts: {
-        createLineChart: function (selector, dataSets, dataLabels, isXDateTime) {
+        createLineChart: function (selector, dataSets, dataLabels, isXDateTime, xAxisLabel) {
             let lineChart = new LineChart();
-            lineChart.create(selector, dataSets, dataLabels, isXDateTime);
+            lineChart.create(selector, dataSets, dataLabels, isXDateTime, xAxisLabel);
         },
 
         createPieChart: function (selector, dataSets, dataLabels) {

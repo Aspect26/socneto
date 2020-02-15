@@ -34,11 +34,16 @@ class LineChartStrategy implements ChartStrategy {
   @override
   redrawChart(String domSelector) {
     List<String> labels = this._getLineChartLabels();
-    SocnetoCharts.createLineChart(domSelector, this._chartData, labels, this._chartDefinition.isXDateTime);
+    var xAxisLabel = this._chartDefinition.isXDateTime? "Post time" : this._chartDefinition.analysisDataPaths[0].property;
+    SocnetoCharts.createLineChart(domSelector, this._chartData, labels, this._chartDefinition.isXDateTime, xAxisLabel);
   }
 
   List<String> _getLineChartLabels() {
-    return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property).toList();
+    if (this._chartDefinition.isXDateTime) {
+      return this._chartDefinition.analysisDataPaths.map<String>((dataPath) => dataPath.property).toList();
+    } else {
+      return this._chartDefinition.analysisDataPaths.sublist(1, this._chartDefinition.analysisDataPaths.length).map<String>((dataPath) => dataPath.property).toList();
+    }
   }
 
   // TODO: dart are you kidding me -_- There's no other way to check if a string is a correct date string
