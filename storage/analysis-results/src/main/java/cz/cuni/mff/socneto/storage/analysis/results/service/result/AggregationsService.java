@@ -13,8 +13,11 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +41,12 @@ public class AggregationsService {
         var aggregation = createAggregation(resultName, valueName, SUM_INIT_SCRIPT, SUM_MAP_SCRIPT, SUM_COMBINE_SCRIPT, SUM_REDUCE_SCRIPT);
         var filter = createFilterQuery(jobId, componentId);
 
-        return (Map<String, Double>) executeQuery(aggregation, filter).aggregation();
+        var result = (Map<String, Double>) executeQuery(aggregation, filter).aggregation();
+
+        return result.entrySet().stream()
+                .sorted(Comparator.comparingDouble(e -> e.getValue() * -1))
+                .limit(20)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o, n) -> n, LinkedHashMap::new));
     }
 
     @SuppressWarnings("unchecked")
@@ -47,8 +55,12 @@ public class AggregationsService {
         var aggregation = createAggregation(resultName, valueName, COUNT_INIT_SCRIPT, COUNT_MAP_SCRIPT, COUNT_COMBINE_SCRIPT, COUNT_REDUCE_SCRIPT);
         var filter = createFilterQuery(jobId, componentId);
 
-        return (Map<String, Integer>) executeQuery(aggregation, filter).aggregation();
+        var result = (Map<String, Integer>) executeQuery(aggregation, filter).aggregation();
 
+        return result.entrySet().stream()
+                .sorted(Comparator.comparingInt(e -> e.getValue() * -1))
+                .limit(20)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o, n) -> n, LinkedHashMap::new));
     }
 
     private ScriptedMetricAggregationBuilder createAggregation(
@@ -80,7 +92,7 @@ public class AggregationsService {
     }
 
     private InternalScriptedMetric executeQuery(ScriptedMetricAggregationBuilder aggregation, BoolQueryBuilder filter) {
-        var query = new NativeSearchQueryBuilder().withQuery(filter).addAggregation(aggregation).withIndices("analysesx").build();
+        var query = new NativeSearchQueryBuilder().withQuery(filter).addAggregation(aggregation).withIndices("analyses").build();
         return elasticsearchOperations.query(query,
                 searchResponse -> searchResponse).getAggregations().get("RESULT");
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,9 @@ public class PostController {
                 postSearchRequest.getAllowedTerms(),
                 postSearchRequest.getForbiddenTerms(),
                 postSearchRequest.getPage(),
-                postSearchRequest.getSize()));
+                postSearchRequest.getSize(),
+                postSearchRequest.getFromDate(),
+                postSearchRequest.getToDate()));
     }
 
     @Data
@@ -35,5 +38,7 @@ public class PostController {
         private List<String> forbiddenTerms;
         private int page = 0;
         private int size = 100;
+        private Date fromDate;
+        private Date toDate;
     }
 }

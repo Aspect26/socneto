@@ -29,21 +29,23 @@ public class ResultRequestDtoProcessorVisitor implements ResultRequestDtoVisitor
             case LIST:
                 if (resultRequest.getParams().size() == 1) {
                     var list = searchResultService.queryList(resultRequest.getJobId(), resultRequest.getComponentId(),
-                            resultRequest.getParams().get(0).getResultName(), resultRequest.getParams().get(0).getValueName());
-                    return new ListValueResult<>("list", List.of(list));
+                            resultRequest.getParams().get(0).getResultName(), resultRequest.getParams().get(0).getValueName(),
+                            resultRequest.getPage(), resultRequest.getSize());
+                    return new ListValueResult<>("LIST", List.of(list.getList()), list.getTotalCount());
                 } else if (resultRequest.getParams().size() == 2) {
                     var listPair = searchResultService.queryListPair(resultRequest.getJobId(), resultRequest.getComponentId(),
                             resultRequest.getParams().get(0).getResultName(), resultRequest.getParams().get(0).getValueName(),
-                            resultRequest.getParams().get(1).getResultName(), resultRequest.getParams().get(1).getValueName());
-                    return new ListValueResult<>("list", listPair);
+                            resultRequest.getParams().get(1).getResultName(), resultRequest.getParams().get(1).getValueName(),
+                            resultRequest.getPage(), resultRequest.getSize());
+                    return new ListValueResult<>("LIST", listPair.getList(), listPair.getTotalCount());
                 } else {
                     throw new IllegalArgumentException("too many arguments");
                 }
             case LIST_WITH_TIME:
                 var listWithTime = searchResultService
                         .queryListWithTime(resultRequest.getJobId(),resultRequest.getComponentId(), resultRequest.getParams().get(0).getResultName(),
-                                resultRequest.getParams().get(0).getValueName());
-                return new ListValueResult<>("listPairWithTime", listWithTime);
+                                resultRequest.getParams().get(0).getValueName(),resultRequest.getPage(), resultRequest.getSize());
+                return new ListValueResult<>("LIST_WITH_TIME", listWithTime.getList(), listWithTime.getTotalCount());
         }
 
         throw new IllegalArgumentException("error");
@@ -51,15 +53,19 @@ public class ResultRequestDtoProcessorVisitor implements ResultRequestDtoVisitor
 
     @Override
     public Result requestResults(AggregationResultRequest resultRequest) {
+        if (resultRequest.getParams().size() != 1) {
+            throw new IllegalArgumentException("Wrong size of arguments.");
+        }
+        var params = resultRequest.getParams().get(0);
         switch (resultRequest.getResultRequestType()) {
             case MAP_SUM:
                 var sums = aggregationsService.mapSum(resultRequest.getJobId(), resultRequest.getComponentId(),
-                        resultRequest.getResultName(), resultRequest.getValueName());
-                return MapValueResult.<String, Double>builder().resultName(resultRequest.getResultName()).map(sums).build();
+                        params.getResultName(), params.getValueName());
+                return MapValueResult.<String, Double>builder().resultName(params.getResultName()).map(sums).build();
             case LIST_COUNT:
                 var counts = aggregationsService.listCount(resultRequest.getJobId(), resultRequest.getComponentId(),
-                        resultRequest.getResultName(), resultRequest.getValueName());
-                return MapValueResult.<String, Integer>builder().resultName(resultRequest.getResultName()).map(counts).build();
+                        params.getResultName(), params.getValueName());
+                return MapValueResult.<String, Integer>builder().resultName(params.getResultName()).map(counts).build();
         }
 
         throw new IllegalArgumentException("error");

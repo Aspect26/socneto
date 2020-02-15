@@ -4,19 +4,18 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import cz.cuni.mff.socneto.storage.analysis.results.service.result.ResultRequestDtoVisitor;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @JsonTypeName("AGGREGATION")
 public class AggregationResultRequest extends ResultRequest {
 
-    private final String resultName;
-    private final String valueName;
+    private final List<ListParamsResultRequest> params;
 
-    public AggregationResultRequest(ResultRequestType resultRequestType, UUID jobId, String componentId, String resultName1, String valueName) {
+    public AggregationResultRequest(ResultRequestType resultRequestType, UUID jobId, String componentId, List<ListParamsResultRequest> params) {
         super(resultRequestType, jobId, componentId);
-        this.resultName = resultName1;
-        this.valueName = valueName;
+        this.params = params;
     }
 
     @Override
