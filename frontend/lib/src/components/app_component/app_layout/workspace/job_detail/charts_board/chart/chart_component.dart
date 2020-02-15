@@ -43,6 +43,7 @@ class ChartComponent implements AfterChanges {
 
   @ViewChild(VerificationModal) VerificationModal verificationModal;
 
+  final int PAGE_SIZE = 200;
   final SocnetoService _socnetoService;
 
   final _updateChartsController = StreamController<List<ChartDefinition>>();
@@ -55,6 +56,10 @@ class ChartComponent implements AfterChanges {
   ChartStrategy _chartStrategy;
   List<List<List<dynamic>>> chartData = [];
   bool loadingData = true;
+  int currentPage = 1;
+  int totalResults = 0;
+  int maxPage = 1;
+  bool isPaginated = false;
   
   ChartComponent(this._socnetoService);
 
@@ -79,6 +84,21 @@ class ChartComponent implements AfterChanges {
       Toastr.httpError(e);
     }
   }
+
+  void onPageBack() {
+    this._changePageTo(this.currentPage + 1);
+  }
+
+  void onPageForward() {
+    this._changePageTo(this.currentPage - 1);
+  }
+
+  void _changePageTo(int page) {
+    if (page < 0 || page > this.maxPage) return;
+
+    this.currentPage = page;
+    this._refreshChart();
+  }
   
   void _setChartStrategy() {
     switch (this.chartDefinition.chartType) {
@@ -93,7 +113,14 @@ class ChartComponent implements AfterChanges {
 
   void _refreshChart() async {
     try {
-      this.chartData = await this._socnetoService.getChartData(this.jobId, this.chartDefinition);
+      this.loadingData = true;
+      var dataWithCount = await this._socnetoService.getChartData(this.jobId, this.chartDefinition, this.PAGE_SIZE, this.currentPage);
+      this.chartData = dataWithCount.item1;
+      this.totalResults = dataWithCount.item2;
+
+      this.maxPage = (this.totalResults - 1) ~/ PAGE_SIZE + 1;
+      this.isPaginated = this.chartDefinition?.chartType == ChartType.Line && this.maxPage > 1;
+
     } on HttpException {
       Toastr.error("Analysis", "Could not fetch analyses for chart");
       return;
