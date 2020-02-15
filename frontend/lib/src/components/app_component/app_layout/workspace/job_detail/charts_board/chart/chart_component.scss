@@ -13,6 +13,19 @@
     position: relative;
     padding: 20px;
 
+    material-button {
+      color: get-color($primary);
+
+      &.pagination {
+        align-items: center;
+        display: flex;
+
+        &:hover:not([disabled]) {
+          background-color: get-color($primary, 100);
+        }
+      }
+    }
+
     .title {
       display: flex;
       align-items: center;
@@ -21,10 +34,6 @@
         flex-grow: 1;
         color: get-color($primary);
         font-weight: normal;
-      }
-
-      material-button {
-        color: get-color($primary);
       }
     }
 
@@ -44,6 +53,14 @@
 
       font-size: 30px;
       text-align: center;
+    }
+  }
+
+  .chart-pagination-wrapper {
+    display: flex;
+
+    .chart-wrapper {
+      flex-grow: 1;
     }
   }
 }
