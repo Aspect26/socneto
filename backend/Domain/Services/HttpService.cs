@@ -62,7 +62,7 @@ namespace Socneto.Domain.Services
         {
             var fullPath = GetFullPath(path);
             var content = CreateHttpContent(data);
-            _eventTracker.TrackInfo(EventTrackerEventName,$"PUT /{path} {content}");
+            _eventTracker.TrackInfo(EventTrackerEventName,$"PUT /{path} {JsonConvert.SerializeObject(data)}");
 
             try
             {

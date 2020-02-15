@@ -22,7 +22,7 @@ namespace Api
 #endif
             if (args.Contains("--sleep_on_startup"))
             {
-                await Task.Delay(TimeSpan.FromSeconds(180));
+                await Task.Delay(TimeSpan.FromSeconds(90));
             }
             
             var builder = JobManagementServiceBuilder.GetBuilder(args);
