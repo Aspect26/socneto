@@ -58,8 +58,10 @@ class ChartsBoardComponent implements AfterChanges {
     }
   }
 
-  void onNewChartCreated(ChartDefinition chartDefinition) async {
+  void onNewChartCreated(ChartDefinition chartDefinition) async =>
     this.chartDefinitions.add(chartDefinition);
-  }
+
+  void onUpdateCharts(List<ChartDefinition> chartDefinitions) =>
+      this.chartDefinitions = chartDefinitions;
 
 }

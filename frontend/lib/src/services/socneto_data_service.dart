@@ -15,7 +15,6 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
 import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
-import 'package:tuple/tuple.dart';
 
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
@@ -115,6 +114,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
 
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
       await this.getList<ChartDefinition>("charts/$jobId", (result) => ChartDefinition.fromMap(result));
+
+  Future<List<ChartDefinition>> removeChartDefinition(String jobId, String chartId) async =>
+      await this.getList<ChartDefinition>("charts/$jobId/$chartId/remove", (result) => ChartDefinition.fromMap(result));
 
   Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {

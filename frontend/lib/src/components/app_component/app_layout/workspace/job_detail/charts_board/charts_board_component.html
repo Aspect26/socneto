@@ -3,7 +3,8 @@
        [chartDefinition]="chartDefinition"
        [jobId]="job.id"
        [ngClass]="{ 'highlight': i % 2 == 0 }"
-       chartId="i{{ i }}">
+       chartId="i{{ i }}"
+       (updateCharts)="onUpdateCharts($event)">
 </chart>
 
 <create-chart-button
