@@ -18,7 +18,7 @@ class LineChart {
 
     _isXDate = false;
 
-    create(selector, dataSets, dataLabels, isXDate) {
+    create(selector, dataSets, dataLabels, isXDate, xAxisLabel) {
         this._removeOld(selector);
         this._isXDate = isXDate;
 
@@ -42,6 +42,7 @@ class LineChart {
         this._createXAxis(svg, xScale, chartHeight);
         this._createYAxis(svg, yScale, chartWidth);
 
+        this._createXAxisLabel(svg, xAxisLabel, chartHeight);
         for (let index = 0; index < dataSets.length; ++index) {
             let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
             this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve);
@@ -126,10 +127,15 @@ class LineChart {
             .attr("d", curve);
     }
 
+    _createXAxisLabel(svg, label, height) {
+        let legend = svg.append("g").attr("transform", "translate(0, " + 30 + ")").attr("class", "legend-entry");
+        legend.append("text").attr("x", 0).attr("y", height - 25).text(label + ":").style("font-size", "15px").attr("alignment-baseline","middle");
+    }
+
     _createChartLegend(svg, dataSet, dataLabel, color, curve, index) {
         let legend = svg.append("g").attr("transform", "translate(0, " + 30 + ")").attr("class", "legend-entry");
-        legend.append("circle").attr("cx", 10).attr("cy", index * 20).attr("r", 6).style("fill", color);
-        legend.append("text").attr("x", 20).attr("y", index * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");
+        legend.append("circle").attr("cx", 10).attr("cy", (index + 1) * 20).attr("r", 6).style("fill", color);
+        legend.append("text").attr("x", 20).attr("y", (index + 1) * 20).text(dataLabel).style("font-size", "15px").attr("alignment-baseline","middle");
 
         legend
             .on("mouseover", function(d, i) {
