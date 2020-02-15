@@ -28,10 +28,9 @@ namespace Socneto.Domain.Services
 
         public async Task<bool> IsComponentRunning()
         {
-            // TODO: this is a hack
             try
             {
-                return (await _httpService.Get<User>("users?username=admin")) != null;
+                return await _httpService.GetString("health-check") != null;
             }
             catch (ServiceUnavailableException)
             {
