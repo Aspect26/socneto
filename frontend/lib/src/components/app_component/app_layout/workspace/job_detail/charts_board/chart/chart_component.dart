@@ -4,6 +4,7 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/chart/chart_strategy.dart';
+import 'package:sw_project/src/components/shared/verification/verification_modal.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
@@ -26,6 +27,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialPaperTooltipComponent,
     MaterialTooltipTargetDirective,
 
+    VerificationModal,
+
     NgIf,
     NgFor
   ],
@@ -38,7 +41,12 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class ChartComponent implements AfterChanges {
 
+  @ViewChild(VerificationModal) VerificationModal verificationModal;
+
   final SocnetoService _socnetoService;
+
+  final _updateChartsController = StreamController<List<ChartDefinition>>();
+  @Output() Stream<List<ChartDefinition>> get updateCharts => _updateChartsController.stream;
 
   @Input() ChartDefinition chartDefinition;
   @Input() String jobId;
@@ -57,6 +65,20 @@ class ChartComponent implements AfterChanges {
   }
 
   String get chartTitle => this.chartDefinition?.title != null && this.chartDefinition.title.isNotEmpty? this.chartDefinition.title : "Chart";
+
+  void removeChart() {
+    this.verificationModal.show();
+  }
+
+  void onRemoveChartVerified() async {
+    try {
+      var newCharts = await this._socnetoService.removeChartDefinition(jobId, chartDefinition.id);
+      Toastr.success("Success", "The chart was successfully removed");
+      this._updateChartsController.add(newCharts);
+    } on HttpException catch (e) {
+      Toastr.httpError(e);
+    }
+  }
   
   void _setChartStrategy() {
     switch (this.chartDefinition.chartType) {

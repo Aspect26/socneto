@@ -65,5 +65,28 @@ namespace Socneto.Api.Controllers
             await _chartsService.CreateJobChart(jobId, request.Title, request.ChartType, analysisDataPaths, request.IsXPostDateTime);
             return Ok(SuccessResponse.True());
         }
+
+        [HttpGet]
+        [Route("api/charts/{jobId:guid}/{chartId:guid}/remove")]
+        public async Task<ActionResult<List<ChartDefinitionDto>>> RemoveJobChart([FromRoute] Guid jobId, [FromRoute] Guid chartId)
+        {
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("RemoveJobChart", $"User '{User.Identity.Name}' is unauthorized to see job '{jobId}'");
+                return Unauthorized();
+            }
+            
+            var newJobView = await _chartsService.RemoveJobChart(jobId, chartId);
+            if (newJobView == null)
+            {
+                return NotFound();
+            }
+
+            var result = newJobView.ViewConfiguration.ChartDefinitions
+                .Select(ChartDefinitionDto.FromModel)
+                .ToList();
+                
+            return Ok(result);
+        }
     }
 }

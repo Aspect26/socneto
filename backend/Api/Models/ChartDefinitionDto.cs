@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Socneto.Domain.Models;
@@ -6,6 +7,9 @@ namespace Socneto.Api.Models
 {
     public class ChartDefinitionDto
     {
+        [JsonProperty("id")]
+        public Guid Identifier { get; set; }
+        
         [JsonProperty("title")]
         public string Title { get; set; }
     
@@ -22,6 +26,7 @@ namespace Socneto.Api.Models
         {
             return new ChartDefinitionDto
             {
+                Identifier = chartDefinition.Identifier,
                 Title = chartDefinition.Title,
                 AnalysisDataPaths = chartDefinition.AnalysisDataPaths,
                 ChartType = chartDefinition.ChartType.ToString(),
