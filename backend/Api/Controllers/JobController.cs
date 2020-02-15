@@ -215,9 +215,10 @@ namespace Socneto.Api.Controllers
                 analysisResult = await _getAnalysisService.GetAggregationAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperty);
             }
-            catch (GetAnalysisService.GetAnalysisException)
+            catch (GetAnalysisService.GetAnalysisException e)
             {
-                return AggregationAnalysisResponse.Empty();
+                _eventTracker.TrackError("GetAggregationAnalysis", e.Message, analysisRequest);
+                return Ok(AggregationAnalysisResponse.Empty());
             }
 
             var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
@@ -243,9 +244,10 @@ namespace Socneto.Api.Controllers
                 analysisResult = await _getAnalysisService.GetArrayAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperties, analysisRequest.IsXPostDate);
             }
-            catch (GetAnalysisService.GetAnalysisException)
+            catch (GetAnalysisService.GetAnalysisException e)
             {
-                return ArrayAnalysisResponse.Empty();
+                _eventTracker.TrackError("GetArrayAnalysis", e.Message, analysisRequest);
+                return Ok(ArrayAnalysisResponse.Empty());
             }
 
             var analysisResponse = ArrayAnalysisResponse.FromModel(analysisResult);

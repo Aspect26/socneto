@@ -94,13 +94,17 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     ArrayAnalysisRequest request = ArrayAnalysisRequest(analyserId, propertyNames, isXPostDate);
     Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
 
-    List<List<dynamic>> values = [];
-    var dataPoints = result["data"];
-    dataPoints.forEach((datum) => {
-      values.add(datum)
+    List<List<List<dynamic>>> values = [];
+    var arrays = result["data"];
+    arrays.forEach((array) {
+      List<List<dynamic>> currentArrayData = [];
+      array.forEach((dataPoint) {
+        currentArrayData.add(dataPoint);
+      });
+      values.add(currentArrayData);
     });
 
-    return values.isEmpty? [] : [values];
+    return values.isEmpty? [] : values;
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>
