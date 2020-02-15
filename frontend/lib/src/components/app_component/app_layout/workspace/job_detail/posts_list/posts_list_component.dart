@@ -108,6 +108,8 @@ class PostsListComponent implements AfterChanges {
 
     String prettyJson(dynamic obj) => JSON_ENCODER.convert(obj);
 
+    void onRefresh() async => this._updateDisplayedPosts();
+
     void onPageChange(int page) async {
         this.paginator.currentPage = page;
         await this._updateDisplayedPosts();
