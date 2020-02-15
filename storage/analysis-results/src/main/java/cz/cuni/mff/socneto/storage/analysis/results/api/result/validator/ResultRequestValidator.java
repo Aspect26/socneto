@@ -34,8 +34,10 @@ public class ResultRequestValidator implements ResultRequestDtoVisitor<Void> {
     @Override
     public Void requestResults(AggregationResultRequest resultRequest) {
         validateBase(resultRequest);
-        notNullOrEmpty("valueName", resultRequest.getValueName());
-        notNullOrEmpty("resultName", resultRequest.getResultName());
+        resultRequest.getParams().forEach(r -> {
+            notNullOrEmpty("valueName", r.getValueName());
+            notNullOrEmpty("resultName", r.getResultName());
+        });
         return null;
     }
 

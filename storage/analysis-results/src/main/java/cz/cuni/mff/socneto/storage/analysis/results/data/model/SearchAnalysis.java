@@ -18,6 +18,7 @@ public class SearchAnalysis {
     private UUID postId;
     @Field(type = FieldType.Keyword)
     private UUID jobId;
+    @Field(type = FieldType.Date)
     private Date datetime;
     @Field(type = FieldType.Keyword)
     private String componentId;

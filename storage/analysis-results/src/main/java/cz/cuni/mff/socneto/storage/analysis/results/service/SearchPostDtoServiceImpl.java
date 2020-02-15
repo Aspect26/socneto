@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class SearchPostDtoServiceImpl implements SearchPostDtoService {
 
     private static final String TEXT_FIELD = "text";
+    private static final String DATE_FIELD = "datetime";
 
     private final SearchPostService searchPostService;
     private final SearchPostMapper postMapper;
@@ -42,7 +46,11 @@ public class SearchPostDtoServiceImpl implements SearchPostDtoService {
         return searchPostService.getById(id).map(postMapper::searchPostToSearchPostDto);
     }
 
-    public ListWithCount<SearchPostDto> searchPosts(UUID jobId, List<String> allowedTerms, List<String> forbiddenTerms, int page, int size) {
+    @Override
+    public ListWithCount<SearchPostDto> searchPosts(
+            UUID jobId, List<String> allowedTerms, List<String> forbiddenTerms,
+            int page, int size, Date fromDate, Date toDate
+    ) {
         BoolQueryBuilder filter = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.termQuery("jobId", jobId.toString()));
 
@@ -50,8 +58,18 @@ public class SearchPostDtoServiceImpl implements SearchPostDtoService {
         allowedTerms.forEach(term -> filter.filter(QueryBuilders.termQuery(TEXT_FIELD, term.toLowerCase())));
         forbiddenTerms.forEach(term -> filter.mustNot(QueryBuilders.termQuery(TEXT_FIELD, term.toLowerCase())));
 
+        if (toDate != null) {
+            filter.filter(QueryBuilders.rangeQuery(DATE_FIELD).lte(toDate.toInstant().toEpochMilli()));
+        }
+
+        if (fromDate != null) {
+            filter.filter(QueryBuilders.rangeQuery(DATE_FIELD).from(fromDate.toInstant().toEpochMilli()));
+        }
+
+        FieldSortBuilder sort = SortBuilders.fieldSort(DATE_FIELD).order(SortOrder.DESC);
+
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
-                .withQuery(filter).withPageable(PageRequest.of(page, size)).withIndices("posts");
+                .withQuery(filter).withSort(sort).withPageable(PageRequest.of(page, size)).withIndices("posts");
 
         return elasticsearchOperations.query(nativeSearchQueryBuilder.build(),
                 searchResponse -> {

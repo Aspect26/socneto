@@ -18,9 +18,13 @@ import java.util.stream.Collectors;
 @Profile("WORD_COUNT")
 public class WordCountAnalyzer implements Analyzer {
 
+    private static final String REGEX = "[^A-Za-z0-9]";
+
     @Override
     public Map<String, AnalysisResult> analyze(String text) {
-        var frequency = Arrays.stream(text.split(" "))
+        var frequency = Arrays.stream(text.split(REGEX))
+                .filter(s -> s.length() > 3)
+                .filter(s -> !s.isBlank())
                 .map(String::toLowerCase)
                 .collect(Collectors.groupingBy(Function.identity(),
                 Collectors.collectingAndThen(Collectors.counting(), Double::valueOf)));

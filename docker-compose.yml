@@ -34,10 +34,6 @@ services:
       - POSTGRES_DB=storagedb
     ports:
       - "5432:5432"
-  mongo_db:
-    image: mongo
-    ports:
-      - "27017:27017"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
@@ -84,7 +80,6 @@ services:
     container_name: storageservice
     depends_on:
       - kafka
-      - mongo_db
       - db
       - elasticsearch
 
