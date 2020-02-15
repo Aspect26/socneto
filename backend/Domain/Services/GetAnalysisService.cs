@@ -101,11 +101,14 @@ namespace Socneto.Domain.Services
             var result = timeAnalysesResults
                 .Select(timeAnalysisResult => timeAnalysisResult.Select(dataPoint => new JArray(dataPoint.Item1, dataPoint.Item2)).ToList())
                 .Select(timeAnalysisResultList => new JArray(timeAnalysisResultList)).ToList();
+            
+            var maxTotalCount = timeAnalyses.Aggregate(0, (max, analysis) => analysis.TotalCount > max ? analysis.TotalCount : max);
 
             return new ArrayAnalysisResult
             {
                 ResultName = timeAnalyses[0].ResultName,
-                Result = result
+                Result = result,
+                TotalCount = maxTotalCount
             };
         }
 
@@ -159,10 +162,13 @@ namespace Socneto.Domain.Services
                 .Select(analysis => analysis.Result).ToList()
                 .Select(analysisResult => new JArray(analysisResult)).ToList();
 
+            var totalCount = analyses.Aggregate(0, (max, analysis) => analysis.TotalCount > max ? analysis.TotalCount : max);
+
             return new ArrayAnalysisResult
             {
                 ResultName = analyses[0].ResultName,
-                Result = result
+                Result = result,
+                TotalCount = totalCount
             };
         }
 

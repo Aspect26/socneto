@@ -13,7 +13,7 @@ namespace Socneto.Api.Models
         [JsonProperty("is_x_post_date")]
         public bool IsXPostDate { get; set; }
 
-        [JsonProperty("pageSize")] 
+        [JsonProperty("page_size")] 
         public int PageSize { get; set; } = 200;
 
         [JsonProperty("page")] 
