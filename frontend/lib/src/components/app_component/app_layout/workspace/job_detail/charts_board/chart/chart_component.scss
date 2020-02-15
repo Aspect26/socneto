@@ -13,6 +13,8 @@
     position: relative;
     padding: 20px;
 
+    border-bottom: get-color($primary) 1px solid;
+
     material-button {
       color: get-color($primary);
 
