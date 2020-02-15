@@ -22,6 +22,23 @@ namespace Socneto.Domain.Services
             _eventTracker = eventTracker;
         }
         
+        public async Task<string> GetString(string path)
+        {
+            var fullPath = GetFullPath(path);
+            _eventTracker.TrackInfo(EventTrackerEventName,$"GET /{path}");
+
+            try
+            {
+                var response = await _client.GetAsync(fullPath);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (HttpRequestException e)
+            {
+                throw WrapHttpException(e);
+            }
+        }
+        
         public async Task<TResult> Get<TResult>(string path)
         {
             var fullPath = GetFullPath(path);
