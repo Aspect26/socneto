@@ -10,8 +10,8 @@ class SocnetoAnalyser extends SocnetoComponent {
         super(identifier, type);
 
   SocnetoAnalyser.fromMap(Map data) :
-        properties = (data["analysisProperties"] as Map<dynamic, dynamic>)?.entries?.map(
-                (entry) => AnalysisProperty(entry.key, getEnumByString(AnalysisPropertyType.values, entry.value, AnalysisPropertyType.Number))
+        properties = (data["analysis_properties"] as Map<dynamic, dynamic>)?.entries?.map(
+                (entry) => AnalysisProperty(entry.key, getEnumByString(AnalysisPropertyType.values, entry.value, AnalysisPropertyType.numberValue))
         )?.toList() ?? [],
         super.fromMap(data);
 }
@@ -25,13 +25,15 @@ class AnalysisProperty {
 
   AnalysisProperty.fromMap(Map data) :
       name = data["identifier"],
-      type = getEnumByString(AnalysisPropertyType.values, data["type"], AnalysisPropertyType.Number);
+      type = getEnumByString(AnalysisPropertyType.values, data["type"], AnalysisPropertyType.numberValue);
 }
 
 
 enum AnalysisPropertyType {
-  Number,
-  String,
-  NumberList,
-  StringList
+  numberValue,
+  textValue,
+  numberListValue,
+  textListValue,
+  numberMapValue,
+  textMapValue,
 }

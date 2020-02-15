@@ -22,7 +22,7 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
-model_path = "model_1574374374.795886.bin"
+model_path = "distilbert_predictor"
 analysis = a.Analysis(model_path)
 
 
@@ -34,8 +34,8 @@ def register_itself(topic, input_topic, componentId, producer):
         "InputChannelName": input_topic,
         "attributes": {
             "outputFormat": {
-                "polarity": "number",
-                "accuracy": "number"
+                "polarity": "numberValue",
+                "accuracy": "numberValue"
             }
         }
     }
