@@ -1,0 +1,44 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
+
+
+@mixin verification-modal($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  material-dialog.verification-dialog {
+    height: 250px;
+
+    main {
+      align-items: center;
+      display: flex;
+
+      span {
+        font-size: 20px;
+      }
+
+    }
+
+    material-yes-no-buttons {
+
+      .btn.btn-yes:not([disabled]).highlighted[raised] {
+        background-color: get-color($primary);
+        color: get-color-font($primary);
+      }
+
+      .btn.btn-no:not([disabled])[raised] {
+        background-color: get-color($background, 100);
+        color: get-color-font($background, 100);
+      }
+
+    }
+
+  }
+
+}

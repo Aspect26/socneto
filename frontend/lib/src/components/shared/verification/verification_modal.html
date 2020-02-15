@@ -1,0 +1,17 @@
+<modal [(visible)]="displayed">
+    <material-dialog headered
+                     class="verification-dialog">
+
+        <div header>
+            <h1>{{ title }}</h1>
+        </div>
+
+        <ng-content></ng-content>
+
+        <div footer>
+            <material-yes-no-buttons *ngIf="!submitting" raised yesHighlighted class="red-yes" (no)="onCanceled()" (yes)="onConfirmed()"></material-yes-no-buttons>
+            <material-spinner *ngIf="submitting"></material-spinner>
+        </div>
+
+    </material-dialog>
+</modal>

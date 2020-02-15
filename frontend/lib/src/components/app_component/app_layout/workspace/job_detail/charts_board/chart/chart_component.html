@@ -1,6 +1,11 @@
-<h3 class="title">
-    {{ chartTitle }}
-</h3>
+<div class="title">
+    <h3>
+        {{ chartTitle }}
+    </h3>
+    <material-button icon autoFocus (trigger)="removeChart()">
+        <material-icon icon="delete_forever"></material-icon>
+    </material-button>
+</div>
 
 <section *ngIf="loadingData">
     <material-progress [indeterminate]="true"></material-progress>
@@ -15,3 +20,5 @@
         <material-progress [indeterminate]="true"></material-progress>
     </section>
 </div>
+
+<verification-modal title="Remove chart" [confirmedCallback]="onRemoveChartVerified">Are you sure you want to remove chart <b>{{ chartTitle }}</b>?</verification-modal>

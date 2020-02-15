@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
 
@@ -25,6 +26,7 @@ namespace Socneto.Domain.Services
         {
             var newChartDefinition = new ChartDefinition
             {
+                Identifier = Guid.NewGuid(),
                 Title = title,
                 ChartType = chartType,
                 AnalysisDataPaths = analysisDataPaths,
@@ -35,6 +37,17 @@ namespace Socneto.Domain.Services
             EnsureCorrectViewConfiguration(jobView);
             jobView.ViewConfiguration.ChartDefinitions.Add(newChartDefinition);
 
+            return await _storageService.UpdateJobView(jobId, jobView);
+        }
+
+        public async Task<JobView> RemoveJobChart(Guid jobId, Guid chartId)
+        {
+            var jobView = await _storageService.GetJobView(jobId);
+
+            var chart = jobView?.ViewConfiguration?.ChartDefinitions?.SingleOrDefault(definition => definition.Identifier == chartId);
+            if (chart == null) return null;
+
+            jobView.ViewConfiguration.ChartDefinitions.Remove(chart);
             return await _storageService.UpdateJobView(jobId, jobView);
         }
 
