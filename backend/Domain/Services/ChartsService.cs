@@ -18,7 +18,7 @@ namespace Socneto.Domain.Services
         public async Task<IList<ChartDefinition>> GetJobCharts(Guid jobId)
         {
             var jobView = await _storageService.GetJobView(jobId);
-            return jobView?.ViewConfiguration == null ? new List<ChartDefinition>() : jobView.ViewConfiguration.ChartDefinitions;
+            return jobView?.ViewConfiguration?.ChartDefinitions ?? new List<ChartDefinition>();
         }
 
         public async Task<JobView> CreateJobChart(Guid jobId, string title, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime)

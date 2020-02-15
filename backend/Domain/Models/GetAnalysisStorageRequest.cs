@@ -41,6 +41,7 @@ namespace Socneto.Domain.Models
         [JsonProperty("componentId")]
         public string ComponentId { get; set; }
         
+        // TODO: these can be only two, so maybe use Tuple
         [JsonProperty("params")]
         public List<ArrayAnalysisRequestProperty> AnalysisProperties { get; set; }
     }

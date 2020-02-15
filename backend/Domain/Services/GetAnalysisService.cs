@@ -53,7 +53,10 @@ namespace Socneto.Domain.Services
 
         private async Task<ArrayAnalysisResult> GetListWithTimeAnalysis(Guid jobId, string analyserId, string[] analysisProperties)
         {
-            List<TimeArrayAnalysisResult> analyses = new List<TimeArrayAnalysisResult>();
+            if (analysisProperties.Length < 2) 
+                throw new GetAnalysisException(analyserId, "", "List with time analysis request requires at least one analysis property");
+            
+            var analyses = new List<TimeArrayAnalysisResult>();
             
             foreach (var analysisProperty in analysisProperties)
             {
@@ -76,94 +79,75 @@ namespace Socneto.Domain.Services
                 analyses.Add(analysis);
             }
 
-            if (analyses.Count == 0) return new ArrayAnalysisResult();
-
-            var result = new ArrayAnalysisResult
-            {
-                ResultName = analyses[0].ResultName,
-                Result = analyses.Select((timeAnalysisResult) => new JArray(timeAnalysisResult.Result)).ToList()
-            };
-
             return MergeTimeAnalyses(analyses);
         }
 
-        private ArrayAnalysisResult MergeTimeAnalyses(List<TimeArrayAnalysisResult> analyses)
+        private ArrayAnalysisResult MergeTimeAnalyses(List<TimeArrayAnalysisResult> timeAnalyses)
         {
-            if (analyses.Count == 0) return new ArrayAnalysisResult();
+            var timeAnalysesResults = timeAnalyses.Select(timeAnalysis => timeAnalysis.Result);
+            var result = timeAnalysesResults
+                .Select(timeAnalysisResult => timeAnalysisResult.Select(dataPoint => new JArray(dataPoint.Item1, dataPoint.Item2)).ToList())
+                .Select(timeAnalysisResultList => new JArray(timeAnalysisResultList)).ToList();
 
-            var result = new ArrayAnalysisResult
+            return new ArrayAnalysisResult
             {
-                ResultName = analyses[0].ResultName,
-                Result = analyses[0].Result.Select(dataTuple => new JArray(dataTuple.Item1, dataTuple.Item2)).ToList()
+                ResultName = timeAnalyses[0].ResultName,
+                Result = result
             };
-
-            foreach (var analysisResult in analyses.GetRange(1, analyses.Count - 1))
-            {
-                ConcatTimeAnalyses(result, analysisResult);
-            }
-
-            return result;
-        }
-
-        private void ConcatTimeAnalyses(ArrayAnalysisResult to, TimeArrayAnalysisResult from)
-        {
-            int toIndex;
-            int fromIndex;
-
-            
-            for (toIndex = 0, fromIndex = 0; toIndex < to.Result.Count && fromIndex < from.Result.Count;)
-            {
-                var dateTimesDiff = DateTime.Compare(DateTime.Parse((string)to.Result[toIndex][0]), from.Result[fromIndex].Item1);
-                if (toIndex == to.Result.Count)
-                {
-                    to.Result.AddRange(from.Result.GetRange(fromIndex, from.Result.Count - fromIndex)
-                        .Select(dataTuple => new JArray(dataTuple.Item1, dataTuple.Item2)));
-                }
-                else if (fromIndex == from.Result.Count)
-                {
-                    return;
-                }
-                else if (dateTimesDiff == 0)
-                {
-                    to.Result[toIndex].Add(from.Result[fromIndex].Item2);
-                    fromIndex++;
-                    toIndex++;
-                } 
-                else if (dateTimesDiff > 0)
-                {
-                    to.Result.Insert(toIndex, new JArray(from.Result[fromIndex].Item1, from.Result[fromIndex].Item2));
-                    fromIndex++;
-                }
-                else
-                {
-                    toIndex++;
-                }
-            }
         }
 
         private async Task<ArrayAnalysisResult> GetListAnalysis(Guid jobId, string analyserId, string[] analysisProperties)
         {
-            var analysisPropertiesRequest = new List<ArrayAnalysisRequestProperty>();
+            if (analysisProperties.Length < 2) 
+                throw new GetAnalysisException(analyserId, "", "List analysis request requires at least two analysis properties");
             
-            foreach (var analysisProperty in analysisProperties)
+            var xAxisProperty = new ArrayAnalysisRequestProperty
             {
-                analysisPropertiesRequest.Add(new ArrayAnalysisRequestProperty
-                {
-                    AnalysisPropertyName = analysisProperty,
-                    AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperty)
-                });
-            }
-            
-            var arrayAnalysisStorageRequest = new GetArrayAnalysisStorageRequest
-            {
-                JobId = jobId,
-                Type = AnalysisType.List,
-                ResultType = AnalysisResultType.List,
-                ComponentId = analyserId,
-                AnalysisProperties = analysisPropertiesRequest
+                AnalysisPropertyName = analysisProperties[0],
+                AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperties[0])
             };
+
+            var analyses = new List<ArrayAnalysisResult>();
             
-            return await _storageService.GetAnalysisArray(arrayAnalysisStorageRequest);
+            for (var i = 1; i < analysisProperties.Length; ++i)
+            {
+                var currentAnalysisProperties = new List<ArrayAnalysisRequestProperty>
+                {
+                    xAxisProperty,
+                    new ArrayAnalysisRequestProperty
+                    {
+                        AnalysisPropertyName = analysisProperties[i],
+                        AnalysisPropertyType = await GetAnalyserPropertyResultValue(analyserId, analysisProperties[i])
+                    }
+                };
+                
+                var request = new GetArrayAnalysisStorageRequest
+                {
+                    JobId = jobId,
+                    Type = AnalysisType.List,
+                    ResultType = AnalysisResultType.List,
+                    ComponentId = analyserId,
+                    AnalysisProperties = currentAnalysisProperties
+                };
+                
+                var analysis = await _storageService.GetAnalysisArray(request);
+                analyses.Add(analysis);
+            }
+
+            return MergeAnalyses(analyses);
+        }
+        
+        private ArrayAnalysisResult MergeAnalyses(List<ArrayAnalysisResult> analyses)
+        {
+            var result = analyses
+                .Select(analysis => analysis.Result).ToList()
+                .Select(analysisResult => new JArray(analysisResult)).ToList();
+
+            return new ArrayAnalysisResult
+            {
+                ResultName = analyses[0].ResultName,
+                Result = result
+            };
         }
 
         private async Task<AnalysisPropertyType> GetAnalyserPropertyResultValue(string analyserId, string analyserProperty)
