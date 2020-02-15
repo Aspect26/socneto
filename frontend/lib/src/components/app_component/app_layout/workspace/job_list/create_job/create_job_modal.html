@@ -38,6 +38,7 @@
                         </material-input>
                     </div>
 
+                    <!--
                     <div>
                         Language:
                         <material-dropdown-select
@@ -49,6 +50,7 @@
                             class="language-select">
                         </material-dropdown-select>
                     </div>
+                    -->
 
                     Data acquirers:
                     <components-select
@@ -75,7 +77,7 @@
                       [optional]="true"
                       [hideButtons]="true">
                 <div>
-                    <component-credentials [diabled]="submitting" [acquirers]="availableSocialNetworks" (onCredentialsChange)="onCredentialsChange($event)"></component-credentials>
+                    <component-attributes [diabled]="submitting" [acquirers]="availableSocialNetworks" (onAttributesChange)="onAttributesChange($event)"></component-attributes>
                 </div>
             </template>
 

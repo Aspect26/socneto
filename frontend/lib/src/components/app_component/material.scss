@@ -225,4 +225,62 @@
     }
   }
 
+  date-range-editor {
+    background: get-color($background, 100);
+
+    material-calendar-picker .month {
+      background: get-color($background, 100);
+    }
+
+    .highlight.highlight-range::before {
+      background: get-color($primary, 200);
+    }
+
+    .boundary.highlight.highlight-range:not(.active):not(.hover)::after {
+      background: get-color($primary, 200);
+    }
+
+    .right.right-range::before {
+      border-right-color: get-color($primary, 200);
+    }
+
+    .left.left-range::before {
+      border-left-color: get-color($primary, 200);
+    }
+
+    .boundary.boundary-range.active:not(.hover)::after {
+      background: get-color($primary, 500);
+    }
+
+    .boundary.boundary-range.active:not(.hover) {
+      color: get-color-font($primary, 500);
+    }
+
+    .range material-input.active .focused-underline:not(.invalid) {
+      background-color: get-color($primary, 500) !important;
+    }
+
+    .day-slot.right.right-preview::before {
+      box-shadow: inset -18px 0 0 get-color($background, 100) !important;
+    }
+
+    .day-slot.left.left-preview::before {
+      box-shadow: inset 18px 0 0 get-color($background, 100) !important;
+    }
+
+  }
+
+  .apply-bar {
+    background: get-color($background, 100) !important;
+
+    material-button {
+      background: transparent;
+      color: get-color($primary, 500);
+    }
+  }
+
+  .acx-overlay-container {
+    font-family: $font-family;
+  }
+
 }

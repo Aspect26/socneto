@@ -1,0 +1,61 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+@import "package:sw_project/src/components/app_component/mixins.scss";
+
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_dialog/mixins';
+@import 'package:angular_components/material_button/mixins';
+
+
+@mixin component-attributes-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  material-tab-panel {
+
+    margin: 10px;
+
+    .tab-content {
+      flex-direction: column;
+      display: flex;
+
+      material-toggle {
+        width: fit-content;
+      }
+
+      .attribute-wrapper {
+        display: flex;
+        align-items: center;
+
+        .attribute {
+          display: flex;
+          flex-direction: row;
+
+          .key {
+            flex: 30%;
+            margin-right: 25px;
+          }
+
+          .value {
+            flex: 70%;
+          }
+
+        }
+
+        .remove-button {
+          width: 40px;
+          height: 40px;
+          color: red;
+        }
+
+      }
+
+      .add-button {
+        color: red;
+      }
+
+    }
+  }
+
+}

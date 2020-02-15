@@ -6,9 +6,9 @@ class JobSubmitRequest {
   final List<SocnetoComponent> acquirers;
   final List<SocnetoComponent> analyzers;
   final String language;
-  final Map<String, Map<String, String>> credentials;
+  final Map<String, Map<String, String>> attributes;
 
-  JobSubmitRequest(this.jobName, this.query, this.acquirers, this.analyzers, this.language, this.credentials);
+  JobSubmitRequest(this.jobName, this.query, this.acquirers, this.analyzers, this.language, this.attributes);
 
   Map<String, dynamic> toMap() => {
     "job_name": this.jobName,
@@ -16,6 +16,6 @@ class JobSubmitRequest {
     "selected_acquirers": this.acquirers.map((acquirer) => acquirer.identifier).toList(),
     "selected_analysers": this.analyzers.map((analyzer) => analyzer.identifier).toList(),
     "language": this.language,
-    "credentials": this.credentials
+    "attributes": this.attributes
   };
 }

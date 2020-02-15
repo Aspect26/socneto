@@ -1,7 +1,8 @@
+import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
-import 'package:sw_project/src/models/PaginatedAnalyzedPosts.dart';
+import 'package:sw_project/src/models/PaginatedPosts.dart';
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
@@ -10,7 +11,6 @@ import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/local_storage_service.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:sw_project/src/services/socneto_mock_data_service.dart';
-import 'package:tuple/tuple.dart';
 
 
 class SocnetoService {
@@ -48,10 +48,10 @@ class SocnetoService {
       await this._dataService.getJob(jobId);
   Future<List<Job>> getUserJobs() async =>
       await this._dataService.getUserJobs();
-  Future<PaginatedAnalyzedPosts> getJobPosts(String jobId, int page, int pageSize) async =>
-      await this._dataService.getJobPosts(jobId, page, pageSize);
-  String getJobPostsExportLink(String jobId) =>
-      this._dataService.getJobPostsExportLink(jobId);
+  Future<PaginatedPosts> getJobPosts(String jobId, int page, int pageSize, List<String> containsWords, List<String> excludeWords, DateRange dateRange) async =>
+      await this._dataService.getJobPosts(jobId, page, pageSize, containsWords, excludeWords, dateRange);
+  String getJobPostsExportLink(String jobId, List<String> containsWords, List<String> excludeWords, DateRange dateRange) =>
+      this._dataService.getJobPostsExportLink(jobId, containsWords, excludeWords, dateRange);
   Future<List<List<List<dynamic>>>> getChartData(String jobId, ChartDefinition chart) async =>
       await this._dataService.getChartData(jobId, chart);
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
@@ -63,8 +63,8 @@ class SocnetoService {
   Future<List<SocnetoAnalyser>> getAvailableAnalyzers() async =>
       await this._dataService.getAvailableAnalyzers();
   Future<JobStatus> submitNewJob(String jobName, String query, List<SocnetoComponent> networks, List<SocnetoComponent> analyzers,
-      String language, Map<String, Map<String, String>> credentials) async =>
-      await this._dataService.submitNewJob(jobName, query, networks, analyzers, language, credentials);
+      String language, Map<String, Map<String, String>> attributes) async =>
+      await this._dataService.submitNewJob(jobName, query, networks, analyzers, language, attributes);
   Future<JobStatus> stopJob(String jobId) async =>
       await this._dataService.stopJob(jobId);
 
