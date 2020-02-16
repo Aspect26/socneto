@@ -23,4 +23,4 @@ RUN webdev build --release
 
 EXPOSE 8080
 
-CMD ["webdev", "serve",  "web:8080", "--hostname", "0.0.0.0", "--release"]
+CMD ["webdev", "serve",  "web:6007", "--hostname", "0.0.0.0", "--release"]
