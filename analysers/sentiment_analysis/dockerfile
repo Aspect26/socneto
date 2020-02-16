@@ -14,5 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt --default-timeout=120  --trus
 RUN pip install --default-timeout=120  --trusted-host pypi.python.org minio
 RUN python get_model.py distilbert_predictor.zip
 RUN unzip distilbert_predictor.zip
+RUN mv ./distilbert_predictor/distilbert_predictor.preproc ./distilbert_predictor.preproc
 
 CMD [ "python", "./main.py", "--server_address","kafka:9092" , "--sleep_on_startup"]
