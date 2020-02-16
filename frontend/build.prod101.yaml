@@ -9,7 +9,7 @@ targets:
         options:
           compiler: dart2js
           dart2js_args:
-          - -DbackendAddress="acheron.ms.mff.cuni.cz:39103"
+          - -DbackendAddress="http://acheron.ms.mff.cuni.cz:39103" 
           - --fast-startup
           - --minify
           - --trust-type-annotations
