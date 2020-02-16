@@ -26,8 +26,4 @@ services:
       - jms
     environment:
       - ASPNETCORE_ENVIRONMENT=Bohm
- 
-  kibana:
-    ports:
-     - 5601:6008
 
