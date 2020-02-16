@@ -4,6 +4,8 @@ services:
   frontend:
     build:
       dockerfile: Dockerfile.bohm
+    ports:
+     - 6007:6007
 
   topic-modelling-analyser:
     container_name: tma
@@ -23,5 +25,9 @@ services:
       - kafka
       - jms
     environment:
-      - ASPNETCORE_ENVIRONMENT=MovieTweets
+      - ASPNETCORE_ENVIRONMENT=Bohm
  
+  kibana:
+    ports:
+     - 5601:6008
+
