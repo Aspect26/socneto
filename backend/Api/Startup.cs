@@ -102,7 +102,7 @@ namespace Socneto.Api
                 app.UseHsts();
             }
 
-            app.UseCors();
+            app.UseCors("_myAllowSpecificOrigins");
 
             //app.UseForwardedHeaders(new ForwardedHeadersOptions
             //{
