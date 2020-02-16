@@ -32,7 +32,7 @@ namespace Socneto.Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("*")
+                        builder.WithOrigins("http://acheron.ms.mff.cuni.cz:39110", "http://acheron.ms.mff.cuni.cz:39103")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
@@ -102,7 +102,7 @@ namespace Socneto.Api
                 app.UseHsts();
             }
 
-            app.UseCors(MyAllowSpecificOrigins);
+            app.UseCors("_myAllowSpecificOrigins");
 
             //app.UseForwardedHeaders(new ForwardedHeadersOptions
             //{
