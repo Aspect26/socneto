@@ -132,6 +132,8 @@ class CreateJobModal {
       } finally {
         this.submitting = false;
       }
+    } else {
+      Toastr.warning( "New Job", "Incorrect job definition");
     }
   }
 
