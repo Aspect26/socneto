@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -78,6 +79,7 @@ namespace Socneto.Api.Controllers
             return Ok();
         }
 
+        [EnableCors("_myAllowSpecificOrigins")]
         [HttpGet]
         [Route("api/platform_status")]
         public async Task<ActionResult<SocnetoComponentsStatus>> PlatformStatus()
