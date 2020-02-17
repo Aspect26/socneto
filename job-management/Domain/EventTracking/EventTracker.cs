@@ -90,8 +90,9 @@ namespace Domain.EventTracking
             string eventType,
             string eventName,
             string message,
-            object serializableAttributes = null)
+            object serializableAttributes)
         {
+            
             var currentLevelIndex = _levels.IndexOf(eventType);
             if (_defaulLogLevelIndex < currentLevelIndex)
             {
@@ -102,12 +103,22 @@ namespace Domain.EventTracking
             object[] paramsObjects;
             if (serializableAttributes != null)
             {
+                string attributesJson = "error";
+                try
+                {
+                    attributesJson = JsonConvert.SerializeObject(serializableAttributes);
+                }
+                catch (JsonException je)
+                {
+                    _logger.LogError("Could not log object {e}",je);
+                    serializableAttributes = new { el = serializableAttributes };
+                }
                 loggerMessage += "\nAttributes:{attributes}";
                 paramsObjects = new object[] {
                     eventName,
                     message,
                     _componentOptionsJson,
-                    JsonConvert.SerializeObject(serializableAttributes)};
+                    attributesJson};
             }
             else
             {
@@ -143,7 +154,7 @@ namespace Domain.EventTracking
                 eventName,
                 message,
                 timestamp = DateTime.Now.ToString("s"),
-                attributes = serializableAttributes
+                attributes = serializableAttributes ?? new object()
             };
             _eventQueue.Enqueue(metric);
         }
