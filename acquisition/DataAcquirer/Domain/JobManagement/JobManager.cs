@@ -93,7 +93,7 @@ namespace Domain.JobManagement
                             _logger.TrackInfo(
                                 "StartNewJob",
                                 "Job removed",
-                                new { config = jobId });
+                                new { jobId = jobId.ToString() });
                         });
 
                 var jobManagerJobRecord = new JobManagerJobRecord
