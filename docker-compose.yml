@@ -51,6 +51,7 @@ services:
         hard: -1
     volumes:
       - data01:/usr/share/elasticsearch/data
+      - elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 
   kibana:
     depends_on:

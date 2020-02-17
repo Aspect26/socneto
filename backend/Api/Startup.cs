@@ -1,4 +1,5 @@
-﻿using Bazinga.AspNetCore.Authentication.Basic;
+﻿using System;
+using Bazinga.AspNetCore.Authentication.Basic;
 using Domain.EventTracking;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,7 @@ namespace Socneto.Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://acheron.ms.mff.cuni.cz:39110", "http://acheron.ms.mff.cuni.cz:39103")
+                        builder.WithOrigins("http://acheron.ms.mff.cuni.cz:39110", "http://acheron.ms.mff.cuni.cz:39103", "http://localhost:8080")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
