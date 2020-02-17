@@ -136,7 +136,7 @@ namespace Application
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (aspNetCoreEnv != null)
+            if (! string.IsNullOrEmpty(aspNetCoreEnv))
             {
                 builder.AddJsonFile($"appsettings.{aspNetCoreEnv}.json", true, true);
             }

@@ -95,9 +95,9 @@ namespace Api
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var aspNetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (aspNetCoreEnv == "Development")
+            if (!string.IsNullOrEmpty(aspNetCoreEnv))
             {
-                builder.AddJsonFile($"appsettings.Development.json", true, true);
+                builder.AddJsonFile($"appsettings.{aspNetCoreEnv}.json", true, true);
             }
 
             var configuration = builder.Build();
