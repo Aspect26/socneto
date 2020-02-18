@@ -1,3 +1,4 @@
+// TODO: this should be in models :(
 class Paginator {
 
   int entriesCount = 0;
