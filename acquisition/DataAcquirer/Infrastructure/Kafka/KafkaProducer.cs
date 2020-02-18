@@ -30,34 +30,43 @@ namespace Infrastructure.Kafka
 
             var producerBuilder =new  ProducerBuilder<string, string>(config);
             producerBuilder.SetErrorHandler(
-                (producer, error) => { _logger.LogError(error.Reason); }
+                (producer, error) => { _logger.LogWarning(error.Reason); }
             );
-            
 
-            using (var producer = producerBuilder.Build())
+            try
             {
-                
-                try
+                while (true)
                 {
-                    // Note: Awaiting the asynchronous produce request below prevents flow of execution
-                    // from proceeding until the acknowledgement from the broker is received (at the 
-                    // expense of low throughput).
+                    try
+                    {
+                        using (var producer = producerBuilder.Build())
+                        {
+                            // Note: Awaiting the asynchronous produce request below prevents flow of execution
+                            // from proceeding until the acknowledgement from the broker is received (at the 
+                            // expense of low throughput).
 
-                    var deliveryReport = await producer.ProduceAsync(
-                        topic, KafkaMessage.FromMessageBrokerMessage(message)
-                        );
+                            var deliveryReport = await producer.ProduceAsync(
+                                topic, KafkaMessage.FromMessageBrokerMessage(message)
+                                );
 
-                    //producer.Produce(
-                    //    topic, KafkaMessage.FromMessageBrokerMessage(message)
-                    //);
+                            //producer.Produce(
+                            //    channelName, KafkaMessage.FromMessageBrokerMessage(message)
+                            //);
 
 
-                    //_logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                            //_logger.LogInformation($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                            return;
+                        }
+                    }
+                    catch (KafkaException e)
+                    {
+                        _logger.LogError($"failed to deliver message: {e.Message} [{e.Error.Code}]");
+                    }
                 }
-                catch (ProduceException<string, string> e)
-                {
-                    _logger.LogError($"failed to deliver message: {e.Message} [{e.Error.Code}]");
-                }
+            }
+            catch (OperationCanceledException)
+            {
+                //
             }
         }
     }
