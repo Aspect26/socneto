@@ -140,6 +140,7 @@ namespace Socneto.Api.Controllers
         {
             containsWords = containsWords ?? new string[0];
             excludeWords = excludeWords ?? new string[0];
+            page = Math.Max(1, page);
             
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
@@ -148,6 +149,12 @@ namespace Socneto.Api.Controllers
             }
 
             var (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to, page, pageSize);
+            var maxPage = (postsCount - 1) / pageSize + 1;
+            if (page > maxPage)
+            {
+                page = maxPage;
+                (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to, page, pageSize);
+            }
 
             var postDtos = posts.Select(PostDto.FromModel).ToList();
             var paginatedPosts = new Paginated<PostDto>
@@ -155,7 +162,7 @@ namespace Socneto.Api.Controllers
                 Pagination = new Pagination
                 {
                     TotalSize = postsCount,
-                    Page = Math.Clamp(page, 1, ((postsCount - 1) / pageSize) + 1),
+                    Page = page,
                     PageSize = pageSize
                 },
                 Data = postDtos
