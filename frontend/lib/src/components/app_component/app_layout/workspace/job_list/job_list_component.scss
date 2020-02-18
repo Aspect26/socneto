@@ -75,7 +75,20 @@
             font-size: 12px;
             color: get-color($primary, 400);
           }
+
+          .tertiary {
+            font-size: 12px;
+            color: get-color-font($background, 700);
+          }
         }
+      }
+
+      .hidden {
+        visibility: hidden;
+      }
+
+      .smaller {
+        font-size: 13px;
       }
 
       .footer {

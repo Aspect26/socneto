@@ -40,7 +40,8 @@ import 'package:sw_project/src/utils.dart';
     CreateJobModal,
     StopJobModal,
     NgFor,
-    NgIf
+    NgIf,
+    NgClass
   ],
   templateUrl: 'job_list_component.html',
   styleUrls: [
@@ -96,7 +97,7 @@ class JobListComponent implements AfterChanges {
 
   String getProcessingTime(Job job) {
     var fromTime = job.startedAt;
-    var toTime = DateTime.now();
+    var toTime = job.finishedAt != null? job.finishedAt : DateTime.now();
     var timeDiff = toTime.difference(fromTime);
 
     return getDurationString(timeDiff);
