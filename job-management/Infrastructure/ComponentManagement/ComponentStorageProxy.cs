@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.ComponentManagement;
+using Domain.DependencyWaiting;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,7 @@ namespace Infrastructure.ComponentManagement
     public class ComponentStorageProxy : IComponentRegistry
     {
         private readonly HttpClient _httpClient;
+        private readonly IStorageDependencyWaitingService _storageDependencyWaitingService;
         private readonly ILogger<ComponentStorageProxy> _logger;
         private readonly StorageChannelNames _storageChannelNames;
         private readonly Uri _addComponentUri;
@@ -30,14 +32,15 @@ namespace Infrastructure.ComponentManagement
         private readonly ComponentIdentifiers _componentIdentifier;
 
         public ComponentStorageProxy(HttpClient httpClient,
+            IStorageDependencyWaitingService storageDependencyWaitingService,
             IOptions<ComponentStorageOptions> componentStorageOptionsAccessor,
             IOptions<StorageChannelNames> storageChannelNamesAccessor,
             IOptions<ComponentIdentifiers> componentIdentifiers,
-
             ILogger<ComponentStorageProxy> logger)
         {
             _componentIdentifier = componentIdentifiers.Value;
             _httpClient = httpClient;
+            _storageDependencyWaitingService = storageDependencyWaitingService;
             _logger = logger;
             _storageChannelNames = storageChannelNamesAccessor.Value;
             var baseUri = new Uri(componentStorageOptionsAccessor.Value.BaseUri);
@@ -50,6 +53,7 @@ namespace Infrastructure.ComponentManagement
 
         public async Task AddOrUpdateAsync(ComponentModel componentRegistrationModel)
         {
+            await WaitOnStorage();
             var subscribedComponent = new SubscribedComponentPayloadObject
             {
                 Attributes = componentRegistrationModel.Attributes,
@@ -74,6 +78,7 @@ namespace Infrastructure.ComponentManagement
 
         public async Task InsertJobComponentConfigAsync(JobComponentConfig jobConfig)
         {
+            await WaitOnStorage();
             var jsonBody = JsonConvert.SerializeObject(jobConfig);
             var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
@@ -92,6 +97,7 @@ namespace Infrastructure.ComponentManagement
 
         public async Task<List<JobComponentConfig>> GetAllComponentJobConfigsAsync(string componentId)
         {
+            await WaitOnStorage();
             var jobConfigUri = new Uri(
                 _getComponentJobConfigUriTemplate
                 .Replace("componentId", componentId));
@@ -124,6 +130,7 @@ namespace Infrastructure.ComponentManagement
 
         public async Task<List<ComponentModel>> GetAllComponentsAsync()
         {
+            await WaitOnStorage();
             var response = await _httpClient.GetAsync(_getComponentsUri);
 
             if (!response.IsSuccessStatusCode)
@@ -149,6 +156,7 @@ namespace Infrastructure.ComponentManagement
 
         public async Task<ComponentModel> GetComponentByIdAsync(string componentId)
         {
+            await WaitOnStorage();
             var getUriWithParams = _getComponentUri
                 .AbsoluteUri
                 .Replace("componentId", componentId);
@@ -201,6 +209,21 @@ namespace Infrastructure.ComponentManagement
                 payload.UpdateChannelName,
                 payload.Attributes
             );
+        }
+
+        private async Task WaitOnStorage()
+        {
+            var shouldWait = true;
+            while (shouldWait)
+            {
+                shouldWait = !await _storageDependencyWaitingService.IsDependencyReadyAsync();
+                if(shouldWait)
+                {
+                    _logger.LogWarning("Storage not ready");
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                }
+
+            }
         }
     }
 }
