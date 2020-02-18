@@ -94,11 +94,13 @@ namespace Infrastructure.Kafka
                             }
                             catch (Exception e)
                             {
-                                _logger.LogInformation("Failed to consume: {error}. \nTopic {topic}, \nAddress {address}",
-                                    e.Message,
+                                _logger.LogInformation("Failed to consume: Topic '{topic}', Input:'{value}', Address '{address}', error:'{error}'",
                                     topic,
-                                    _serverAddress);
+                                    consumeResult.Value,
+                                    _serverAddress,
+                                    e);
                             }
+
                             if (consumeResult.Offset % commitPeriod == 0)
                             {
                                 // The Commit method sends a "commit offsets" request to the Kafka
