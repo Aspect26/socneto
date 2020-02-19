@@ -116,7 +116,8 @@ class SocnetoMockDataService extends SocnetoDataService {
     ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true, id: "asd"),
     ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
     ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
-    ChartDefinition("Chart 4", [AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
+    ChartDefinition("Chart 4", [AnalysisDataPath("componentId", "wordCount")], ChartType.Bar, false),
+    ChartDefinition("Chart 5", [AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
   ];
 
   static final List<Post> mockPosts = [
@@ -177,13 +178,15 @@ class SocnetoMockDataService extends SocnetoDataService {
           [11, 0.9]
         ]
       ], 5));
-    } else if (chartDefinition.chartType == ChartType.Pie) {
+    } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar) {
       return Future.value(Tuple2([
         [
           [" ", 68],
           ["footbal", 53],
           ["hockey", 23],
-          ["  ", 25]
+          ["  ", 25],
+          ["rugby", 8],
+          ["volleyball", 12],
         ]
       ], 3));
     } else if (chartDefinition.chartType == ChartType.Scatter) {
