@@ -76,6 +76,7 @@ abstract class AggregationChartStrategy implements ChartStrategy {
       this.chartData[x.toString()] = y;
     }
   }
+
 }
 
 class PieChartStrategy extends AggregationChartStrategy {
