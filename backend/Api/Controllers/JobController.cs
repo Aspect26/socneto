@@ -170,6 +170,7 @@ namespace Socneto.Api.Controllers
             return Ok(paginatedPosts);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("api/job/{jobId:guid}/posts/export")]
         [Produces("text/csv")]
@@ -181,12 +182,6 @@ namespace Socneto.Api.Controllers
             containsWords = containsWords ?? new string[0];
             excludeWords = excludeWords ?? new string[0];
             
-            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
-            {
-                _eventTracker.TrackInfo("GetJobPostsExport", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
-                return Unauthorized();
-            }
-
             var currentPage = 1;
             var (currentPagePosts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to,currentPage, ExportPageSize);
             var csvStringBuilder = new StringBuilder();
