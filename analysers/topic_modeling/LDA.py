@@ -52,6 +52,8 @@ class LDAAnalysis:
 
     def get_topic_keywords(self,text):
         text = re.sub(r'#\w+', '', text)
+        text = " ".join(text.split())
+
         pr = [self.nlp(text)]
         words = corpora.Dictionary(pr)
         corpus = [words.doc2bow(d) for d in pr]
@@ -64,3 +66,6 @@ class LDAAnalysis:
                                                     alpha='auto',
                                                     per_word_topics=True)
         return self.format(lda_model, words)
+
+
+print(LDAAnalysis().get_topic_keywords('hahaha \n \n all I want is you \r\n and you \t.'))
