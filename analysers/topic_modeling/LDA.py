@@ -7,7 +7,6 @@ import many_stop_words
 import re
 #https://towardsdatascience.com/building-a-topic-modeling-pipeline-with-spacy-and-gensim-c5dc03ffc619
 
-
 class LDAAnalysis:
     def __init__(self, topic_num = 1, topic_words = 10):
         self.nlp = spacy.load("en_core_web_lg")
@@ -66,6 +65,3 @@ class LDAAnalysis:
                                                     alpha='auto',
                                                     per_word_topics=True)
         return self.format(lda_model, words)
-
-
-print(LDAAnalysis().get_topic_keywords('hahaha \n \n all I want is you \r\n and you \t.'))
