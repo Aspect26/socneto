@@ -56,6 +56,7 @@ class BarChart {
             data.push({'key': key, 'value': dataSet[key]});
         });
 
+        data.sort((a ,b) => b.value - a.value);
         return data;
     }
 
