@@ -82,7 +82,6 @@ namespace Socneto.Api.Controllers
                 TopicQuery = request.TopicQuery,
                 SelectedAcquirersIdentifiers = request.SelectedAcquirers,
                 SelectedAnalysersIdentifiers = request.SelectedAnalysers,
-                Language = request.Language,
             };
 
             var jobStatus = await _jobManagementService.SubmitJob(jobSubmit, request.Attributes);
