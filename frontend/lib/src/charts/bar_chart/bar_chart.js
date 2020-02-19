@@ -114,17 +114,16 @@ class BarChart {
     }
 
     _createBars(svg, data, xScale, yScale, colorScale, height) {
-        console.log(yScale);
         svg.selectAll(".bar")
             .data(data)
             .enter()
             .append("rect")
             .attr("class", "bar")
             .style("fill", d => colorScale(d.key))
-            .attr("x", (d) => { console.log(d); return xScale(d.key); })
+            .attr("x", (d) => xScale(d.key))
             .attr("width", xScale.bandwidth())
-            .attr("y", function(d) { console.log("AAA"); console.log(d.value); console.log(yScale(d.value)); return yScale(d.value); })
-            .attr("height", (d) => { console.log("----"); console.log(d.value); console.log(yScale(d.value)); return height - yScale(d.value)});
+            .attr("y", (d) => yScale(d.value))
+            .attr("height", (d) => height - yScale(d.value));
 
         let bars = svg.selectAll(".bar");
         bars
