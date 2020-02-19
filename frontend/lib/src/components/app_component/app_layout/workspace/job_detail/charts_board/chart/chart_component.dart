@@ -30,7 +30,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
     VerificationModal,
 
     NgIf,
-    NgFor
+    NgFor,
+    NgClass
   ],
   templateUrl: 'chart_component.html',
   styleUrls: ['chart_component.css'],
@@ -60,8 +61,10 @@ class ChartComponent implements AfterChanges {
   int totalResults = 0;
   int maxPage = 1;
   bool isPaginated = false;
-  
+
   ChartComponent(this._socnetoService);
+
+  bool get isChartTable => this.chartDefinition.chartType == ChartType.Table;
 
   @override
   void ngAfterChanges() async {
@@ -70,6 +73,7 @@ class ChartComponent implements AfterChanges {
   }
 
   String get chartTitle => this.chartDefinition?.title != null && this.chartDefinition.title.isNotEmpty? this.chartDefinition.title : "Chart";
+  String get tableChartHeader => this.chartDefinition?.analysisDataPaths[0].property;
 
   void removeChart() {
     this.verificationModal.show();
@@ -106,6 +110,8 @@ class ChartComponent implements AfterChanges {
   
   void _setChartStrategy() {
     switch (this.chartDefinition.chartType) {
+      case ChartType.Table:
+        this._chartStrategy = TableChartStrategy(); break;
       case ChartType.Line:
         this._chartStrategy = LineChartStrategy(); break;
       case ChartType.Pie:

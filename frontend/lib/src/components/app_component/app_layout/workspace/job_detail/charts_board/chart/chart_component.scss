@@ -46,6 +46,27 @@
     section {
       height: 150px;
       line-height: 150px;
+
+      &.table {
+        height: auto;
+        line-height: 2;
+
+        table {
+          min-width: 300px;
+          margin: auto;
+          border-collapse: collapse;
+        }
+
+        table, td {
+          border: 1px solid get-color($primary);
+        }
+        th {
+          border: 2px solid get-color($primary);
+        }
+        td {
+          text-align: center;
+        }
+      }
     }
 
     .no-data {

@@ -1,6 +1,11 @@
 let Socneto = {
 
     Charts: {
+        createTableChart: function (selector, dataSets, dataLabels) {
+            let tableChart = new TableChart();
+            tableChart.create(selector, dataSets, dataLabels);
+        },
+
         createLineChart: function (selector, dataSets, dataLabels, isXDateTime, xAxisLabel) {
             let lineChart = new LineChart();
             lineChart.create(selector, dataSets, dataLabels, isXDateTime, xAxisLabel);

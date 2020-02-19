@@ -109,8 +109,23 @@ class CreateChartModalComponent {
 
   int get requiredNumberOfDataPaths {
     switch (this.chartType) {
+      case ChartType.Table:
+        return 1;
       case ChartType.Line:
         return 2;
+      case ChartType.Pie:
+        return 1;
+      case ChartType.Scatter:
+        return 2;
+    }
+  }
+
+  int get maxNumberOfDataPoints {
+    switch (this.chartType) {
+      case ChartType.Table:
+        return 1;
+      case ChartType.Line:
+        return 50;
       case ChartType.Pie:
         return 1;
       case ChartType.Scatter:
@@ -123,10 +138,12 @@ class CreateChartModalComponent {
 
   String getDataPathLabel(int index) {
     switch (this.chartType) {
+      case ChartType.Table:
+        return "Analysis property";
       case ChartType.Line:
         return (index == 0)? "X - Axis" : "Line ${index}";
       case ChartType.Pie:
-        return "Partition ${index + 1}";
+        return "Analysis property";
       case ChartType.Scatter:
         return index == 0? "X - Axis" : "Y - Axis";
       default:
@@ -181,7 +198,7 @@ class CreateChartModalComponent {
 
   bool isDefinitionCorrect() {
     return this.chartTitle != null && this.chartTitle.isNotEmpty && this.chartType != null
-        && (this.dataPaths.length >= this.requiredNumberOfDataPaths);
+        && (this.dataPaths.length >= this.requiredNumberOfDataPaths) && (this.dataPaths.length <= this.maxNumberOfDataPoints);
   }
 
   void _addDefaultDataPaths(int count) {

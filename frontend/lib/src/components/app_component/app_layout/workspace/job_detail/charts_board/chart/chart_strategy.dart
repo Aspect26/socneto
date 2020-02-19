@@ -82,6 +82,30 @@ class PieChartStrategy implements ChartStrategy {
 
 }
 
+class TableChartStrategy implements ChartStrategy {
+
+  Map<String, num> _chartData = {};
+
+  @override
+  setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet) {
+    this._chartData = {};
+
+    var currentPieData = dataSet[0];
+    for (var dataPointValue in currentPieData) {
+      var x = dataPointValue[0];
+      var y = dataPointValue[1];
+
+      this._chartData[x.toString()] = y;
+    }
+  }
+
+  @override
+  redrawChart(String domSelector) {
+    SocnetoCharts.createTableChart(domSelector, this._chartData);
+  }
+
+}
+
 class ScatterChartStrategy implements ChartStrategy {
 
   List<Map<String, num>> _chartData = [];

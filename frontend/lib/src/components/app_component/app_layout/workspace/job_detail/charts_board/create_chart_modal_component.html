@@ -50,7 +50,7 @@
             </div>
 
             <div>
-                <material-button *ngIf="chartType != scatterChartType" icon (trigger)="onAddDataPath()">
+                <material-button *ngIf="chartType != scatterChartType && dataPaths.length < maxNumberOfDataPoints" icon (trigger)="onAddDataPath()">
                     <material-icon icon="add"></material-icon>
                 </material-button>
             </div>

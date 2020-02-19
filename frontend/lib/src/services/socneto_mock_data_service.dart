@@ -113,6 +113,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
+    ChartDefinition("Chart 0", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Table, true, id: "asd"),
     ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true, id: "asd"),
     ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
     ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
@@ -177,7 +178,7 @@ class SocnetoMockDataService extends SocnetoDataService {
           [11, 0.9]
         ]
       ], 5));
-    } else if (chartDefinition.chartType == ChartType.Pie) {
+    } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Table) {
       return Future.value(Tuple2([
         [
           [1, 53],

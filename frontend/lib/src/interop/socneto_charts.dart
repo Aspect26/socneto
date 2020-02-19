@@ -4,12 +4,14 @@ library charts_interop;
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as js;
 
+typedef TableChartFn = Function(String selector, dynamic dataSet);
 typedef LineChartFn = Function(String selector, List dataSets, List dataLabels, bool isXDateTime, String xAxisLabel);
 typedef PieChartFn = Function(String selector, dynamic dataSet);
 typedef ScatterChartFn = Function(String selector, dynamic dataSet);
 
 @JS()
 class ChartsInterface {
+  @JS() external TableChartFn get createTableChart;
   @JS() external LineChartFn get createLineChart;
   @JS() external PieChartFn get createPieChart;
   @JS() external ScatterChartFn get createScatterChart;
@@ -19,6 +21,11 @@ class ChartsInterface {
 external ChartsInterface get charts;
 
 class SocnetoCharts {
+
+  static void createTableChart(String selector, Map<String, num> dataSet) {
+    var jsData = _mapToJsObject(dataSet);
+    charts.createTableChart(selector, jsData);
+  }
 
   static void createLineChart(String selector, List<List<dynamic>> dataSets, List<String> dataLabels, bool isXDateTime, String xAxisLabel) {
     List jsData = [];

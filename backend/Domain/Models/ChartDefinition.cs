@@ -35,6 +35,7 @@ namespace Socneto.Domain.Models
 
     public enum ChartType
     {
+        Table,
         Line,
         Pie,
         Scatter

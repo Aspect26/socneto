@@ -19,6 +19,7 @@ class ChartDefinition {
 }
 
 enum ChartType {
+  Table,
   Line,
   Pie,
   Scatter,

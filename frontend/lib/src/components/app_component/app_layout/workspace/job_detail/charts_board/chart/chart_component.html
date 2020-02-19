@@ -27,8 +27,20 @@
     </material-button>
 
     <div class="chart-wrapper">
-        <section *ngIf="chartData.isNotEmpty">
+        <section *ngIf="chartData.isNotEmpty" [ngClass]="{ 'table': isChartTable }">
             <material-progress [indeterminate]="true"></material-progress>
+            <!-- TODO: THIS IS A HUGE HACK HERE; IMPLEMENT THE CHART IN D3 -->
+            <table *ngIf="isChartTable">
+                <tr>
+                    <th>{{ tableChartHeader }}</th>
+                    <th>Value</th>
+                </tr>
+
+                <tr *ngFor="let datum of chartData[0]">
+                    <td *ngFor="let val of datum">{{ val }}</td>
+                </tr>
+
+            </table>
         </section>
     </div>
 
