@@ -11,6 +11,11 @@ let Socneto = {
             pieChart.create(selector, dataSets, dataLabels);
         },
 
+        createBarChart: function (selector, dataSets, dataLabels) {
+            let barChart = new BarChart();
+            barChart.create(selector, dataSets, dataLabels);
+        },
+
         createScatterChart: function (selector, dataSet) {
             let scatterChart = new ScatterChart();
             scatterChart.create(selector, dataSet);
