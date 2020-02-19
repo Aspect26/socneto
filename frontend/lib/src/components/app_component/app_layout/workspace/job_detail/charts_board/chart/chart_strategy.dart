@@ -71,6 +71,8 @@ class PieChartStrategy implements ChartStrategy {
       var x = dataPointValue[0];
       var y = dataPointValue[1];
 
+      if (x is String && x.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").isEmpty) continue;
+
       this._chartData[x.toString()] = y;
     }
   }
