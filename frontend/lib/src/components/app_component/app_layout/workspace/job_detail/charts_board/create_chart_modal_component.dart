@@ -112,9 +112,12 @@ class CreateChartModalComponent {
       case ChartType.Line:
         return 2;
       case ChartType.Pie:
+      case ChartType.Bar:
         return 1;
       case ChartType.Scatter:
         return 2;
+      case ChartType.PostsFrequency:
+        return 0;
     }
   }
 
@@ -126,10 +129,11 @@ class CreateChartModalComponent {
       case ChartType.Line:
         return (index == 0)? "X - Axis" : "Line ${index}";
       case ChartType.Pie:
-        return "Partition ${index + 1}";
+      case ChartType.Bar:
+        return "Analysis property";
       case ChartType.Scatter:
         return index == 0? "X - Axis" : "Y - Axis";
-      default:
+      case ChartType.PostsFrequency:
         return "";
     }
   }

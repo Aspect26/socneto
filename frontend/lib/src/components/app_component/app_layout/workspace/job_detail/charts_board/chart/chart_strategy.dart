@@ -1,6 +1,7 @@
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/interop/socneto_charts.dart';
 
+
 abstract class ChartStrategy {
 
   setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet);
@@ -58,13 +59,12 @@ class LineChartStrategy implements ChartStrategy {
 
 }
 
-class PieChartStrategy implements ChartStrategy {
-
-  Map<String, num> _chartData = {};
+abstract class AggregationChartStrategy implements ChartStrategy {
+  Map<String, num> chartData = {};
 
   @override
   setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet) {
-    this._chartData = {};
+    this.chartData = {};
 
     var currentPieData = dataSet[0];
     for (var dataPointValue in currentPieData) {
@@ -73,13 +73,25 @@ class PieChartStrategy implements ChartStrategy {
 
       if (x is String && x.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").isEmpty) continue;
 
-      this._chartData[x.toString()] = y;
+      this.chartData[x.toString()] = y;
     }
   }
+}
+
+class PieChartStrategy extends AggregationChartStrategy {
 
   @override
   redrawChart(String domSelector) {
-    SocnetoCharts.createPieChart(domSelector, this._chartData);
+    SocnetoCharts.createPieChart(domSelector, this.chartData);
+  }
+
+}
+
+class BarChartStrategy extends AggregationChartStrategy {
+
+  @override
+  redrawChart(String domSelector) {
+    SocnetoCharts.createBarChart(domSelector, this.chartData);
   }
 
 }
@@ -103,6 +115,29 @@ class ScatterChartStrategy implements ChartStrategy {
   @override
   redrawChart(String domSelector) {
     SocnetoCharts.createScatterChart(domSelector, this._chartData);
+  }
+
+}
+
+class PostsFrequencyStrategy implements ChartStrategy {
+
+  List<List<dynamic>> _chartData = [];
+
+  @override
+  setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet) {
+    this._chartData = [[]];
+
+    var currentPieData = dataSet[0];
+    for (var dataPointValue in currentPieData) {
+      var postsTime = DateTime.parse(dataPointValue[0]).toIso8601String();
+      var postsCount = dataPointValue[1];
+      this._chartData.last.add({'date': postsTime, 'count': postsCount});
+    }
+  }
+
+  @override
+  redrawChart(String domSelector) {
+    SocnetoCharts.createLineChart(domSelector, this._chartData, [], true, null);
   }
 
 }

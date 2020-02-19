@@ -21,5 +21,8 @@ class ChartDefinition {
 enum ChartType {
   Line,
   Pie,
+  Bar,
   Scatter,
+
+  PostsFrequency,
 }

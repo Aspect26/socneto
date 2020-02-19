@@ -1,3 +1,13 @@
+class PostsFrequencyAnalysisRequest {
+  final String jobId;
+
+  PostsFrequencyAnalysisRequest(this.jobId);
+
+  Map<String, dynamic> toMap() => {
+    "job_id": this.jobId
+  };
+}
+
 class ArrayAnalysisRequest {
   final String analyserId;
   final List<String> analysisProperties;
@@ -16,3 +26,17 @@ class ArrayAnalysisRequest {
   };
 
 }
+
+class AggregateAnalysisRequest {
+  final String analyserId;
+  final String analysisProperty;
+
+  AggregateAnalysisRequest(this.analyserId, this.analysisProperty);
+
+  Map<String, dynamic> toMap() => {
+    'analyser_id': this.analyserId,
+    'analysis_property': this.analysisProperty
+  };
+
+}
+
