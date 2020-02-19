@@ -14,6 +14,7 @@ class BarChart {
     _ELEMENT_HEIGHT = 400;
     _CHART_PADDING_VERTICAL = 30;
     _CHART_PADDING_HORIZONTAL = 30;
+    _MAX_BAR_WIDTH = 70;
 
     create(selector, dataSet) {
         this._removeOld(selector);
@@ -22,17 +23,19 @@ class BarChart {
         if (element == null)
             return;
 
+        let barData = this._createBarData(dataSet);
+
         let elementWidth = element.clientWidth;
-        let chartWidth = elementWidth - this._CHART_PADDING_HORIZONTAL * 2;
+        let chartWidth = Math.min(elementWidth - this._CHART_PADDING_HORIZONTAL * 2, this._MAX_BAR_WIDTH * barData.length);
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_VERTICAL * 2;
 
-        let barData = this._createBarData(dataSet);
+        let paddingLeft = Math.max(this._CHART_PADDING_HORIZONTAL, (elementWidth - chartWidth) / 2);
 
         let xScale = this._createXScale(chartWidth, barData);
         let yScale = this._createYScale(chartHeight, barData);
         let colorScale = this._createColorScale(dataSet, this._BAR_COLORS);
 
-        let svg = this._createSvg(selector, chartWidth, this._ELEMENT_HEIGHT, this._CHART_PADDING_HORIZONTAL, this._CHART_PADDING_VERTICAL);
+        let svg = this._createSvg(selector, chartWidth, this._ELEMENT_HEIGHT, paddingLeft, this._CHART_PADDING_VERTICAL);
 
         this._createGridYLines(svg, yScale, chartWidth);
         this._createXAxis(svg, xScale, chartHeight);
