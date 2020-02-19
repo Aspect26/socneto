@@ -2,9 +2,15 @@
     <div *ngIf="job != null">
         <h3>{{ job.name }}</h3>
 
-        <material-tab-panel class="tab-panel" [activeTabIndex]="0">
+        <material-tab-panel class="tab-panel" [activeTabIndex]="0" (tabChange)="onTabChange($event)">
 
-            <material-tab label="Charts board">
+            <!--
+            <material-tab label="Detail">
+                <job-stats [job]="job" ></job-stats>
+            </material-tab>
+            -->
+
+            <material-tab label="Analyses">
                 <charts-board [job]="job"></charts-board>
             </material-tab>
 

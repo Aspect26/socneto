@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:angular_components/angular_components.dart';
 import 'package:sw_project/src/config.dart';
-import 'package:sw_project/src/models/AggregateAnalysisRequest.dart';
-import 'package:sw_project/src/models/ArrayAnalysisRequest.dart';
+import 'package:sw_project/src/models/AnalysisRequest.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/JmsJobResponse.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -72,7 +71,9 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<Tuple2<List<List<List<dynamic>>>, int>> getChartData(String jobId, ChartDefinition chartDefinition, int pageSize, int page) async {
     var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
     var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property).toList();
-    if (chartDefinition.chartType == ChartType.Pie) {
+    if (chartDefinition.chartType == ChartType.PostsFrequency) {
+      return await this._getPostsFrequencyChartData(jobId);
+    } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar) {
       return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
     } else {
       return await this._getArrayChartData(jobId, analyserId, propertyNames, chartDefinition.isXDateTime, pageSize, page);
@@ -110,6 +111,20 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     });
 
     return values.isEmpty? Tuple2([], 0) : Tuple2(values, totalCount);
+  }
+
+  Future<Tuple2<List<List<List<dynamic>>>, int>> _getPostsFrequencyChartData(String jobId) async {
+    PostsFrequencyAnalysisRequest request = PostsFrequencyAnalysisRequest(jobId);
+    // TODO: would be nice to have some model here
+    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
+
+    List<List<dynamic>> values = [];
+    var aggregations = result["aggregations"];
+    aggregations.forEach((key, value) => {
+      values.add([key, value])
+    });
+
+    return values.isEmpty? Tuple2([], 0) : Tuple2([values], values.length);
   }
 
   Future<List<SocnetoComponent>> getAvailableAcquirers() async =>

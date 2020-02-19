@@ -37,6 +37,7 @@ namespace Socneto.Domain.Models
     {
         Line,
         Pie,
+        Bar,
         Scatter
     }
 }
