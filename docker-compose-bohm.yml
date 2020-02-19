@@ -4,6 +4,8 @@ services:
   frontend:
     build:
       dockerfile: Dockerfile.bohm
+    ports:
+     - 6007:6007
 
   topic-modelling-analyser:
     container_name: tma
@@ -23,5 +25,12 @@ services:
       - kafka
       - jms
     environment:
-      - ASPNETCORE_ENVIRONMENT=MovieTweets
- 
+      - ASPNETCORE_ENVIRONMENT=Bohm
+
+  twitter-acquirer:
+    container_name: tw-acquirer
+    build: './acquisition/DataAcquirer'
+    restart: always
+    depends_on:
+      - kafka
+      - jms

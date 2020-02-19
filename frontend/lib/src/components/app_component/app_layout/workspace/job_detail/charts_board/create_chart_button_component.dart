@@ -13,7 +13,6 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
-import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/services/base/exceptions.dart';
 import 'package:sw_project/src/services/socneto_service.dart';
 
@@ -71,17 +70,17 @@ class CreateChartButtonComponent {
   }
 
   void onSubmit(ChartDefinition chartDefinition) async {
-    Success response;
+    ChartDefinition createdChart;
     try {
-      response = await this._socnetoService.createJobChartDefinition(job.id, chartDefinition);
+      createdChart = await this._socnetoService.createJobChartDefinition(job.id, chartDefinition);
     } on HttpException catch (e) {
       Toastr.error("Error", "Could not submit the chart definition: ${e.toString()}");
       return;
     }
 
-    if (response.success) {
+    if (createdChart != null) {
       Toastr.success("Success", "The chart was successfully created!");
-      this._chartCreatedController.add(chartDefinition);
+      this._chartCreatedController.add(createdChart);
     } else {
       Toastr.success("Error", "Could not create the chart :(");
     }

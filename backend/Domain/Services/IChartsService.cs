@@ -9,7 +9,7 @@ namespace Socneto.Domain.Services
     {
         Task<IList<ChartDefinition>> GetJobCharts(Guid jobId);
 
-        Task<JobView> CreateJobChart(Guid jobId, string title, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime);
+        Task<ChartDefinition> CreateJobChart(Guid jobId, string title, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime);
 
         Task<JobView> RemoveJobChart(Guid jobId, Guid chartId);
     }

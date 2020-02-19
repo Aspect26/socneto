@@ -19,9 +19,6 @@ namespace Socneto.Domain.Models
         [JsonProperty("selectedDataAnalysers")]
         public string[] SelectedAnalysersIdentifiers;
 
-        [JsonProperty("language")] 
-        public Language Language;
-
         [JsonProperty("attributes")] 
         public JObject Attributes;
     }

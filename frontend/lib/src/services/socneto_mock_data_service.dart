@@ -205,8 +205,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   Future<List<ChartDefinition>> getJobChartDefinitions(String jobId) async =>
     Future.value(mockCharts);
 
-  Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
-    return Future.value(Success(true));
+  Future<ChartDefinition> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
+    return Future.value(ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true, id: "asd"));
   }
 
 }

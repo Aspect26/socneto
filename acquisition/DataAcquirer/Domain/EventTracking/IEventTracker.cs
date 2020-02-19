@@ -15,5 +15,4 @@ namespace Domain.EventTracking
         public void TrackError(string eventName, string message, object serializableAttributes = null);
         public void TrackFatal(string eventName, string message, object serializableAttributes = null);
     }
-
 }
