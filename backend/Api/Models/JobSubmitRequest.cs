@@ -18,10 +18,6 @@ namespace Socneto.Api.Models
         [JsonProperty("selected_analysers")]
         public string[] SelectedAnalysers { get; set; }
         
-        // TODO: here we use model from Domain no API :(
-        [JsonProperty("language")]
-        public Language Language { get; set; } 
-        
         [JsonProperty("attributes")]
         public Dictionary<string, Dictionary<string, string>> Attributes { get; set; }
     }

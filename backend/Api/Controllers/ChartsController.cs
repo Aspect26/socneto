@@ -48,7 +48,7 @@ namespace Socneto.Api.Controllers
 
         [HttpPost]
         [Route("api/charts/{jobId:guid}/create")]
-        public async Task<ActionResult<SuccessResponse>> CreateJobChart([FromRoute] Guid jobId, [FromBody] CreateChartDefinitionRequest request)
+        public async Task<ActionResult<ChartDefinitionDto>> CreateJobChart([FromRoute] Guid jobId, [FromBody] CreateChartDefinitionRequest request)
         {
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
@@ -62,8 +62,8 @@ namespace Socneto.Api.Controllers
                 Property = analysisProperty.Property
             }).ToList();
             
-            await _chartsService.CreateJobChart(jobId, request.Title, request.ChartType, analysisDataPaths, request.IsXPostDateTime);
-            return Ok(SuccessResponse.True());
+            var newChart = await _chartsService.CreateJobChart(jobId, request.Title, request.ChartType, analysisDataPaths, request.IsXPostDateTime);
+            return Ok(ChartDefinitionDto.FromModel(newChart));
         }
 
         [HttpGet]
