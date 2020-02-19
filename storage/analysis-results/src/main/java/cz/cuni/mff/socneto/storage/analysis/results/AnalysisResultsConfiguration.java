@@ -76,7 +76,7 @@ public class AnalysisResultsConfiguration {
                 }
             } catch (Exception e) {
                 Thread.sleep(10_000);
-                log.info("Wainting for elasticsearch.");
+                log.info("Waiting for elasticsearch.");
                 continue;
             }
         }

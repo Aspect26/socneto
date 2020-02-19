@@ -6,14 +6,20 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BucketOrder;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.InternalDateHistogram;
 import org.elasticsearch.search.aggregations.metrics.scripted.InternalScriptedMetric;
 import org.elasticsearch.search.aggregations.metrics.scripted.ScriptedMetricAggregationBuilder;
+import org.joda.time.DateTime;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -34,6 +40,20 @@ public class AggregationsService {
     private static final String COUNT_REDUCE_SCRIPT = "agg_list_map_reduce_sum";
 
     private final ElasticsearchOperations elasticsearchOperations;
+
+    public Map<Date, Long> coutInTime(UUID jobId) {
+        var filter = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery("jobId", jobId.toString()));
+
+        var aggregation = AggregationBuilders.dateHistogram("date").dateHistogramInterval(DateHistogramInterval.HOUR).field("datetime").order(BucketOrder.key(false));
+
+        var query = new NativeSearchQueryBuilder().withQuery(filter).addAggregation(aggregation).withIndices("analyses").build();
+        var result = (InternalDateHistogram) elasticsearchOperations.query(query, searchResponse -> searchResponse).getAggregations().get("date");
+
+        return result.getBuckets().stream()
+                .collect(Collectors.toMap(b -> Date.from(Instant.ofEpochMilli(((DateTime) b.getKey()).getMillis())),
+                        InternalDateHistogram.Bucket::getDocCount, (o, n) -> n, LinkedHashMap::new));
+    }
 
     @SuppressWarnings("unchecked")
     public Map<String, Double> mapSum(UUID jobId, String componentId, String resultName, String valueName) {
