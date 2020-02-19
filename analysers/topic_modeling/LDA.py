@@ -7,7 +7,6 @@ import many_stop_words
 import re
 #https://towardsdatascience.com/building-a-topic-modeling-pipeline-with-spacy-and-gensim-c5dc03ffc619
 
-
 class LDAAnalysis:
     def __init__(self, topic_num = 1, topic_words = 10):
         self.nlp = spacy.load("en_core_web_lg")
@@ -52,6 +51,8 @@ class LDAAnalysis:
 
     def get_topic_keywords(self,text):
         text = re.sub(r'#\w+', '', text)
+        text = " ".join(text.split())
+
         pr = [self.nlp(text)]
         words = corpora.Dictionary(pr)
         corpus = [words.doc2bow(d) for d in pr]
