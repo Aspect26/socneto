@@ -180,9 +180,10 @@ class SocnetoMockDataService extends SocnetoDataService {
     } else if (chartDefinition.chartType == ChartType.Pie) {
       return Future.value(Tuple2([
         [
-          [1, 53],
-          [-1, 23],
-          [0, 42]
+          [" ", 68],
+          ["footbal", 53],
+          ["hockey", 23],
+          ["  ", 25]
         ]
       ], 3));
     } else if (chartDefinition.chartType == ChartType.Scatter) {
