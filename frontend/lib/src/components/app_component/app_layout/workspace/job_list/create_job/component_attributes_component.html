@@ -7,8 +7,8 @@
         <div *ngFor="let attribute of acquirer.attributes" class="attribute-wrapper">
             <!-- TODO: This if is not a nice hack :( The 'Translate' attribute should only be set by the toggle above -->
             <div *ngIf='attribute.item1 != "Translate"' class="attribute">
-                <material-input class="key" [(ngModel)]="attribute.item1" type="text" floatingLabel label="key"></material-input>
-                <material-input class="value" [(ngModel)]="attribute.item2" type="text" floatingLabel label="value"></material-input>
+                <material-input class="key" (change)="onAttributeKeyChange(attribute, $event)" type="text" floatingLabel label="key"></material-input>
+                <material-input class="value" (change)="onAttributeValueChange(attribute, $event)" type="text" floatingLabel label="value"></material-input>
             </div>
             <material-button *ngIf='attribute.item1 != "Translate"' class="remove-button" icon (trigger)="onRemove(acquirer.attributes, attribute)">
                 <material-icon icon="remove"></material-icon>

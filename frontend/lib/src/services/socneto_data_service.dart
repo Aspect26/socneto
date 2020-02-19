@@ -20,8 +20,10 @@ import 'package:tuple/tuple.dart';
 
 class SocnetoDataService extends HttpServiceBasicAuthBase {
 
-  static String API_URL = Config.backendHost ?? "http://localhost:6010";
+  static String API_URL = Config.backendHost ?? _DEFAULT_API_URL;
   static const String API_PREFIX = "api";
+
+  static const _DEFAULT_API_URL = "http://localhost:6010";
 
   SocnetoDataService() : super(API_URL, API_PREFIX);
 
@@ -122,7 +124,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   Future<List<ChartDefinition>> removeChartDefinition(String jobId, String chartId) async =>
       await this.getList<ChartDefinition>("charts/$jobId/$chartId/remove", (result) => ChartDefinition.fromMap(result));
 
-  Future<Success> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
+  Future<ChartDefinition> createJobChartDefinition(String jobId, ChartDefinition chartDefinition) async {
     var body = {
       "title": chartDefinition.title,
       "chart_type": chartDefinition.chartType.toString().split('.').last,
@@ -133,7 +135,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
       "is_x_post_datetime": chartDefinition.isXDateTime
     };
 
-    return this.post<Success>("charts/$jobId/create", body, (result) => Success.fromMap(result));
+    return this.post<ChartDefinition>("charts/$jobId/create", body, (result) => ChartDefinition.fromMap(result));
   }
 
 }

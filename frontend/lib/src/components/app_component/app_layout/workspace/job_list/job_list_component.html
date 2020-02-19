@@ -21,17 +21,20 @@
 
         <material-select-item *ngFor="let job of displayedJobs" [routerLink]="jobUrl(job.id)" focusItem [selected]="job == selectedJob">
 
-            <material-button icon *ngIf="job.status == runningJobStatus" class="material-list-item-primary" aria-hidden="true" (trigger)="stopJob(job); $event.stopPropagation()">
+            <material-button icon [ngClass]="{ 'hidden': job.status != runningJobStatus }" class="material-list-item-primary" aria-hidden="true" (trigger)="stopJob(job); $event.stopPropagation()">
                 <material-icon icon="stop"></material-icon>
             </material-button>
 
             <div>
                 <b>{{ job.name }}</b> <br>
-                <ng-container *ngIf="job.startedAt != null && job.finishedAt == null">Started at: {{ getHumanReadableDate(job.startedAt) }}<br></ng-container>
-                <ng-container *ngIf="job.finishedAt != null">Finished at: {{ getHumanReadableDate(job.finishedAt) }}</ng-container>
+                <span class="smaller" *ngIf="job.finishedAt != null">Finished at: {{ getHumanReadableDate(job.finishedAt) }}<br></span>
 
                 <span *ngIf="job.status == runningJobStatus" class="secondary">
                     In progress for {{ getProcessingTime(job) }}
+                </span>
+
+                <span *ngIf="job.finishedAt != null" class="tertiary">
+                    Run for {{ getProcessingTime(job) }}
                 </span>
             </div>
 

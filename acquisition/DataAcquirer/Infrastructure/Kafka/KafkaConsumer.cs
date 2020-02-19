@@ -55,7 +55,7 @@ namespace Infrastructure.Kafka
             // is UTF8. The default deserializer for Ignore returns null for all input data
             // (including non-null data).
             using (var consumer = new ConsumerBuilder<Ignore, string>(config)
-                .SetErrorHandler((_, e) => _logger.LogError(e.Reason))
+                .SetErrorHandler((_, e) => _logger.LogWarning(e.Reason))
                 .SetPartitionsAssignedHandler((c, partitions) =>
                 {
                     _logger.LogTrace($"Assigned partitions: [{string.Join(", ", partitions)}]");
@@ -94,11 +94,13 @@ namespace Infrastructure.Kafka
                             }
                             catch (Exception e)
                             {
-                                _logger.LogInformation("Failed to consume: {error}. \nTopic {topic}, \nAddress {address}",
-                                    e.Message,
+                                _logger.LogInformation("Failed to consume: Topic '{topic}', Input:'{value}', Address '{address}', error:'{error}'",
                                     topic,
-                                    _serverAddress);
+                                    consumeResult.Value,
+                                    _serverAddress,
+                                    e);
                             }
+
                             if (consumeResult.Offset % commitPeriod == 0)
                             {
                                 // The Commit method sends a "commit offsets" request to the Kafka

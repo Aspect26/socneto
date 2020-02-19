@@ -86,8 +86,10 @@ class ComponentAttributesComponent implements AfterChanges {
     this._setAttribute(attributes, "Translate", translate.toString());
   }
 
-  void onRemove(List<MutableTuple> attributes, MutableTuple attribute) =>
-      attributes.remove(attribute);
+  void onRemove(List<MutableTuple> attributes, MutableTuple attribute) {
+    attributes.remove(attribute);
+    this._attributesChangeController.add(this.acquirersWithAttributes);
+  }
 
   void onAddNew(List<MutableTuple> attributes) =>
       this._addNewEmpty(attributes);
@@ -98,8 +100,20 @@ class ComponentAttributesComponent implements AfterChanges {
   void onAddDefaultReddit(List<MutableTuple> attributes) =>
       this._addNew(attributes, this._REDDIT_KEYS);
 
-  void _addNewEmpty(List<MutableTuple> attributes) =>
-      attributes.add(MutableTuple<String, String>("", ""));
+  void onAttributeKeyChange(MutableTuple attribute, String key) {
+    attribute.item1 = key;
+    this._attributesChangeController.add(this.acquirersWithAttributes);
+  }
+
+  void onAttributeValueChange(MutableTuple attribute, String value) {
+    attribute.item2 = value;
+    this._attributesChangeController.add(this.acquirersWithAttributes);
+  }
+
+  void _addNewEmpty(List<MutableTuple> attributes) {
+    attributes.add(MutableTuple<String, String>("", ""));
+    this._attributesChangeController.add(this.acquirersWithAttributes);
+  }
 
   bool _hasAllKeys(List<MutableTuple> attributes, List<String> keys) {
     for (var key in keys) {
@@ -112,11 +126,12 @@ class ComponentAttributesComponent implements AfterChanges {
   }
 
   void _addNew(List<MutableTuple> attributes, List<String> keys) =>
-      keys.forEach((key) => this._addIfAbsent(attributes, key));
-  
+    keys.forEach((key) => this._addIfAbsent(attributes, key));
+
   void _addIfAbsent(List<MutableTuple> attributes, String key) {
     if (!this._attributesHasField(attributes, key)) {
       attributes.add(MutableTuple<String, String>(key, ""));
+      this._attributesChangeController.add(this.acquirersWithAttributes);
     }
   }
 
@@ -128,6 +143,7 @@ class ComponentAttributesComponent implements AfterChanges {
     } else {
       attribute.item2 = value;
     }
+    this._attributesChangeController.add(this.acquirersWithAttributes);
   }
 
   bool _attributesHasField(List<MutableTuple> attributes, String key) {

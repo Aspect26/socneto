@@ -26,6 +26,10 @@ namespace Infrastructure.CustomStaticData.StreamReaders
         }
         public PostBuilder PopulateFixed(IDictionary<string, string> fixedValues)
         {
+            if(fixedValues == null)
+            {
+                return this;
+            }
             foreach (var (k, v) in fixedValues)
             {
                 _post.TryAdd(k, v);

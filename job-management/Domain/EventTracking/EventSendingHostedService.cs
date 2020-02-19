@@ -51,11 +51,17 @@ namespace Domain.EventTracking
                     }
                     else
                     {
-                        var json = JsonConvert.SerializeObject(item);
-                        var message = new MessageBrokerMessage("message-key-1", json);
-                        await _messageBrokerProducer.ProduceAsync(
-                            _systemMetricsOptions.SystemMetricsChannelName
-                            , message);
+                        try
+                        {
+                            var json = JsonConvert.SerializeObject(item);
+                            var message = new MessageBrokerMessage("message-key-1", json);
+                            await _messageBrokerProducer.ProduceAsync(
+                                _systemMetricsOptions.SystemMetricsChannelName
+                                , message);
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             }

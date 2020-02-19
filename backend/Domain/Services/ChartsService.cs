@@ -22,7 +22,7 @@ namespace Socneto.Domain.Services
             return jobView?.ViewConfiguration?.ChartDefinitions ?? new List<ChartDefinition>();
         }
 
-        public async Task<JobView> CreateJobChart(Guid jobId, string title, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime)
+        public async Task<ChartDefinition> CreateJobChart(Guid jobId, string title, ChartType chartType, List<AnalysisDataPath> analysisDataPaths, bool isXPostDateTime)
         {
             var newChartDefinition = new ChartDefinition
             {
@@ -36,8 +36,10 @@ namespace Socneto.Domain.Services
             var jobView = await _storageService.GetJobView(jobId);
             EnsureCorrectViewConfiguration(jobView);
             jobView.ViewConfiguration.ChartDefinitions.Add(newChartDefinition);
+            
+            await _storageService.UpdateJobView(jobId, jobView);
 
-            return await _storageService.UpdateJobView(jobId, jobView);
+            return newChartDefinition;
         }
 
         public async Task<JobView> RemoveJobChart(Guid jobId, Guid chartId)
