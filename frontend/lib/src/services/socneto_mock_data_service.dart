@@ -11,7 +11,6 @@ import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/Post.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
-import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/socneto_data_service.dart';
 import 'package:tuple/tuple.dart';
@@ -114,7 +113,7 @@ class SocnetoMockDataService extends SocnetoDataService {
 
   static final List<ChartDefinition> mockCharts = [
     ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true, id: "asd"),
-    ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "keywords"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
+    ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
     ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
     ChartDefinition("Chart 4", [AnalysisDataPath("componentId", "wordCount")], ChartType.Bar, false),
     ChartDefinition("Chart 5", [AnalysisDataPath("componentId", "keywords")], ChartType.Scatter, false)
@@ -144,7 +143,17 @@ class SocnetoMockDataService extends SocnetoDataService {
     Future.value(PaginatedPosts(mockPosts, Paging(0, 1, 20)));
 
   Future<Tuple2<List<List<List<dynamic>>>, int>> getChartData(String jobId, ChartDefinition chartDefinition, int pageSize, int page) async {
-    if (chartDefinition.chartType == ChartType.Line && chartDefinition.isXDateTime) {
+    if (chartDefinition.chartType == ChartType.PostsFrequency) {
+      return Future.value(Tuple2([
+        [
+          ["2020-02-18T19:00:00", 100],
+          ["2020-02-18T18:00:00", 453],
+          ["2020-02-18T17:00:00", 216],
+          ["2020-02-18T16:00:00", 121],
+          ["2020-02-18T15:00:00", 32]
+        ]
+      ], 5));
+    } else if (chartDefinition.chartType == ChartType.Line && chartDefinition.isXDateTime) {
       return Future.value(Tuple2([
         [
           [1571824906245, 1],
@@ -187,6 +196,16 @@ class SocnetoMockDataService extends SocnetoDataService {
           ["  ", 25],
           ["rugby", 8],
           ["volleyball", 12],
+        ]
+      ], 3));
+    } else if (chartDefinition.chartType == ChartType.LanguageFrequency) {
+      return Future.value(Tuple2([
+        [
+          ["EN", 125],
+          ["GR", 21],
+          ["FR", 35],
+          ["  ", 25],
+          ["SK", 2],
         ]
       ], 3));
     } else if (chartDefinition.chartType == ChartType.Scatter) {

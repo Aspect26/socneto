@@ -25,4 +25,5 @@ enum ChartType {
   Scatter,
 
   PostsFrequency,
+  LanguageFrequency
 }

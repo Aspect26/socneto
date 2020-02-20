@@ -3,7 +3,7 @@
         {{ chartTitle }}
     </h3>
 
-    <material-button icon (trigger)="removeChart()">
+    <material-button *ngIf="removable" icon (trigger)="removeChart()">
         <material-icon icon="delete_forever"></material-icon>
     </material-button>
 
