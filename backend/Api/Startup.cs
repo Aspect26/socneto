@@ -33,7 +33,7 @@ namespace Socneto.Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://acheron.ms.mff.cuni.cz:39110", "http://acheron.ms.mff.cuni.cz:39103", "http://localhost:8080")
+                        builder.WithOrigins("http://acheron.ms.mff.cuni.cz:39110", "http://acheron.ms.mff.cuni.cz:39103", "http://acheron.ms.mff.cuni.cz:39109", "http://localhost:8080")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
