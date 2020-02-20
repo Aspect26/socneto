@@ -2,6 +2,8 @@ version: '3'
 services:
 
   frontend:
+    build:
+      dockerfile: Dockerfile.analyser
     ports:
       - 8080:8080
 
