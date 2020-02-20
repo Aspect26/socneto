@@ -1,0 +1,50 @@
+version: '3'
+services:
+
+  frontend:
+    ports:
+      - 8080:8080
+
+  backend:
+    ports:
+      - 8111:6010
+
+  topic-modelling-analyser:
+    container_name: tma
+    build: './analysers/topic_modeling'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+
+  twitter-static-acquirer:
+    container_name: tw-static-acquirer
+    build:
+      context: './acquisition/DataAcquirer'
+      dockerfile: 'Dockerfile.custom'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Bohm
+
+  twitter-acquirer:
+    container_name: tw-acquirer
+    build:
+      context: './acquisition/DataAcquirer'
+      dockerfile: 'Dockerfile.twitter'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+
+  reddit-acquirer:
+    container_name: re-acquirer
+    build:
+      context: './acquisition/DataAcquirer/'
+      dockerfile: 'Dockerfile.reddit'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
