@@ -113,6 +113,7 @@ class ChartComponent implements AfterChanges {
         this._chartStrategy = PieChartStrategy(); break;
       case ChartType.Bar:
       case ChartType.LanguageFrequency:
+      case ChartType.AuthorFrequency:
         this._chartStrategy = BarChartStrategy(); break;
       case ChartType.Scatter:
         this._chartStrategy = ScatterChartStrategy(); break;

@@ -49,6 +49,7 @@ class JobStatsComponent implements OnInit{
   final SocnetoService _socnetoService;
   final ChartDefinition postsFrequencyChart = ChartDefinition("Posts frequency", [], ChartType.PostsFrequency, true, id: "dummy1");
   final ChartDefinition languageFrequencyChart = ChartDefinition("Language frequency", [], ChartType.LanguageFrequency, false, id: "dummy2");
+  final ChartDefinition authorFrequencyChart = ChartDefinition("Author frequency", [], ChartType.AuthorFrequency, false, id: "dummy3");
 
   @Input() Job job;
   int postsCount;
