@@ -6,6 +6,8 @@ public enum ResultRequestType {
     LIST,
     LIST_WITH_TIME,
     MAP_SUM,
-    LIST_COUNT
-
+    LIST_COUNT,
+    COUNT_PER_TIME,
+    COUNT_PER_AUTHOR,
+    COUNT_PER_LANGUAGE
 }
