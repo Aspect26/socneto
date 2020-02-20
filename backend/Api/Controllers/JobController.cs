@@ -197,6 +197,57 @@ namespace Socneto.Api.Controllers
             var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(csvStringBuilder.ToString()));
             return new FileStreamResult(dataStream, "text/csv") {FileDownloadName = $"socneto_export_{jobId}.csv"};
         }
+
+        [HttpGet]
+        [Route("api/job/{jobId:guid}/posts_frequency")]
+        public async Task<ActionResult<AggregationAnalysisResponse>> GetPostsFrequency([FromRoute] Guid jobId)
+        {
+            _eventTracker.TrackInfo("GetPostsFrequency", $"User '{User.Identity.Name}' requested posts frequency for job '{jobId}'");
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetPostsFrequency", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
+                return Unauthorized();
+            }
+
+            var analysisResult = await _getAnalysisService.GetPostsFrequency(jobId);
+            var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
+        
+            return Ok(analysisResponse);
+        }
+        
+        [HttpGet]
+        [Route("api/job/{jobId:guid}/language_frequency")]
+        public async Task<ActionResult<AggregationAnalysisResponse>> GetLanguageFrequency([FromRoute] Guid jobId)
+        {
+            _eventTracker.TrackInfo("GetLanguageFrequency", $"User '{User.Identity.Name}' requested language frequency for job '{jobId}'");
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetLanguageFrequency", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
+                return Unauthorized();
+            }
+
+            var analysisResult = await _getAnalysisService.GetLanguageFrequency(jobId);
+            var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
+        
+            return Ok(analysisResponse);
+        }
+        
+        [HttpGet]
+        [Route("api/job/{jobId:guid}/author_frequency")]
+        public async Task<ActionResult<AggregationAnalysisResponse>> GetAuthorFrequency([FromRoute] Guid jobId)
+        {
+            _eventTracker.TrackInfo("GetAuthorFrequency", $"User '{User.Identity.Name}' requested author frequency for job '{jobId}'");
+            if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
+            {
+                _eventTracker.TrackInfo("GetAuthorFrequency", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
+                return Unauthorized();
+            }
+
+            var analysisResult = await _getAnalysisService.GetAuthorFrequency(jobId);
+            var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
+        
+            return Ok(analysisResponse);
+        }
         
         [HttpPost]
         [Route("api/job/{jobId:guid}/aggregation_analysis")]
@@ -210,21 +261,20 @@ namespace Socneto.Api.Controllers
                 return Unauthorized();
             }
 
-            AggregationAnalysisResult analysisResult;
             try
             {
-                analysisResult = await _getAnalysisService.GetAggregationAnalysis(jobId, analysisRequest.AnalyserId,
+                var analysisResult = await _getAnalysisService.GetAggregationAnalysis(jobId, analysisRequest.AnalyserId,
                     analysisRequest.AnalysisProperty);
+                
+                var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
+            
+                return Ok(analysisResponse);
             }
             catch (GetAnalysisService.GetAnalysisException e)
             {
                 _eventTracker.TrackError("GetAggregationAnalysis", e.Message, analysisRequest);
                 return Ok(AggregationAnalysisResponse.Empty());
             }
-
-            var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
-            
-            return Ok(analysisResponse);
         }
         
         [HttpPost]

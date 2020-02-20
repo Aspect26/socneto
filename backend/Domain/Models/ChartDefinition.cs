@@ -38,6 +38,10 @@ namespace Socneto.Domain.Models
         Line,
         Pie,
         Bar,
-        Scatter
+        Scatter,
+        
+        PostsFrequency,
+        LanguageFrequency,
+        AuthorFrequency
     }
 }
