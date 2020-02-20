@@ -27,6 +27,8 @@
                 [active]="false">
         </components-select>
 
+        <br>
+
         <span>Analyzers:</span>
         <components-select
                 [components]="analyzers"
@@ -52,5 +54,14 @@
            [jobId]="job.id"
            [removable]="false"
            chartId="{{ languageFrequencyChart.id }}">
+    </chart>
+</section>
+
+<section>
+    <chart id="{{ authorFrequencyChart.id }}"
+           [chartDefinition]="authorFrequencyChart"
+           [jobId]="job.id"
+           [removable]="false"
+           chartId="{{ authorFrequencyChart.id }}">
     </chart>
 </section>

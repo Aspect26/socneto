@@ -11,7 +11,6 @@ import 'package:sw_project/src/models/PaginatedPosts.dart';
 import 'package:sw_project/src/models/PlatformStatus.dart';
 import 'package:sw_project/src/models/SocnetoAnalyser.dart';
 import 'package:sw_project/src/models/SocnetoComponent.dart';
-import 'package:sw_project/src/models/Success.dart';
 import 'package:sw_project/src/models/User.dart';
 import 'package:sw_project/src/services/base/http_service_basic_auth_base.dart';
 import 'package:tuple/tuple.dart';
@@ -69,21 +68,29 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   }
 
   Future<Tuple2<List<List<List<dynamic>>>, int>> getChartData(String jobId, ChartDefinition chartDefinition, int pageSize, int page) async {
-    var analyserId = chartDefinition.analysisDataPaths[0].analyserId;
+    var analyserId = (chartDefinition.analysisDataPaths.isNotEmpty)? chartDefinition.analysisDataPaths[0].analyserId : "";
     var propertyNames = chartDefinition.analysisDataPaths.map((dataPath) => dataPath.property).toList();
     if (chartDefinition.chartType == ChartType.PostsFrequency) {
       return await this._getPostsFrequencyChartData(jobId);
-    } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar) {
-      return await this._getAggregatedChartData(jobId, analyserId, propertyNames[0]);
+    } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar
+        || chartDefinition.chartType == ChartType.LanguageFrequency || chartDefinition.chartType == ChartType.AuthorFrequency) {
+      var propertyName = propertyNames.isNotEmpty? propertyNames[0] : "";
+      return await this._getAggregatedChartData(jobId, analyserId, propertyName, chartDefinition.chartType);
     } else {
       return await this._getArrayChartData(jobId, analyserId, propertyNames, chartDefinition.isXDateTime, pageSize, page);
     }
   }
 
-  Future<Tuple2<List<List<List<dynamic>>>, int>> _getAggregatedChartData(String jobId, String analyserId, String propertyName) async {
-    AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
-    // TODO: would be nice to have some model here
-    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
+  Future<Tuple2<List<List<List<dynamic>>>, int>> _getAggregatedChartData(String jobId, String analyserId, String propertyName, ChartType chartType) async {
+    Map<String, dynamic> result = {};
+    if (chartType == ChartType.LanguageFrequency) {
+      result = await this.get<dynamic>("job/$jobId/language_frequency", (result) => result);
+    } else if (chartType == ChartType.AuthorFrequency) {
+      result = await this.get<dynamic>("job/$jobId/author_frequency", (result) => result);
+    } else {
+      AggregateAnalysisRequest request = AggregateAnalysisRequest(analyserId, propertyName);
+      result = await this.post<dynamic>("job/$jobId/aggregation_analysis", request.toMap(), (result) => result);
+    }
 
     List<List<dynamic>> values = [];
     var aggregations = result["aggregations"];
@@ -114,9 +121,7 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
   }
 
   Future<Tuple2<List<List<List<dynamic>>>, int>> _getPostsFrequencyChartData(String jobId) async {
-    PostsFrequencyAnalysisRequest request = PostsFrequencyAnalysisRequest(jobId);
-    // TODO: would be nice to have some model here
-    Map<String, dynamic> result = await this.post<dynamic>("job/$jobId/array_analysis", request.toMap(), (result) => result);
+    Map<String, dynamic> result = await this.get<dynamic>("job/$jobId/posts_frequency", (result) => result);
 
     List<List<dynamic>> values = [];
     var aggregations = result["aggregations"];
