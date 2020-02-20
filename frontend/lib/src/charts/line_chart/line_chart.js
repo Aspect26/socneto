@@ -42,11 +42,12 @@ class LineChart {
         this._createXAxis(svg, xScale, chartHeight);
         this._createYAxis(svg, yScale, chartWidth);
 
-        this._createXAxisLabel(svg, xAxisLabel, chartHeight);
+        if (xAxisLabel != null) this._createXAxisLabel(svg, xAxisLabel, chartHeight);
+
         for (let index = 0; index < dataSets.length; ++index) {
             let color = this._LINE_COLORS[index % this._LINE_COLORS.length];
             this._createChartLine(svg, dataSets[index], dataLabels[index], color, curve);
-            this._createChartLegend(svg, dataSets[index], dataLabels[index], color, curve, index);
+            if (dataLabels != null && dataLabels.length > 0) this._createChartLegend(svg, dataSets[index], dataLabels[index], color, curve, index);
         }
 
         this._createMouseHoverDivs(background, selector, xScale, dataSets, dataLabels);

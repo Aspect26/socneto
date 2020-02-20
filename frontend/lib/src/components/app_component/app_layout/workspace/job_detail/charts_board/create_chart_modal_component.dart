@@ -116,6 +116,7 @@ class CreateChartModalComponent {
         return 1;
       case ChartType.Scatter:
         return 2;
+      case ChartType.LanguageFrequency:
       case ChartType.PostsFrequency:
         return 0;
     }
@@ -134,6 +135,7 @@ class CreateChartModalComponent {
       case ChartType.Scatter:
         return index == 0? "X - Axis" : "Y - Axis";
       case ChartType.PostsFrequency:
+      case ChartType.LanguageFrequency:
         return "";
     }
   }
