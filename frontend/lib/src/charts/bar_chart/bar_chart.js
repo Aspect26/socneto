@@ -57,6 +57,13 @@ class BarChart {
         });
 
         data.sort((a ,b) => b.value - a.value);
+
+        let totalSum = data.reduce((acc, item) => acc + item.value, 0);
+        for (let i = 0; i < data.length; ++i) {
+            let itemPercentage = data[i].value / totalSum;
+            data[i].key = `${data[i].key} (${(itemPercentage * 100).toFixed(1)}%)`;
+        }
+
         return data;
     }
 
@@ -81,13 +88,6 @@ class BarChart {
             .attr("class", "bar-chart")
             .append("g")
             .attr("transform", "translate(" + paddingLeft + "," + paddingTop + ")");
-    }
-
-    _createBackground(svg, width) {
-        svg.append("rect")
-            .attr("class", "overlay")
-            .attr("width", width)
-            .attr("height", this._ELEMENT_HEIGHT);
     }
 
     _createColorScale(dataSet, colors) {

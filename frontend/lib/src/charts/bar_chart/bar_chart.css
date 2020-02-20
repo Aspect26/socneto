@@ -11,3 +11,7 @@
 .bar-chart .axis.y path {
     visibility: hidden;
 }
+
+.bar-chart g.tick text {
+    transform: rotate(7deg);
+}
