@@ -9,7 +9,21 @@
 
   job-stats {
 
+    section {
+      &.background-highlight {
+        background-color: get-color($primary, A200);
+      }
 
+      &.stats {
+        padding: 20px;
+        border-bottom: get-color($primary) 1px solid;
 
+        span.highlight {
+          color: get-color($primary);
+          margin-left: 10px;
+        }
+      }
+    }
   }
+
 }

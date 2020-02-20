@@ -1,15 +1,69 @@
-<section>
+<section class="stats">
+    <div>
+        <span>Status: </span><span class="highlight">{{ status }}</span>
+    </div>
+
+    <div>
+        <span>Posts count: </span><span class="highlight">{{ postsCount }}</span>
+    </div>
+
+    <div>
+        <span>Started at: </span><span class="highlight">{{ job.startedAt }}</span>
+    </div>
+
+    <div *ngIf="job.finishedAt != null">
+        <span>Finished at: </span><span class="highlight">{{ job.finishedAt }}</span>
+    </div>
+
+    <div>
+        <span *ngIf="job.finishedAt != null">Run for: </span><span *ngIf="job.finishedAt == null">Running for: </span><span class="highlight">{{ runningTime }}</span>
+    </div>
+
+    <!--
+    <div>
+        <span>Acquirers:</span>
+        <components-select
+                [components]="acquirers"
+                [loading]="loadingAcquirers"
+                [active]="false">
+        </components-select>
+
+        <br>
+
+        <span>Analyzers:</span>
+        <components-select
+                [components]="analyzers"
+                [loading]="loadingAnalyzers"
+                [active]="false">
+        </components-select>
+    </div>
+    -->
+</section>
+
+
+<section class="background-highlight">
     <chart id="{{ postsFrequencyChart.id }}"
            [chartDefinition]="postsFrequencyChart"
            [jobId]="job.id"
+           [removable]="false"
            chartId="{{ postsFrequencyChart.id }}">
     </chart>
 </section>
 
 <section>
-    Bar chart for languages
+    <chart id="{{ languageFrequencyChart.id }}"
+           [chartDefinition]="languageFrequencyChart"
+           [jobId]="job.id"
+           [removable]="false"
+           chartId="{{ languageFrequencyChart.id }}">
+    </chart>
 </section>
 
 <section>
-    Job definition
+    <chart id="{{ authorFrequencyChart.id }}"
+           [chartDefinition]="authorFrequencyChart"
+           [jobId]="job.id"
+           [removable]="false"
+           chartId="{{ authorFrequencyChart.id }}">
+    </chart>
 </section>

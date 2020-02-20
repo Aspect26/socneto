@@ -6,6 +6,11 @@ namespace Socneto.Domain.Services
 {
     public interface IGetAnalysisService
     {
+        Task<AggregationAnalysisResult> GetPostsFrequency(Guid jobId);
+        
+        Task<AggregationAnalysisResult> GetLanguageFrequency(Guid jobId);
+        
+        Task<AggregationAnalysisResult> GetAuthorFrequency(Guid jobId);
         
         Task<AggregationAnalysisResult> GetAggregationAnalysis(Guid jobId, string analyserId, string analysisProperty);
 

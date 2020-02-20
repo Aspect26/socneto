@@ -49,6 +49,18 @@ namespace Socneto.Domain.Models
         public int ResultPage { get; set; }
     }
 
+    public class GetFrequencyAnalysisStorageRequest
+    {
+        [JsonProperty("jobId")]
+        public Guid JobId { get; set; }
+
+        [JsonProperty("type")] 
+        public AnalysisType Type { get; } = AnalysisType.PostAggregation;
+
+        [JsonProperty("resultRequestType")]
+        public AnalysisResultType ResultType { get; set; }
+    }
+
     public class AnalysisRequestProperty
     {
         [JsonProperty("resultName")]
@@ -62,6 +74,9 @@ namespace Socneto.Domain.Models
     [JsonConverter(typeof(StringEnumConverter))]
     public enum AnalysisType
     {
+        [EnumMember(Value = "POST_AGGREGATION")]
+        PostAggregation,
+        
         [EnumMember(Value = "AGGREGATION")]
         Aggregation,
         
@@ -72,16 +87,25 @@ namespace Socneto.Domain.Models
     [JsonConverter(typeof(StringEnumConverter))]
     public enum AnalysisResultType
     {
-        [EnumMember(Value = "MAP_SUM")]
-        MapSum,
+        [EnumMember(Value = "COUNT_PER_TIME")]
+        CountPerTime,
         
-        [EnumMember(Value = "LIST_COUNT")]
-        ListCount,
+        [EnumMember(Value = "COUNT_PER_LANGUAGE")]
+        CountPerLanguage,
+        
+        [EnumMember(Value = "COUNT_PER_AUTHOR")]
+        CountPerAuthor,
         
         [EnumMember(Value = "LIST_WITH_TIME")]
         ListWithTime,
         
         [EnumMember(Value = "LIST")]
-        List
+        List,
+        
+        [EnumMember(Value = "MAP_SUM")]
+        MapSum,
+        
+        [EnumMember(Value = "LIST_COUNT")]
+        ListCount,
     }
 }
