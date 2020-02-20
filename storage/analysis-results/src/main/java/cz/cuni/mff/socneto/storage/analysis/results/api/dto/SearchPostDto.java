@@ -18,5 +18,7 @@ public class SearchPostDto {
     private String originalId;
     private String text;
     private String originalText;
+    private String authorId;
+    private String language;
     private Date datetime;
 }

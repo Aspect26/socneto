@@ -24,6 +24,10 @@ public class SearchPost {
     private String text;
     @Field(type = FieldType.Text)
     private String originalText;
+    @Field(type = FieldType.Keyword)
+    private String authorId;
+    @Field(type = FieldType.Keyword)
+    private String language;
     @Field(type = FieldType.Date)
     private Date datetime;
 }
