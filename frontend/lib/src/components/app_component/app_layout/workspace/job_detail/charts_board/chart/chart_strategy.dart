@@ -132,7 +132,7 @@ class PostsFrequencyStrategy implements ChartStrategy {
     for (var dataPointValue in currentPieData) {
       var postsTime = DateTime.parse(dataPointValue[0]).toIso8601String();
       var postsCount = dataPointValue[1];
-      this._chartData.last.add({'date': postsTime, 'count': postsCount});
+      this._chartData.last.add({'x': postsTime, 'y': postsCount});
     }
   }
 

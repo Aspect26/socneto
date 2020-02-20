@@ -1,13 +1,3 @@
-class PostsFrequencyAnalysisRequest {
-  final String jobId;
-
-  PostsFrequencyAnalysisRequest(this.jobId);
-
-  Map<String, dynamic> toMap() => {
-    "job_id": this.jobId
-  };
-}
-
 class ArrayAnalysisRequest {
   final String analyserId;
   final List<String> analysisProperties;
