@@ -190,12 +190,15 @@ class SocnetoMockDataService extends SocnetoDataService {
     } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar) {
       return Future.value(Tuple2([
         [
-          [" ", 68],
+          ["Some reeaaally long text", 68],
           ["footbal", 53],
           ["hockey", 23],
           ["  ", 25],
           ["rugby", 8],
           ["volleyball", 12],
+          ["another loooongs teeeext", 55],
+          ["Lorem ipsun loooooool", 25],
+          ["loreum ipssuuuunen askjdap", 64]
         ]
       ], 3));
     } else if (chartDefinition.chartType == ChartType.LanguageFrequency) {
