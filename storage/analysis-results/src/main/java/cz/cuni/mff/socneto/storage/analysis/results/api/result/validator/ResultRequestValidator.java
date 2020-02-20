@@ -3,6 +3,7 @@ package cz.cuni.mff.socneto.storage.analysis.results.api.result.validator;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.AggregationResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.ListParamsResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.ListResultRequest;
+import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.PostAggregationResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.ResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.api.result.request.SingleResultRequest;
 import cz.cuni.mff.socneto.storage.analysis.results.service.result.ResultRequestDtoVisitor;
@@ -32,8 +33,15 @@ public class ResultRequestValidator implements ResultRequestDtoVisitor<Void> {
 
     @Override
     public Void requestResults(AggregationResultRequest resultRequest) {
-        notNullOrEmpty("jobId", resultRequest.getJobId());
+        validateBase(resultRequest);
         validateParams(resultRequest.getParams());
+        return null;
+    }
+
+    @Override
+    public Void requestResults(PostAggregationResultRequest resultRequest) {
+        notNullOrEmpty("jobId", resultRequest.getJobId());
+        notNullOrEmpty("resultRequestType", resultRequest.getResultRequestType());
         return null;
     }
 

@@ -40,9 +40,6 @@ public class AnalysisResultsConfiguration {
     @Value("${elasticsearch.port}")
     private int port;
 
-    @Value("${elasticsearch.wait.millis}")
-    private int wait;
-
     @Bean
     public TransportClient client() throws UnknownHostException {
         return new PreBuiltTransportClient(Settings.builder().put("cluster.name", "docker-cluster").build())

@@ -41,20 +41,6 @@ public class AggregationsService {
 
     private final ElasticsearchOperations elasticsearchOperations;
 
-    public Map<Date, Long> coutInTime(UUID jobId) {
-        var filter = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("jobId", jobId.toString()));
-
-        var aggregation = AggregationBuilders.dateHistogram("date").dateHistogramInterval(DateHistogramInterval.HOUR).field("datetime").order(BucketOrder.key(false));
-
-        var query = new NativeSearchQueryBuilder().withQuery(filter).addAggregation(aggregation).withIndices("analyses").build();
-        var result = (InternalDateHistogram) elasticsearchOperations.query(query, searchResponse -> searchResponse).getAggregations().get("date");
-
-        return result.getBuckets().stream()
-                .collect(Collectors.toMap(b -> Date.from(Instant.ofEpochMilli(((DateTime) b.getKey()).getMillis())),
-                        InternalDateHistogram.Bucket::getDocCount, (o, n) -> n, LinkedHashMap::new));
-    }
-
     @SuppressWarnings("unchecked")
     public Map<String, Double> mapSum(UUID jobId, String componentId, String resultName, String valueName) {
 
