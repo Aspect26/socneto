@@ -38,6 +38,7 @@ namespace Socneto.Domain.Models
         Line,
         Pie,
         Bar,
+        Table,
         Scatter,
         
         PostsFrequency,

@@ -1,0 +1,28 @@
+table.table-chart {
+    min-width: 300px;
+    height: auto;
+
+    margin: auto;
+    line-height: 2;
+
+    border: 1px solid #f44336;
+    border-collapse: collapse;
+}
+
+.table-chart th {
+    border: 2px solid #f44336;
+    background-color: #faa19b;
+}
+
+.table-chart tr.highlight {
+    background-color: #ffe9e9;
+}
+
+.table-chart tr.no-highlight {
+    background-color: white;
+}
+
+.table-chart td {
+    border: 1px solid #f44336;
+    text-align: center;
+}
