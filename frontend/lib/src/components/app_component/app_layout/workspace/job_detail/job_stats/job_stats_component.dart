@@ -10,6 +10,7 @@ import 'package:sw_project/src/components/app_component/app_layout/workspace/job
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/components/shared/component_select/component_select_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
+import 'package:sw_project/src/models/AnalysisDataPath.dart';
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/models/Job.dart';
 import 'package:sw_project/src/models/JobStatusCode.dart';
@@ -48,8 +49,8 @@ class JobStatsComponent implements OnInit{
 
   final SocnetoService _socnetoService;
   final ChartDefinition postsFrequencyChart = ChartDefinition("Posts frequency", [], ChartType.PostsFrequency, true, id: "dummy1");
-  final ChartDefinition languageFrequencyChart = ChartDefinition("Language frequency", [], ChartType.LanguageFrequency, false, id: "dummy2");
-  final ChartDefinition authorFrequencyChart = ChartDefinition("Author frequency", [], ChartType.AuthorFrequency, false, id: "dummy3");
+  final ChartDefinition languageFrequencyChart = ChartDefinition("Language frequency", [AnalysisDataPath("", "Language")], ChartType.LanguageFrequency, false, id: "dummy2");
+  final ChartDefinition authorFrequencyChart = ChartDefinition("Author frequency", [AnalysisDataPath("", "Author")], ChartType.AuthorFrequency, false, id: "dummy3");
 
   @Input() Job job;
   int postsCount;

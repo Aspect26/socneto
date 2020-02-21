@@ -16,6 +16,11 @@ let Socneto = {
             barChart.create(selector, dataSets, dataLabels);
         },
 
+        createTableChart: function (selector, dataSets, dataLabels) {
+            let tableChart = new TableChart();
+            tableChart.create(selector, dataSets, dataLabels);
+        },
+
         createScatterChart: function (selector, dataSet) {
             let scatterChart = new ScatterChart();
             scatterChart.create(selector, dataSet);

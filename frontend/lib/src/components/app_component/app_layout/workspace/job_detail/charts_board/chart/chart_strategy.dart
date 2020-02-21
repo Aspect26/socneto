@@ -61,10 +61,12 @@ class LineChartStrategy implements ChartStrategy {
 
 abstract class AggregationChartStrategy implements ChartStrategy {
   Map<String, num> chartData = {};
+  ChartDefinition chartDefinition;
 
   @override
   setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet) {
     this.chartData = {};
+    this.chartDefinition = chartDefinition;
 
     var currentPieData = dataSet[0];
     for (var dataPointValue in currentPieData) {
@@ -93,6 +95,16 @@ class BarChartStrategy extends AggregationChartStrategy {
   @override
   redrawChart(String domSelector) {
     SocnetoCharts.createBarChart(domSelector, this.chartData);
+  }
+
+}
+
+class TableChartStrategy extends AggregationChartStrategy {
+
+  @override
+  redrawChart(String domSelector) {
+    var label = chartDefinition.analysisDataPaths[0].property;
+    SocnetoCharts.createTableChart(domSelector, this.chartData, label);
   }
 
 }
