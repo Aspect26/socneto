@@ -120,11 +120,11 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<Post> mockPosts = [
-    Post(null, "asdASd", "asdASd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
-    Post(null, "asdASd", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
-    Post("1", "asdASd", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
-    Post("1233", "asdASd", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
-    Post("153", "asdASd", "asdasd", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post(null, "asdASd", "asdASd", "author 1", "en", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post(null, "asdASd", null, "author 1", "en", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post("1", "asdASd", null, null, "en", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post("1233", "asdASd", null, "author 1", null, DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
+    Post("153", "asdASd", "asdasd", "author 1", "en", DateTime.fromMicrosecondsSinceEpoch(1540000000000000)),
   ];
 
   Future<PlatformStatus> getPlatformStatus() async =>

@@ -80,6 +80,16 @@
             {{ post.originalText }}
         </div>
 
+        <div *ngIf="post.authorId != null && post.authorId.isNotEmpty">
+            <span class="title">Author Identifier:</span>
+            {{ post.authorId }}
+        </div>
+
+        <div *ngIf="post.language != null && post.language.isNotEmpty">
+            <span class="title">Language:</span>
+            {{ post.language }}
+        </div>
+
         <div  *ngIf="post.postedAt != null">
             <span class="title">Posted At:</span>
             {{ post.postedAt }}
