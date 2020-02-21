@@ -5,7 +5,7 @@ namespace Socneto.Domain.Models
 {
     public class Post
     {
-        [JsonProperty("postId")]
+        [JsonProperty("id")]
         public Guid PostId { get; set; }
         
         [JsonProperty("jobId")]
@@ -19,6 +19,12 @@ namespace Socneto.Domain.Models
         
         [JsonProperty("originalText")]
         public string OriginalText { get; set; }
+        
+        [JsonProperty("authorId")]
+        public string AuthorId { get; set; }
+        
+        [JsonProperty("language")]
+        public string Language { get; set; }
         
         [JsonProperty("datetime")]
         public DateTime? PostedAt { get; set; }
