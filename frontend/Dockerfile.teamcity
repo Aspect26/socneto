@@ -5,7 +5,7 @@ ADD ./ /app
 
 WORKDIR "/app"
 RUN rm "./build.yaml"
-RUN mv "./build.analyser.yaml" "./build.yaml"
+RUN mv "./build.teamcity.yaml" "./build.yaml"
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get install --yes nodejs
