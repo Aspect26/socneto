@@ -113,6 +113,24 @@ class CreateChartModalComponent {
         return 2;
       case ChartType.Pie:
       case ChartType.Bar:
+      case ChartType.Table:
+        return 1;
+      case ChartType.Scatter:
+        return 2;
+      case ChartType.LanguageFrequency:
+      case ChartType.PostsFrequency:
+      case ChartType.AuthorFrequency:
+        return 0;
+    }
+  }
+
+  int get maxNumberOfDataPaths {
+    switch (this.chartType) {
+      case ChartType.Line:
+        return 100;
+      case ChartType.Pie:
+      case ChartType.Bar:
+      case ChartType.Table:
         return 1;
       case ChartType.Scatter:
         return 2;
@@ -132,6 +150,7 @@ class CreateChartModalComponent {
         return (index == 0)? "X - Axis" : "Line ${index}";
       case ChartType.Pie:
       case ChartType.Bar:
+      case ChartType.Table:
         return "Analysis property";
       case ChartType.Scatter:
         return index == 0? "X - Axis" : "Y - Axis";
@@ -189,7 +208,8 @@ class CreateChartModalComponent {
 
   bool isDefinitionCorrect() {
     return this.chartTitle != null && this.chartTitle.isNotEmpty && this.chartType != null
-        && (this.dataPaths.length >= this.requiredNumberOfDataPaths);
+        && (this.dataPaths.length >= this.requiredNumberOfDataPaths)
+        && (this.dataPaths.length <= this.maxNumberOfDataPaths);
   }
 
   void _addDefaultDataPaths(int count) {
