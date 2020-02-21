@@ -3,7 +3,7 @@ services:
 
   frontend:
     build:
-      dockerfile: Dockerfile.analyser
+      dockerfile: Dockerfile.teamcity
     ports:
       - 8080:8080
 
@@ -29,7 +29,7 @@ services:
       - kafka
       - jms
     environment:
-      - ASPNETCORE_ENVIRONMENT=Bohm
+      - ASPNETCORE_ENVIRONMENT=Teamcity
 
   twitter-acquirer:
     container_name: tw-acquirer
