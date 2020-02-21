@@ -211,6 +211,16 @@ class SocnetoMockDataService extends SocnetoDataService {
           ["SK", 2],
         ]
       ], 3));
+    } else if (chartDefinition.chartType == ChartType.AuthorFrequency) {
+      return Future.value(Tuple2([
+        [
+          ["author 1", 125],
+          ["author 2", 21],
+          ["author 3", 35],
+          ["  ", 25],
+          ["author 4", 2],
+        ]
+      ], 3));
     } else if (chartDefinition.chartType == ChartType.Scatter) {
       return Future.value(Tuple2([
         [

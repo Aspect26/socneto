@@ -56,6 +56,7 @@ class ChartTypeSelectComponent implements OnInit {
       case ChartType.Line: return "Line";
       case ChartType.Pie: return "Pie";
       case ChartType.Bar: return "Bar";
+      case ChartType.Table: return "Table";
       case ChartType.Scatter: return "Scatter";
       case ChartType.PostsFrequency: return "Posts frequency";
       case ChartType.LanguageFrequency: return "Language frequency";
@@ -73,6 +74,7 @@ class ChartTypeSelectComponent implements OnInit {
       case ChartType.Line: return "line.png";
       case ChartType.Pie: return "pie.png";
       case ChartType.Bar: return "bar.png";
+      case ChartType.Table: return "table.png";
       case ChartType.Scatter: return "scatter.png";
       case ChartType.PostsFrequency: return "line.png";
       case ChartType.LanguageFrequency: return "bar.png";
