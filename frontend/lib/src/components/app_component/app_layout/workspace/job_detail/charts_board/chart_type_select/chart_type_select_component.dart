@@ -34,7 +34,7 @@ import 'package:sw_project/src/models/ChartDefinition.dart';
 class ChartTypeSelectComponent implements OnInit {
 
   final String _iconsLocation = "packages/sw_project/static/images/charts";
-  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Bar, ChartType.Pie, ChartType.Scatter];
+  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Table, ChartType.Bar, ChartType.Pie, ChartType.Scatter];
 
   final _changeController = StreamController<ChartType>();
   @Output() Stream<ChartType> get change => _changeController.stream;
