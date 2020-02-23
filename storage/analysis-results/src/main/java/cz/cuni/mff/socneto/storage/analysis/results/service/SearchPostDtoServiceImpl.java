@@ -80,6 +80,9 @@ public class SearchPostDtoServiceImpl implements SearchPostDtoService {
                                             .jobId(UUID.fromString((String) hit.get("jobId")))
                                             .text((String) hit.get("text"))
                                             .originalText((String) hit.get("originalText"))
+                                            .originalId((String) hit.get("originalId"))
+                                            .authorId((String) hit.get("authorId"))
+                                            .language((String) hit.get("language"))
                                             .datetime((Date.from(Instant.ofEpochMilli((Long) hit.get("datetime")))))
                                             .build()
                             ).collect(Collectors.toList());
