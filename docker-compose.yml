@@ -38,7 +38,7 @@ services:
       - data02:/var/lib/postgresql/data
 
   elasticsearch:
-    build: './elasticsearch'
+    build: './storage/docker/elasticsearch'
     container_name: elasticsearch
     environment:
       - bootstrap.memory_lock=true
