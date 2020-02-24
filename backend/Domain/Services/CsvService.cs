@@ -62,7 +62,7 @@ namespace Socneto.Domain.Services
         {
             if (property == null) return string.Empty;
             
-            var itemPropertyValueString = property.ToString();
+            var itemPropertyValueString = (property is DateTime time)? time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") : property.ToString();
 
             if (itemPropertyValueString.Contains(_delimiter))
             {
