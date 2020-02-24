@@ -114,7 +114,8 @@ namespace Domain.JobManagement
             try
             {
                 var translate = jobConfig.Attributes.TryGetValue("Translate",out string value) 
-                    && value.ToLower() == "true";
+                    //&& value.ToLower() == "true"
+                    ;
                 // TODO validate job config
                 if (!jobConfig.Attributes.ContainsKey("TopicQuery"))
                 {
