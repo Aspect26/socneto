@@ -51,10 +51,10 @@ def analyse(text):
     polarity, confidence = analysis.get_text_sentiment(text)
     return {
         "polarity": {
-            "numberValue": polarity
+            "numberValue": int(polarity)
         },
         "accuracy": {
-            "numberValue": confidence
+            "numberValue": float(confidence)
         }
     }
 
@@ -70,7 +70,8 @@ def process_acquired_data(config, producer):
                     # validate that message is unipost
                     payload = msg.value
                     logger.info("received {}".format(payload))
-                    post = json.loads(payload)
+                    payload_string = payload.decode("utf-8")
+                    post = json.loads(payload_string)
                     text = post["text"]
                     analysis = analyse(text)
                     result = {
