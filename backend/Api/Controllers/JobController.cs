@@ -244,6 +244,7 @@ namespace Socneto.Api.Controllers
             }
 
             var analysisResult = await _getAnalysisService.GetAuthorFrequency(jobId);
+            analysisResult.MapResult.Remove("0"); // Artificial author id for posts, where no author is defined
             var analysisResponse = AggregationAnalysisResponse.FromModel(analysisResult);
         
             return Ok(analysisResponse);
