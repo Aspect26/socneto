@@ -97,7 +97,7 @@ namespace Socneto.Domain.Services
         private async Task<ArrayAnalysisResult> GetListWithTimeAnalysis(Guid jobId, string analyserId, 
             string[] analysisProperties, int resultSize, int page)
         {
-            if (analysisProperties.Length < 2) 
+            if (analysisProperties.Length < 1) 
                 throw new GetAnalysisException(analyserId, "", "List with time analysis request requires at least one analysis property");
             
             var analyses = new List<TimeArrayAnalysisResult>();
@@ -244,7 +244,7 @@ namespace Socneto.Domain.Services
             }
 
             private static string GetErrorMessage(string analyserId, string analysisProperty, string message) =>
-                $"Error retrieving analyses from analyser {analyserId}, for property {analysisProperty}: {message}";
+                $"Error retrieving analyses from analyser '{analyserId}', for property '{analysisProperty}': {message}";
         }
         
     }
