@@ -116,6 +116,11 @@ namespace Socneto.Domain.Services
             return await _httpService.Get<List<SocnetoComponent>>($"components?type=DATA_ACQUIRER");
         }
 
+        public async Task<AggregationAnalysisResult> GetFrequencyAggregation(GetFrequencyAnalysisStorageRequest getAnalysisRequest)
+        {
+            return await _httpService.Post<AggregationAnalysisResult>($"results", getAnalysisRequest);
+        }
+        
         public async Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest)
         {
             return await _httpService.Post<AggregationAnalysisResult>($"results", getAnalysisRequest);

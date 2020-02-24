@@ -52,6 +52,7 @@ class ChartComponent implements AfterChanges {
   @Input() ChartDefinition chartDefinition;
   @Input() String jobId;
   @Input() String chartId;
+  @Input() bool removable = true;
 
   ChartStrategy _chartStrategy;
   List<List<List<dynamic>>> chartData = [];
@@ -110,8 +111,16 @@ class ChartComponent implements AfterChanges {
         this._chartStrategy = LineChartStrategy(); break;
       case ChartType.Pie:
         this._chartStrategy = PieChartStrategy(); break;
+      case ChartType.Bar:
+        this._chartStrategy = BarChartStrategy(); break;
+      case ChartType.Table:
+      case ChartType.LanguageFrequency:
+      case ChartType.AuthorFrequency:
+        this._chartStrategy = TableChartStrategy(); break;
       case ChartType.Scatter:
         this._chartStrategy = ScatterChartStrategy(); break;
+      case ChartType.PostsFrequency:
+        this._chartStrategy = PostsFrequencyStrategy(); break;
     }
   }
 

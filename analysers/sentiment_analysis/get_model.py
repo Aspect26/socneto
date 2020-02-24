@@ -5,7 +5,7 @@ import sys
 import os.path
 from os import path
 
-client = Minio('acheron.ms.mff.cuni.cz:39107',
+client = Minio('acheron.ms.mff.cuni.cz:39111',
                access_key='socnetoadmin',
                secret_key='Tajn0Heslo',
                secure = False)

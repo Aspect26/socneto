@@ -36,6 +36,8 @@ public class PostReceiver {
         searchPost.setOriginalId(postMessage.getOriginalPostId());
         searchPost.setText(postMessage.getText());
         searchPost.setOriginalText(postMessage.getOriginalText());
+        searchPost.setAuthorId(postMessage.getAuthorId());
+        searchPost.setLanguage(postMessage.getLanguage());
         searchPost.setDatetime(postMessage.getDateTime());
 
         searchPostDtoService.create(searchPost);

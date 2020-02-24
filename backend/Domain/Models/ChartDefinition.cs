@@ -37,6 +37,12 @@ namespace Socneto.Domain.Models
     {
         Line,
         Pie,
-        Scatter
+        Bar,
+        Table,
+        Scatter,
+        
+        PostsFrequency,
+        LanguageFrequency,
+        AuthorFrequency
     }
 }

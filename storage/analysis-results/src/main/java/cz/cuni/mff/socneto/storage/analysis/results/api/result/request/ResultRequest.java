@@ -15,6 +15,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(value = SingleResultRequest.class, name = "SINGLE"),
         @JsonSubTypes.Type(value = ListResultRequest.class, name = "LIST"),
         @JsonSubTypes.Type(value = AggregationResultRequest.class, name = "AGGREGATION"),
+        @JsonSubTypes.Type(value = PostAggregationResultRequest.class, name = "POST_AGGREGATION"),
 })
 @Getter
 public abstract class ResultRequest {

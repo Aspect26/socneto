@@ -1,0 +1,36 @@
+version: '3'
+services:
+
+  frontend:
+    build:
+      dockerfile: Dockerfile.coordinator
+    ports:
+     - 6007:6007
+
+  topic-modelling-analyser:
+    container_name: tma
+    build: './analysers/topic_modeling'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+
+  twitter-static-acquirer:
+    container_name: tw-static-acquirer
+    build:
+      context: './acquisition/DataAcquirer'
+      dockerfile: 'Dockerfile.custom'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Coordinator
+
+  twitter-acquirer:
+    container_name: tw-acquirer
+    build: './acquisition/DataAcquirer'
+    restart: always
+    depends_on:
+      - kafka
+      - jms

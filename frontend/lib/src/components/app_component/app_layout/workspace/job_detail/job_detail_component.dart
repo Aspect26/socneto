@@ -8,6 +8,7 @@ import 'package:angular_components/material_list/material_list_item.dart';
 import 'package:angular_components/material_select/material_select_item.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/charts_board/charts_board_component.dart';
+import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/job_stats/job_stats_component.dart';
 import 'package:sw_project/src/components/app_component/app_layout/workspace/job_detail/posts_list/posts_list_component.dart';
 import 'package:sw_project/src/interop/toastr.dart';
 import 'package:sw_project/src/models/Job.dart';
@@ -28,8 +29,9 @@ import 'package:sw_project/src/services/socneto_service.dart';
     MaterialSelectItemComponent,
     MaterialTabPanelComponent,
     MaterialTabComponent,
-    PostsListComponent,
     ChartsBoardComponent,
+    PostsListComponent,
+    JobStatsComponent,
     NgFor,
     NgIf,
   ],
@@ -40,6 +42,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
   ],
 )
 class JobDetailComponent implements OnActivate {
+
+  @ViewChild(ChartsBoardComponent) ChartsBoardComponent chartsBoardComponent;
 
   final Router _router;
   final SocnetoService _socnetoService;
@@ -53,6 +57,12 @@ class JobDetailComponent implements OnActivate {
     final parameters = routerState.parameters;
     final jobId = parameters[RouteParams.jobDetailJobId];
     this._setJob(jobId);
+  }
+
+  void onTabChange(TabChangeEvent event) {
+    if (event.newIndex == 1) {
+      this.chartsBoardComponent.refreshCharts();
+    }
   }
 
   void _setJob(String jobId) async {
