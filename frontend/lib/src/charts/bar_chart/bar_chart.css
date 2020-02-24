@@ -1,0 +1,17 @@
+.bar-chart .grid.y {
+    color: lightgray;
+    shape-rendering: crispEdges;
+    stroke-dasharray: 3;
+}
+
+.bar-chart .grid.y path {
+    visibility: hidden;
+}
+
+.bar-chart .axis.y path {
+    visibility: hidden;
+}
+
+.bar-chart g.tick text {
+    transform: rotate(7deg);
+}

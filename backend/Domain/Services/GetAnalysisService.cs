@@ -22,6 +22,39 @@ namespace Socneto.Domain.Services
             _storageService = storageService;
             _eventTracker = eventTracker;
         }
+
+        public async Task<AggregationAnalysisResult> GetPostsFrequency(Guid jobId)
+        {
+            var storageRequest = new GetFrequencyAnalysisStorageRequest
+            {
+                JobId = jobId,
+                ResultType = AnalysisResultType.CountPerTime
+            };
+            
+            return await _storageService.GetFrequencyAggregation(storageRequest);
+        }
+        
+        public async Task<AggregationAnalysisResult> GetLanguageFrequency(Guid jobId)
+        {
+            var storageRequest = new GetFrequencyAnalysisStorageRequest
+            {
+                JobId = jobId,
+                ResultType = AnalysisResultType.CountPerLanguage
+            };
+            
+            return await _storageService.GetFrequencyAggregation(storageRequest);
+        }
+        
+        public async Task<AggregationAnalysisResult> GetAuthorFrequency(Guid jobId)
+        {
+            var storageRequest = new GetFrequencyAnalysisStorageRequest
+            {
+                JobId = jobId,
+                ResultType = AnalysisResultType.CountPerAuthor
+            };
+            
+            return await _storageService.GetFrequencyAggregation(storageRequest);
+        }
         
         public async Task<AggregationAnalysisResult> GetAggregationAnalysis(Guid jobId, string analyserId, string analysisProperty)
         {

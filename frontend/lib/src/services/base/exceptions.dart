@@ -25,6 +25,10 @@ class NotFoundException extends HttpException {
   NotFoundException() : super(404, "Not found");
 }
 
+class MethodNotAllowedException extends HttpException {
+  MethodNotAllowedException() : super(405, "Method not allowed");
+}
+
 class InternalServerErrorException extends HttpException {
   InternalServerErrorException() : super(500, "Internal server error");
 }

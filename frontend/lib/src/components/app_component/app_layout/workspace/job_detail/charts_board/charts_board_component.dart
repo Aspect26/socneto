@@ -41,6 +41,8 @@ import 'package:sw_project/src/services/socneto_service.dart';
 )
 class ChartsBoardComponent implements AfterChanges {
 
+  @ViewChildren(ChartComponent) List<ChartComponent> charts;
+
   @Input() Job job;
 
   List<ChartDefinition> chartDefinitions = [];
@@ -56,6 +58,12 @@ class ChartsBoardComponent implements AfterChanges {
     } on HttpException {
       Toastr.error("Charts", "Could not fetch charts for this job");
     }
+  }
+
+  void refreshCharts() {
+    this.charts.forEach((chart) {
+      chart.onRefresh();
+    });
   }
 
   void onNewChartCreated(ChartDefinition chartDefinition) async =>

@@ -14,7 +14,7 @@ class PieChart {
     _ELEMENT_HEIGHT = 700;
     _CHART_PADDING_VERTICAL = 20;
     _CHART_PADDING_HORIZONTAL = 10;
-    _LABELS_MIDDLE_OFFSET = 1.2;
+    _LABELS_MIDDLE_OFFSET = 2.0;
 
     create(selector, dataSet) {
         this._removeOld(selector);
@@ -26,7 +26,7 @@ class PieChart {
         let elementWidth = element.clientWidth;
         let chartWidth = elementWidth - this._CHART_PADDING_HORIZONTAL;
         let chartHeight = this._ELEMENT_HEIGHT - this._CHART_PADDING_VERTICAL;
-        let radius = Math.min(chartWidth, chartHeight) / 2;
+        let radius = Math.min(chartWidth, chartHeight) / 2 - 65;
         let totalSum = Object.values(dataSet).reduce((t, n) => t + n, 0);
 
         let svg = this._createSvg(selector, chartWidth, this._ELEMENT_HEIGHT);
@@ -88,11 +88,24 @@ class PieChart {
         let slices = svg.select(".slices").selectAll("path.slice");
         slices
             .on('mouseover', (_, hoveredElementIndex) => {
+                let labels = svg.select(".labels").selectAll("text");
+                let polylines = svg.select(".labels").selectAll("polyline");
+
                 slices.transition().style("opacity", 0.5);
+                polylines.transition().style("opacity", 0.5);
+                labels.transition().style("opacity", 0.3);
+
                 d3.select(slices.nodes()[hoveredElementIndex]).transition().style("opacity", 1);
+                d3.select(labels.nodes()[hoveredElementIndex]).transition().style("opacity", 1);
+                d3.select(polylines.nodes()[hoveredElementIndex]).transition().style("opacity", 1);
             })
             .on('mouseout', (d, i) => {
+                let labels = svg.select(".labels").selectAll("text");
+                let polylines = svg.select(".labels").selectAll("polyline");
+
                 slices.transition().style("opacity", 1.0);
+                labels.transition().style("opacity", 1.0);
+                polylines.transition().style("opacity", 1.0);
             });
     }
 
@@ -118,7 +131,12 @@ class PieChart {
             .text(d => ((d.data.value / dataTotalSum) * 100).toFixed(1) + "% (" + d.data.value + ")")
             .attr("class", "value")
             .attr("x", 0)
-            .attr("y", "0.7em")
+            .attr("y", "0.7em");
+
+        let labelLines = svg.select(".labels").selectAll("polyline").data(pieData);
+        labelLines.enter()
+            .append("polyline")
+            .attr("points", (d) => [pieArc.centroid(d).map(d => d * textOffsetMiddle * 0.7), pieArc.centroid(d).map(d => d * textOffsetMiddle * 0.92)]);
     }
 
 }

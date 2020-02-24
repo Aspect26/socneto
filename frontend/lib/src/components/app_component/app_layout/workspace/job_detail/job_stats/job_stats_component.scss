@@ -1,0 +1,29 @@
+@import "package:sw_project/src/style/style.scss";
+@import "package:sw_project/src/style/theming/theming.scss";
+
+
+@mixin job-stats-component($theme) {
+
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+
+  job-stats {
+
+    section {
+      &.background-highlight {
+        background-color: get-color($primary, A200);
+      }
+
+      &.stats {
+        padding: 20px;
+        border-bottom: get-color($primary) 1px solid;
+
+        span.highlight {
+          color: get-color($primary);
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+
+}

@@ -33,6 +33,8 @@ namespace Socneto.Domain.Services
 
         Task<IList<SocnetoComponent>> GetAcquirers();
 
+        Task<AggregationAnalysisResult> GetFrequencyAggregation(GetFrequencyAnalysisStorageRequest getAnalysisRequest);
+        
         Task<AggregationAnalysisResult> GetAnalysisAggregation(GetAggregationAnalysisStorageRequest getAnalysisRequest);
 
         Task<ArrayAnalysisResult> GetAnalysisArray(GetArrayAnalysisStorageRequest getAnalysisStorageRequest);
