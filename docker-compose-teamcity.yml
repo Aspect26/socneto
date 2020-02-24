@@ -19,6 +19,14 @@ services:
       - kafka
       - jms
 
+  sentiment-analyser:
+    container_name: se
+    build: './analysers/sentiment_analysis'
+    restart: always
+    depends_on:
+      - kafka
+      - jms
+
   twitter-static-acquirer:
     container_name: tw-static-acquirer
     build:
