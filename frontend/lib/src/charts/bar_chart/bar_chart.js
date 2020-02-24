@@ -13,7 +13,7 @@ class BarChart {
 
     _ELEMENT_HEIGHT = 400;
     _CHART_PADDING_VERTICAL = 30;
-    _CHART_PADDING_HORIZONTAL = 30;
+    _CHART_PADDING_HORIZONTAL = 100;
     _MAX_BAR_WIDTH = 70;
 
     create(selector, dataSet) {
