@@ -83,6 +83,7 @@ namespace Api
                     await registration.Register(registrationRequest);
                     logger.LogInformation("Service {serviceName} register request sent", "DataAcquisitionService");
                     await Task.Delay(TimeSpan.FromMinutes(.5));
+                    await registration.Register(registrationRequest);
                     break;
                 }
                 catch (Exception e)
