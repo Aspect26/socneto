@@ -79,8 +79,8 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<SocnetoAnalyser> mockAnalysers = [
-    SocnetoAnalyser("sentiment", ComponentType.DATA_ANALYSER, [AnalysisProperty("polarity", AnalysisPropertyType.numberValue), AnalysisProperty("accuracy", AnalysisPropertyType.numberValue)]),
-    SocnetoAnalyser("keywords", ComponentType.DATA_ANALYSER, [AnalysisProperty("most", AnalysisPropertyType.textListValue)]),
+    SocnetoAnalyser("sentiment", ComponentType.DATA_ANALYSER, [AnalysisProperty("polarity", AnalysisPropertyType.numberValue), AnalysisProperty("accuracy", AnalysisPropertyType.numberValue), AnalysisProperty("topics", AnalysisPropertyType.textListValue)]),
+    SocnetoAnalyser("topics", ComponentType.DATA_ANALYSER, [AnalysisProperty("topics", AnalysisPropertyType.textListValue)]),
     SocnetoAnalyser("magic", ComponentType.DATA_ANALYSER, [AnalysisProperty("m", AnalysisPropertyType.numberListValue)]),
   ];
 
