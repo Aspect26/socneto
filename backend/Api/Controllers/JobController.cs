@@ -148,7 +148,7 @@ namespace Socneto.Api.Controllers
             }
 
             var (posts, postsCount) = await _jobService.GetJobPosts(jobId, containsWords, excludeWords, from, to, page, pageSize);
-            var maxPage = (postsCount - 1) / pageSize + 1;
+            var maxPage = Math.Max(1, (postsCount - 1) / pageSize + 1);
             if (page > maxPage)
             {
                 page = maxPage;
