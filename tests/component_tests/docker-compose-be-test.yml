@@ -1,0 +1,71 @@
+version: '3'
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper'
+    restart: always
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: 'bitnami/kafka'
+    restart: always
+    ports:
+      - 9094:9094
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://kafka:9094
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
+
+  db:
+    image: "postgres"
+    container_name: storagedb
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=storagedb
+    ports:
+      - "5432:5432"
+
+  elasticsearch:
+    build: '../../storage/docker/elasticsearch'
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  storage:
+    build: '../../storage'
+    ports:
+      - '8888:8888'
+    container_name: storageservice
+    depends_on:
+      - kafka
+      - db
+      - elasticsearch
+
+  jms:
+    build: '../../job-management'
+    ports:
+      - '6009:6009'
+    container_name: jms
+    depends_on:
+      - storage
+      - kafka
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
