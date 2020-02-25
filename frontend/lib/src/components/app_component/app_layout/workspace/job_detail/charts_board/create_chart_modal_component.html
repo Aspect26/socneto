@@ -31,13 +31,15 @@
                     <material-dropdown-select class="analyser-select"
                                               buttonText="{{ dataPath.analyserId }}"
                                               [disabled]="useTimeAsX && first"
+                                              [deselectOnActivate]="false"
                                               [options]="analyserIds"
-                                              [(selection)]="dataPath.analyserId">
+                                              (selectionChange)="onAnalyserChanged(dataPath, $event)">
                     </material-dropdown-select>
 
                     <material-dropdown-select class="property-select"
                                               buttonText="{{ dataPath.property }}"
                                               [disabled]="useTimeAsX && first"
+                                              [deselectOnActivate]="false"
                                               [(selection)]="dataPath.property"
                                               [options]="getAnalyserProperties(dataPath.analyserId)">
                     </material-dropdown-select>
@@ -50,7 +52,7 @@
             </div>
 
             <div>
-                <material-button *ngIf="chartType != scatterChartType && dataPaths.length <= maxNumberOfDataPaths" icon (trigger)="onAddDataPath()">
+                <material-button *ngIf="chartType != scatterChartType && dataPaths.length < maxNumberOfDataPaths" icon (trigger)="onAddDataPath()">
                     <material-icon icon="add"></material-icon>
                 </material-button>
             </div>

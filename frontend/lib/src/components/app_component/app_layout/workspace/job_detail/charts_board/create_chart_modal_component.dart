@@ -71,7 +71,32 @@ class CreateChartModalComponent {
     this.loadAnalyzers();
   }
 
-  List<String> get analyserIds => this.analysers?.map((analyser) => analyser.identifier)?.toList() ?? [];
+  List<String> get analyserIds =>
+    this.analysers
+        ?.where((availableAnalyzer) => availableAnalyzer.properties.where((analysisProperty) => this.isPropertyAllowed(analysisProperty.type)).isNotEmpty)
+        ?.map((allowedAnalyzer) => allowedAnalyzer.identifier)?.toList() ?? [];
+
+  bool isPropertyAllowed(AnalysisPropertyType propertyType) {
+    switch (this.chartType) {
+      case ChartType.Line:
+      case ChartType.Scatter:
+        return propertyType == AnalysisPropertyType.numberValue;
+
+      case ChartType.Pie:
+      case ChartType.Bar:
+      case ChartType.Table:
+        return propertyType == AnalysisPropertyType.numberListValue
+            || propertyType == AnalysisPropertyType.textListValue
+            || propertyType == AnalysisPropertyType.numberMapValue
+            || propertyType == AnalysisPropertyType.textMapValue;
+
+      case ChartType.PostsFrequency:
+      case ChartType.LanguageFrequency:
+      case ChartType.AuthorFrequency:
+        return false;
+    }
+  }
+
 
   void loadAnalyzers() async {
     // TODO: this should ask for analyzers of the selected job
@@ -163,7 +188,9 @@ class CreateChartModalComponent {
 
   List<String> getAnalyserProperties(String analyserId) {
     var analyser = this.analysers.firstWhere((analyser) => analyser.identifier == analyserId, orElse: () => null);
-    return analyser?.properties?.map((analyserProperty) => analyserProperty.name)?.toList() ?? [];
+    return analyser?.properties
+        ?.where((analyserProperty) => this.isPropertyAllowed(analyserProperty.type))
+        ?.map((analyserProperty) => analyserProperty.name)?.toList() ?? [];
   }
 
   void onUseTimeAsXChange(bool checked) {
@@ -172,6 +199,14 @@ class CreateChartModalComponent {
 
   void onRemoveDataPath(AnalysisDataPath dataPath) {
     this.dataPaths.remove(dataPath);
+  }
+
+  void onAnalyserChanged(AnalysisDataPath dataPath, String analyserId) {
+    dataPath.analyserId = analyserId;
+
+    var analyser = this.analysers.firstWhere((analyser) => analyser.identifier == analyserId);
+    var property = analyser.properties.firstWhere((analyserProperty) => this.isPropertyAllowed(analyserProperty.type));
+    dataPath.property = property.name;
   }
 
   void onChartTypeSelected(ChartType chartType) {
