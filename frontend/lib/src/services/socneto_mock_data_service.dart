@@ -163,15 +163,27 @@ class SocnetoMockDataService extends SocnetoDataService {
     } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar) {
       return Future.value(Tuple2([
         [
-          ["Some reeaaally long text", 68],
-          ["footbal", 53],
-          ["hockey", 23],
-          ["  ", 25],
-          ["rugby", 8],
-          ["volleyball", 12],
-          ["another loooongs teeeext", 55],
-          ["Lorem ipsun loooooool", 25],
-          ["loreum ipssuuuunen askjdap", 64]
+          ["Some reeaaally long text", 1800],
+          ["footbal", 1300],
+          ["hockey", 1300],
+          ["  ", 1500],
+          ["rugby", 800],
+          ["volleyball", 1200],
+          ["another loooongs teeeext", 5500],
+          ["Lorem ipsun loooooool", 2500],
+          ["loreum ipssuuuunen askjdap", 6400],
+          ["loreum ipssuuuunen askjdapa", 6400],
+          ["loreum ipssuuuunen askjdapb", 6400],
+          ["loreum ipssuuuunen askjdapc", 6400],
+          ["loreum ipssuuuunen askjdapd", 6400],
+          ["loreum ipssuuuunen askjdape", 6400],
+          ["loreum ipssuuuunen askjdapf", 6400],
+          ["loreum ipssuuuunen askjdapg", 6400],
+          ["loreum ipssuuuunen askjdaph", 6400],
+          ["loreum ipssuuuunen askjdapi", 6400],
+          ["loreum ipssuuuunen askjdapj", 6400],
+          ["loreum ipssuuuunen askjdapk", 6400],
+          ["loreum ipssuuuunen askjdapl", 6400]
         ]
       ], 3));
     } else if (chartDefinition.chartType == ChartType.LanguageFrequency) {
