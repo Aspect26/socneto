@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
+using Socneto.Domain.Models.Storage.Request;
+using Socneto.Domain.Models.Storage.Response;
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
 
@@ -79,7 +81,7 @@ namespace Socneto.Domain.Services
         public async Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, 
             string[] forbiddenWords, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
-            var body = new PostsStorageRequest
+            var body = new PostsRequest
             {
                 JobId = jobId,
                 AllowedWords = allowedWords,
