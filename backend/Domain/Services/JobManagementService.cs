@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
+using Socneto.Domain.Models.JMS.Response;
 
 namespace Socneto.Domain.Services
 {
@@ -53,7 +54,7 @@ namespace Socneto.Domain.Services
         {
             try
             {
-                var hello = await _httpService.Get<JMSHello>("api/test/say-hello");
+                var hello = await _httpService.Get<JmsHelloResponse>("api/test/say-hello");
                 return hello.Message == "hello";
             }
             catch (ServiceUnavailableException)
