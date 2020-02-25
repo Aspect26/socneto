@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
-
+using Socneto.Domain.Models.Storage.Request;
+using Socneto.Domain.Models.Storage.Response;
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
 
