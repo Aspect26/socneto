@@ -8,7 +8,7 @@ namespace Socneto.Api.Authentication
     {
         public Task<bool> Authenticate(string username, string password)
         {
-            return Task.FromResult(username == "admin" && password == "admin");
+            return Task.FromResult(!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
         }
     }
 }

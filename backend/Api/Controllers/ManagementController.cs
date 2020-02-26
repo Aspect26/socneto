@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Socneto.Api.Models;
+using Socneto.Api.Models.Requests;
+using Socneto.Api.Models.Responses;
 using Socneto.Domain;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;

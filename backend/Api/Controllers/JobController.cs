@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Socneto.Api.Models;
+using Socneto.Api.Models.Requests;
+using Socneto.Api.Models.Responses;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
+using Socneto.Domain.Models.Storage.Response;
 using Socneto.Domain.Services;
 using IAuthorizationService = Socneto.Domain.Services.IAuthorizationService;
 

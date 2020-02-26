@@ -73,8 +73,8 @@ class SocnetoDataService extends HttpServiceBasicAuthBase {
     if (chartDefinition.chartType == ChartType.PostsFrequency) {
       return await this._getPostsFrequencyChartData(jobId);
     } else if (chartDefinition.chartType == ChartType.Pie || chartDefinition.chartType == ChartType.Bar
-        || chartDefinition.chartType == ChartType.Table || chartDefinition.chartType == ChartType.LanguageFrequency
-        || chartDefinition.chartType == ChartType.AuthorFrequency) {
+        || chartDefinition.chartType == ChartType.Table || chartDefinition.chartType == ChartType.WordCloud
+        || chartDefinition.chartType == ChartType.LanguageFrequency || chartDefinition.chartType == ChartType.AuthorFrequency) {
       var propertyName = propertyNames.isNotEmpty? propertyNames[0] : "";
       return await this._getAggregatedChartData(jobId, analyserId, propertyName, chartDefinition.chartType);
     } else {
