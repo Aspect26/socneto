@@ -109,6 +109,15 @@ class TableChartStrategy extends AggregationChartStrategy {
 
 }
 
+class WordCloudChartStrategy extends AggregationChartStrategy {
+
+  @override
+  redrawChart(String domSelector) {
+    SocnetoCharts.createWordCloudChart(domSelector, this.chartData);
+  }
+
+}
+
 class ScatterChartStrategy implements ChartStrategy {
 
   List<Map<String, num>> _chartData = [];

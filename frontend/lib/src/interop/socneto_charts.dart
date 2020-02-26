@@ -8,6 +8,7 @@ typedef LineChartFn = Function(String selector, List dataSets, List dataLabels, 
 typedef PieChartFn = Function(String selector, dynamic dataSet);
 typedef BarChartFn = Function(String selector, dynamic dataSet);
 typedef TableChartFn = Function(String selector, dynamic dataSet, String label);
+typedef WordCloudChartFn = Function(String selector, dynamic dataSet);
 typedef ScatterChartFn = Function(String selector, dynamic dataSet);
 
 @JS()
@@ -16,6 +17,7 @@ class ChartsInterface {
   @JS() external PieChartFn get createPieChart;
   @JS() external BarChartFn get createBarChart;
   @JS() external TableChartFn get createTableChart;
+  @JS() external WordCloudChartFn get createWordCloudChart;
   @JS() external ScatterChartFn get createScatterChart;
 }
 
@@ -46,6 +48,11 @@ class SocnetoCharts {
   static void createTableChart(String selector, Map<String, num> dataSet, String label) {
     var jsData = _mapToJsObject(dataSet);
     charts.createTableChart(selector, jsData, label);
+  }
+
+  static void createWordCloudChart(String selector, Map<String, num> dataSet) {
+    var jsData = _mapToJsObject(dataSet);
+    charts.createWordCloudChart(selector, jsData);
   }
 
   static void createScatterChart(String selector, List<Map<String, num>> dataSet) {

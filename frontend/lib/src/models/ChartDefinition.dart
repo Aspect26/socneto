@@ -23,6 +23,7 @@ enum ChartType {
   Pie,
   Bar,
   Table,
+  WordCloud,
   Scatter,
 
   PostsFrequency,

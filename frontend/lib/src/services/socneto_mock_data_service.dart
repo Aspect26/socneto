@@ -85,6 +85,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
+    ChartDefinition("Chart 0", [AnalysisDataPath("componentId", "topics"), AnalysisDataPath("componentId", "topics")], ChartType.WordCloud, false),
     ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true, id: "asd"),
     ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
     ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
@@ -185,7 +186,32 @@ class SocnetoMockDataService extends SocnetoDataService {
           ["loreum ipssuuuunen askjdapk", 6400],
           ["loreum ipssuuuunen askjdapl", 6400]
         ]
-      ], 3));
+      ], 20));
+    } else if (chartDefinition.chartType == ChartType.WordCloud) {
+      return Future.value(Tuple2([
+        [
+          ["Black Sabbath", 1800],
+          ["Iron Maiden", 1300],
+          ["Metallica", 1300],
+          ["AC/DC", 800],
+          ["Led Zeppelin", 1200],
+          ["Jimi Hendrix", 950],
+          ["Guns 'n' Roses", 1200],
+          ["Avantasia", 1000],
+          ["Rammstein", 900],
+          ["Kiss", 800],
+          ["Linkin Park", 900],
+          ["Limp Bizkit", 1000],
+          ["Beatles", 1100],
+          ["Edguy", 950],
+          ["Follow the Cipher", 1150],
+          ["The HU", 1200],
+          ["HammerFall", 950],
+          ["Battle Beast", 850],
+          ["Dream Theater", 1050],
+          ["Powerwolf", 1125],
+        ]
+      ], 9));
     } else if (chartDefinition.chartType == ChartType.LanguageFrequency) {
       return Future.value(Tuple2([
         [
