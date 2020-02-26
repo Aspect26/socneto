@@ -21,6 +21,11 @@ let Socneto = {
             tableChart.create(selector, dataSets, dataLabels);
         },
 
+        createWordCloudChart: function (selector, dataSets) {
+            let wordCloudChart = new WordCloudChart();
+            wordCloudChart.create(selector, dataSets);
+        },
+
         createScatterChart: function (selector, dataSet) {
             let scatterChart = new ScatterChart();
             scatterChart.create(selector, dataSet);

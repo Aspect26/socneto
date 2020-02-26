@@ -90,6 +90,10 @@ class CreateChartModalComponent {
             || propertyType == AnalysisPropertyType.numberMapValue
             || propertyType == AnalysisPropertyType.textMapValue;
 
+      case ChartType.WordCloud:
+        return propertyType == AnalysisPropertyType.textListValue
+            || propertyType == AnalysisPropertyType.textMapValue;
+
       case ChartType.PostsFrequency:
       case ChartType.LanguageFrequency:
       case ChartType.AuthorFrequency:
@@ -139,6 +143,7 @@ class CreateChartModalComponent {
       case ChartType.Pie:
       case ChartType.Bar:
       case ChartType.Table:
+      case ChartType.WordCloud:
         return 1;
       case ChartType.Scatter:
         return 2;
@@ -156,6 +161,7 @@ class CreateChartModalComponent {
       case ChartType.Pie:
       case ChartType.Bar:
       case ChartType.Table:
+      case ChartType.WordCloud:
         return 1;
       case ChartType.Scatter:
         return 2;
@@ -176,6 +182,7 @@ class CreateChartModalComponent {
       case ChartType.Pie:
       case ChartType.Bar:
       case ChartType.Table:
+      case ChartType.WordCloud:
         return "Analysis property";
       case ChartType.Scatter:
         return index == 0? "X - Axis" : "Y - Axis";
