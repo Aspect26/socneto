@@ -45,9 +45,9 @@ namespace Socneto.Domain.Services
         
         private Dictionary<string, string> DefaultRedditCredentials => new Dictionary<string, string>
         {
-            ["RedditAppId"] = _defaultAcquirersCredentials.Reddit.AppId,
-            ["RedditAppSecret"] = _defaultAcquirersCredentials.Reddit.AppSecret,
-            ["RedditRefreshToken"] = _defaultAcquirersCredentials.Reddit.RefreshToken
+            ["appId"] = _defaultAcquirersCredentials.Reddit.AppId,
+            ["appSecret"] = _defaultAcquirersCredentials.Reddit.AppSecret,
+            ["refreshToken"] = _defaultAcquirersCredentials.Reddit.RefreshToken
         };
 
         public async Task<bool> IsComponentRunning()
