@@ -190,25 +190,25 @@ class SocnetoMockDataService extends SocnetoDataService {
     } else if (chartDefinition.chartType == ChartType.WordCloud) {
       return Future.value(Tuple2([
         [
-          ["Black Sabbath", 1800],
+          ["Black Sabbath", 180],
           ["Iron Maiden", 1300],
           ["Metallica", 1300],
           ["AC/DC", 800],
-          ["Led Zeppelin", 1200],
+          ["Led Zeppelin", 120],
           ["Jimi Hendrix", 950],
           ["Guns 'n' Roses", 1200],
-          ["Avantasia", 1000],
+          ["Avantasia", 100],
           ["Rammstein", 900],
           ["Kiss", 800],
-          ["Linkin Park", 900],
+          ["Linkin Park", 90],
           ["Limp Bizkit", 1000],
           ["Beatles", 1100],
           ["Edguy", 950],
           ["Follow the Cipher", 1150],
-          ["The HU", 1200],
-          ["HammerFall", 950],
+          ["The HU", 120],
+          ["HammerFall", 90],
           ["Battle Beast", 850],
-          ["Dream Theater", 1050],
+          ["Dream Theater", 150],
           ["Powerwolf", 1125],
         ]
       ], 9));
