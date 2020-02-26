@@ -54,9 +54,6 @@ import 'package:sw_project/src/models/SocnetoComponent.dart';
 )
 class ComponentAttributesComponent implements AfterChanges {
 
-  final List<String> _TWITTER_KEYS = ["api_key", "api_secret_key", "access_token", "access_token_secret"];
-  final List<String> _REDDIT_KEYS = ["app_id", "app_secret", "refresh_token"];
-
   @Input() List<SocnetoComponent> acquirers = [];
   @Input() bool disabled = false;
 
@@ -76,12 +73,6 @@ class ComponentAttributesComponent implements AfterChanges {
     this.selectedAcquirer = this.acquirersWithAttributes.isNotEmpty? this.acquirersWithAttributes[0] : null;
   }
 
-  bool hasAllTwitterKeys(List<MutableTuple> attributes) =>
-      this._hasAllKeys(attributes, this._TWITTER_KEYS);
-
-  bool hasAllRedditKeys(List<MutableTuple> attributes) =>
-      this._hasAllKeys(attributes, this._REDDIT_KEYS);
-
   void onUseTranslationChange(List<MutableTuple> attributes, bool translate) {
     this._setAttribute(attributes, "Translate", translate.toString());
   }
@@ -94,12 +85,6 @@ class ComponentAttributesComponent implements AfterChanges {
   void onAddNew(List<MutableTuple> attributes) =>
       this._addNewEmpty(attributes);
   
-  void onAddDefaultTwitter(List<MutableTuple> attributes) =>
-      this._addNew(attributes, this._TWITTER_KEYS);
-
-  void onAddDefaultReddit(List<MutableTuple> attributes) =>
-      this._addNew(attributes, this._REDDIT_KEYS);
-
   void onAttributeKeyChange(MutableTuple attribute, String key) {
     attribute.item1 = key;
     this._attributesChangeController.add(this.acquirersWithAttributes);
@@ -115,26 +100,6 @@ class ComponentAttributesComponent implements AfterChanges {
     this._attributesChangeController.add(this.acquirersWithAttributes);
   }
 
-  bool _hasAllKeys(List<MutableTuple> attributes, List<String> keys) {
-    for (var key in keys) {
-      if (!this._attributesHasField(attributes, key)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  void _addNew(List<MutableTuple> attributes, List<String> keys) =>
-    keys.forEach((key) => this._addIfAbsent(attributes, key));
-
-  void _addIfAbsent(List<MutableTuple> attributes, String key) {
-    if (!this._attributesHasField(attributes, key)) {
-      attributes.add(MutableTuple<String, String>(key, ""));
-      this._attributesChangeController.add(this.acquirersWithAttributes);
-    }
-  }
-
   void _setAttribute(List<MutableTuple> attributes, String key, String value) {
     var attribute = attributes.firstWhere((attribute) => attribute.item1 == key, orElse: () => null);
     if (attribute == null) {
@@ -146,11 +111,6 @@ class ComponentAttributesComponent implements AfterChanges {
     this._attributesChangeController.add(this.acquirersWithAttributes);
   }
 
-  bool _attributesHasField(List<MutableTuple> attributes, String key) {
-    var attributeWithKey = attributes.firstWhere((attribute) => attribute.item1 == key, orElse: () => null);
-    return attributeWithKey != null;
-  }
-  
 }
 
 class MutableTuple<T1, T2> {
