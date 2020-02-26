@@ -21,24 +21,6 @@
             </material-button>
         </div>
 
-        <div>
-            <material-button *ngIf="!hasAllTwitterKeys(acquirer.attributes)"
-                             class="add-button"
-                             icon
-                             (trigger)="onAddDefaultTwitter(acquirer.attributes)">
-                <material-icon icon="add"></material-icon>
-                DEFAULT TWITTER FIELDS
-            </material-button>
-
-            <material-button *ngIf="!hasAllRedditKeys(acquirer.attributes)"
-                             class="add-button"
-                             icon
-                             (trigger)="onAddDefaultReddit(acquirer.attributes)">
-                <material-icon icon="add"></material-icon>
-                DEFAULT REDDIT FIELDS
-            </material-button>
-        </div>
-
     </material-tab>
 
 </material-tab-panel>
