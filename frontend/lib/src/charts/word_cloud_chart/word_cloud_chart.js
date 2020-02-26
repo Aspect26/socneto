@@ -13,8 +13,11 @@ class WordCloudChart {
 
     _CHART_PADDING_VERTICAL = 30;
     _CHART_PADDING_HORIZONTAL = 30;
+
     _CHART_HEIGHT = 500;
+
     _MAX_FONT_SIZE = 50;
+    _MIN_FONT_SIZE = 15;
 
     create(selector, dataSet) {
         this._removeOld(selector);
@@ -46,7 +49,7 @@ class WordCloudChart {
             let word = key;
             let amount = dataSet[key];
             let ratioToMax = amount / maxValue;
-            let fontSize = Math.round(this._MAX_FONT_SIZE * ratioToMax);
+            let fontSize = Math.round((this._MAX_FONT_SIZE - this._MIN_FONT_SIZE) * ratioToMax + this._MIN_FONT_SIZE);
 
             data.push({'word': word, 'amount': fontSize});
         });
