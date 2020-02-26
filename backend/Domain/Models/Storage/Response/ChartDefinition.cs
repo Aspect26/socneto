@@ -39,6 +39,7 @@ namespace Socneto.Domain.Models.Storage.Response
         Pie,
         Bar,
         Table,
+        WordCloud,
         Scatter,
         
         PostsFrequency,
