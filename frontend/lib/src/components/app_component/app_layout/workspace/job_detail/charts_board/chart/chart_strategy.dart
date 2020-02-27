@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/interop/socneto_charts.dart';
 
@@ -60,8 +62,13 @@ class LineChartStrategy implements ChartStrategy {
 }
 
 abstract class AggregationChartStrategy implements ChartStrategy {
+
+  final int dataLimit;
+
   Map<String, num> chartData = {};
   ChartDefinition chartDefinition;
+
+  AggregationChartStrategy({this.dataLimit = 20});
 
   @override
   setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet) {
@@ -69,7 +76,8 @@ abstract class AggregationChartStrategy implements ChartStrategy {
     this.chartDefinition = chartDefinition;
 
     var currentPieData = dataSet[0];
-    for (var dataPointValue in currentPieData) {
+    for (var index = 0; index < min(currentPieData.length, this.dataLimit); ++index) {
+      var dataPointValue = currentPieData[index];
       var x = dataPointValue[0];
       var y = dataPointValue[1];
 
@@ -101,6 +109,8 @@ class BarChartStrategy extends AggregationChartStrategy {
 
 class TableChartStrategy extends AggregationChartStrategy {
 
+  TableChartStrategy() : super(dataLimit: 200);
+
   @override
   redrawChart(String domSelector) {
     var label = chartDefinition.analysisDataPaths[0].property;
@@ -110,6 +120,8 @@ class TableChartStrategy extends AggregationChartStrategy {
 }
 
 class WordCloudChartStrategy extends AggregationChartStrategy {
+
+  WordCloudChartStrategy() : super(dataLimit: 35);
 
   @override
   redrawChart(String domSelector) {
