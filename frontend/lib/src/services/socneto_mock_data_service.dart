@@ -184,7 +184,21 @@ class SocnetoMockDataService extends SocnetoDataService {
           ["loreum ipssuuuunen askjdapi", 6400],
           ["loreum ipssuuuunen askjdapj", 6400],
           ["loreum ipssuuuunen askjdapk", 6400],
-          ["loreum ipssuuuunen askjdapl", 6400]
+          ["loreum ipssuuuunen askjdapl", 6400],
+          ["loreum ipssuuuunen askjdapm", 6400],
+          ["loreum ipssuuuunen askjdapn", 6400],
+          ["loreum ipssuuuunen askjdapo", 6400],
+          ["loreum ipssuuuunen askjdapp", 6400],
+          ["loreum ipssuuuunen askjdapq", 6400],
+          ["loreum ipssuuuunen askjdapr", 6400],
+          ["loreum ipssuuuunen askjdaps", 6400],
+          ["loreum ipssuuuunen askjdapt", 6400],
+          ["loreum ipssuuuunen askjdapu", 6400],
+          ["loreum ipssuuuunen askjdapv", 6400],
+          ["loreum ipssuuuunen askjdapw", 6400],
+          ["loreum ipssuuuunen askjdapx", 6400],
+          ["loreum ipssuuuunen askjdapy", 6400],
+          ["loreum ipssuuuunen askjdapz", 6400]
         ]
       ], 20));
     } else if (chartDefinition.chartType == ChartType.WordCloud) {
