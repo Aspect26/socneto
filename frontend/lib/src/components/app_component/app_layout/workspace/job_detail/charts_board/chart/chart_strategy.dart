@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:sw_project/src/models/ChartDefinition.dart';
 import 'package:sw_project/src/interop/socneto_charts.dart';
 
@@ -75,13 +73,16 @@ abstract class AggregationChartStrategy implements ChartStrategy {
     this.chartData = {};
     this.chartDefinition = chartDefinition;
 
+    var items = 0;
     var currentPieData = dataSet[0];
-    for (var index = 0; index < min(currentPieData.length, this.dataLimit); ++index) {
-      var dataPointValue = currentPieData[index];
+    for (var dataPointValue in currentPieData) {
+      if (items == this.dataLimit) break;
+
       var x = dataPointValue[0];
       var y = dataPointValue[1];
 
       if (x is String && x.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").isEmpty) continue;
+      items++;
 
       this.chartData[x.toString()] = y;
     }
