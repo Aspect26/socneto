@@ -76,7 +76,9 @@ services:
       xpack.monitoring.elasticsearch.hosts: http://elasticsearch:9200
 
   storage:
-    build: './storage/docker/storage'
+    build: 
+      context: './storage'
+      dockerfile: './docker/storage/Dockerfile'
     ports:
       - '8888:8888'
     container_name: storageservice
