@@ -122,7 +122,7 @@ class TableChartStrategy extends AggregationChartStrategy {
 
 class WordCloudChartStrategy extends AggregationChartStrategy {
 
-  WordCloudChartStrategy() : super(dataLimit: 35);
+  WordCloudChartStrategy() : super(dataLimit: 70);
 
   @override
   redrawChart(String domSelector) {
