@@ -21,7 +21,9 @@ services:
 
   sentiment-analyser:
     container_name: se
-    build: './analysers/sentiment_analysis'
+    build: 
+      context: './analysers/sentiment_analysis'
+      dockerfile: 'Dockerfile.acheron'
     restart: always
     depends_on:
       - kafka

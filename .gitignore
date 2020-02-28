@@ -358,3 +358,6 @@ en_core_web_lg-2.2.5.tar.gz
 
 **/cred.json
 **/*.cred
+
+# Aspect's custom
+kibana
