@@ -62,7 +62,7 @@ class WordCloudChart {
         return d3.select(selector)
             .append("svg")
             .attr("class", "word-cloud-chart")
-            .attr("width", width + 2 * paddingHorizontal)
+            .attr("width", "100%")
             .attr("height", height + 2 * paddingVertical)
             .append("g")
                 .attr("transform", "translate(" + paddingHorizontal + "," + paddingVertical + ")");
