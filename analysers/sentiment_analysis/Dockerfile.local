@@ -2,10 +2,9 @@ FROM python:3.7.5
 
 WORKDIR /usr/src/app
 
-# COPY model_1574374374.795886.bin ./
 COPY Analysis.py ./
 COPY main.py ./
-COPY get_model.py ./
+COPY get_model.py ./ "http://acheron.ms.mff.cuni.cz:39111/"
 COPY requirements_from_cluster.txt ./requirements.txt
 
 RUN pip install -U pip
