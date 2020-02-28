@@ -5,7 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Socneto.Domain.EventTracking;
-using Socneto.Domain.Models;
+using Socneto.Domain.Models.Storage.Request;
+using Socneto.Domain.Models.Storage.Response;
 using DataPoint = System.Collections.Generic.IList<dynamic>;
 
 
@@ -53,12 +54,18 @@ namespace Socneto.Domain.Services
 
         public async Task<IList<Job>> GetUserJobs(string username)
         {
-            return await _httpService.Get<List<Job>>($"jobs?username={username}");
+            var jobs = await _httpService.Get<List<Job>>($"jobs?username={username}");
+            jobs.ForEach(SetJobDatetimeTimezones);
+
+            return jobs;
         }
 
         public async Task<Job> GetJob(Guid jobId)
         {
-            return await _httpService.Get<Job>($"jobs/{jobId}");
+            var job = await _httpService.Get<Job>($"jobs/{jobId}");
+            SetJobDatetimeTimezones(job);
+            
+            return job;
         }
 
         public async Task<JobView> GetJobView(Guid jobId)
@@ -79,7 +86,7 @@ namespace Socneto.Domain.Services
         public async Task<ListWithCount<Post>> GetPosts(Guid jobId, string[] allowedWords, 
             string[] forbiddenWords, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
-            var body = new PostsStorageRequest
+            var body = new PostsRequest
             {
                 JobId = jobId,
                 AllowedWords = allowedWords,
@@ -134,6 +141,12 @@ namespace Socneto.Domain.Services
         public async Task<TimeArrayAnalysisResult> GetAnalysisTimeArray(GetArrayAnalysisStorageRequest getAnalysisRequest)
         {
             return await _httpService.Post<TimeArrayAnalysisResult>($"results", getAnalysisRequest);
+        }
+
+        private static void SetJobDatetimeTimezones(Job job)
+        {
+            job.StartedAt = DateTime.SpecifyKind(job.StartedAt, DateTimeKind.Utc);
+            if (job.FinishedAt != null) job.FinishedAt = DateTime.SpecifyKind((DateTime)job.FinishedAt, DateTimeKind.Utc);
         }
     }
 }

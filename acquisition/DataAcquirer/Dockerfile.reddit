@@ -20,4 +20,4 @@ RUN dotnet publish "WebApi.Reddit.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "WebApi.Reddit.dll"]
+ENTRYPOINT ["dotnet", "WebApi.Reddit.dll", "--sleep_on_startup"]

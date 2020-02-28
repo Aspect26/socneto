@@ -34,7 +34,7 @@ import 'package:sw_project/src/models/ChartDefinition.dart';
 class ChartTypeSelectComponent implements OnInit {
 
   final String _iconsLocation = "packages/sw_project/static/images/charts";
-  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Table, ChartType.Bar, ChartType.Pie, ChartType.Scatter];
+  final List<ChartType> chartTypes = [ChartType.Line, ChartType.Table, ChartType.Bar, ChartType.Pie, ChartType.WordCloud, ChartType.Scatter];
 
   final _changeController = StreamController<ChartType>();
   @Output() Stream<ChartType> get change => _changeController.stream;
@@ -57,10 +57,11 @@ class ChartTypeSelectComponent implements OnInit {
       case ChartType.Pie: return "Pie";
       case ChartType.Bar: return "Bar";
       case ChartType.Table: return "Table";
+      case ChartType.WordCloud: return "Word Cloud";
       case ChartType.Scatter: return "Scatter";
-      case ChartType.PostsFrequency: return "Posts frequency";
-      case ChartType.LanguageFrequency: return "Language frequency";
-      case ChartType.AuthorFrequency: return "Author frequency";
+      case ChartType.PostsFrequency: return "Posts Frequency";
+      case ChartType.LanguageFrequency: return "Language Frequency";
+      case ChartType.AuthorFrequency: return "Author Frequency";
     }
   }
 
@@ -75,6 +76,7 @@ class ChartTypeSelectComponent implements OnInit {
       case ChartType.Pie: return "pie.png";
       case ChartType.Bar: return "bar.png";
       case ChartType.Table: return "table.png";
+      case ChartType.WordCloud: return "word_cloud.png";
       case ChartType.Scatter: return "scatter.png";
       case ChartType.PostsFrequency: return "line.png";
       case ChartType.LanguageFrequency: return "bar.png";

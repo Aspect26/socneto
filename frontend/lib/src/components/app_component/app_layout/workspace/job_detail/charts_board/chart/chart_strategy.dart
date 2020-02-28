@@ -60,20 +60,29 @@ class LineChartStrategy implements ChartStrategy {
 }
 
 abstract class AggregationChartStrategy implements ChartStrategy {
+
+  final int dataLimit;
+
   Map<String, num> chartData = {};
   ChartDefinition chartDefinition;
+
+  AggregationChartStrategy({this.dataLimit = 20});
 
   @override
   setData(ChartDefinition chartDefinition, List<List<List<dynamic>>> dataSet) {
     this.chartData = {};
     this.chartDefinition = chartDefinition;
 
+    var items = 0;
     var currentPieData = dataSet[0];
     for (var dataPointValue in currentPieData) {
+      if (items == this.dataLimit) break;
+
       var x = dataPointValue[0];
       var y = dataPointValue[1];
 
       if (x is String && x.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").isEmpty) continue;
+      items++;
 
       this.chartData[x.toString()] = y;
     }
@@ -101,10 +110,23 @@ class BarChartStrategy extends AggregationChartStrategy {
 
 class TableChartStrategy extends AggregationChartStrategy {
 
+  TableChartStrategy() : super(dataLimit: 200);
+
   @override
   redrawChart(String domSelector) {
     var label = chartDefinition.analysisDataPaths[0].property;
     SocnetoCharts.createTableChart(domSelector, this.chartData, label);
+  }
+
+}
+
+class WordCloudChartStrategy extends AggregationChartStrategy {
+
+  WordCloudChartStrategy() : super(dataLimit: 70);
+
+  @override
+  redrawChart(String domSelector) {
+    SocnetoCharts.createWordCloudChart(domSelector, this.chartData);
   }
 
 }

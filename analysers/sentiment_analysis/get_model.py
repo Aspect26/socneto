@@ -5,7 +5,9 @@ import sys
 import os.path
 from os import path
 
-client = Minio('10.3.4.101:6008',
+minio_address = sys.argv[2]
+
+client = Minio(minio_address,
                access_key='socnetoadmin',
                secret_key='Tajn0Heslo',
                secure = False)
