@@ -86,7 +86,7 @@ class WordCloudChart {
                 .selectAll("text")
                 .data(data)
                 .enter().append("text")
-                .style("font-size", d => d.size)
+                .style("font-size", d => `${d.size}px`)
                 .style("fill", (d, i) => colors[i % colors.length])
                 .attr("text-anchor", "middle")
                 .style("font-family", "Impact")
