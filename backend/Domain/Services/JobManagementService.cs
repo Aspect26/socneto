@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
+using Socneto.Domain.Models.JMS.Response;
 
 namespace Socneto.Domain.Services
 {
@@ -44,16 +45,16 @@ namespace Socneto.Domain.Services
         
         private Dictionary<string, string> DefaultRedditCredentials => new Dictionary<string, string>
         {
-            ["RedditAppId"] = _defaultAcquirersCredentials.Reddit.AppId,
-            ["RedditAppSecret"] = _defaultAcquirersCredentials.Reddit.AppSecret,
-            ["RedditRefreshToken"] = _defaultAcquirersCredentials.Reddit.RefreshToken
+            ["appId"] = _defaultAcquirersCredentials.Reddit.AppId,
+            ["appSecret"] = _defaultAcquirersCredentials.Reddit.AppSecret,
+            ["refreshToken"] = _defaultAcquirersCredentials.Reddit.RefreshToken
         };
 
         public async Task<bool> IsComponentRunning()
         {
             try
             {
-                var hello = await _httpService.Get<JMSHello>("api/test/say-hello");
+                var hello = await _httpService.Get<JmsHelloResponse>("api/test/say-hello");
                 return hello.Message == "hello";
             }
             catch (ServiceUnavailableException)

@@ -85,6 +85,7 @@ class SocnetoMockDataService extends SocnetoDataService {
   ];
 
   static final List<ChartDefinition> mockCharts = [
+    ChartDefinition("Chart 0", [AnalysisDataPath("componentId", "topics"), AnalysisDataPath("componentId", "topics")], ChartType.WordCloud, false),
     ChartDefinition("Chart 1", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, true, id: "asd"),
     ChartDefinition("Chart 2", [AnalysisDataPath("componentId", "polarity"), AnalysisDataPath("componentId", "accuracy")], ChartType.Line, false),
     ChartDefinition("Chart 3", [AnalysisDataPath("componentId", "wordCount")], ChartType.Pie, false),
@@ -183,9 +184,48 @@ class SocnetoMockDataService extends SocnetoDataService {
           ["loreum ipssuuuunen askjdapi", 6400],
           ["loreum ipssuuuunen askjdapj", 6400],
           ["loreum ipssuuuunen askjdapk", 6400],
-          ["loreum ipssuuuunen askjdapl", 6400]
+          ["loreum ipssuuuunen askjdapl", 6400],
+          ["loreum ipssuuuunen askjdapm", 6400],
+          ["loreum ipssuuuunen askjdapn", 6400],
+          ["loreum ipssuuuunen askjdapo", 6400],
+          ["loreum ipssuuuunen askjdapp", 6400],
+          ["loreum ipssuuuunen askjdapq", 6400],
+          ["loreum ipssuuuunen askjdapr", 6400],
+          ["loreum ipssuuuunen askjdaps", 6400],
+          ["loreum ipssuuuunen askjdapt", 6400],
+          ["loreum ipssuuuunen askjdapu", 6400],
+          ["loreum ipssuuuunen askjdapv", 6400],
+          ["loreum ipssuuuunen askjdapw", 6400],
+          ["loreum ipssuuuunen askjdapx", 6400],
+          ["loreum ipssuuuunen askjdapy", 6400],
+          ["loreum ipssuuuunen askjdapz", 6400]
         ]
-      ], 3));
+      ], 20));
+    } else if (chartDefinition.chartType == ChartType.WordCloud) {
+      return Future.value(Tuple2([
+        [
+          ["Black Sabbath", 180],
+          ["Iron Maiden", 1300],
+          ["Metallica", 1300],
+          ["AC/DC", 800],
+          ["Led Zeppelin", 120],
+          ["Jimi Hendrix", 950],
+          ["Guns 'n' Roses", 1200],
+          ["Avantasia", 100],
+          ["Rammstein", 900],
+          ["Kiss", 800],
+          ["Linkin Park", 90],
+          ["Limp Bizkit", 1000],
+          ["Beatles", 1100],
+          ["Edguy", 950],
+          ["Follow the Cipher", 1150],
+          ["The HU", 120],
+          ["HammerFall", 90],
+          ["Battle Beast", 850],
+          ["Dream Theater", 150],
+          ["Powerwolf", 1125],
+        ]
+      ], 9));
     } else if (chartDefinition.chartType == ChartType.LanguageFrequency) {
       return Future.value(Tuple2([
         [

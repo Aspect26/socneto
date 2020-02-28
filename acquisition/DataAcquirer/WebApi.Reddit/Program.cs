@@ -23,7 +23,7 @@ namespace WebApi.Reddit
         {
             if (args.Contains("--sleep_on_startup"))
             {
-                await Task.Delay(TimeSpan.FromSeconds(180));
+                await Task.Delay(TimeSpan.FromSeconds(60));
             }
 
             //var assemblyPath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
@@ -37,7 +37,7 @@ namespace WebApi.Reddit
             //.PostConfigure<DataAcquirerJobFileStorageOptions>(o => o.Directory = jobMetaDir);
             ;
 
-            var app = builder.BuildWebHost(true);
+            var app = builder.BuildWebHost(false);
             await InitializeApplication(app);
 
             await app.RunAsync();
@@ -75,6 +75,7 @@ namespace WebApi.Reddit
                     await registration.Register(registrationRequest);
                     logger.LogInformation("Service {serviceName} register request sent", "DataAcquisitionService");
                     await Task.Delay(TimeSpan.FromMinutes(.5));
+                    await registration.Register(registrationRequest);
                     break;
                 }
                 catch (Exception e)

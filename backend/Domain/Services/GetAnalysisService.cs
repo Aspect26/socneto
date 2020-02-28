@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Socneto.Domain.EventTracking;
 using Socneto.Domain.Models;
+using Socneto.Domain.Models.Storage.Request;
+using Socneto.Domain.Models.Storage.Response;
 
 namespace Socneto.Domain.Services
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Socneto.Domain.Models;
+using Socneto.Domain.Models.JMS.Response;
 
 namespace Socneto.Domain.Services
 {

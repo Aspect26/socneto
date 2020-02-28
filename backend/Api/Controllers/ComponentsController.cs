@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Socneto.Api.Models;
+using Socneto.Api.Models.Responses;
 using Socneto.Domain.Services;
 
 namespace Socneto.Api.Controllers
