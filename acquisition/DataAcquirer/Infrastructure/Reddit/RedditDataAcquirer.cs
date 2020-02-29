@@ -70,7 +70,8 @@ namespace Infrastructure.Reddit
                             var listingPost = item.Listing;
                             yield return DataAcquirerPost.FromValues(
                                 listingPost.Id,
-                                "(title:" + listingPost.Title + ",comment)" + c.Body,
+                                //"(title:" + listingPost.Title + ",comment)" + c.Body,
+                                c.Body,
                                 "en",
                                 "reddit",
                                 c.Author ?? "n/a",
