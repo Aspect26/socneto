@@ -50,7 +50,9 @@ services:
         hard: -1
 
   storage:
-    build: '../../storage'
+    build: 
+      context: '../../storage'
+      dockerfile: './docker/storage/Dockerfile'
     ports:
       - '8888:8888'
     container_name: storageservice
