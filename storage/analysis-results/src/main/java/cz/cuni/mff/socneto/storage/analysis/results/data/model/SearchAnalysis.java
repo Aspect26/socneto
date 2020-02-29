@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import java.util.Date;
 import java.util.Map;
@@ -12,8 +13,10 @@ import java.util.UUID;
 
 @Data
 @Document(indexName = "analyses")
+@Setting(settingPath = "/setting.json")
 public class SearchAnalysis {
     @Id
+    private Long id;
     @Field(type = FieldType.Keyword)
     private UUID postId;
     @Field(type = FieldType.Keyword)

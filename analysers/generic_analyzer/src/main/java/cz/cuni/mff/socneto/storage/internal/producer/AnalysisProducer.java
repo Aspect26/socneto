@@ -14,7 +14,7 @@ public class AnalysisProducer {
     private final KafkaTemplate<String, AnalysisMessage> analysisTemplate;
 
     public void send(String topic, AnalysisMessage analysisMessage){
-        log.info("ACTION='analysis' TOPIC='{}' ANALYSIS='{}'", topic, analysisMessage);
+        log.debug("ACTION='analysis' TOPIC='{}' ANALYSIS='{}'", topic, analysisMessage);
         analysisTemplate.send(topic, analysisMessage);
     }
 }

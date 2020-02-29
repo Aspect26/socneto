@@ -7,7 +7,7 @@ COPY storage-messaging /home/app/storage-messaging
 COPY storage-web /home/app/storage-web
 COPY pom.xml /home/app
 
-RUN mvn -f /home/app/pom.xml clean package
+RUN mvn -f /home/app/pom.xml clean package -Dmaven.test.skip=true
 
 
 
