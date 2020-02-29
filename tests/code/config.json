@@ -3,7 +3,13 @@
         "kafka_server": "localhost:9094"
     },
     "uris":{
-        "jms_submit_uri":"http://localhost:5100/api/job/submit"
+        "backend_heart_beat": "http://localhost:6010/api/heart-beat",
+        "backend_platform_status": "http://localhost:6010/api/platform_status",
+        "backend_login": "http://localhost:6010/api/user/login",
+        "backend_create_job": "http://localhost:6010/api/job/create",
+
+        "jms_submit_uri": "http://localhost:5100/api/job/submit"
+
     },
     "topics": {
         "sentiment": "job_management.component_data_input.DataAnalyser_topics",
