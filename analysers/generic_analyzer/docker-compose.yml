@@ -1,0 +1,38 @@
+version: '3'
+services:
+
+  analyser-hashtag:
+    build: '.'
+    restart: always
+    ports:
+      - '8881:8881'
+    environment:
+      - SERVER_PORT=8881
+      - SPRING_PROFILES_ACTIVE=HASH_TAG
+      - COMPONENT_CONFIG_COMPONENT_ID=HASH_TAGS
+      - COMPONENT_CONFIG_TOPIC_INPUT=job_management.component_data_input.HASH_TAGS
+      - COMPONENT_CONFIG_TOPIC_UPDATE=job_management.job_configuration.HASH_TAGS
+
+  analyser-trump:
+    build: '.'
+    restart: always
+    ports:
+      - '8882:8882'
+    environment:
+      - SERVER_PORT=8882
+      - SPRING_PROFILES_ACTIVE=SWEAR_WORDS
+      - COMPONENT_CONFIG_COMPONENT_ID=SWEAR_WORDS
+      - COMPONENT_CONFIG_TOPIC_INPUT=job_management.component_data_input.SWEAR_WORDS
+      - COMPONENT_CONFIG_TOPIC_UPDATE=job_management.job_configuration.SWEAR_WORDS
+
+  analyser-swear:
+    build: '.'
+    restart: always
+    ports:
+      - '8883:8883'
+    environment:
+      - SERVER_PORT=8883
+      - SPRING_PROFILES_ACTIVE=TRUMP_ANALYZER
+      - COMPONENT_CONFIG_COMPONENT_ID=TRUMP_ANALYZER
+      - COMPONENT_CONFIG_TOPIC_INPUT=job_management.component_data_input.TRUMP_ANALYZER
+      - COMPONENT_CONFIG_TOPIC_UPDATE=job_management.job_configuration.TRUMP_ANALYZER

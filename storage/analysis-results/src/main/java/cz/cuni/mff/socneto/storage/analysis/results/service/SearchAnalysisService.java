@@ -12,6 +12,11 @@ public class SearchAnalysisService {
     private final SearchAnalysisRepository searchAnalysisRepository;
 
     public SearchAnalysis create(SearchAnalysis searchAnalysis) {
+        searchAnalysis.setId(
+                (long) searchAnalysis.getPostId().hashCode() *
+                (long) searchAnalysis.getComponentId().hashCode() *
+                (long) searchAnalysis.getJobId().hashCode()
+        );
         return searchAnalysisRepository.save(searchAnalysis);
     }
 
