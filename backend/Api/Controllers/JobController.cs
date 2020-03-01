@@ -284,8 +284,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/array_analysis")]
         public async Task<ActionResult<ArrayAnalysisResponse>> GetJobAnalysisArray([FromRoute]Guid jobId, [FromBody] GetArrayAnalysisRequest analysisRequest)
         {
-            _eventTracker.TrackInfo("GetJobAnalysisArray", $"User '{User.Identity.Name}' requested array analysis", 
-                JsonConvert.SerializeObject(analysisRequest));
+            _eventTracker.TrackInfo("GetJobAnalysisArray", $"User '{User.Identity.Name}' requested array analysis", analysisRequest);
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
                 _eventTracker.TrackInfo("GetJobAnalysisArray", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
