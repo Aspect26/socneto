@@ -110,7 +110,7 @@ class BarChartStrategy extends AggregationChartStrategy {
 
 class TableChartStrategy extends AggregationChartStrategy {
 
-  TableChartStrategy() : super(dataLimit: 200);
+  TableChartStrategy() : super(dataLimit: 100);
 
   @override
   redrawChart(String domSelector) {

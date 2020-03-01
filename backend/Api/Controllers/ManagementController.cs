@@ -100,7 +100,7 @@ namespace Socneto.Api.Controllers
                 StorageStatus = storageStatus
             };
             
-            _eventTracker.TrackInfo("PlatformStatus", "Platform status requested", JsonConvert.SerializeObject(response));
+            _eventTracker.TrackInfo("PlatformStatus", "Platform status requested", response);
 
             return Ok(response);
         }
