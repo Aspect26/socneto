@@ -67,7 +67,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/create")]
         public async Task<ActionResult<JobStatusResponse>> SubmitJob([FromBody] JobSubmitRequest request)
         {
-            _eventTracker.TrackInfo("SubmitJob", "Submitting a new job", JsonConvert.SerializeObject(request));
+            _eventTracker.TrackInfo("SubmitJob", "Submitting a new job", request);
             if (User.Identity.Name == null)
             {
                 _eventTracker.TrackInfo("SubmitJob", "Unauthorized attempt to list all jobs");
@@ -93,7 +93,7 @@ namespace Socneto.Api.Controllers
                 JobId = jobStatus.JobId,
                 Status = jobStatus.Status,
             };
-            _eventTracker.TrackInfo("SubmitJob", "New job submitted", JsonConvert.SerializeObject(response));
+            _eventTracker.TrackInfo("SubmitJob", "New job submitted", response);
             return Ok(response);
         }
 
@@ -257,8 +257,7 @@ namespace Socneto.Api.Controllers
         [Route("api/job/{jobId:guid}/aggregation_analysis")]
         public async Task<ActionResult<AggregationAnalysisResponse>> GetJobAnalysisAggregation([FromRoute]Guid jobId, [FromBody] GetAggregationAnalysisRequest analysisRequest)
         {
-            _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' requested aggregation analysis", 
-                JsonConvert.SerializeObject(analysisRequest));
+            _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' requested aggregation analysis", analysisRequest);
             if (!await _authorizationService.IsUserAuthorizedToSeeJob(User.Identity.Name, jobId))
             {
                 _eventTracker.TrackInfo("GetJobAnalysisAggregation", $"User '{User.Identity.Name}' is not authorized to see job '{jobId}'");
