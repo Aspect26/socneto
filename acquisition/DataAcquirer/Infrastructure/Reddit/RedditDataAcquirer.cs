@@ -63,10 +63,17 @@ namespace Infrastructure.Reddit
                         count++;
                         maxBefore = Max(item.Created, maxBefore);
 
-                        yield return FromPost(item, query);
+                        if (!string.IsNullOrWhiteSpace(item.Listing.SelfText))
+                        {
+                            yield return FromPost(item, query);
+                        }
                         var comments = item.Comments.GetTop(100);
                         foreach (var c in comments)
                         {
+                            if(string.IsNullOrWhiteSpace(c.Body))
+                            {
+                                continue;
+                            }
                             var listingPost = item.Listing;
                             yield return DataAcquirerPost.FromValues(
                                 listingPost.Id,
@@ -118,8 +125,6 @@ namespace Infrastructure.Reddit
             }
             return b;
         }
-
-
 
         private DataAcquirerPost FromPost(Post r, string query)
         {
