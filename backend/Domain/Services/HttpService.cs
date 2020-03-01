@@ -25,7 +25,7 @@ namespace Socneto.Domain.Services
         public async Task<string> GetString(string path)
         {
             var fullPath = GetFullPath(path);
-            _eventTracker.TrackInfo(EventTrackerEventName,$"GET /{path}");
+            _eventTracker.TrackInfo(EventTrackerEventName, $"GET /{path}");
 
             try
             {
@@ -42,7 +42,7 @@ namespace Socneto.Domain.Services
         public async Task<TResult> Get<TResult>(string path)
         {
             var fullPath = GetFullPath(path);
-            _eventTracker.TrackInfo(EventTrackerEventName,$"GET /{path}");
+            _eventTracker.TrackInfo(EventTrackerEventName, $"GET /{path}");
 
             try
             {
@@ -59,7 +59,7 @@ namespace Socneto.Domain.Services
         public async Task<TResult> Post<TResult>(string path, object data = null)
         {
             var fullPath = GetFullPath(path);
-            _eventTracker.TrackInfo(EventTrackerEventName,$"POST /{path} {JsonConvert.SerializeObject(data)}");
+            _eventTracker.TrackInfo(EventTrackerEventName, $"POST /{path}", data);
             var content = CreateHttpContent(data ?? new object());
 
             try
@@ -79,7 +79,7 @@ namespace Socneto.Domain.Services
         {
             var fullPath = GetFullPath(path);
             var content = CreateHttpContent(data);
-            _eventTracker.TrackInfo(EventTrackerEventName,$"PUT /{path} {JsonConvert.SerializeObject(data)}");
+            _eventTracker.TrackInfo(EventTrackerEventName, $"PUT /{path}", data);
 
             try
             {
