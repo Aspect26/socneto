@@ -76,7 +76,9 @@ namespace Socneto.Domain.Services
                 AddDefaultRedditCredentialsIfNotSet(acquirerAttributes);
                 
                 attributes.Add(selectedAcquirerId, new JObject(
-                    acquirerAttributes.ToList().Select(attribute => new JProperty(attribute.Key, attribute.Value)).ToList())
+                    acquirerAttributes.ToList()
+                        .Where(attribute => !string.IsNullOrEmpty(attribute.Key))
+                        .Select(attribute => new JProperty(attribute.Key, attribute.Value)).ToList())
                 );
             }
 
