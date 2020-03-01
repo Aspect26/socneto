@@ -20,8 +20,9 @@ if path.exists(model_name):
     sys.exit()
 
 try:
-    print("Downloading model (500MiB)")
+    print(f"Downloading model - '{model_name}' (500MiB)")
     client.fget_object('models', model_name, model_name)
 except ResponseError as err:
     print(err)
+    exit(1)
 
