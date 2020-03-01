@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Socneto.Api.Models;
 using Socneto.Api.Models.Requests;
 using Socneto.Api.Models.Responses;
 using Socneto.Domain.EventTracking;
@@ -29,7 +27,7 @@ namespace Socneto.Api.Controllers
         [Route("api/user/login")]
         public async Task<ActionResult<LoginResponse>> Login([FromBody]LoginRequest login)
         {
-            _eventTracker.TrackInfo("Login", "A user tried to login", JsonConvert.SerializeObject(new { User = login.Username }));
+            _eventTracker.TrackInfo("Login", "A user tried to login", new { User = login.Username });
             var authenticatedUser = await _userService.Authenticate(login.Username, login.Password);
 
             if (authenticatedUser == null)

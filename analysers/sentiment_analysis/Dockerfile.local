@@ -4,14 +4,14 @@ WORKDIR /usr/src/app
 
 COPY Analysis.py ./
 COPY main.py ./
-COPY get_model.py ./ "http://acheron.ms.mff.cuni.cz:39111/"
+COPY get_model.py ./ 
 COPY requirements_from_cluster.txt ./requirements.txt
 
 RUN pip install -U pip
 RUN pip install tensorflow==2.1.0
 RUN pip install --no-cache-dir -r requirements.txt --default-timeout=120  --trusted-host pypi.python.org
 RUN pip install --default-timeout=120  --trusted-host pypi.python.org minio
-RUN python get_model.py distilbert_predictor.zip
+RUN python get_model.py distilbert_predictor.zip "acheron.ms.mff.cuni.cz:39111"
 RUN unzip distilbert_predictor.zip
 RUN mv ./distilbert_predictor/distilbert_predictor.preproc ./distilbert_predictor.preproc
 
