@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +32,14 @@ public class JobController {
     @GetMapping("/jobs")
     public List<JobDto> getJobsByUsername(@RequestParam(value = "username", required = false) String username) {
         if (username == null) {
-            return jobDtoService.findAll();
+            return jobDtoService.findAll().stream()
+                    .sorted(Comparator.comparingDouble(job -> job.getStartedAt().toInstant().toEpochMilli()))
+                    .collect(Collectors.toList());
         } else {
-            return jobDtoService.findAllByUser(username);
+            return jobDtoService.findAllByUser(username)
+                    .stream()
+                    .sorted(Comparator.comparingDouble(job -> job.getStartedAt().toInstant().toEpochMilli()))
+                    .collect(Collectors.toList());
         }
     }
 
