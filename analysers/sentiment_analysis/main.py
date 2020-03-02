@@ -22,7 +22,7 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
-model_path = "distilbert_predictor"
+model_path = "best_model"
 analysis = a.Analysis(model_path)
 
 
