@@ -47,6 +47,8 @@ import '../../../../../../utils.dart';
 )
 class JobStatsComponent implements OnInit{
 
+  @ViewChildren(ChartComponent) List<ChartComponent> charts;
+
   final SocnetoService _socnetoService;
   final ChartDefinition postsFrequencyChart = ChartDefinition("Posts frequency", [], ChartType.PostsFrequency, true, id: "dummy1");
   final ChartDefinition languageFrequencyChart = ChartDefinition("Language frequency", [AnalysisDataPath("", "Language")], ChartType.LanguageFrequency, false, id: "dummy2");
@@ -85,6 +87,12 @@ class JobStatsComponent implements OnInit{
     } on HttpException catch (e) {
       Toastr.httpError(e);
     }
+  }
+
+  void refreshCharts() {
+    this.charts.forEach((chart) {
+      chart.onRefresh();
+    });
   }
 
 }
