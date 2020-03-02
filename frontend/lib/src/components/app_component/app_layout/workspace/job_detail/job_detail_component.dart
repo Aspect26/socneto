@@ -44,6 +44,7 @@ import 'package:sw_project/src/services/socneto_service.dart';
 class JobDetailComponent implements OnActivate {
 
   @ViewChild(ChartsBoardComponent) ChartsBoardComponent chartsBoardComponent;
+  @ViewChild(JobStatsComponent) JobStatsComponent jobStatsComponent;
 
   final Router _router;
   final SocnetoService _socnetoService;
@@ -60,7 +61,9 @@ class JobDetailComponent implements OnActivate {
   }
 
   void onTabChange(TabChangeEvent event) {
-    if (event.newIndex == 1) {
+    if (event.newIndex == 0) {
+      this.jobStatsComponent.refreshCharts();
+    } else if (event.newIndex == 1) {
       this.chartsBoardComponent.refreshCharts();
     }
   }
