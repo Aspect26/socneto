@@ -51,6 +51,7 @@ public class AggregationsService {
 
         return result.entrySet().stream()
                 .sorted(Comparator.comparingDouble(e -> e.getValue() * -1))
+                .filter(e -> e.getKey().length() > 2)
                 .limit(200)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o, n) -> n, LinkedHashMap::new));
     }
@@ -64,6 +65,7 @@ public class AggregationsService {
         var result = (Map<String, Integer>) executeQuery(aggregation, filter).aggregation();
 
         return result.entrySet().stream()
+                .filter(e -> e.getKey().length() > 2)
                 .sorted(Comparator.comparingInt(e -> e.getValue() * -1))
                 .limit(200)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o, n) -> n, LinkedHashMap::new));
