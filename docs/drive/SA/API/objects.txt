@@ -1,0 +1,103 @@
+Twitter: https://developer.twitter.com/en/docs.html
+
+Linkedin: https://developer.linkedin.com/docs
+
+Reddit: https://www.reddit.com/dev/api/
+
+{
+  "twitter": {
+    "tweet": {
+      "created_at": "Thu May 10 15:24:15 +0000 2018",
+      "id_str": "850006245121695744",
+      "text": "Here is the Tweet message.",
+      "user": {},
+      "place": {},
+      "entities": {},
+      "extended_entities": {},
+      
+      "retweeted_status": {
+        "tweet": {}
+      },
+      "quoted_status": {
+        "tweet": {}
+      }
+    },
+    
+    "user": {
+      "id": 6253282,
+      "name": "Twitter API",
+      "lang": "en",
+      "created_at": "Mon Nov 29 21:18:15 +0000 2010"
+    },
+    
+    "place": {
+      "id": "01a9a39529b27f36",
+      "name": "Manhattan",
+      "country": "United States",
+      "bounding_box": {
+        "coordinates": []
+      }
+    },
+    
+    "entities": {
+      "#Note": "Data from tweet.text",
+      "hashtags": {},
+      "media": {},
+      "urls": {},
+      "user_mentions": {},
+      "symbols": {},
+      "polls": {}
+    },
+    
+    "extended_entities": {
+      "#Note": "only media object",
+      "media": {
+        "#Note": "Same as entities, but more more than one photo, video or GIF"
+      }
+    }
+  },
+  
+  "linkedin": {
+    "user": {
+      "firstName": "Frodo",
+      "headline": "Jewelery Repossession in Middle Earth",
+      "id": "1R2RtA",
+      "lastName": "Baggins",
+      "location": {}
+    },
+    
+    "company": {
+      "description": "Founded in 2003, LinkedIn connects the world's professionals to...",
+      "id": 1337,
+      "name": "LinkedIn",
+      "ticker": "LNKD"
+    },
+    
+    "status/text": {
+      "comment": "Check out developer.linkedin.com!",
+      "content": {
+        "title": "LinkedIn Developers Resources",
+        "description": "Leverage LinkedIn's APIs to maximize engagement",
+        "submitted-url": "https://developer.linkedin.com",  
+        "submitted-image-url": "https://example.com/logo.png"
+      } 
+    }
+  },
+  
+  "reddit": {
+    "data": {
+       "link_title":"Django middleware that prints query stats to stderr after each request. pip install django-querycount",
+       "author":"mrrrgn",
+       "parent_id":"t3_2alblh",
+       "body":"Try django-devserver for query counts, displaying the full queries, profiling, reporting memory usage, etc. \n\nhttps://pypi.python.org/pypi/django-devserver",
+       "link_id":"t3_2alblh",
+       "name":"t1_ciwbo37",
+       "link_url":"https://github.com/bradmontgomery/django-querycount"
+    },
+    
+    "user": {
+      
+    }
+  }
+}
+
