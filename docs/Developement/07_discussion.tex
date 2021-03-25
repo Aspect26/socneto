@@ -1,0 +1,65 @@
+\chapter{Discussion}
+
+\section{Architecture}
+% multiple services
+Socneto was designed to be extensible, therefore a monolithic application was not a considered feasible. The domain of the application was split into dedicated services allowing them to run independently coordinated by one dedicated Job Management Service.
+
+% why kafka
+Socneto consists of multiple data acquirers streaming data to multiple data producers and eventually into the storage. It is unsuitable to use synchronous communication for streaming therefore Socneto internal communication is based upon asynchronous message broker Kafka. At the beginning, this decision was slowing us down, because it could solve more complex tasks than we needed. But in the end, we achieved our goal to have a scalable, distributed and extensible architecture. 
+
+% db
+The only change in the architecture during implementation was to remove the NoSQL database from the storage module, because it was not useful for any use-case and Elasticsearch is sufficient for the storing acquired data. If we had more time, there could be more research about choosing the right messaging broker, for example, we could use a more lightweight solution. Otherwise, this architecture satisfies a possible production usage. The only unimplemented part is authentication and authorization between FE, Backend, JSM and Storage modules.
+
+\section{Infrastructure}
+% 
+Socneto was designed to run on premises. This gave us absolute freedom of the architectural and hosting aspects of the development. The university provided us with multiple Virtual Machines which were used to test and deploy Socneto. Given the fact that Socneto is a data processing framework, it could not be hosted on a single PC. 
+
+The alternative to this decision was to run Socneto in some cloud platform. The disadvantages are:
+\begin{itemize}
+    \item The lack of professional experience with the application scope of the size of Socneto.
+    \item The time required to get accustomed to cloud development.
+    \item Unsuitability of the cloud for prototyping
+    \item Limited options of free subscriptions and price of premium ones.
+\end{itemize}
+These disadvantages outweighted the advantages a cloud would have. The cloud is a infrastructure-as-a-service. All production grade features such as scaling, load balancing, security are supported out-of-the-box. The decision in favour of on premises deployment was based upon the fact that in this stage Socneto is not a production grade software making the use of the advantages limited.
+
+% docker
+Socneto design allows it to run in Docker - each component is hosted in a separated docker container. Docker (docker-compose) was chosen, because it provides fast deployment with easy configuration without requiring all installed dependencies. This approach can be extended with automatic testing and deployment pipeline, which is used in real-world projects. 
+% We decided to not spend time implementing an automatic pipeline, because we didn't have a capacity for this. (this was moved to future work)
+
+% technology freedom 
+Important benefit is that each service can be implemented using different technology. In Socneto, each component is written in a language most suitable for the purpose of the given component. In this case, data analysers are based on python since it is the most popular language for data science related tasks. Java was used for data storing related service since it integrates best with Java based Elastic Search. Due to that there were no conflicts in the beginning of the project related to technological uniformity.
+
+
+\section{Social Networks}
+% why which social network
+After the Cambridge Analytics issue \footnote{\url{https://en.wikipedia.org/wiki/Cambridge_Analytica}}, most social network providers limited their API usage which influenced the decision of which social networks to support. Socneto supports Twitter and Reddit. Twitter was chosen, because it offers easily accessible data with many customers for free and Reddit because it contains longer textual data with comments. Facebook was not used, because it restricted API was not possible to utilize for free.
+
+Lately, social networks started to shift toward audiovisual content rather than textual. Supporting such network will introduce a whole new level of complexity and would impact every aspect of Socneto architecture. For that reason Socneto focuses only on textual data leaving space for future improvement. 
+
+\section{Data Analysis}
+
+As a part of this project, three text analyses where implemented - named entity recognition, sentiment analysis and latent Dirichlet analysis. We mainly used third-party libraries with existing pre-trained models. For sentiment analysis, fine-tuning of the model was performed together with the best model selection. We definitely do not have state-of-the-art solutions, but our analyses have a reasonable performance for usage and can be easily improved with more training (which include more time and also more training data).
+
+\section{Market Potential}
+
+% tohle patri spis do project timeline
+%During implementation, we missed the fifth colleague, who was supposed to cover testing, deployment and real use cases. We managed to split his responsibilities among the member of the team which resulted in a reliable framework which proved itself to two subjects therefore it could be used by possible customers.
+
+Development of Socneto has two directions. The first one is to open it to public and let each potential customer to build their personalized frameworks around it and monetize the support as many other projects already have done (most notable are Hadoop Ecosystem\footnote{\url{https://hadoopecosystemtable.github.io/}} and Project BlackLight\footnote{\url{http://projectblacklight.org/}})
+
+The other is to extend it ourselves the way as our competitors did (as discussed in Section \ref{section:relatedWork}). Before we may sell Socneto to the first possible customer, we should extend analysers with more functionality (geographical data, image recognition) and also we have to cover other data sources (Instagram, Pinterest). The platform needs to improve security and all components need polishing. But the current state is prepared for further improvements.
+
+\section{Summary}
+
+Socento successfully delivered the specified functionality. Starting with acquisition of data from various sources and its following analysis with complex linguistic models performing sentiment analysis and topic modelling. The application fulfills requirements made to data storage and visualization. Extensibility was proved by implementing custom dataset acquirer and hasthag analyser on top of what was originally planned. 
+
+To sum up the positive sides, the application is a well-designed data processing framework that  employs principles such as service oriented architecture, asynchronous messaging and NoSQL databases. Socneto uses modern platform for deployment making it easier for users' better integration. 
+
+The weaker side of Socneto is the lack of security and proper user management expected from a production-grade software, but not essential for an academic project. Testing could be improved to give us a confidence that Socneto is ready for being used by customers.
+
+\section{Future Work}
+
+Socneto lack of production-grade features is currently the most pressing issue that should be solved before Socneto can be released. The problem with security and user management would be solved with migration to the cloud which would require some adjustments. It would also make it easier to implement continuous integration process.
+
+In terms of the functionality, data acquirers could utilize more data offered by social networks such as geo codes, post statistics and comments. It could also start processing non textual data and implement analyses that would understand it. Socneto currently supports only primitive data flow with three steps. Some data acquirer gives data to some data analyser which then gives analyses to storage. This can be expanded to support custom data flow chaining compatible analysis. For example, the translation service is coupled with Twitter and Reddit data acquirers. It could be turned into a stand-alone component that would be part of the pipeline.  
