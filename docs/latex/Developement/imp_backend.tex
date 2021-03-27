@@ -1,0 +1,111 @@
+\section{Backend}\label{section:backend}
+Backend serves as a middle component between \textit{\hyperref[section:frontend]{frontend}} and the rest of the platform. It provides means for the users to retrieve different data from the platform and create new jobs. It also authenticates users using it and check whether the users are authorized to get the requested data.
+
+\subsection{Requirements and Dependencies}
+Backend requires two other components to be running in order to function properly:
+\begin{itemize}
+    \item \textbf{\href{section:jms}{Job Management Service}} - to create and stop jobs,
+    \item \textbf{\href{section:storage}{Storage}} - to retrieve multiple different data.
+\end{itemize}
+It also needs Kafka for event tracking.
+
+\subsection{Implementation} 
+Backend is a web application running on ASP .NET Core 2.2 which implements standard Model-View-Controller principle. The solution follows data-driven-development which requires  the code base to be split into the following projects: 
+\begin{itemize}
+    \item \texttt{Api} - entry point of the application, contains configuration \texttt{appsettings.json} and controllers handling HTTP requests,
+    \item \texttt{Domain} - business logic, platform independent,
+    \item \texttt{Infrastructure} - platform dependent implementation.
+\end{itemize}
+
+The application uses dependency injection that is configured in the project \texttt{Api} in the file \texttt{Startup.cs}.
+
+\subsubsection{Code}
+The API's controllers are split according to which entities they operate with. Their role is to define concrete HTTP routes the API exposes, which HTTP methods they allow, and how the bodies of the requests look like. They also verify, whether the user querying the API is authenticated and authorized to do such requests. The authentication is implemented via HTTP's \texttt{Authorization} header, using \textit{Basic token}.
+
+The following controllers are implemented:
+\begin{itemize}
+    \item \texttt{SocnetoController} is a base class for each controller. After handling each API request, it checks whether \texttt{ServiceUnavailableException} was thrown, and if it was, its sets the response's HTTP status code to 503 (Service unavailable),
+    
+    \item \texttt{ChartsController} defines API for management of charts. It defines requests for getting list of all charts defined for a job, creating a chart for a job and removing a chart from a job,
+    
+    \item \texttt{ComponentsController} defines API for listing components, which are connected to Socneto platform. It defines one route for getting all currently connected analysers and one for currently connected data acquirers,
+    
+    \item \texttt{JobController} defines API for retrieving job-specific data. It defines routes for listing all user's jobs, creating and stopping a user's job and getting status of a user's job. It also defines a route for getting posts acquired within a given job. The request is paginated and returns posts only from a given page and also support multiple filters. To get all the posts, it exposes another route, which returns all the posts in CSV formatted file. The controller also defines routes for retrieving aggregation and array type analyses for a given job, as well as basic analyses for each job, which are \textit{language frequency}, \textit{author frequency} and \textit{posts frequency},
+    
+    \item \texttt{ManagementController} defines API which informs whether the backend is running, and which other Socneto core components are running,
+    
+    \item \texttt{UserController} defines single API route, which is for logging in. It verifies, whether the user which is trying to login exists, and provided credentials are correct. 
+\end{itemize}
+
+The \texttt{Domain} project implements business logic of the backend. It is split into multiple services. While API project works only with interfaces of these services, their implementation are in this project. Just like the API project, Domain also defines multiple models, which define objects, that are transfered between backend and other Socneto components, or between API and Domain projects. 
+
+The following services are implemented:
+\begin{itemize}
+    \item \texttt{AuthorizationService} implements the logic of verifying, whether a given user is able to interact with a given job in any way,
+    
+    \item \texttt{HttpService} is a wrapper over C\#'s \texttt{HttpClient}\footnote{\url{https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=netcore-2.2}}. It implements utility functions for \texttt{Get}, \texttt{Post} and \texttt{Put} HTTP requests, which automatically check, whether the HTTP response was successful (HTTP status code which indicates success was returned), and deserializes the body of the response to a type specified by method's generic type. It also throws \texttt{ServiceUnavailableException} if the requested route is unavailable,
+    
+    \item \texttt{StorageService} implements Socneto's storage component REST API interface. All communication initiated by backend with storage component is handled by this service,
+
+    \item \texttt{JobManagementService} implements Socneto's job management service's component REST API interface. All communication initiated by backend with JMS is handled by this service. It also sets default values for twitter and reddit credentials when submitting a job,
+
+    \item \texttt{ChartsService} implements the logic behind creating, listing and removing charts for a given job. It queries storage component to retrieve and store the required data,
+    
+    \item \texttt{CsvService} implements creation of a CSV formatted file from a list of objects of the same serializable type. Serializable type in this context is a type, which uses \texttt{Newtonsoft.Json} library attributes, to mark, how it should be serialized into JSON. This service, however, uses these attributes to serialize the objects into CSV,
+    
+    \item \texttt{GetAnalysisService} implements creation and execution of correct queries to storage, to retrieve analysis of acquired posts with given parameters. A query creation is based on:
+    \begin{itemize}
+        \item \textit{Analyser's output format}: the query must ask for the field of the analysis, which is being populated,
+        \item \textit{Type of the analysis}: the analysis can be an aggregation of analyses' field or an array of values of analyses' field,
+        \item \textit{Requested result type}: the requested result may contain multiple analyses (e.g. line chart can contain multiple lines), in which case multiple queries to storage must be executed, and their results must be correctly merged together,
+    \end{itemize}
+
+    \item \texttt{JobService} implements retrieving jobs statuses and jobs' acquired posts from storage,
+    
+    \item \texttt{UserService} implements authenticating a user from given credentials. It queries storage whether the given user exists.
+\end{itemize}
+
+Event tracking is implemented by class \texttt{EventTracker}, which has public method for tracking messages on different levels (error, warn, info, ...). Any tracked message is enqueued to \texttt{EventQueue}. \texttt{EventSendingHostedService} then tries to dequeue a message from the \texttt{EventQueue} every 5 seconds and sends it via \texttt{IMessageBrokerProducer} to the platform.
+
+The \texttt{Infrastructure} project implements functionality required by the chosen infrastructure of the platform. It contains implementation of \texttt{IMessageBro\-kerProducer} interface using Kafka.
+
+\subsubsection{Configuration}
+The configuration of backend is stored in project \texttt{API} in file \texttt{appsettings.json}. The configuration is distributed via a dependency injection  container. The most notable configuration objects are:
+\begin{itemize}
+    \item \texttt{KafkaOptions} - contains location of Kafka,
+    \item \texttt{StorageOptions} - contains location of storage component's API,
+    \item \texttt{JobManagementServiceOptions} - contains location of job management service component's API,
+    \item \texttt{DefaultAcquirersCredentials} - contains default credentials for Twitter and Reddit acquirers, which are used if no credentials are specified via frontend when creating a job.
+\end{itemize}
+
+\subsubsection{Build and Run}
+Backend can be built and run with two methods: with or without Docker.
+
+If using docker, the required Docker version is \textit{18.0.9.7} or higher. The Dockerfile can be found in \texttt{/backend/} directory. From there, it can be built and run using the following commands:
+
+\begin{lstlisting}
+docker build -t "backend" .
+docker run -p "6010:6010" "backend"
+\end{lstlisting}
+Then the backend's API can be found on \texttt{localhost:6010}.
+
+If not using Docker, the project can be built and run using \textit{.NET Command Line Tools} (version 2.2.401 or higher). The following commands will build and start backend when executed from \texttt{/backend/Api}:
+
+\begin{lstlisting}
+dotnet restore # download all third party libraries
+dotnet build # build the projects
+dotnet run # run the project
+\end{lstlisting}
+After executing these commands, backend's API can be found on address\\ \texttt{localhost:5000}.
+
+
+\subsection{Communication}\label{section:backend-communication}
+Backend communicates with \textit{Storage} (Section \ref{section:storage}) and \textit{JMS} (Section \ref{section:jms}) components. It also exposes its own HTTP interface.
+
+\subsubsection{HTTP interface}\label{section:backend-http-interface}
+Backend exposes its own \textit{HTTP JSON REST API} for \textit{Frontend} to communicate with it. The API consists of multiple routes, which are documented in \texttt{/docs/api/be-api.pdf}.
+
+\subsubsection{Outgoing communication}
+To communicate with \textit{JMS} and \textit{Storage} backend uses their \textit{HTTP APIa} (see Sections \ref{subsubsection:jms_httpinterface} and \ref{subsection:storage-communication}).
+
+Most of the requests on backend simply redirect them to one of the other two components with minimal changes and some input validation. 

@@ -1,0 +1,19 @@
+\section{Extensibility}\label{section:extensibility}
+
+Socneto can be extended with custom data acquirers or data analysers. The components must implement the following stages properly.
+
+\subsection{Contract}
+
+\paragraph{Registration}
+To component sends registration request (see Section \ref{subsubsection:jms_kafkainterface} to the topic \texttt{job\_management.registration.request} consumed by JMS (see Section \ref{section:jms}). This registration request makes the component discoverable. Without the registration, component could not be selected by the user. 
+
+In case that the component was already registered and crashed. Upon the re registration, the component receives all the job notifications of running jobs that was received during the the component lifetime. This behaviour makes it easier for component to recover since it does not have to persist the notification itself. This behavior implies that the registration is idempotent therefore multiple re registration will not cause problems.
+
+\paragraph{Starting a Job} 
+After successful registration, the jobs notification (see Appendix \ref{subsection:notification}) starts flowing event to the channel specified in the \newline\texttt{updateChannelName} field in the registration request. The processing of those jobs has been already discussed in respective chapter of the analysing components (see Section \ref{subsubsection:ds_kafkainterface}) and data acquiring components (see Section \ref{subsubsection:da_kafkainterface}).
+
+Data acquirers and data analysers react differently to the job notification. While data acquirers are expected to start producing posts (see Appendix \ref{subsection:postmessage}) to all topics present in the \texttt{outputChannelNames} array the acquirers need to wait for some posts from \texttt{inputChannelName} to come first then analyse them and produce the analysis (see Appendix \ref{section:analysisMessage}). In case of data acquirers, the job notification element \texttt{outputChannelNames} contain at least two topics: one represent a topic which storage consume to store raw posts. The others are then for each selected data analyser. In case of data analyser, the \texttt{outputChannelNames} is usually only one --- the storage input topic.
+
+\paragraph{Stopping a Job}
+
+The jobs can be stopped using also the job notification with a command element \texttt{command} set to \texttt{Stop}. This signals the component that can safely stop listening to the respective input topics. In case of analysers, stopping should be delayed for some time until the all of the messages are not consumed. Data acquirers should be shut down immediately.

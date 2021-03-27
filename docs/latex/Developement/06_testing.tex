@@ -1,0 +1,104 @@
+\chapter{Testing}\label{chapter:testing}
+
+Socneto framework is tested on the following four levels, ordered from the lowest level to the highest:
+
+\begin{itemize}
+    \item Unit - Automatic tests of methods or classes
+    \item Integration - Automatic tests of integration of multiple classes
+    \item Component - Automatic tests of the whole component
+    \item System - Manual tests of the whole application
+\end{itemize}
+
+\section{Requirements}
+
+\begin{itemize}
+    \item .Net Core 3.1 SDK
+    \item .Net Core 2.2 SDK (for backend)
+    \item Python 3.7.1
+    \item Powershell Core 6.2.4
+\end{itemize}
+
+
+\section{Unit Tests}
+
+\textbf{Job Management Service}
+\\ \\
+Test location: \texttt{<socneto-root-dir-path>/job-management/Tests}\\
+Run tests command: 
+\begin{lstlisting}[style=DOS]
+dotnet test <socneto-root-dir-path>/job-management/Tests 
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Backend}
+\\ \\
+Test location: \texttt{<socneto-root-dir-path>/backend/Tests}\\
+Run tests command: \begin{lstlisting}[style=DOS]
+dotnet test <socneto-root-dir-path>/backend/Tests
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Data Acquirers}
+\\ \\
+All data acquirers shares the same code base therefore are all tested with the same unit tests.\\ \\
+Test location: \texttt{<socneto-root-dir-path>/acquisition/DataAcquirer/Tests}\\
+Run tests command: \begin{lstlisting}[style=DOS]
+dotnet test <socneto-root-dir-path>/acquisition/DataAcquirer/Tests
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Storage }\\
+Test location: \texttt{<path-to-module>/src/test/java}\\
+Run tests command: \begin{lstlisting}[style=DOS]
+mvn test -DskipTests=false
+\end{lstlisting}
+
+
+\section{Integration Tests}
+
+
+\textbf{Job Management Service}
+\\ \\
+Test location: \texttt{<socneto-root-dir-path>/job-management/Tests.Integration}\newline
+Run tests command: \begin{lstlisting}[style=DOS]
+dotnet test <socneto-root-dir-path>/job-management/Tests.Integration
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Data Acquirers} \newline
+\\
+All data acquirers shares the same code base therefore are all tested with the same unit tests.\\ \\
+Test location: \texttt{<socneto-root-dir-path>/acquisition/DataAcquirer/Tests.Inte\-gration}\newline 
+Run tests command: 
+\begin{lstlisting}[style=DOS]
+dotnet test <socneto-root-dir-path>/acquisition/DataAcquirer/Tests.Integration
+\end{lstlisting}
+
+\section{Component Tests}
+
+Component tests can be run separately, as described below, or at once with the following command: \\ \begin{lstlisting}[style=DOS]
+<socneto-root-dir-path>/tests/component_tests/run_test_da.ps1
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Job Management Service} \\ \\
+Test location: \texttt{<socneto-root-dir-path>/tests/component\_tests/code/test\_da.ps1} \\
+Run tests Powershell script:\\ \begin{lstlisting}[style=DOS]
+<socneto-root-dir-path>/tests/component\_tests/run\_test\_da.ps1
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Data Acquirers}
+\\ \\
+Test location: \texttt{<socneto-root-dir-path>/tests/component\_tests/code/test\_da.ps1}\\
+Run tests Powershell script:\\ \begin{lstlisting}[style=DOS]
+<socneto-root-dir-path>/tests/component\_tests/run\_test\_da.ps1
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Data Analysers}
+\\ \\
+Test location: \texttt{<socneto-root-dir-path>/tests/component\_tests/code/test\_an.ps1}\\
+Run tests Powershell script:\\ \begin{lstlisting}[style=DOS]
+<socneto-root-dir-path>/tests/component\_tests/run\_test\_an.ps1
+\end{lstlisting}
+\vspace{\baselineskip}
+\textbf{Backend}
+\\ \\
+Test location: \texttt{<socneto-root-dir-path>/tests/component\_tests/code/test\_be.ps1}\\
+Run tests Powershell script:\\ \begin{lstlisting}[style=DOS]
+<socneto-root-dir-path>/tests/component\_tests/run\_test\_be.ps1
+\end{lstlisting}
