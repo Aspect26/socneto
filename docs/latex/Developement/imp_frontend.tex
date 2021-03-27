@@ -1,0 +1,203 @@
+\section{Frontend}\label{section:frontend}
+
+Frontend enables the user to use the platform via a modern graphical interface. It is a web-based application, so it can be run in any environment with a web browser, however it is aimed for the environments with larger screens (i.e. computers, not phones). Using frontend, the user can:
+\begin{itemize}
+    \item \textbf{create jobs} - start acquiring and analyzing posts,
+    \item \textbf{see the results} of jobs, including:
+    \begin{itemize}
+        \item \textit{analyses},
+        \item optionally filtered acquired \textit{posts}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Dependencies}
+Frontend requires \textit{\href{section:backend}{backend}} component to be running in order to function properly. This is caused by all the data it displays is being acquired via backend.
+
+\subsection{Implementation}
+The frontend is primarily written in \texttt{\href{https://angulardart.dev/}{AngularDart}} library \footnote{\url{https://angulardart.dev/}} with minority of the code being written in pure \texttt{JavaScript} and \texttt{CSS}. The \texttt{AngularDart} heavily uses \texttt{\href{https://dart-lang.github.io/angular\_components}{angular\_components}} library \footnote{\url{https://dart-lang.github.io/angularcomponents}}. It provides multiple reusable components which are based on \href{https://material.io/design/}{Material design} \footnote{\url{https://material.io/design/}}.
+
+The whole frontend codebase can be found in \texttt{/frontend} directory of the project repository.
+
+\subsubsection{Code - AngularDart}
+As a typical Angular application, it uses \textit{component based architecture}. Each component consists of three parts:
+\begin{itemize}
+    \item \texttt{Dart} code - implements the business logic of the component (it is later compiled to \texttt{JavaScript}, which is described in Section \ref{section:frontend-build}),
+    \item \texttt{HTML} code - a special version of HTML which supports interpolations of \texttt{Dart} code,
+    \item \texttt{CSS} code - used for styling the resulting \texttt{HTML} code.
+\end{itemize}
+Each component is translated into an HTML tag.
+
+The components are complemented with \textit{services}, which provide logic that is not bound to any component and \textit{models} which represent data and their structure.
+
+
+\subsubsection{Services}
+The logic which is used across multiple components, such as communication with backend, is implemented in services. These can be found in directory \texttt{/lib/src/services/}. Frontend contains the following services:
+
+\begin{itemize}
+    \item \texttt{HttpServiceBase} is an abstract wrapper of Dart's \texttt{\href{https://pub.dev/packages/http}{http package}}, which is implementation of HTTP protocol. This service adds an option to specify IP address and prefix of all HTTP requests. It also adds two functionalities to the http package:
+    \begin{itemize}
+        \item checking whether the HTTP response was successful (i.e. returned status code indicating success), or else throws \texttt{HttpException},
+        \item deserializes and returns the JSON body of the response in form of Dart's Map object,
+    \end{itemize}
+    
+    \item \texttt{HttpServiceBasicAuthBase} extends \texttt{HttpServiceBase} by adding \texttt{Autho\-rization} header to all HTTP requests using the \textit{basic authorization token}. This token can be specified directly, or by providing the service with username and password,
+    
+    \item \texttt{LocalStorageService} is a simple utility service which handles storing and loading of user credentials to the browser's local storage,
+    
+    \item \texttt{SocnetoDataService} extends \texttt{HttpServiceBasicAuthBase} with concrete HTTP requests to Socneto backend. All communication with backend is handled by this service,
+    
+    \item \texttt{SocnetoMockDataService} uses the same interface as \texttt{SocnetoDataService}, but instead of sending real requests to the backend, it returns mock data. This service should be used only during development and not on production!
+    
+    \item \texttt{SocnetoService} use \texttt{SocnetoDataService} via composition. It also uses \\ \texttt{LocalStorageService} to store and load user's credentials in the browser's local storage,
+    
+    \item \texttt{PlatformStatusService} is used to get the status of core Socneto components and inform subscribed Angular components about its changes. If any Angular component is subscribed for the changes, the service polls backend using \texttt{SocnetoService} every 5 seconds and asks about the platform status. If a different status is returned then in the previous request, then all the subscribed components are informed about this change.
+    
+\end{itemize}
+
+\subsubsection{Components}
+Most of the frontend codebase consists of implementations of multiple different components. These components can be found in directory \texttt{lib/src/components}. They are typically implemented in three parts (Dart, HTML and CASS). The convention in this project is, that each part is implemented in a different file. All of these three files are then placed in the same directory, have the same name and differ only in their extension. 
+
+In this project, instead of using CSS, we use SCSS. Thanks to its more extensive syntax, SCSS is more user-friendly. However, it needs to be compiled later into CSS, because browsers do not support it. This process is described in Section \ref{section:frontend-build}.
+
+Some components are designed for reuse in multiple other components. Their code is located in directory \texttt{lib/src/components/shared}. These components are:
+
+\begin{itemize}
+    \item \texttt{ComponentSelect} - gets a list of Socneto components on input and displays to the user the list of these components. The user can select any of these components, and after each selection change, this component triggers an event about it,
+    
+    \item \texttt{Paginator} is a simple visualisation of pagination. It displays a list of available pages and triggers an event on each page change,
+    
+    \item \texttt{PlatformStartupInfo} displays a warning for each core Socneto component which is not running. It subscribes itself to the \texttt{PlatformStatus\-Ser\-vice} to get notified on each component status changed. This component is used only during startup! After all  components are running, the component unsubscribes itself from the \texttt{PlatformStatusSer\-vice}, and will no longer show warnings if a component stops working,
+    
+    \item \texttt{SocnetoComponentStatus} - gets a \href{section:frontend-code-models-component-status}{\texttt{ComponentStatus}} as an input and displays it in a form of a colored icon,
+    
+    \item \texttt{Verification} is a modal dialogue, which is given a verification message on input, displays the message and triggers an event when the user presses the \texttt{yes} or \texttt{no} button.
+\end{itemize}
+The root component of the application, \texttt{App}, is the only direct child of HTML's \texttt{\textless body\textgreater} tag:
+
+\begin{itemize}
+    \item \texttt{App} is the root component of the application. Its only functionality is to check whether there are valid credentials in the browser's local storage and login the user automatically if there are,
+    
+    \item \texttt{AppLayout} is the only child of \texttt{App} component. It creates the main layout of the page:
+    \begin{itemize}
+        \item \textit{header bar} at the top of the page,
+        \item \textit{hideable drawer} on the left,
+        \item \textit{content} below the header. It can be either \texttt{Login} or \texttt{Workspace} component. Which of them is displayed is based on current page's URL\footnote{\url{https://angulardart.dev/tutorial/toh-pt5}}.
+    \end{itemize} 
+    
+\end{itemize}
+Description of other important components follows:
+
+\begin{itemize}
+    \item \texttt{Login} displays inputs for login and password. It also disables the inputs during the platform startup, while not all of the core Socneto components are not running,
+    
+    \item \texttt{Workspace} displays user's workspace when logged in. It is composed of two other components: \texttt{JobsList} on the left side and the second component on the right. The second component is chosen by current page's URL\footnote{\url{https://angulardart.dev/tutorial/toh-pt5}}. It can be either \texttt{QuickGuide} or \texttt{JobDetail} component,
+    
+    \item \texttt{JobsList} displays paginated list of all  user created jobs along with basic info about them. It is implemented using material list component\footnote{\url{https://dart-lang.github.io/angular\_components/\#/material\_list}}. The data for this component is retrieved from backend via \texttt{SocnetoService},
+    
+    \item \texttt{CreateJobModal} contains two-step material list component\footnote{\url{https://dart-lang.github.io/angular\_components/\#/material\_list}}. The first step contains inputs for each required field in a job definition and the second optional step contains credentials for the job. Only if a correct job definition is defined by the user, the job can be submitted to backend,
+    
+    \item \texttt{QuickGuide} displays a simple guide for the user. The guide is implemented using material stepper component \footnote{\url{https://dart-lang.github.io/angular_components/\#/material\_stepper}},
+    
+    \item \texttt{JobDetail} displays detail of the currently selected job in the \texttt{JobsList} component. It is a material list component with three tabs. The first tab contains \texttt{JobStats} component, the second contains \texttt{ChartsBoard} component and the third contains \texttt{PostsList} component,
+    
+    \item \texttt{JobStats} gets a \texttt{Job} on the input and displays some basic info about it and a few frequency charts (posts, language and author frequency),
+    
+    \item \texttt{ChartsBoard} gets a \texttt{jobId} on the input and displays one \texttt{Chart} component for each chart of that job. At the bottom of the list, it displays \texttt{CreateChartButton} component, which opens \texttt{CreateChartModal} when clicked on,
+    
+    \item \texttt{CreateChartModal} display inputs required for definition of a chart. Only a correct chart definition can be then submitted via backend,
+    
+    \item \texttt{Chart} get a \texttt{ChartDefinition} on input and queries chart data from backend according to it. It then displays the data in a chart. The chart's type is also selected from the chart definition,
+    
+    \item \texttt{PostsList} get \texttt{jobId} on input and displays \textit{paginated} list of posts acquired by the given job. The list is retrieved from backend. It also displays optional filters, which can be applied to the list. After each change in the filter, it queries backend for the posts again. It also contains a button to export all the (filtered) posts to CSV. The button's redirect URL is retrieved from backend.
+\end{itemize}
+
+\subsubsection{Routes}
+Some of the components use angular routing\footnote{\url{https://angulardart.dev/tutorial/toh-pt5}} to select which component to display. All of the available routes are defined in \texttt{/lib/src/routes.dart}, along with their route parameters and mappings of concrete routes to concrete components.
+
+\subsubsection{Styles}
+Instead of using plain CSS, we use SCSS for its better and more extensive syntax.
+
+The frontend uses two color palettes in each component - \textit{primary} and \textit{background}. In order to easily change these in the whole application, theming is implemented. Each component has its own styles wrapped in a SCSS mixin\footnote{\url{https://sass-lang.com/documentation/at-rules/mixin}}, which has a \textit{theme} parameter. This parameter contains both palettes, and every color used in the \textit{mixin} is picked from them. All  these component mixins are then included in the \texttt{apply-theme} mixin which passes the \textit{theme} parameter to each of them. We then implement multiple CSS classes which include this \texttt{apply-theme} mixin with different predefined theme objects, which can be found in \texttt{lib/src/style/theming/themes.scss}.
+
+Different color palettes are defined in \newline\texttt{/lib/src/style/theming/palettes.scss}, which were created according to material color palette rules\footnote{\url{https://material.io/design/color/the-color-system.html\#color-usage-palettes}} using Palette Tool\footnote{\url{http://mcg.mbitson.com/\#!?mcgpalette0=\%233f51b5}}. The SCSS functions for retrieving specific colors from color palettes are implemented in \newline\texttt{/lib/src/style/theming/theming.scss}.
+
+\subsubsection{Models}
+Directory \texttt{/lib/src/models/} contains all of the models used throughout the application. It contains models for objects sent and received by backend as well as models used exclusively only on frontend. 
+
+Models representing requests contain function \texttt{toMap()} which serializes them to Dart's generic \texttt{Map} object. This can be then easily serialized to JSON string by \texttt{HttpServiceBase} and sent to backend. 
+
+Models representing responses from backend contain function \texttt{fromMap(Map data)}, which deserializes the \texttt{data} parameter into the model.
+
+\subsubsection{Interoperability} \label{section:frontend-code-interoperability}
+Dart SDK provides means to communicate with native JavaScript code via \texttt{js} package\footnote{\url{https://api.dart.dev/stable/2.7.1/dart-js/dart-js-library.html}}. This interoperability is required, when we want to use a \texttt{JavaScript} library, which was not rewritten to Dart. 
+
+We use this functionality for two \texttt{JavaScript} libraries. One of them is \texttt{toastr}\footnote{\url{https://codeseven.github.io/toastr/}}, which is used to display notifications. The second one is Socneto's own JavaScript library for displaying charts. To be able to use these libraries, we implemented interfaces between Dart and them, using the mentioned \texttt{js} package. These interfaces can be found in directory \texttt{/src/lib/interop/}.
+
+Even with these interfaces, we still need to import these \texttt{JavaScript} libraries from the resulting HTML code. This is done in \texttt{/web/index.html}. The \texttt{toastr} library requires \texttt{jQuery} library to function, so that one is also imported.
+
+\subsubsection{Code - JavaScript}
+To draw different types of charts, we use \texttt{d3js library}\footnote{\url{https://d3js.org/}}. This library was not rewritten to Dart. It also has an extensive API, so it would take considerable effort to create a Dart interface for it using Dart's \texttt{js} library as mentioned in Section \ref{section:frontend-code-interoperability}. For this reason, we  write chart components in pure JavaScript. From this code we then make a \texttt{JavaScript} library.
+
+\texttt{Socneto} object implemented in \texttt{/lib/src/charts/charts.js} exposes multiple static functions for creating charts with data as their parameters. Implementations of the charts are then contained in separate JavaScript classes and CSS files located in the same directory.
+
+
+\subsubsection{Static}
+All the static image, which are used by the frontend are contained in \texttt{/lib/static} directory.
+
+\subsubsection{Configuration}
+\texttt{SocnetoDataService}'s backend address is read from environment variable \texttt{back\-endAddress}. It is read from the environment by utility class \texttt{Config}. If the variable is not specified, it defaults to \texttt{localhost:6010}.
+
+The port where the frontend will be running is specified during build process (see Section \ref{section:frontend-build-no-docker}).
+
+\subsubsection{Build and Run} \label{section:frontend-build}
+The frontend can be built using two different methods. It can be built either by using Docker or without Docker.
+
+\subsubsection {Build and Run - Without Docker}\label{section:frontend-build-no-docker}
+To build the frontend without Docker, the following packages are required:
+\begin{itemize}
+    \item \textbf{Dart SDK} version 2.5.2 or higher,
+    \item \textbf{NodeJs} version 8 or higher.
+\end{itemize}
+The following steps are required to build frontend:
+\begin{itemize}
+    \item \textbf{Gulp} - for better performance, we do not want to import from HTML all of our JavaScript and CSS files individually. To merge all of them into one JavaScript and one CSS file, we use \href{https://gulpjs.com/}{\textit{gulp} tool}. This tool can be installed only via \texttt{npm}, using command \texttt{npm install gulp \&\& npm install gulp -g \&\& npm install gulp-concat}. The gulp is configured via \texttt{/gulpfile.js} to do the merging as a default task. This means, we can run \texttt{gulp} command with no parameters or arguments and it will create the resulting two files, and put them to \texttt{/lib/static} directory.
+    
+    \item \textbf{Pub} - next, we need to download all the dependencies for our Dart application, which are specified in \texttt{/pubspec.yaml}. This is handled by running command \texttt{pub get},
+    
+    \item \textbf{Webdev} - the frontend server is started using \texttt{webdev} tool. This tool was already installed in previous step by \texttt{pub}. To be able to use the tool from command line, we need to activate it  using command \texttt{pub global activate webdev 2.5.1}. Now we can start the server using command \texttt{webdev serve}
+\end{itemize}
+
+\textbf{Note:} Since web browsers support only \texttt{CSS}, all of our \texttt{SCSS} files are compiled to \texttt{CSS} during the build. The compilation is done by \texttt{angular\_components} library, and it is specified in build configuration file located at path \texttt{/build.yaml}.
+
+The resulting commands sequence is then following (run from \texttt{/frontend} directory of the Socneto repository):
+
+\begin{lstlisting}[language=bash]
+npm install gulp
+npm install gulp -g
+npm install gulp-concat
+gulp
+pub get
+pub global activate webdev 2.5.1
+webdev serve
+\end{lstlisting}
+
+Using \texttt{webdev serve} without any parameters, we start the server on address \texttt{localhost:8080} and compile Dart code to JavaScript using \texttt{dartdevc} compiler, which is more suitable for development then production. If we want to change the port, on which the server runs, we need to start it using command \texttt{webdev serve web:<PORT\_NUMBER>} (replace \texttt{<PORT\_NUMBER>}, with the required port number). If we are building the Dart web application on production, it is more suitable to use its \texttt{dart2js} Dart to JavaScript compiler. This compiler next to other features also minifies the resulting JavaScript, increasing the performance of our application. This can be achieved by running the above commands with option \texttt{--release}. 
+
+\subsubsection {Build and Run - Using Docker}
+To build the frontend using Docker, we need to have installed following pakcages:
+\begin{itemize}
+    \item \textbf{Docker} version 18.0.9.7 or higher.
+\end{itemize}
+
+The Socneto repository contains prepared functional \texttt{Dockerfile} located in directory \texttt{/frontend}. This \texttt{Dockerfile} builds the frontend using \texttt{dart2js} compiler (see Section \ref{section:frontend-build-no-docker}), and starts the server on port \texttt{8080}, accessible from \texttt{localhost} on host machine. To build and run the image, execute the following commands:
+
+\begin{lstlisting}[language=bash]
+docker build -t "frontend" .
+docker run -p "8080:8080" "frontend"
+\end{lstlisting}
+
+After these commands the frontend can be accessed via a web browser on address \texttt{localhost:8080}.
+
+\subsection{Communication}
+
+Frontend communicates with Socneto via \href{section:backend-communication}{backend's HTTP JSON REST API}. 

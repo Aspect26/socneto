@@ -1,0 +1,107 @@
+\appendix
+\chapter{Appendix}
+%\setcounter{chapter}{1}
+%\renewcommand\thesection{\Roman{section}}
+%\renewcommand\thesubsection{\thesection.\Roman{subsection}}
+
+
+\section{Entities}\label{appendix}
+
+All entities are in JSON format, data types of values are inside $<$ and $>$ symbols.
+
+\subsection{Registration Message}\label{subsection:registrationrequest}
+
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+  "componentId": <string>,
+  "componentType": <DATA_ACQUIRER or DATA_ANALYSER>,
+  "updateChannelName": <string>,
+  "inputChannelName": <string>,
+  "attributes": <json object>
+  }
+}
+\end{lstlisting}
+
+\subsection{Job Configuration}
+
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+    "selectedDataAcquirers":[<string>],
+    "selectedDataAnalysers":[<string>],
+    "topicQuery": <string>,
+    "jobName": <string>,
+    "attributes":{
+        "acquirer_1":{
+            "parameter1": <string>
+        }
+        ...
+    }
+}
+\end{lstlisting}
+
+\subsection{Update Message}\label{subsection:notification}
+
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+    "jobId": <uuid>,
+    "command": <'Start' or 'Stop'>,
+    "attributes":{
+        "attribute_1": <string>,
+        ...
+    },
+    "outputChannelNames": [<string>]
+}
+\end{lstlisting}
+
+\subsection{Post Message}\label{subsection:postmessage}
+
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+  "id" : <uuid>,
+  "jobId" : <uuid>,
+  "originalId" : <long>,
+  "text" : <string>,
+  "originalText" : <string>,
+  "authorId" : <string>,
+  "language" : <string>,
+  "datetime" : <datetime>
+}
+\end{lstlisting}
+
+\subsection{Analysis Message}\label{section:analysisMessage}
+
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+  "postId": <uuid>,
+  "jobId": <uuid>,
+  "componentId": <string>,
+  "results": {
+    "valueName": {
+        "numberValue": <double>,
+        "textValue": <string>,
+        "numberListValue": [<double>],
+        "textListValue": [<string>],
+        "numberMapValue": {<string,number>},
+        "textMapValue": {<string,string>}
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection{Log Message}\label{section:logMessage}
+
+eventType values: FATAL, ERROR, WARN, INFO, METRIC
+
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+  "componentId": <string>,
+  "eventType": <string>,
+  "eventName": <string>,
+  "message": <string>,
+  "timestamp": <datetime>,
+  "attributes": {<any object>}
+}
+\end{lstlisting}
+\newpage
+\section{Detailed specification as approved}
+\includepdf[pages=-]{specification.pdf}

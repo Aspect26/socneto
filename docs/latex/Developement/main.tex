@@ -1,0 +1,110 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage[colorinlistoftodos,prependcaption]{todonotes}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[nottoc]{tocbibind}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+\usepackage{pdfpages}
+
+
+\usepackage{xcolor}
+\usepackage{listings}
+\setlength\textwidth{140mm}
+
+\lstdefinestyle{DOS}
+{
+    backgroundcolor=\color{gray},
+    basicstyle=\color{white}\ttfamily,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background}
+}
+
+% Thesis title in English (exactly as in the formal assignment)
+\def\ThesisTitle{Scent of Current Network Overview}
+\def\Abbreviation{SOCNETO}
+
+% Author of the thesis
+\def\ThesisAuthor{Bc.~Július Flimmel, Bc.~Jaroslav Knotek, Bc.~Lukáš Kolek, Bc.~Petra Vysušilová}
+
+% Year when the thesis is submitted
+\def\YearSubmitted{2020}
+
+% Name of the department or institute, where the work was officially assigned
+% (according to the Organizational Structure of MFF UK in English,
+% or a full name of a department outside MFF)
+\def\Department{Department of Software Engineering}
+
+% Is it a department (katedra), or an institute (ústav)?
+\def\DeptType{Institute}
+
+% Thesis supervisor: name, surname and titles
+\def\Supervisor{doc. RNDr. Irena Holubová, Ph.D.}
+
+% Supervisor's department (again according to Organizational structure of MFF)
+\def\SupervisorsDepartment{Department of Software Engineering}
+
+
+
+\def\Dedication{%
+We would first like to thank to our advisor, Doc. RNDr. Irena Holubová, Ph.D. She devoted a lot of time to to our project and provided us valuable advices and support. We would also like to thank to RNDr. Jakub Yaghob, Ph.D. for his willing help with school clusters. We are grateful Datamole provided its space for our meetings and coding sessions, which helped us to move a lot. Last but not least our thanks belong to Bc. Jiří Suchomel, who suggested real use cases for Socneto and also connected us with other people, which can use Socneto for their use cases.
+}
+
+\def\Abstract{%
+The aim of the project is to develop a framework for analysis of social
+network data. It provides users with functionality to analyse sentiment of
+large amounts of data and visualize the results. Data are acquired via
+social networks public APIs or custom modules.
+}
+
+\def\Keywords{%
+{key} {words}
+}
+\title{Development documentation}
+\author{SOCNETO}
+\date{February 2020}
+
+\begin{document}
+\include{title}
+%\maketitle
+\tableofcontents
+\include{01_intro}
+\include{02_project_overview}
+\include{03_implementation}
+\include{04_text_analysis}
+\include{05_extensibility}
+\include{06_testing}
+\include{07_discussion}
+\include{08_conclusion}
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography}
+\newpage
+\include{99_apendix}
+
+%\addcontentsline{toc}{section}{References}
+
+\newpage
+%\listoftodos
+
+\end{document}
+
